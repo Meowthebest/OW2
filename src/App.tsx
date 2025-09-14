@@ -1,4 +1,4 @@
-import Overwatch2RandomHeroPickerDuoRoleLock from '@/components/Overwatch2RandomHeroPickerDuoRoleLock'
+import Overwatch2RandomHeroPickerDuoRoleLock from './components/Overwatch2RandomHeroPickerDuoRoleLock'
 
 export default function App() {
   return (
