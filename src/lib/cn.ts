@@ -1,10 +1,3 @@
-src/lib/cn.ts
-src/components/ui/button.tsx
-src/components/ui/card.tsx
-src/components/ui/badge.tsx
-src/components/ui/switch.tsx
-src/components/ui/tabs.tsx
-src/components/ui/input.tsx
-src/components/ui/checkbox.tsx
-src/components/ui/separator.tsx
-src/components/ui/select.tsx
+export function cn(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(' ')
+}
