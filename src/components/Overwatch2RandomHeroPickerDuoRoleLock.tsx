@@ -11,13 +11,4 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-src/lib/cn.ts
-src/components/ui/button.tsx
-src/components/ui/card.tsx
-src/components/ui/badge.tsx
-src/components/ui/switch.tsx
-src/components/ui/tabs.tsx
-src/components/ui/input.tsx
-src/components/ui/checkbox.tsx
-src/components/ui/separator.tsx
-src/components/ui/select.tsx
+// ----- Hero Data (kept in sync with your other canvases) -----
