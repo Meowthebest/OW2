@@ -244,7 +244,7 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
             </div>
 
             {/* Per-player role selects */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-1 block text-xs uppercase text-muted-foreground">Player 1 Role</label>
                 <Select value={p1Role} onValueChange={(v) => setP1Role(v as Role)}>
@@ -296,7 +296,7 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
             {/* Manual Add Completed */}
             <div className="rounded-xl border p-3">
               <div className="mb-2 text-xs uppercase text-muted-foreground">Add Completed (Manual)</div>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div>
                   <label className="mb-1 block text-xs uppercase text-muted-foreground">Player</label>
                   <Select value={String(addPlayer)} onValueChange={(v) => setAddPlayer(Number(v) as PlayerNum)}>
@@ -386,11 +386,11 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
 
             {/* Picks Display */}
             {twoPlayer ? (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {([ {label: "Player 1", pick: picked1, role: p1Role, p: 1}, {label: "Player 2", pick: picked2, role: p2Role, p: 2} ] as const).map(({label, pick, role, p}) => (
                   <div key={label} className="rounded-xl border p-4">
                     <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> {label} • {role}</div>
-                    <div className="mt-2 min-h-[92px]">
+                    <div className="mt-2 min-h-[120px]">
                       <AnimatePresence mode="wait">
                         {pick ? (
                           <motion.div key={pick} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="flex items-center justify-between">
@@ -447,7 +447,7 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
             <div>
               <div className="mb-2 text-xs uppercase text-muted-foreground">Recent Picks</div>
               {twoPlayer ? (
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="rounded-lg border p-3">
                     <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> Player 1</div>
                     {historyP1.length === 0 ? (
@@ -520,7 +520,7 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
             {/* Completed per player */}
             <div>
               <div className="mb-2 text-xs uppercase text-muted-foreground">Completed Heroes (per player)</div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {[1,2].map((p) => {
                   const completedList = Object.entries(completedByPlayer[p as PlayerNum] || {}).filter(([, v]) => v).map(([k]) => k);
                   return (
