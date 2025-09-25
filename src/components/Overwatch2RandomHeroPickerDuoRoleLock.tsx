@@ -519,7 +519,7 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
                       <motion.div key={picked[1]} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="flex items-center justify-between">
                         <div>
                           <div className="text-2xl font-bold leading-tight">{picked[1]}</div>
-                          <div className="text-sm text-muted-foreground">{ALL_HEROES.find((h) => h.name === picked[1])?.role}</div>
+                          <Badge   variant="outline"   className="role-badge"   data-role={ALL_HEROES.find((h) => h.name === pick)?.role as any} >   {ALL_HEROES.find((h) => h.name === pick)?.role} </Badge>
                         </div>
                         <Badge variant="secondary" className="text-xs">{isRolling ? "Rolling…" : (completedByPlayer[1]?.[picked[1] as string] ? "Done" : "Locked")}</Badge>
                       </motion.div>
@@ -542,7 +542,7 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
                             <motion.div key={pick} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="flex items-center justify-between">
                               <div>
                                 <div className="text-2xl font-bold leading-tight">{pick}</div>
-                                <div className="text-sm text-muted-foreground">{ALL_HEROES.find((h) => h.name === pick)?.role}</div>
+                                <Badge   variant="outline"   className="role-badge"   data-role={ALL_HEROES.find((h) => h.name === pick)?.role as any} >   {ALL_HEROES.find((h) => h.name === pick)?.role} </Badge>
                               </div>
                               <Badge variant="secondary" className="text-xs">{isRolling ? "Rolling…" : (completedByPlayer[p]?.[pick] ? "Done" : "Locked")}</Badge>
                             </motion.div>
@@ -573,7 +573,7 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
                           {list.map((h) => (
                             <li key={`p${p}_${h}`} className="flex items-center justify-between rounded-lg border p-2">
                               <span className="text-sm font-medium">{h}</span>
-                              <Badge variant="outline" className="text-[10px]">{ALL_HEROES.find((x) => x.name === h)?.role}</Badge>
+                              <Badge   variant="outline"   className="role-badge"   data-role={ALL_HEROES.find((x) => x.name === h)?.role as any} >   {ALL_HEROES.find((x) => x.name === h)?.role} </Badge>
                             </li>
                           ))}
                         </ul>
