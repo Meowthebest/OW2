@@ -139,17 +139,13 @@ body {
 
 /* ---- Pick card tightening & anti-gap helpers ---- */
 @layer components {
-  /* Outer wrapper of each pick card (needed for absolute status badge) */
-  .pick-card { @apply relative; }
-
-  /* Inner content area (keeps all cards equal height & vertically centered) */
+  .pick-card { @apply relative; }                 /* needed for absolute badge */
   .pick-block { @apply min-h-[96px] flex items-center; }
   @screen sm { .pick-block { @apply min-h-[104px]; } }
   @screen lg { .pick-block { @apply min-h-[112px]; } }
 
-  /* Larger, tidy hero name */
-  .pick-title { @apply text-xl sm:text-2xl font-bold leading-tight; }
+  /* IMPORTANT: normal wrapping so names don't break character-by-character */
+  .pick-title { @apply text-xl sm:text-2xl font-bold leading-tight whitespace-normal break-normal; }
 
-  /* Take the status badge out of normal flow so it never pushes layout */
   .status-badge { @apply absolute top-3 right-3 text-xs; }
 }
