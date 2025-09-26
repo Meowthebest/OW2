@@ -1,21 +1,15 @@
-// Simple theme controller (dark / light) using localStorage + <html class="dark">
-const KEY = "ow2_theme"; // "dark" | "light"
-
-export type Theme = "dark" | "light";
+export type Theme = "light" | "dark";
+const KEY = "ow2_theme";
 
 export function getStoredTheme(): Theme {
-  const t = (localStorage.getItem(KEY) as Theme) || "dark";
-  return t === "light" ? "light" : "dark";
+  const raw = (typeof window !== "undefined" && localStorage.getItem(KEY)) as Theme | null;
+  return raw === "light" || raw === "dark" ? raw : "dark";
 }
 
-export function applyTheme(t: Theme) {
+export function applyTheme(next: Theme) {
+  if (typeof document === "undefined") return;
   const root = document.documentElement;
-  if (t === "dark") root.classList.add("dark");
-  else root.classList.remove("dark");
-  localStorage.setItem(KEY, t);
-}
-
-export function initThemeOnce() {
-  const t = getStoredTheme();
-  applyTheme(t);
+  root.classList.remove("light", "dark");
+  root.classList.add(next);
+  localStorage.setItem(KEY, next);
 }
