@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shuffle, Dice5, Filter, Trash2, History, Repeat, CheckCircle2, Undo2, Trophy, Users, User, Pencil } from "lucide-react";
+import { Shuffle, Dice5, Filter, Trash2, History, Repeat, CheckCircle2, Undo2, Trophy, Users, User } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-/* ---------------- Hero Data ---------------- */
+// ----- Hero Data -----
 const HEROES: Record<string, string[]> = {
   Tank: ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
   Damage: ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Venture","Widowmaker"],
@@ -26,120 +26,80 @@ const ALL_HEROES: HeroInfo[] = Object.entries(HEROES).flatMap(([role, list]) =>
   list.map((name) => ({ name, role: role as keyof typeof HEROES }))
 );
 
-const MAX_PLAYERS = 5;
-type PlayerNum = 1 | 2 | 3 | 4 | 5;
-const PLAYERS: PlayerNum[] = [1,2,3,4,5];
-
-/* ---------------- Storage Keys ---------------- */
 const STORAGE_KEYS = {
-  excluded: "ow2_rolelock_excluded",
-  norepeat: "ow2_rolelock_norepeat",
-  history: "ow2_rolelock_history",
-  history_by_player: "ow2_rolelock_history_by_player",
-  listRole: "ow2_rolelock_list_role",
-  roles: "ow2_rolelock_roles",
-  players: "ow2_rolelock_players",
-  twoPlayerLegacy: "ow2_duo_rolelock_two_player",      // old
-  p1Role: "ow2_duo_rolelock_p1_role",                   // old
-  p2Role: "ow2_duo_rolelock_p2_role",                   // old
-  completedByPlayer: "ow2_rolelock_completed_by_player",
-  challengeMode: "ow2_rolelock_challenge_mode",
-  playerNames: "ow2_rolelock_player_names",             // NEW
+  excluded: "ow2_duo_rolelock_excluded",
+  norepeat: "ow2_duo_rolelock_norepeat",
+  history: "ow2_duo_rolelock_history",
+  history_p1: "ow2_duo_rolelock_history_p1",
+  history_p2: "ow2_duo_rolelock_history_p2",
+  listRole: "ow2_duo_rolelock_list_role",
+  p1Role: "ow2_duo_rolelock_p1_role",
+  p2Role: "ow2_duo_rolelock_p2_role",
+  completedByPlayer: "ow2_duo_rolelock_completed_by_player",
+  challengeMode: "ow2_duo_rolelock_challenge_mode",
+  twoPlayer: "ow2_duo_rolelock_two_player",
 };
 
-/* ---------------- Component ---------------- */
-export default function Overwatch2RandomHeroPicker() {
-  // player count
-  const [playersCount, setPlayersCount] = useState<number>(() => {
-    const saved = Number(localStorage.getItem(STORAGE_KEYS.players));
-    if (saved >= 1 && saved <= MAX_PLAYERS) return saved;
-    // migrate legacy 2p toggle if present
-    const legacyTwo = localStorage.getItem(STORAGE_KEYS.twoPlayerLegacy);
-    return legacyTwo === "true" ? 2 : 2;
-  });
-  const activePlayers = PLAYERS.slice(0, playersCount);
+type PlayerNum = 1 | 2;
 
-  // player names (optional)
-  const [playerNames, setPlayerNames] = useState<Record<PlayerNum, string>>(() => {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.playerNames) || "{}");
-      const d: any = {};
-      PLAYERS.forEach((p) => (d[p] = typeof parsed?.[p] === "string" ? parsed[p] : `P${p}`));
-      return d as Record<PlayerNum,string>;
-    } catch { return {1:"P1",2:"P2",3:"P3",4:"P4",5:"P5"}; }
-  });
-  const nameOf = (p: PlayerNum) => (playerNames[p] && playerNames[p].trim() ? playerNames[p].trim() : `P${p}`);
-
-  // per-player role
-  const [roles, setRoles] = useState<Record<PlayerNum, Role>>(() => {
-    try {
-      const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.roles) || "{}");
-      if (parsed && typeof parsed === "object") {
-        const merged: any = {};
-        PLAYERS.forEach((p) => (merged[p] = (parsed[p] as Role) || "All"));
-        return merged as Record<PlayerNum, Role>;
-      }
-    } catch {}
-    const fb: any = {};
-    fb[1] = (localStorage.getItem(STORAGE_KEYS.p1Role) as Role) || "All";
-    fb[2] = (localStorage.getItem(STORAGE_KEYS.p2Role) as Role) || "All";
-    fb[3] = fb[4] = fb[5] = "All";
-    return fb as Record<PlayerNum, Role>;
-  });
-
-  // list filter + search
+export default function Overwatch2RandomHeroPickerDuoRoleLock() {
+  // Role filters
   const [listRole, setListRole] = useState<Role>(() => (localStorage.getItem(STORAGE_KEYS.listRole) as Role) || "All");
-  const [query, setQuery] = useState("");
+  const [p1Role, setP1Role] = useState<Role>(() => (localStorage.getItem(STORAGE_KEYS.p1Role) as Role) || "All");
+  const [p2Role, setP2Role] = useState<Role>(() => (localStorage.getItem(STORAGE_KEYS.p2Role) as Role) || "All");
+  const [twoPlayer, setTwoPlayer] = useState<boolean>(() => {
+    const raw = localStorage.getItem(STORAGE_KEYS.twoPlayer);
+    return raw === null ? true : raw === "true"; // default ON
+  });
 
-  // exclusions & challenge/completed
+  // Search + state
+  const [query, setQuery] = useState("");
   const [excluded, setExcluded] = useState<Record<string, boolean>>(() => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.excluded) || "{}"); } catch { return {}; }
+  });
+  const [completedByPlayer, setCompletedByPlayer] = useState<Record<PlayerNum, Record<string, boolean>>>(() => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.completedByPlayer) || "{}"); } catch { return {} as any; }
   });
   const [challengeMode, setChallengeMode] = useState<boolean>(() => {
     const raw = localStorage.getItem(STORAGE_KEYS.challengeMode);
     return raw === null ? true : raw === "true";
   });
-  const [completedByPlayer, setCompletedByPlayer] = useState<Record<PlayerNum, Record<string, boolean>>>(() => {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.completedByPlayer) || "{}"); } catch { return {} as any; }
-  });
-
-  // repeats + history
   const [noRepeat, setNoRepeat] = useState<boolean>(() => localStorage.getItem(STORAGE_KEYS.norepeat) === "true");
   const [history, setHistory] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.history) || "[]"); } catch { return []; }
   });
-  const [historyByPlayer, setHistoryByPlayer] = useState<Record<PlayerNum, string[]>>(() => {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.history_by_player) || "{}"); } catch { return {} as any; }
+  const [historyP1, setHistoryP1] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.history_p1) || "[]"); } catch { return []; }
   });
-
-  // picks
-  const [picked, setPicked] = useState<Record<PlayerNum, string | null>>({1:null,2:null,3:null,4:null,5:null} as const);
+  const [historyP2, setHistoryP2] = useState<string[]>(() => {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEYS.history_p2) || "[]"); } catch { return []; }
+  });
+  const [picked1, setPicked1] = useState<string | null>(null);
+  const [picked2, setPicked2] = useState<string | null>(null);
   const [isRolling, setIsRolling] = useState(false);
 
-  // manual add
+  // Manual add state
   const [addPlayer, setAddPlayer] = useState<PlayerNum>(1);
   const [addHero, setAddHero] = useState<string>("");
 
-  /* -------- persist -------- */
-  useEffect(() => localStorage.setItem(STORAGE_KEYS.players, String(playersCount)), [playersCount]);
-  useEffect(() => localStorage.setItem(STORAGE_KEYS.roles, JSON.stringify(roles)), [roles]);
+  // Persist
   useEffect(() => localStorage.setItem(STORAGE_KEYS.listRole, listRole), [listRole]);
+  useEffect(() => localStorage.setItem(STORAGE_KEYS.p1Role, p1Role), [p1Role]);
+  useEffect(() => localStorage.setItem(STORAGE_KEYS.p2Role, p2Role), [p2Role]);
+  useEffect(() => localStorage.setItem(STORAGE_KEYS.twoPlayer, String(twoPlayer)), [twoPlayer]);
   useEffect(() => localStorage.setItem(STORAGE_KEYS.excluded, JSON.stringify(excluded)), [excluded]);
   useEffect(() => localStorage.setItem(STORAGE_KEYS.completedByPlayer, JSON.stringify(completedByPlayer)), [completedByPlayer]);
   useEffect(() => localStorage.setItem(STORAGE_KEYS.challengeMode, String(challengeMode)), [challengeMode]);
   useEffect(() => localStorage.setItem(STORAGE_KEYS.norepeat, String(noRepeat)), [noRepeat]);
   useEffect(() => localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history)), [history]);
-  useEffect(() => localStorage.setItem(STORAGE_KEYS.history_by_player, JSON.stringify(historyByPlayer)), [historyByPlayer]);
-  useEffect(() => localStorage.setItem(STORAGE_KEYS.playerNames, JSON.stringify(playerNames)), [playerNames]);
+  useEffect(() => localStorage.setItem(STORAGE_KEYS.history_p1, JSON.stringify(historyP1)), [historyP1]);
+  useEffect(() => localStorage.setItem(STORAGE_KEYS.history_p2, JSON.stringify(historyP2)), [historyP2]);
 
-  /* -------- helpers -------- */
+  // Helpers
   const byRole = (role: Role) => (role === "All" ? ALL_HEROES : ALL_HEROES.filter((h) => h.role === role));
   const listBase = useMemo(() => byRole(listRole), [listRole]);
-  const baseByPlayer = useMemo(() => {
-    const map: Record<PlayerNum, HeroInfo[]> = {} as any;
-    PLAYERS.forEach((p) => { map[p] = byRole(roles[p]); });
-    return map;
-  }, [roles]);
+  const baseP1 = useMemo(() => byRole(p1Role), [p1Role]);
+  const baseP2 = useMemo(() => byRole(p2Role), [p2Role]);
   const visibleHeroes = useMemo(() => listBase.filter((h) => h.name.toLowerCase().includes(query.toLowerCase())), [listBase, query]);
 
   function computeEligible(base: HeroInfo[], player: PlayerNum) {
@@ -150,172 +110,157 @@ export default function Overwatch2RandomHeroPicker() {
     if (!noRepeat) return pool;
     const used = new Set(history);
     const remaining = pool.filter((n) => !used.has(n));
-    return remaining.length > 0 ? remaining : pool;
+    return remaining.length > 0 ? remaining : pool; // if exhausted, allow repeats
   }
 
-  const eligibleByPlayer = useMemo(() => {
-    const map: Record<PlayerNum, string[]> = {} as any;
-    PLAYERS.forEach((p) => { map[p] = computeEligible(baseByPlayer[p], p); });
-    return map;
-  }, [baseByPlayer, excluded, completedByPlayer, challengeMode, noRepeat, history]);
+  const eligibleP1 = useMemo(() => computeEligible(baseP1, 1), [baseP1, excluded, completedByPlayer, challengeMode, noRepeat, history]);
+  const eligibleP2 = useMemo(() => computeEligible(baseP2, 2), [baseP2, excluded, completedByPlayer, challengeMode, noRepeat, history]);
 
-  /* -------- rolling -------- */
   function roll() {
-    if (playersCount === 1) return singleRoll(1);
-    const pools: Record<PlayerNum, string[]> = {} as any;
-    activePlayers.forEach((p) => (pools[p] = eligibleByPlayer[p].slice()));
-    if (activePlayers.every((p) => pools[p].length === 0)) {
-      const cleared: any = {}; activePlayers.forEach((p) => (cleared[p] = null));
-      setPicked((prev) => ({ ...prev, ...cleared })); return;
-    }
+    if (!twoPlayer) return singleRoll();
+    if (eligibleP1.length === 0 && eligibleP2.length === 0) { setPicked1(null); setPicked2(null); return; }
     setIsRolling(true);
     const duration = 900, interval = 60; let elapsed = 0;
     const id = setInterval(() => {
-      const chosen = new Set<string>();
-      const next: Record<PlayerNum, string | null> = {} as any;
-      for (const p of activePlayers) {
-        const uniquePool = pools[p].filter((n) => !chosen.has(n));
-        const pickFrom = uniquePool.length > 0 ? uniquePool : pools[p];
-        next[p] = pickFrom.length ? pickFrom[Math.floor(Math.random() * pickFrom.length)] : null;
-        if (next[p]) chosen.add(next[p] as string);
-      }
-      setPicked((prev) => ({ ...prev, ...next }));
+      const p1 = eligibleP1.length > 0 ? eligibleP1[Math.floor(Math.random() * eligibleP1.length)] : null;
+      let p2Pool = eligibleP2;
+      if (p1) p2Pool = p2Pool.filter((n) => n !== p1);
+      const p2 = p2Pool.length > 0 ? p2Pool[Math.floor(Math.random() * p2Pool.length)] : null;
+      setPicked1(p1); setPicked2(p2);
       elapsed += interval;
-      if (elapsed >= duration) { clearInterval(id); setIsRolling(false); finalizeMulti(next); }
+      if (elapsed >= duration) { clearInterval(id); setIsRolling(false); finalizeTwo(p1, p2); }
     }, interval);
   }
 
-  function singleRoll(p: PlayerNum) {
-    const pool = eligibleByPlayer[p];
-    if (!pool.length) { setPicked((prev) => ({ ...prev, [p]: null })); return; }
+  function singleRoll() {
+    if (eligibleP1.length === 0) { setPicked1(null); setPicked2(null); return; }
     setIsRolling(true);
     const duration = 900, interval = 60; let elapsed = 0;
     const id = setInterval(() => {
-      const n = pool[Math.floor(Math.random() * pool.length)];
-      setPicked((prev) => ({ ...prev, [p]: n }));
+      const n = eligibleP1[Math.floor(Math.random() * eligibleP1.length)];
+      setPicked1(n); setPicked2(null);
       elapsed += interval;
-      if (elapsed >= duration) { clearInterval(id); setIsRolling(false); finalizeOne(p, n); }
+      if (elapsed >= duration) { clearInterval(id); setIsRolling(false); finalizeOne(n); }
     }, interval);
   }
 
-  function finalizeOne(p: PlayerNum, n: string | null) {
+  function finalizeOne(n: string | null) {
     if (!n) return;
-    setHistory((prev) => [n, ...prev.filter((x) => x !== n)].slice(0, 20));
-    setHistoryByPlayer((prev) => ({ ...prev, [p]: [n, ...((prev[p] || []).filter((x) => x !== n))].slice(0, 10) }));
+    setHistory((prev) => [n, ...prev.filter((x) => x !== n)].slice(0, 14));
+    setHistoryP1((prev) => [n, ...prev.filter((x) => x !== n)].slice(0, 10));
   }
-  function finalizeMulti(picks: Record<PlayerNum, string | null>) {
-    const names = activePlayers.map((p) => picks[p]).filter(Boolean) as string[];
-    if (!names.length) return;
+  function finalizeTwo(p1: string | null, p2: string | null) {
+    const names = [p1, p2].filter(Boolean) as string[];
+    if (names.length === 0) return;
     setHistory((prev) => [...names, ...prev.filter((x) => !names.includes(x))].slice(0, 20));
-    setHistoryByPlayer((prev) => {
-      const updated = { ...prev };
-      for (const p of activePlayers) {
-        const n = picks[p];
-        if (n) updated[p] = [n, ...((updated[p] || []).filter((x) => x !== n))].slice(0, 10);
-      }
-      return updated;
-    });
+    if (p1) setHistoryP1((prev) => [p1, ...prev.filter((x) => x !== p1)].slice(0, 10));
+    if (p2) setHistoryP2((prev) => [p2, ...prev.filter((x) => x !== p2)].slice(0, 10));
   }
 
-  /* -------- actions -------- */
-  function toggleExclude(name: string) { setExcluded((prev) => ({ ...prev, [name]: !prev[name] })); }
+  function toggleExclude(name: string) {
+    setExcluded((prev) => ({ ...prev, [name]: !prev[name] }));
+  }
+
   function markDone(name?: string, player?: PlayerNum) {
-    const p = player ?? 1; const target = name ?? picked[p];
+    const target = name ?? (player === 2 ? picked2 : picked1);
+    const p: PlayerNum = player ?? 1;
     if (!target) return;
     setCompletedByPlayer((prev) => ({ ...prev, [p]: { ...(prev[p] || {}), [target]: true } }));
-    setPicked((prev) => ({ ...prev, [p]: null }));
+    if (p === 2) setPicked2(null); else setPicked1(null);
   }
-  function markAllDone() {
-    const up: Record<PlayerNum, Record<string, boolean>> = {} as any;
-    const np: Record<PlayerNum, string | null> = {} as any;
-    for (const p of activePlayers) { const hero = picked[p]; np[p] = null; if (hero) up[p] = { ...(completedByPlayer[p] || {}), [hero]: true }; }
-    setCompletedByPlayer((prev) => ({ ...prev, ...up })); setPicked((prev) => ({ ...prev, ...np }));
-  }
+
   function undoDone(name: string, player: PlayerNum) {
     setCompletedByPlayer((prev) => ({ ...prev, [player]: { ...(prev[player] || {}), [name]: false } }));
   }
-  function handleManualAdd() { if (!addHero) return; markDone(addHero, addPlayer); setAddHero(""); }
-  function setAllExcluded(value: boolean) { const u: Record<string, boolean> = { ...excluded }; for (const h of listBase) u[h.name] = value; setExcluded(u); }
-  function clearAll() { setExcluded({}); setHistory([]); setHistoryByPlayer({}); setPicked({1:null,2:null,3:null,4:null,5:null} as any); }
-  function resetChallenge() { setCompletedByPlayer({} as any); setPicked({1:null,2:null,3:null,4:null,5:null} as any); }
+
+  function handleManualAdd() {
+    if (!addHero) return;
+    markDone(addHero, addPlayer);
+    setAddHero("");
+  }
+
+  function setAllExcluded(value: boolean) {
+    const updates: Record<string, boolean> = { ...excluded };
+    for (const h of listBase) updates[h.name] = value;
+    setExcluded(updates);
+  }
+
+  function clearAll() {
+    setExcluded({});
+    setHistory([]); setHistoryP1([]); setHistoryP2([]);
+    setPicked1(null); setPicked2(null);
+  }
+
+  function resetChallenge() {
+    setCompletedByPlayer({} as any);
+    setPicked1(null); setPicked2(null);
+  }
 
   const totals = useMemo(() => {
     const total = listBase.length;
     const excludedCount = listBase.filter((h) => excluded[h.name]).length;
     const available = Math.max(0, total - excludedCount);
-    const compCounts: Record<PlayerNum, number> = {} as any;
-    activePlayers.forEach((p) => (compCounts[p] = Object.values(completedByPlayer[p] || {}).filter(Boolean).length));
-    return { total, excluded: excludedCount, available, compCounts };
-  }, [listBase, excluded, completedByPlayer, playersCount]);
-  const eligibleBadge = activePlayers.map((p) => `${nameOf(p)} ${eligibleByPlayer[p].length}`).join(" • ");
+    const c1 = Object.values(completedByPlayer[1] || {}).filter(Boolean).length;
+    const c2 = Object.values(completedByPlayer[2] || {}).filter(Boolean).length;
+    return { total, excluded: excludedCount, available, c1, c2 };
+  }, [listBase, excluded, completedByPlayer]);
 
-  /* -------- render -------- */
   return (
-    <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-6xl p-4 sm:p-6">
       <motion.h1 initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="text-3xl font-bold tracking-tight">
-        Overwatch 2 — Random Hero Picker <span className="text-muted-foreground">(Multiplayer Role Lock)</span>
+        Overwatch 2 – Random Hero Picker <span className="text-muted-foreground">(Duo Role Lock)</span>
       </motion.h1>
 
       <p className="mt-2 text-sm text-muted-foreground">
-        Pick roles, roll unique heroes, and track completion per player. Everything auto-saves locally.
+        Choose a role for <span className="font-medium">Player 1</span> and <span className="font-medium">Player 2</span>. Rolls are unique if possible. Mark heroes <em>Done</em> to exclude them for that specific player while Challenge Mode is on.
       </p>
 
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-5">
         {/* Left: Controls */}
-        <Card className="md:col-span-2">
+        <Card className="panel md:col-span-2">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-2 text-lg"><Filter className="h-5 w-5" /> Filters & Players</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Filter className="h-5 w-5" /> Filters & Roles
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Players + Pool */}
-            <div className="rounded-xl bg-muted/40 p-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Users className="h-4 w-4" />
-                  <div className="text-sm">Players</div>
-                  <Select value={String(playersCount)} onValueChange={(v) => setPlayersCount(Number(v))}>
-                    <SelectTrigger className="w-24"><SelectValue placeholder="Players" /></SelectTrigger>
-                    <SelectContent>{[1,2,3,4,5].map(n => <SelectItem key={n} value={String(n)}>{n}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <Badge variant="secondary" className="text-xs">Pool: {totals.available}/{totals.total}</Badge>
+            {/* Global options */}
+            <div className="toolbar flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Switch id="twoplayer" checked={twoPlayer} onCheckedChange={setTwoPlayer} />
+                <label htmlFor="twoplayer" className="text-sm flex items-center gap-1"><Users className="h-4 w-4" /> Two Players</label>
               </div>
-
-              {/* Optional player names */}
-              <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                {activePlayers.map((p) => (
-                  <div key={`nm_${p}`} className="flex items-center gap-2">
-                    <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
-                    <Input
-                      value={playerNames[p]}
-                      onChange={(e) => setPlayerNames((prev) => ({ ...prev, [p]: e.target.value.slice(0,18) }))}
-                      placeholder={`Player ${p} name (optional)`}
-                      className="h-9"
-                    />
-                  </div>
-                ))}
-              </div>
+              <Badge variant="secondary" className="text-xs">Pool: {totals.available}/{totals.total}</Badge>
             </div>
 
             {/* Per-player role selects */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {activePlayers.map((p) => (
-                <div key={`role_${p}`}>
-                  <label className="mb-1 block text-xs uppercase text-muted-foreground">{nameOf(p)} Role</label>
-                  <Select value={roles[p]} onValueChange={(v) => setRoles((prev) => ({ ...prev, [p]: v as Role }))}>
-                    <SelectTrigger><SelectValue placeholder="Choose role" /></SelectTrigger>
-                    <SelectContent>{ALL_ROLES.map(r => <SelectItem key={`p${p}_${r}`} value={r}>{r}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-              ))}
+              <div>
+                <label className="mb-1 block text-xs uppercase text-muted-foreground">Player 1 Role</label>
+                <Select value={p1Role} onValueChange={(v) => setP1Role(v as Role)}>
+                  <SelectTrigger><SelectValue placeholder="Choose role" /></SelectTrigger>
+                  <SelectContent>
+                    {ALL_ROLES.map((r) => (<SelectItem key={`p1_${r}`} value={r}>{r}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="mb-1 block text-xs uppercase text-muted-foreground">Player 2 Role</label>
+                <Select value={p2Role} onValueChange={(v) => setP2Role(v as Role)}>
+                  <SelectTrigger><SelectValue placeholder="Choose role" /></SelectTrigger>
+                  <SelectContent>
+                    {ALL_ROLES.map((r) => (<SelectItem key={`p2_${r}`} value={r}>{r}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            {/* List role & search */}
+            {/* List role filter for browsing/excluding */}
             <Tabs value={listRole} onValueChange={(v) => setListRole(v as Role)} className="w-full mt-2">
               <TabsList className="grid w-full grid-cols-4">
-                {ALL_ROLES.map(r => <TabsTrigger key={`list_${r}`} value={r} className="text-xs sm:text-sm">{r}</TabsTrigger>)}
+                {ALL_ROLES.map((r) => (<TabsTrigger key={`list_${r}`} value={r} className="text-xs sm:text-sm">{r}</TabsTrigger>))}
               </TabsList>
-              {ALL_ROLES.map(r => <TabsContent key={`list_content_${r}`} value={r} />)}
+              {ALL_ROLES.map((r) => (<TabsContent key={`list_content_${r}`} value={r} />))}
             </Tabs>
 
             <div>
@@ -323,16 +268,19 @@ export default function Overwatch2RandomHeroPicker() {
               <Input placeholder="Type to filter…" value={query} onChange={(e) => setQuery(e.target.value)} />
             </div>
 
-            {/* QoL toggles */}
-            <div className="rounded-xl bg-muted/40 p-3">
-              <div className="flex items-center gap-3">
+            <div className="toolbar flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <Switch id="norepeat" checked={noRepeat} onCheckedChange={setNoRepeat} />
                 <label htmlFor="norepeat" className="text-sm">No repeats until pool is used</label>
               </div>
-              <div className="mt-2 flex items-center gap-3">
+            </div>
+
+            <div className="toolbar flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <Switch id="challenge" checked={challengeMode} onCheckedChange={setChallengeMode} />
                 <label htmlFor="challenge" className="text-sm flex items-center gap-1"><Trophy className="h-4 w-4" /> Challenge Mode (per-player)</label>
               </div>
+              <Badge variant="secondary" className="text-xs">Completed: P1 {totals.c1} • P2 {totals.c2}</Badge>
             </div>
 
             {/* Manual Add Completed */}
@@ -343,7 +291,10 @@ export default function Overwatch2RandomHeroPicker() {
                   <label className="mb-1 block text-xs uppercase text-muted-foreground">Player</label>
                   <Select value={String(addPlayer)} onValueChange={(v) => setAddPlayer(Number(v) as PlayerNum)}>
                     <SelectTrigger><SelectValue placeholder="Player" /></SelectTrigger>
-                    <SelectContent>{activePlayers.map(p => <SelectItem key={`sel_${p}`} value={String(p)}>{nameOf(p)}</SelectItem>)}</SelectContent>
+                    <SelectContent>
+                      <SelectItem value="1">Player 1</SelectItem>
+                      <SelectItem value="2">Player 2</SelectItem>
+                    </SelectContent>
                   </Select>
                 </div>
                 <div className="sm:col-span-2">
@@ -352,23 +303,27 @@ export default function Overwatch2RandomHeroPicker() {
                     <SelectTrigger><SelectValue placeholder="Choose a hero" /></SelectTrigger>
                     <SelectContent>
                       {Object.entries(HEROES).map(([role, list]) => (
-                        <div key={`group_${role}`}>{list.map(n => <SelectItem key={`add_${n}`} value={n}>{n}</SelectItem>)}</div>
+                        <div key={`group_${role}`}>
+                          {list.map((name) => (<SelectItem key={`add_${name}`} value={name}>{name}</SelectItem>))}
+                        </div>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
-              <div className="mt-2"><Button size="sm" onClick={handleManualAdd} disabled={!addHero}>Add to Completed</Button></div>
+              <div className="mt-2">
+                <Button size="sm" onClick={handleManualAdd} disabled={!addHero}>Add to Completed</Button>
+              </div>
             </div>
 
-            {/* Bulk controls */}
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={() => setAllExcluded(false)}>Include All</Button>
               <Button variant="outline" size="sm" onClick={() => setAllExcluded(true)}>Exclude All</Button>
-              <Button variant="destructive" size="sm" onClick={clearAll} className="ml-auto"><Trash2 className="mr-1 h-4 w-4" /> Reset Filters</Button>
+              <Button variant="destructive" size="sm" onClick={clearAll} className="ml-auto">
+                <Trash2 className="mr-1 h-4 w-4" /> Reset Filters
+              </Button>
             </div>
 
-            {/* Browse + exclude */}
             <div className="max-h-72 overflow-auto rounded-lg border p-2">
               <ul className="grid grid-cols-2 gap-1 sm:grid-cols-3">
                 {visibleHeroes.map(({ name, role: r }) => (
@@ -382,62 +337,82 @@ export default function Overwatch2RandomHeroPicker() {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={resetChallenge}><Undo2 className="mr-1 h-4 w-4" /> Reset Challenge (clear completed)</Button>
+              <Button variant="outline" size="sm" onClick={resetChallenge}><Undo2 className="mr-1 h-4 w-4" /> Reset Challenge (clear both players)</Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Right: Picker */}
-        <Card className="relative md:col-span-3">
+        <Card className="panel relative md:col-span-3">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center justify-between text-lg">
               <span className="flex items-center gap-2"><Dice5 className="h-5 w-5" /> Randomizer</span>
-              <div className="text-xs text-muted-foreground">Eligible: {eligibleBadge}</div>
+              <div className="text-xs text-muted-foreground">Eligible: P1 {eligibleP1.length} • P2 {twoPlayer ? eligibleP2.length : 0}</div>
             </CardTitle>
           </CardHeader>
 
           <CardContent className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Button className="gap-2" onClick={roll} disabled={activePlayers.every(p => eligibleByPlayer[p].length === 0) || isRolling}>
-                <Shuffle className="h-4 w-4" /> {playersCount === 1 ? "Get Random Hero" : "Get Random Heroes"}
+              <Button className="gap-2" onClick={roll} disabled={(twoPlayer ? (eligibleP1.length === 0 && eligibleP2.length === 0) : eligibleP1.length === 0) || isRolling}>
+                <Shuffle className="h-4 w-4" /> {twoPlayer ? "Get Random Heroes" : "Get Random Hero"}
               </Button>
-              <Button variant="outline" className="gap-2" onClick={() => { setHistory([]); setHistoryByPlayer({}); }} disabled={history.length === 0 && Object.values(historyByPlayer).every(v => !v || v.length === 0)}>
+              <Button variant="outline" className="gap-2" onClick={() => { setHistory([]); setHistoryP1([]); setHistoryP2([]); }} disabled={history.length === 0 && historyP1.length === 0 && historyP2.length === 0}>
                 <History className="h-4 w-4" /> Clear History
               </Button>
-              <Button variant="outline" className="gap-2" onClick={() => setPicked({1:null,2:null,3:null,4:null,5:null} as any)} disabled={activePlayers.every(p => !picked[p])}>
+              <Button variant="outline" className="gap-2" onClick={() => { setPicked1(null); setPicked2(null); }} disabled={!picked1 && !picked2}>
                 <Repeat className="h-4 w-4" /> Clear Picks
               </Button>
-              {playersCount === 1 ? (
-                <Button variant="secondary" className="gap-2 ml-auto" onClick={() => markDone(undefined, 1)} disabled={!picked[1]}><CheckCircle2 className="h-4 w-4" /> Mark Done</Button>
-              ) : (
+              {twoPlayer ? (
                 <>
-                  {activePlayers.map(p => (
-                    <Button key={`mark_${p}`} variant="secondary" className="gap-2 ml-auto" onClick={() => markDone(undefined, p)} disabled={!picked[p]}>
-                      <CheckCircle2 className="h-4 w-4" /> Mark {nameOf(p)} Done
-                    </Button>
-                  ))}
-                  <Button variant="secondary" className="gap-2" onClick={markAllDone} disabled={activePlayers.every(p => !picked[p])}>
-                    <CheckCircle2 className="h-4 w-4" /> Mark All Done
-                  </Button>
+                  <Button variant="secondary" className="gap-2 ml-auto" onClick={() => markDone(undefined, 1)} disabled={!picked1}><CheckCircle2 className="h-4 w-4" /> Mark P1 Done</Button>
+                  <Button variant="secondary" className="gap-2" onClick={() => markDone(undefined, 2)} disabled={!picked2}><CheckCircle2 className="h-4 w-4" /> Mark P2 Done</Button>
+                  <Button variant="secondary" className="gap-2" onClick={() => { markDone(undefined, 1); markDone(undefined, 2); }} disabled={!picked1 && !picked2}><CheckCircle2 className="h-4 w-4" /> Mark Both Done</Button>
                 </>
+              ) : (
+                <Button variant="secondary" className="gap-2 ml-auto" onClick={() => markDone()} disabled={!picked1}><CheckCircle2 className="h-4 w-4" /> Mark Done</Button>
               )}
             </div>
 
-            {/* Picks */}
-            {playersCount === 1 ? (
+            {/* Picks Display */}
+            {twoPlayer ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {([ {label: "Player 1", pick: picked1, role: p1Role, p: 1}, {label: "Player 2", pick: picked2, role: p2Role, p: 2} ] as const).map(({label, pick, role, p}) => (
+                  <div key={label} className="rounded-xl border p-4">
+                    <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> {label} • {role}</div>
+                    <div className="pick-block mt-2">
+                      <AnimatePresence mode="wait">
+                        {pick ? (
+                          <motion.div key={pick} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="flex items-center justify-between">
+                            <div>
+                              <div className="text-2xl font-bold leading-tight">{pick}</div>
+                              <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find((h) => h.name === pick)?.role as any}>
+                                {ALL_HEROES.find((h) => h.name === pick)?.role}
+                              </Badge>
+                            </div>
+                            <Badge variant="secondary" className="text-xs">{isRolling ? "Rolling…" : (completedByPlayer[p]?.[pick] ? "Done" : "Locked")}</Badge>
+                          </motion.div>
+                        ) : (
+                          <motion.div key={`${label}-placeholder`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-muted-foreground">No hero picked yet.</motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
               <div className="rounded-xl border p-4">
-                <div className="text-xs uppercase text-muted-foreground">Current Pick • {roles[1]}</div>
-                <div className="mt-2 min-h-[120px]">
+                <div className="text-xs uppercase text-muted-foreground">Current Pick • {p1Role}</div>
+                <div className="pick-block mt-2">
                   <AnimatePresence mode="wait">
-                    {picked[1] ? (
-                      <motion.div key={picked[1]} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="flex items-center justify-between">
+                    {picked1 ? (
+                      <motion.div key={picked1} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="flex items-center justify-between">
                         <div>
-                          <div className="text-2xl font-bold leading-tight">{picked[1]}</div>
-                          <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find(h => h.name === picked[1])?.role as any}>
-                            {ALL_HEROES.find(h => h.name === picked[1])?.role}
+                          <div className="text-2xl font-bold leading-tight">{picked1}</div>
+                          <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find((h) => h.name === picked1)?.role as any}>
+                            {ALL_HEROES.find((h) => h.name === picked1)?.role}
                           </Badge>
                         </div>
-                        <Badge variant="secondary" className="text-xs">{isRolling ? "Rolling…" : (completedByPlayer[1]?.[picked[1] as string] ? "Done" : "Locked")}</Badge>
+                        <Badge variant="secondary" className="text-xs">{isRolling ? "Rolling…" : (completedByPlayer[1]?.[picked1] ? "Done" : "Locked")}</Badge>
                       </motion.div>
                     ) : (
                       <motion.div key="placeholder" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-muted-foreground">No hero picked yet.</motion.div>
@@ -445,86 +420,91 @@ export default function Overwatch2RandomHeroPicker() {
                   </AnimatePresence>
                 </div>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {activePlayers.map((p) => {
-                  const pick = picked[p];
-                  return (
-                    <div key={`pick_${p}`} className="rounded-xl border p-4">
-                      <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> {nameOf(p)} • {roles[p]}</div>
-                      <div className="mt-2 min-h-[120px]">
-                        <AnimatePresence mode="wait">
-                          {pick ? (
-                            <motion.div key={pick} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }} className="flex items-center justify-between">
-                              <div>
-                                <div className="text-2xl font-bold leading-tight">{pick}</div>
-                                <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find(h => h.name === pick)?.role as any}>
-                                  {ALL_HEROES.find(h => h.name === pick)?.role}
-                                </Badge>
-                              </div>
-                              <Badge variant="secondary" className="text-xs">{isRolling ? "Rolling…" : (completedByPlayer[p]?.[pick] ? "Done" : "Locked")}</Badge>
-                            </motion.div>
-                          ) : (
-                            <motion.div key={`placeholder_${p}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-muted-foreground">No hero picked yet.</motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
             )}
 
             {/* Histories */}
             <div>
               <div className="mb-2 text-xs uppercase text-muted-foreground">Recent Picks</div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {activePlayers.map((p) => {
-                  const list = historyByPlayer[p] || [];
-                  return (
-                    <div key={`hist_${p}`} className="rounded-lg border p-3">
-                      <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> {nameOf(p)}</div>
-                      {list.length === 0 ? (
-                        <div className="text-sm text-muted-foreground">No history yet.</div>
-                      ) : (
-                        <ul className="grid grid-cols-2 gap-2">
-                          {list.map((h) => (
-                            <li key={`p${p}_${h}`} className="flex items-center justify-between rounded-lg border p-2">
-                              <span className="text-sm font-medium">{h}</span>
-                              <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find(x => x.name === h)?.role as any}>
-                                {ALL_HEROES.find(x => x.name === h)?.role}
-                              </Badge>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+              {twoPlayer ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="rounded-lg border p-3">
+                    <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> Player 1</div>
+                    {historyP1.length === 0 ? (
+                      <div className="text-sm text-muted-foreground">No history yet.</div>
+                    ) : (
+                      <ul className="grid grid-cols-2 gap-2">
+                        {historyP1.map((h) => (
+                          <li key={`p1_${h}`} className="flex items-center justify-between rounded-lg border p-2">
+                            <span className="text-sm font-medium">{h}</span>
+                            <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find((x) => x.name === h)?.role as any}>
+                              {ALL_HEROES.find((x) => x.name === h)?.role}
+                            </Badge>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="rounded-lg border p-3">
+                    <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> Player 2</div>
+                    {historyP2.length === 0 ? (
+                      <div className="text-sm text-muted-foreground">No history yet.</div>
+                    ) : (
+                      <ul className="grid grid-cols-2 gap-2">
+                        {historyP2.map((h) => (
+                          <li key={`p2_${h}`} className="flex items-center justify-between rounded-lg border p-2">
+                            <span className="text-sm font-medium">{h}</span>
+                            <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find((x) => x.name === h)?.role as any}>
+                              {ALL_HEROES.find((x) => x.name === h)?.role}
+                            </Badge>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-lg border p-3">
+                  {history.length === 0 ? (
+                    <div className="text-sm text-muted-foreground">No history yet.</div>
+                  ) : (
+                    <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                      {history.map((h) => (
+                        <li key={h} className="flex items-center justify-between rounded-lg border p-2">
+                          <span className="text-sm font-medium">{h}</span>
+                          <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find((x) => x.name === h)?.role as any}>
+                            {ALL_HEROES.find((x) => x.name === h)?.role}
+                          </Badge>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
             </div>
 
             <Separator />
 
-            {/* Completed per player (chips) */}
+            {/* Completed per player */}
             <div>
               <div className="mb-2 text-xs uppercase text-muted-foreground">Completed Heroes (per player)</div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {activePlayers.map((p) => {
-                  const completedList = Object.entries(completedByPlayer[p] || {}).filter(([, v]) => v).map(([k]) => k);
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                {[1,2].map((p) => {
+                  const completedList = Object.entries(completedByPlayer[p as PlayerNum] || {}).filter(([, v]) => v).map(([k]) => k);
                   return (
                     <div key={`done_${p}`} className="rounded-lg border p-3">
-                      <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> {nameOf(p)}</div>
+                      <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground"><User className="h-3.5 w-3.5" /> Player {p}</div>
                       {completedList.length === 0 ? (
                         <div className="text-sm text-muted-foreground">No completed heroes yet.</div>
                       ) : (
                         <ul className="flex flex-wrap gap-2">
                           {completedList.map((name) => (
-                            <li key={`done_${p}_${name}`} className="inline-flex items-center gap-2 max-w-full rounded-full border border-zinc-800 bg-zinc-900/70 px-3.5 py-1.5 shadow-sm">
-                              <span className="truncate max-w-[20ch] text-sm font-medium">{name}</span>
+                            <li key={`done_${p}_${name}`} className="chip">
+                              <span className="chip__name">{name}</span>
                               <button
-                                type="button" onClick={() => undoDone(name, p as PlayerNum)} aria-label={`Undo ${name}`}
-                                className="shrink-0 rounded-full border border-amber-500/40 px-2.5 py-0.5 text-[12px] font-semibold hover:bg-amber-500/10 hover:border-amber-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+                                type="button"
+                                onClick={() => undoDone(name, p as PlayerNum)}
+                                aria-label={`Undo ${name}`}
+                                className="chip__undo"
                               >
                                 Undo
                               </button>
@@ -538,9 +518,13 @@ export default function Overwatch2RandomHeroPicker() {
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground">All settings, names, histories, and progress auto-save in your browser.</p>
+            <p className="text-xs text-muted-foreground">Settings, per-player histories, and challenge progress are saved locally in your browser.</p>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="mt-6 text-xs text-muted-foreground">
+        <p>Tip: You can set different roles per player. A hero completed by one player stays available for the other until they also complete it.</p>
       </div>
     </div>
   );
