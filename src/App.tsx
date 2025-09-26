@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import ThemeToggle from "@/components/ThemeToggle";
 import Overwatch2RandomHeroPickerDuoRoleLock from "@/components/Overwatch2RandomHeroPickerDuoRoleLock";
 import { initThemeOnce } from "@/lib/theme";
 
