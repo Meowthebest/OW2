@@ -14,7 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-/* ---------------- Hero Data ---------------- */
+/* ---------- Hero Data ---------- */
 const HEROES: Record<string, string[]> = {
   Tank: ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
   Damage: ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Venture","Widowmaker"],
@@ -32,7 +32,7 @@ const MAX_PLAYERS = 5 as const;
 type PlayerNum = 1 | 2 | 3 | 4 | 5;
 const PLAYERS: PlayerNum[] = [1, 2, 3, 4, 5];
 
-/* ---------------- Storage Keys ---------------- */
+/* ---------- LocalStorage keys ---------- */
 const K = {
   players: "ow2_multi_players",
   roles: "ow2_multi_roles",
@@ -46,16 +46,15 @@ const K = {
   historyBy: "ow2_multi_history_by_player",
 };
 
-/* ---------------- Component ---------------- */
 export default function Overwatch2RandomHeroPickerMultiRoleLock() {
-  /* how many players (1–5) */
+  /* players 1–5 */
   const [playersCount, setPlayersCount] = useState<number>(() => {
     const n = Number(localStorage.getItem(K.players));
     return n >= 1 && n <= MAX_PLAYERS ? n : 2;
   });
   const activePlayers = PLAYERS.slice(0, playersCount);
 
-  /* per-player role */
+  /* roles per player */
   const [roles, setRoles] = useState<Record<PlayerNum, Role>>(() => {
     try {
       const parsed = JSON.parse(localStorage.getItem(K.roles) || "{}");
@@ -65,7 +64,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     } catch { return {1:"All",2:"All",3:"All",4:"All",5:"All"} as any; }
   });
 
-  /* optional per-player names */
+  /* names per player (optional) */
   const [names, setNames] = useState<Record<PlayerNum, string>>(() => {
     try {
       const parsed = JSON.parse(localStorage.getItem(K.names) || "{}");
@@ -75,18 +74,12 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     } catch { return {1:"Player 1",2:"Player 2",3:"Player 3",4:"Player 4",5:"Player 5"} as any; }
   });
 
-  /* list filter (left panel) */
-  const [listRole, setListRole] = useState<Role>(() =>
-    (localStorage.getItem(K.listRole) as Role) || "All"
-  );
-
-  /* search & filters */
+  /* filters & state */
+  const [listRole, setListRole] = useState<Role>(() => (localStorage.getItem(K.listRole) as Role) || "All");
   const [query, setQuery] = useState("");
   const [excluded, setExcluded] = useState<Record<string, boolean>>(() => {
     try { return JSON.parse(localStorage.getItem(K.excluded) || "{}"); } catch { return {}; }
   });
-
-  /* challenge + completed per player */
   const [challengeMode, setChallengeMode] = useState<boolean>(() => {
     const raw = localStorage.getItem(K.challenge);
     return raw === null ? true : raw === "true";
@@ -96,7 +89,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       try { return JSON.parse(localStorage.getItem(K.completed) || "{}"); } catch { return {} as any; }
     });
 
-  /* repeat + history (global + per-player) */
   const [noRepeat, setNoRepeat] = useState<boolean>(() => localStorage.getItem(K.norepeat) === "true");
   const [history, setHistory] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem(K.history) || "[]"); } catch { return []; }
@@ -106,7 +98,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       try { return JSON.parse(localStorage.getItem(K.historyBy) || "{}"); } catch { return {} as any; }
     });
 
-  /* picks + rolling state */
   const [picked, setPicked] = useState<Record<PlayerNum, string | null>>(
     {1:null,2:null,3:null,4:null,5:null} as const
   );
@@ -146,7 +137,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     if (!noRepeat) return pool;
     const used = new Set(history);
     const remaining = pool.filter((n) => !used.has(n));
-    return remaining.length > 0 ? remaining : pool; // if exhausted, allow repeats
+    return remaining.length > 0 ? remaining : pool;
   }
 
   const eligibleByPlayer = useMemo(() => {
@@ -160,22 +151,27 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     if (playersCount === 1) return singleRoll(1);
     const pools: Record<PlayerNum, string[]> = {} as any;
     activePlayers.forEach((p) => { pools[p] = eligibleByPlayer[p].slice(); });
+
     if (activePlayers.every((p) => pools[p].length === 0)) {
       const cleared: any = {}; activePlayers.forEach((p) => (cleared[p] = null));
       setPicked((prev) => ({ ...prev, ...cleared }));
       return;
     }
+
     setIsRolling(true);
     const duration = 900, interval = 60; let elapsed = 0;
+
     const id = setInterval(() => {
       const chosen = new Set<string>();
       const next: Record<PlayerNum, string | null> = {} as any;
+
       for (const p of activePlayers) {
         const uniquePool = pools[p].filter((n) => !chosen.has(n));
         const pickFrom = uniquePool.length > 0 ? uniquePool : pools[p];
         next[p] = pickFrom.length > 0 ? pickFrom[Math.floor(Math.random() * pickFrom.length)] : null;
         if (next[p]) chosen.add(next[p] as string);
       }
+
       setPicked((prev) => ({ ...prev, ...next }));
       elapsed += interval;
       if (elapsed >= duration) {
@@ -362,31 +358,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               </div>
             </div>
 
-            {/* Manual Add Completed */}
-            <div className="rounded-xl border p-3">
-              <div className="mb-2 text-xs uppercase text-muted-foreground">Add Completed (Manual)</div>
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-                <div>
-                  <label className="mb-1 block text-xs uppercase text-muted-foreground">Player</label>
-                  <Select onValueChange={(v) => setPicked((prev)=>prev)} value={String(activePlayers[0])} disabled>
-                    <SelectTrigger><SelectValue placeholder="Player" /></SelectTrigger>
-                    <SelectContent>
-                      {activePlayers.map((p) => (<SelectItem key={`sel_${p}`} value={String(p)}>{names[p] || `Player ${p}`}</SelectItem>))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="sm:col-span-2">
-                  <label className="mb-1 block text-xs uppercase text-muted-foreground">Hero</label>
-                  <Select onValueChange={() => {}} disabled>
-                    <SelectTrigger><SelectValue placeholder="Use 'Mark Done' buttons" /></SelectTrigger>
-                  </SelectSelect>
-                </div>
-              </div>
-              <div className="mt-2">
-                <p className="text-xs text-muted-foreground">Use the “Mark … Done” buttons in the Randomizer to add completed heroes.</p>
-              </div>
-            </div>
-
+            {/* Include/Exclude + list */}
             <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={() => setAllExcluded(false)}>Include All</Button>
               <Button variant="outline" size="sm" onClick={() => setAllExcluded(true)}>Exclude All</Button>
@@ -408,7 +380,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </div>
 
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={resetChallenge}><Undo2 className="mr-1 h-4 w-4" /> Reset Challenge (clear completed)</Button>
+              <Button variant="outline" size="sm" onClick={resetChallenge}>
+                <Undo2 className="mr-1 h-4 w-4" /> Reset Challenge (clear completed)
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -452,7 +426,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               )}
             </div>
 
-            {/* Picks Display */}
+            {/* Picks grid */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activePlayers.map((p) => {
                 const pick = picked[p];
@@ -464,8 +438,8 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                     <div className="pick-block mt-2">
                       <AnimatePresence mode="wait">
                         {pick ? (
-                          <motion.div key={pick} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                                      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                          <motion.div key={pick} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                                      exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }}
                                       className="flex items-center justify-between">
                             <div>
                               <div className="text-2xl font-bold leading-tight">{pick}</div>
@@ -536,7 +510,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                       {completedList.length === 0 ? (
                         <div className="text-sm text-muted-foreground">No completed heroes yet.</div>
                       ) : (
-                        <ul className="chips">
+                        <ul className="flex flex-wrap gap-2">
                           {completedList.map((name) => (
                             <li key={`done_${p}_${name}`} className="chip">
                               <span className="chip__name">{name}</span>
@@ -558,7 +532,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               </div>
             </div>
 
-            <p className="text-xs text-muted-foreground">Settings, per-player histories, names, and challenge progress are saved locally in your browser.</p>
+            <p className="text-xs text-muted-foreground">
+              Settings, per-player histories, names, and challenge progress are saved locally in your browser.
+            </p>
           </CardContent>
         </Card>
       </div>
