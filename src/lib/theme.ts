@@ -1,6 +1,4 @@
-// src/lib/theme.ts
 export type Theme = "light" | "dark";
-
 const KEY = "ow2_theme";
 
 export function detectSystemTheme(): Theme {
@@ -24,14 +22,10 @@ export function applyTheme(next: Theme): void {
   root.classList.remove("light", "dark");
   root.classList.add(next);
   root.setAttribute("data-theme", next);
-  try {
-    localStorage.setItem(KEY, next);
-  } catch {
-    /* ignore */
-  }
+  try { localStorage.setItem(KEY, next); } catch {}
 }
 
-/** Optional: call once before React mounts (e.g., in src/main.tsx) to avoid flash */
+/** Optional: call in main.tsx before React mounts to avoid flash */
 export function initTheme(): void {
   applyTheme(getInitialTheme());
 }
