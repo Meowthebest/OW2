@@ -7,25 +7,23 @@ import { applyTheme, getInitialTheme, type Theme } from "@/lib/theme";
 type Props = { className?: string };
 
 export default function ThemeToggle({ className }: Props) {
-  // Initialize from the best guess (storage or system).
   const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
 
-  // Ensure DOM matches state on first mount (no-op if you called initTheme()).
+  // Ensure DOM matches on first mount (no-op if you called initTheme() in main.tsx)
   useEffect(() => {
     applyTheme(theme);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggle = () => {
-    setTheme((prev) => {
+    setTheme(prev => {
       const next: Theme = prev === "dark" ? "light" : "dark";
-      applyTheme(next); // update DOM + persist first
-      return next;      // then update React state
+      applyTheme(next);
+      return next;
     });
   };
 
-  const label =
-    theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+  const label = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
 
   return (
     <Button
@@ -35,13 +33,8 @@ export default function ThemeToggle({ className }: Props) {
       className={`gap-2 ${className ?? ""}`}
       aria-label={label}
       title={label}
-      aria-pressed={theme === "dark" ? true : false}
     >
-      {theme === "dark" ? (
-        <Sun className="h-4 w-4" />
-      ) : (
-        <Moon className="h-4 w-4" />
-      )}
+      {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       <span className="hidden sm:inline">
         {theme === "dark" ? "Light mode" : "Dark mode"}
       </span>
