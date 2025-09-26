@@ -58,8 +58,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [roles, setRoles] = useState<Record<PlayerNum, Role>>(() => {
     try {
       const parsed = JSON.parse(localStorage.getItem(K.roles) || "{}");
-      const r: any = {};
-      PLAYERS.forEach((p) => (r[p] = (parsed?.[p] as Role) || "All"));
+      const r: any = {}; PLAYERS.forEach((p) => (r[p] = (parsed?.[p] as Role) || "All"));
       return r as Record<PlayerNum, Role>;
     } catch { return {1:"All",2:"All",3:"All",4:"All",5:"All"} as any; }
   });
@@ -68,8 +67,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [names, setNames] = useState<Record<PlayerNum, string>>(() => {
     try {
       const parsed = JSON.parse(localStorage.getItem(K.names) || "{}");
-      const n: any = {};
-      PLAYERS.forEach((p) => (n[p] = (parsed?.[p] as string) || `Player ${p}`));
+      const n: any = {}; PLAYERS.forEach((p) => (n[p] = (parsed?.[p] as string) || `Player ${p}`));
       return n as Record<PlayerNum, string>;
     } catch { return {1:"Player 1",2:"Player 2",3:"Player 3",4:"Player 4",5:"Player 5"} as any; }
   });
@@ -77,9 +75,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   /* filters & state */
   const [listRole, setListRole] = useState<Role>(() => (localStorage.getItem(K.listRole) as Role) || "All");
   const [query, setQuery] = useState("");
-  const [excluded, setExcluded] = useState<Record<string, boolean>>(() => {
-    try { return JSON.parse(localStorage.getItem(K.excluded) || "{}"); } catch { return {}; }
-  });
+  const [excluded, setExcluded] = useState<Record<string, boolean>>(
+    () => { try { return JSON.parse(localStorage.getItem(K.excluded) || "{}"); } catch { return {}; } }
+  );
   const [challengeMode, setChallengeMode] = useState<boolean>(() => {
     const raw = localStorage.getItem(K.challenge);
     return raw === null ? true : raw === "true";
@@ -220,9 +218,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   }
 
   /* ui actions */
-  function toggleExclude(name: string) {
-    setExcluded((prev) => ({ ...prev, [name]: !prev[name] }));
-  }
+  function toggleExclude(name: string) { setExcluded((prev) => ({ ...prev, [name]: !prev[name] })); }
   function markDone(name?: string, player?: PlayerNum) {
     const p = (player ?? 1) as PlayerNum;
     const target = name ?? picked[p];
@@ -234,8 +230,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     const updates: Record<PlayerNum, Record<string, boolean>> = {} as any;
     const cleared: Record<PlayerNum, string | null> = {} as any;
     for (const p of activePlayers) {
-      const hero = picked[p];
-      cleared[p] = null;
+      const hero = picked[p]; cleared[p] = null;
       if (hero) updates[p] = { ...(completedByPlayer[p] || {}), [hero]: true };
     }
     setCompletedByPlayer((prev) => ({ ...prev, ...updates }));
@@ -301,10 +296,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                   </SelectContent>
                 </Select>
               </div>
-              <Badge variant="secondary" className="text-xs">Pool: {totals.available}/{totals.total}</Badge>
+              <Badge variant="secondary" className="text-xs">Pool: {totals.available}/{ALL_HEROES.length}</Badge>
             </div>
 
-            {/* Per-player role selects + names */}
+            {/* Roles + Names */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {activePlayers.map((p) => (
                 <div key={`role_${p}`} className="space-y-2">
