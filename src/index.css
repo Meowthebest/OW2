@@ -107,6 +107,11 @@ body {
     @apply bg-background text-foreground;
   }
 }
+@layer base {
+  input, select, textarea { color: hsl(var(--foreground)); }
+  input::placeholder, textarea::placeholder { color: hsl(var(--muted-foreground)); }
+}
+
 
 /* Your custom UI helpers */
 @import "./styles/modern.css";
