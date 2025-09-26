@@ -49,3 +49,18 @@
   /* Pick cards: give them breathing room */
   .pick-block { @apply min-h-[128px]; }
 }
+
+
+@layer components {
+  .chip { gap: .5rem; }                        /* hard-enforce spacing */
+  .chip__undo{
+    display: inline-flex; align-items: center; /* vertical align */
+    line-height: 1;                             /* no tall button */
+    margin-left: .25rem;                        /* extra breathing room */
+  }
+
+  /* dark-mode friendly roles (keeps contrast high) */
+  .dark .role-badge[data-role="Tank"]    { @apply bg-emerald-900/30 text-emerald-200 border-emerald-700; }
+  .dark .role-badge[data-role="Damage"]  { @apply bg-rose-900/30    text-rose-200    border-rose-700; }
+  .dark .role-badge[data-role="Support"] { @apply bg-sky-900/30     text-sky-200     border-sky-700; }
+}
