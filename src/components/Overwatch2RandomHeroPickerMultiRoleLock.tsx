@@ -503,40 +503,41 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               })}
             </div>
 
-            {/* Histories */}
-            <div>
-              <div className="mb-2 text-xs uppercase text-muted-foreground">Recent Picks</div>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {activePlayers.map((p) => {
-                  const list = historyByPlayer[p] || [];
-                  return (
-                    <div key={`hist_${p}`} className="rounded-lg border p-3">
-                      <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground">
-                        <User className="h-3.5 w-3.5" /> {names[p]}
-                      </div>
-                      {list.length === 0 ? (
-                        <div className="text-sm text-muted-foreground">No history yet.</div>
-                      ) : (
-                        <ul className="grid grid-cols-2 gap-2">
-                          {list.map((h) => (
-                            <li key={`p${p}_${h}`} className="flex items-center justify-between rounded-lg border p-2">
-                              <span className="text-sm font-medium">{h}</span>
-                              <Badge
-                                variant="outline"
-                                className="role-badge"
-                                data-role={ALL_HEROES.find((x) => x.name === h)?.role as RoleKey}
-                              >
-                                {ALL_HEROES.find((x) => x.name === h)?.role}
-                              </Badge>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+{/* Histories */}
+<div>
+  <div className="mb-2 text-xs uppercase text-muted-foreground">Recent Picks</div>
+  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    {activePlayers.map((p) => {
+      const list = historyByPlayer[p] || [];
+      return (
+        <div key={`hist_${p}`} className="rounded-lg border p-3">
+          <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground">
+            <User className="h-3.5 w-3.5" /> {names[p]}
+          </div>
+          {list.length === 0 ? (
+            <div className="text-sm text-muted-foreground">No history yet.</div>
+          ) : (
+            <ul className="rp-list">
+              {list.map((h) => (
+                <li key={`p${p}_${h}`} className="rp-item">
+                  <span className="rp-name" title={h}>{h}</span>
+                  <Badge
+                    variant="outline"
+                    className="role-badge rp-badge"
+                    data-role={ALL_HEROES.find((x) => x.name === h)?.role as RoleKey}
+                  >
+                    {ALL_HEROES.find((x) => x.name === h)?.role}
+                  </Badge>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      );
+    })}
+  </div>
+</div>
+
 
             <Separator />
 
