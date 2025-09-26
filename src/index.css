@@ -21,3 +21,10 @@ body {
 * { scrollbar-width: thin; scrollbar-color: rgba(120,120,120,.4) transparent; }
 *::-webkit-scrollbar { height: 8px; width: 8px; }
 *::-webkit-scrollbar-thumb { background: rgba(120,120,120,.35); border-radius: 999px; }
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Your custom UI helpers */
+@import "./styles/modern.css";
