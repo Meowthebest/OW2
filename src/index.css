@@ -1,20 +1,14 @@
-/* ===============================
-   Tailwind Directives (must be first)
-   =============================== */
+/* Tailwind first */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ===============================
-   Base design tokens (light by default)
-   =============================== */
+/* ---- Design tokens (light by default) ---- */
 @layer base {
   :root {
-    /* Overwatch accent & bg tints */
-    --ow2-orange: #f59e0b; /* OW orange */
+    --ow2-orange: #f59e0b; /* accent */
     --ow2-blue:   #1b2a41;
 
-    /* Light theme tokens */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
@@ -44,53 +38,39 @@
     --ring: 24 95% 52%;
 
     --radius: 0.75rem;
-
-    /* Convenience var for the radial bg */
     --app-bg: hsl(var(--background));
   }
 
-  /* (Optional) Dark palette if you later add a toggle */
+  /* dark palette available if you add a toggle later */
   .dark {
     --background: 240 10% 8%;
     --foreground: 0 0% 98%;
-
     --card: 240 10% 12%;
     --card-foreground: 0 0% 98%;
-
     --popover: 240 10% 10%;
     --popover-foreground: 0 0% 98%;
-
     --primary: 24 95% 58%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 240 8% 20%;
     --secondary-foreground: 0 0% 98%;
-
     --muted: 240 9% 16%;
     --muted-foreground: 240 5% 65%;
-
     --accent: 200 85% 55%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-
     --border: 240 8% 23%;
     --input: 240 8% 23%;
     --ring: 24 95% 58%;
-
     --app-bg: hsl(var(--background));
   }
 
-  /* Make Tailwind semantic vars work everywhere */
   * { @apply border-border; }
   html, body, #root { height: 100%; }
   body { @apply bg-background text-foreground antialiased; }
 }
 
-/* ===============================
-   Background treatment (OW/Discord-ish)
-   =============================== */
+/* ---- Decorative background ---- */
 body {
   background-image:
     radial-gradient(1200px 600px at 100% -10%, color-mix(in oklab, var(--ow2-orange), transparent 85%), transparent),
@@ -99,26 +79,23 @@ body {
   background-attachment: fixed;
 }
 
-/* ===============================
-   Role badge tinting
-   =============================== */
+/* ---- Role badge tinting ---- */
 @layer components {
   .role-badge[data-role="Tank"]    { @apply border-cyan-500/40 text-cyan-700 dark:text-cyan-300; }
   .role-badge[data-role="Damage"]  { @apply border-rose-500/40 text-rose-700 dark:text-rose-300; }
   .role-badge[data-role="Support"] { @apply border-emerald-500/40 text-emerald-700 dark:text-emerald-300; }
 }
 
-/* ===============================
-   Nicer scrollbars
-   =============================== */
+/* ---- Scrollbars ---- */
 * { scrollbar-width: thin; scrollbar-color: rgba(120,120,120,.35) transparent; }
 *::-webkit-scrollbar { height: 8px; width: 8px; }
 *::-webkit-scrollbar-thumb { background: rgba(120,120,120,.35); border-radius: 999px; }
 
-/* ===============================
-   Ensure inputs are readable
-   =============================== */
+/* ---- Inputs legibility ---- */
 @layer base {
   input, select, textarea { color: hsl(var(--foreground)); }
   input::placeholder, textarea::placeholder { color: hsl(var(--muted-foreground)); }
 }
+
+/* Pull in the small component layer */
+@import "./styles/modern.css";
