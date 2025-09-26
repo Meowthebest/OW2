@@ -171,3 +171,34 @@ body {
 /* Optional: make the card background adapt in dark mode */
 .dark .rp-item { @apply bg-zinc-900/40; }
 
+
+
+@layer components {
+  /* grid of items inside each player's Recent Picks card */
+  .rp-list { @apply grid grid-cols-2 gap-2; }
+
+  /* each item = two columns: name (fills) + badge (no shrink) */
+  .rp-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    /* visual styling */
+    @apply rounded-lg border px-3 py-1.5 bg-white/60;
+  }
+  .dark .rp-item { @apply bg-zinc-900/40; }
+
+  /* name stays on ONE line with ellipsis */
+  .rp-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @apply text-sm font-medium;
+  }
+
+  /* role badge never shrinks or wraps */
+  .rp-badge { @apply shrink-0; }
+}
+
+
