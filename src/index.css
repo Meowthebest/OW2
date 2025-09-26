@@ -149,3 +149,25 @@ body {
 
   .status-badge { @apply absolute top-3 right-3 text-xs; }
 }
+
+@layer components {
+  /* Recent Picks list container: tight, gridy feel */
+  .rp-list { @apply grid grid-cols-2 gap-2; }
+
+  /* Each recent pick pill */
+  .rp-item {
+    @apply flex items-center gap-2 rounded-lg border px-3 py-1.5 bg-white/60;
+  }
+
+  /* Name stays on one line with ellipsis; doesn't collide with badge */
+  .rp-name {
+    @apply min-w-0 flex-1 truncate text-sm font-medium;
+  }
+
+  /* Role badge never wraps and doesn't shrink */
+  .rp-badge { @apply shrink-0; }
+}
+
+/* Optional: make the card background adapt in dark mode */
+.dark .rp-item { @apply bg-zinc-900/40; }
+
