@@ -133,14 +133,14 @@ body {
   .role-badge[data-role="Damage"]  { @apply bg-rose-100    text-rose-700    border-rose-200; }
   .role-badge[data-role="Support"] { @apply bg-sky-100     text-sky-700     border-sky-200; }
 
-  /* Pick cards: give them breathing room */
+  /* Default pick-block to ensure space even with short/long names */
   .pick-block { @apply min-h-[128px]; }
 }
 
 /* ---- Pick card tightening & anti-gap helpers ---- */
 @layer components {
-  /* Outer wrapper of each pick card */
-  .pick-card { @apply relative; } /* needed for absolute status badge */
+  /* Outer wrapper of each pick card (needed for absolute status badge) */
+  .pick-card { @apply relative; }
 
   /* Inner content area (keeps all cards equal height & vertically centered) */
   .pick-block { @apply min-h-[96px] flex items-center; }
