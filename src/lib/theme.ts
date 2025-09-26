@@ -2,8 +2,11 @@ export type Theme = "light" | "dark";
 const KEY = "ow2_theme";
 
 export function getStoredTheme(): Theme {
-  const raw = (typeof window !== "undefined" && localStorage.getItem(KEY)) as Theme | null;
-  return raw === "light" || raw === "dark" ? raw : "dark";
+  if (typeof window === "undefined") return "dark";
+  const stored = localStorage.getItem(KEY) as Theme | null;
+  if (stored === "light" || stored === "dark") return stored;
+  // fall back to system preference on first visit
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
 export function applyTheme(next: Theme) {
