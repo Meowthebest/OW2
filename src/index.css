@@ -1,47 +1,46 @@
-/* Tailwind first */
+/* ===============================
+   Tailwind (must be first)
+   =============================== */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* ---- Design tokens (light by default) ---- */
+/* ===============================
+   Design tokens (light by default)
+   =============================== */
 @layer base {
   :root {
-    --ow2-orange: #f59e0b; /* accent */
+    /* OW2 accent + bg tint */
+    --ow2-orange: #f59e0b;
     --ow2-blue:   #1b2a41;
 
+    /* Light palette */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
-
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
-
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-
     --primary: 24 95% 52%;
     --primary-foreground: 0 0% 100%;
-
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
-
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 213 94% 68%;
     --accent-foreground: 0 0% 100%;
-
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 24 95% 52%;
-
     --radius: 0.75rem;
+
+    /* convenience for bg */
     --app-bg: hsl(var(--background));
   }
 
-  /* dark palette available if you add a toggle later */
+  /* Dark palette (if you add a toggle later) */
   .dark {
     --background: 240 10% 8%;
     --foreground: 0 0% 98%;
@@ -62,6 +61,7 @@
     --border: 240 8% 23%;
     --input: 240 8% 23%;
     --ring: 24 95% 58%;
+
     --app-bg: hsl(var(--background));
   }
 
@@ -70,7 +70,9 @@
   body { @apply bg-background text-foreground antialiased; }
 }
 
-/* ---- Decorative background ---- */
+/* ===============================
+   Decorative background
+   =============================== */
 body {
   background-image:
     radial-gradient(1200px 600px at 100% -10%, color-mix(in oklab, var(--ow2-orange), transparent 85%), transparent),
@@ -79,23 +81,58 @@ body {
   background-attachment: fixed;
 }
 
-/* ---- Role badge tinting ---- */
-@layer components {
-  .role-badge[data-role="Tank"]    { @apply border-cyan-500/40 text-cyan-700 dark:text-cyan-300; }
-  .role-badge[data-role="Damage"]  { @apply border-rose-500/40 text-rose-700 dark:text-rose-300; }
-  .role-badge[data-role="Support"] { @apply border-emerald-500/40 text-emerald-700 dark:text-emerald-300; }
-}
-
-/* ---- Scrollbars ---- */
+/* ===============================
+   Scrollbars
+   =============================== */
 * { scrollbar-width: thin; scrollbar-color: rgba(120,120,120,.35) transparent; }
 *::-webkit-scrollbar { height: 8px; width: 8px; }
 *::-webkit-scrollbar-thumb { background: rgba(120,120,120,.35); border-radius: 999px; }
 
-/* ---- Inputs legibility ---- */
+/* ===============================
+   Inputs legibility
+   =============================== */
 @layer base {
   input, select, textarea { color: hsl(var(--foreground)); }
   input::placeholder, textarea::placeholder { color: hsl(var(--muted-foreground)); }
 }
 
-/* Pull in the small component layer */
-@import "./styles/modern.css";
+/* ===============================
+   Components
+   =============================== */
+@layer components {
+  /* Panels (use on Cards) */
+  .panel {
+    @apply rounded-2xl border border-zinc-200 bg-white/90 backdrop-blur
+           shadow-[0_8px_30px_rgba(0,0,0,0.06)];
+  }
+
+  /* Soft toolbars / option strips */
+  .toolbar {
+    @apply rounded-xl border border-zinc-200 bg-zinc-100/70 px-3 py-2;
+  }
+
+  /* Chips for completed heroes (wrap nicely, no overlap) */
+  .chip {
+    @apply inline-flex items-center gap-2 max-w-full
+           rounded-full border border-zinc-300 bg-white px-3 py-1.5
+           text-sm shadow-sm;
+  }
+  .chip__name { @apply truncate max-w-[22ch] font-medium; }
+  .chip__undo {
+    @apply shrink-0 rounded-full border border-amber-400 px-2 py-0.5
+           text-[12px] font-semibold text-zinc-800 hover:bg-amber-50
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500;
+  }
+
+  /* Role badge (Tank / Damage / Support) – single, consistent set */
+  .role-badge {
+    @apply inline-flex items-center rounded-full border px-2 py-0.5
+           text-[11px] font-medium;
+  }
+  .role-badge[data-role="Tank"]    { @apply bg-emerald-100 text-emerald-700 border-emerald-200; }
+  .role-badge[data-role="Damage"]  { @apply bg-rose-100    text-rose-700    border-rose-200; }
+  .role-badge[data-role="Support"] { @apply bg-sky-100     text-sky-700     border-sky-200; }
+
+  /* Pick cards: give them breathing room */
+  .pick-block { @apply min-h-[128px]; }
+}
