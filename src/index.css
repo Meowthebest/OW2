@@ -25,6 +25,88 @@ body {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/* Tailwind base (keep yours) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---- App tokens: dark-first palette + OW accent ---- */
+@layer base {
+  :root {
+    /* OW accent used in your header icon */
+    --ow2-orange: #f59e0b;
+
+    /* Dark theme as default (adjust if you prefer lighter) */
+    --background: 240 10% 8%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 12%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 24 95% 58%;              /* OW orange */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 240 8% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 9% 16%;
+    --muted-foreground: 240 5% 65%;
+
+    --accent: 200 85% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 8% 23%;
+    --input: 240 8% 23%;
+    --ring: 24 95% 58%;
+
+    --radius: 0.75rem;
+  }
+
+  /* Optional: light mode palette (unused unless you add a toggle) */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 24 95% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 213 94% 68%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 24 95% 52%;
+  }
+
+  /* Make Tailwind’s semantic classes (bg-background, text-foreground, border) work */
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
 /* Your custom UI helpers */
 @import "./styles/modern.css";
