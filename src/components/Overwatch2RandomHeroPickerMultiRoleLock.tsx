@@ -1,3 +1,4 @@
+// src/components/Overwatch2RandomHeroPickerMultiRoleLock.tsx
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -29,7 +30,6 @@ const ALL_HEROES: HeroInfo[] = (Object.entries(HEROES) as [RoleKey, string[]][])
   .flatMap(([role, list]) => list.map((name) => ({ name, role })));
 
 /* ---------- Players ---------- */
-const MAX_PLAYERS = 5 as const;
 type PlayerNum = 1 | 2 | 3 | 4 | 5;
 const PLAYERS: PlayerNum[] = [1, 2, 3, 4, 5];
 
@@ -51,12 +51,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   /* players 1–5 */
   const [playersCount, setPlayersCount] = useState<number>(() => {
     const n = Number(localStorage.getItem(K.players));
-    return Number.isFinite(n) && n >= 1 && n <= MAX_PLAYERS ? n : 2;
+    return Number.isFinite(n) && n >= 1 && n <= 5 ? n : 2;
   });
-  const activePlayers = useMemo<PlayerNum[]>(
-    () => PLAYERS.slice(0, playersCount),
-    [playersCount]
-  );
+  const activePlayers = useMemo<PlayerNum[]>(() => PLAYERS.slice(0, playersCount), [playersCount]);
 
   /* roles per player */
   const [roles, setRoles] = useState<Record<PlayerNum, Role>>(() => {
@@ -122,7 +119,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   /* helpers */
   const byRole = (role: Role) =>
     role === "All" ? ALL_HEROES : ALL_HEROES.filter((h) => h.role === (role as RoleKey));
-
   const listBase = useMemo(() => byRole(listRole), [listRole]);
 
   const baseByPlayer = useMemo(() => {
@@ -477,13 +473,13 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className="flex items-center justify-between w-full pr-16"
+                            className="flex items-start justify-between w-full pr-16 gap-3"
                           >
-                            <div>
-                              <div className="pick-title">{pick}</div>
+                            <div className="min-w-0">
+                              <div className="pick-title break-words hyphens-auto leading-snug">{pick}</div>
                               <Badge
                                 variant="outline"
-                                className="role-badge"
+                                className="role-badge mt-1"
                                 data-role={ALL_HEROES.find((h) => h.name === pick)?.role as RoleKey}
                               >
                                 {ALL_HEROES.find((h) => h.name === pick)?.role}
