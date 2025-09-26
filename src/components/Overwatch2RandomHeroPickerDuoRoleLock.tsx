@@ -529,14 +529,26 @@ export default function Overwatch2RandomHeroPickerDuoRoleLock() {
                       {completedList.length === 0 ? (
                         <div className="text-sm text-muted-foreground">No completed heroes yet.</div>
                       ) : (
-                        <ul className="grid grid-cols-2 gap-2">
-                          {completedList.map((name) => (
-                            <li key={`done_${p}_${name}`} className="flex items-center justify-between rounded-lg border p-2">
-                              <span className="text-sm font-medium">{name}</span>
-                              <Button variant="outline" size="sm" onClick={() => undoDone(name, p as PlayerNum)}><Undo2 className="mr-1 h-4 w-4" /> Undo</Button>
-                            </li>
-                          ))}
-                        </ul>
+  <ul className="flex flex-wrap gap-2">
+    {completedList.map((name) => (
+    <li
+      key={`done_${p}_${name}`}
+      className="inline-flex items-center gap-2 max-w-full rounded-full border border-zinc-800 bg-zinc-900/70 px-3.5 py-1.5 shadow-sm"
+    >
+      <span className="truncate max-w-[20ch] text-sm font-medium">{name}</span>
+      <button
+        type="button"
+        onClick={() => undoDone(name, p as PlayerNum)}
+        aria-label={`Undo ${name}`}
+        className="shrink-0 rounded-full border border-amber-500/40 px-2.5 py-0.5 text-[12px] font-semibold text-zinc-100
+                   hover:bg-amber-500/10 hover:border-amber-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500"
+      >
+        Undo
+      </button>
+    </li>
+  ))}
+</ul>
+
                       )}
                     </div>
                   );
