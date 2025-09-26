@@ -290,14 +290,14 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         {/* Left: Controls */}
         <Card className="panel md:col-span-2">
           <CardHeader className="pb-2">
-            <CardTitle className="flex items-center gap-4 text-lg">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <Filter className="h-5 w-5" /> Filters & Roles
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Players + Pool */}
             <div className="toolbar flex items-center justify-between">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 <Users className="h-4 w-4" />
                 <div className="text-sm">Players</div>
                 <Select value={String(playersCount)} onValueChange={(v) => setPlayersCount(Number(v))}>
@@ -311,7 +311,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </div>
 
             {/* Roles + Names */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {activePlayers.map((p) => (
                 <div key={`role_${p}`} className="space-y-2">
                   <label className="block text-xs uppercase text-muted-foreground">{names[p]} • Role</label>
@@ -344,18 +344,18 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </div>
 
             <div className="toolbar flex items-center justify-between">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 <Switch id="norepeat" checked={noRepeat} onCheckedChange={setNoRepeat} />
                 <label htmlFor="norepeat" className="text-sm">No repeats until pool is used</label>
               </div>
             </div>
 
             <div className="toolbar flex items-center justify-between">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
                 <Switch id="challenge" checked={challengeMode} onCheckedChange={setChallengeMode} />
-                <label htmlFor="challenge" className="text-sm flex items-center gap-4"><Trophy className="h-4 w-4" /> Challenge Mode (per-player)</label>
+                <label htmlFor="challenge" className="text-sm flex items-center gap-1"><Trophy className="h-4 w-4" /> Challenge Mode (per-player)</label>
               </div>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-1">
                 {activePlayers.map((p) => (
                   <Badge key={`done_badge_${p}`} variant="secondary" className="text-[10px]">
                     {(names[p] || `P${p}`)} {Object.values(completedByPlayer[p] || {}).filter(Boolean).length}
@@ -365,7 +365,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </div>
 
             {/* Include/Exclude + list */}
-            <div className="flex gap-4">
+            <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={() => setAllExcluded(false)}>Include All</Button>
               <Button variant="outline" size="sm" onClick={() => setAllExcluded(true)}>Exclude All</Button>
               <Button variant="destructive" size="sm" onClick={clearAll} className="ml-auto">
@@ -374,9 +374,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </div>
 
             <div className="max-h-72 overflow-auto rounded-lg border p-2">
-              <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <ul className="grid grid-cols-2 gap-1 sm:grid-cols-3">
                 {visibleHeroes.map(({ name, role: r }) => (
-                  <li key={name} className="flex items-center gap-4 rounded-md p-1 hover:bg-muted/60">
+                  <li key={name} className="flex items-center gap-2 rounded-md p-1 hover:bg-muted/60">
                     <Checkbox id={`ex_${name}`} checked={!!excluded[name]} onCheckedChange={() => toggleExclude(name)} />
                     <label htmlFor={`ex_${name}`} className="flex-1 cursor-pointer select-none text-sm">{name}</label>
                     <Badge variant="outline" className="role-badge" data-role={r}>{r}</Badge>
@@ -385,7 +385,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               </ul>
             </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-2">
               <Button variant="outline" size="sm" onClick={resetChallenge}>
                 <Undo2 className="mr-1 h-4 w-4" /> Reset Challenge (clear completed)
               </Button>
@@ -397,15 +397,15 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         <Card className="panel relative md:col-span-3">
           <CardHeader className="pb-2">
             <CardTitle className="flex items-center justify-between text-lg">
-              <span className="flex items-center gap-4"><Dice5 className="h-5 w-5" /> Randomizer</span>
+              <span className="flex items-center gap-2"><Dice5 className="h-5 w-5" /> Randomizer</span>
               <div className="text-xs text-muted-foreground">Eligible: {eligibleBadge}</div>
             </CardTitle>
           </CardHeader>
 
           <CardContent className="space-y-4">
-            <div className="flex flex-wrap items-center gap-4">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
-                className="gap-4"
+                className="gap-2"
                 onClick={roll}
                 disabled={activePlayers.every((p) => eligibleByPlayer[p].length === 0) || isRolling}
               >
@@ -414,7 +414,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
               <Button
                 variant="outline"
-                className="gap-4"
+                className="gap-2"
                 onClick={() => { setHistory([]); setHistoryByPlayer({}); }}
                 disabled={history.length === 0 && Object.values(historyByPlayer).every((v) => !v || v.length === 0)}
               >
@@ -423,7 +423,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
               <Button
                 variant="outline"
-                className="gap-4"
+                className="gap-2"
                 onClick={() => setPicked({1:null,2:null,3:null,4:null,5:null})}
                 disabled={activePlayers.every((p) => !picked[p])}
               >
@@ -431,7 +431,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               </Button>
 
               {playersCount === 1 ? (
-                <Button variant="secondary" className="gap-4 ml-auto" onClick={() => markDone(undefined, 1)} disabled={!picked[1]}>
+                <Button variant="secondary" className="gap-2 ml-auto" onClick={() => markDone(undefined, 1)} disabled={!picked[1]}>
                   <CheckCircle2 className="h-4 w-4" /> Mark {names[1]} Done
                 </Button>
               ) : (
@@ -440,14 +440,14 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                     <Button
                       key={`mark_${p}`}
                       variant="secondary"
-                      className="gap-4 ml-auto"
+                      className="gap-2 ml-auto"
                       onClick={() => markDone(undefined, p)}
                       disabled={!picked[p]}
                     >
                       <CheckCircle2 className="h-4 w-4" /> Mark {names[p]} Done
                     </Button>
                   ))}
-                  <Button variant="secondary" className="gap-4" onClick={markAllDone} disabled={activePlayers.every((p) => !picked[p])}>
+                  <Button variant="secondary" className="gap-2" onClick={markAllDone} disabled={activePlayers.every((p) => !picked[p])}>
                     <CheckCircle2 className="h-4 w-4" /> Mark All Done
                   </Button>
                 </>
@@ -455,40 +455,40 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </div>
 
             {/* Picks grid (gap-fixed) */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activePlayers.map((p) => {
                 const pick = picked[p];
                 return (
-                  <div key={`pick_${p}`} className="rounded-xl border p-4 pick-card">
-                    <div className="flex items-center gap-4 text-xs uppercase text-muted-foreground">
+                  <div key={`pick_${p}`} className="rounded-xl border p-4 pick-card relative">
+                    <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground">
                       <User className="h-3.5 w-3.5" /> {names[p]} • {roles[p]}
                     </div>
+
+                    {/* status badge is ABSOLUTE and does not affect layout */}
+                    {pick && (
+                      <Badge variant="secondary" className="status-badge">
+                        {isRolling ? "Rolling…" : (completedByPlayer[p]?.[pick] ? "Done" : "Locked")}
+                      </Badge>
+                    )}
 
                     <div className="pick-block mt-2">
                       <AnimatePresence mode="wait">
                         {pick ? (
                           <motion.div
                             key={pick}
-                            initial={{ opacity: 0, scale: 0.95 }}
+                            initial={{ opacity: 0, scale: 0.98 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className="flex items-start justify-between w-full pr-16 gap-4"
+                            exit={{ opacity: 0, scale: 0.98 }}
+                            transition={{ type: "spring", stiffness: 260, damping: 22 }}
+                            className="space-y-1"
                           >
-                            <div className="min-w-0">
-                              <div className="pick-title break-words hyphens-auto leading-snug">{pick}</div>
-                              <Badge
-                                variant="outline"
-                                className="role-badge mt-1"
-                                data-role={ALL_HEROES.find((h) => h.name === pick)?.role as RoleKey}
-                              >
-                                {ALL_HEROES.find((h) => h.name === pick)?.role}
-                              </Badge>
-                            </div>
-
-                            {/* out-of-flow, won’t cause gaps */}
-                            <Badge variant="secondary" className="status-badge">
-                              {isRolling ? "Rolling…" : (completedByPlayer[p]?.[pick] ? "Done" : "Locked")}
+                            <div className="pick-title">{pick}</div>
+                            <Badge
+                              variant="outline"
+                              className="role-badge"
+                              data-role={ALL_HEROES.find((h) => h.name === pick)?.role as RoleKey}
+                            >
+                              {ALL_HEROES.find((h) => h.name === pick)?.role}
                             </Badge>
                           </motion.div>
                         ) : (
@@ -506,18 +506,18 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             {/* Histories */}
             <div>
               <div className="mb-2 text-xs uppercase text-muted-foreground">Recent Picks</div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {activePlayers.map((p) => {
                   const list = historyByPlayer[p] || [];
                   return (
                     <div key={`hist_${p}`} className="rounded-lg border p-3">
-                      <div className="mb-2 flex items-center gap-4 text-xs uppercase text-muted-foreground">
+                      <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground">
                         <User className="h-3.5 w-3.5" /> {names[p]}
                       </div>
                       {list.length === 0 ? (
                         <div className="text-sm text-muted-foreground">No history yet.</div>
                       ) : (
-                        <ul className="grid grid-cols-2 gap-4">
+                        <ul className="grid grid-cols-2 gap-2">
                           {list.map((h) => (
                             <li key={`p${p}_${h}`} className="flex items-center justify-between rounded-lg border p-2">
                               <span className="text-sm font-medium">{h}</span>
@@ -543,18 +543,18 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             {/* Completed per player */}
             <div>
               <div className="mb-2 text-xs uppercase text-muted-foreground">Completed Heroes (per player)</div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {activePlayers.map((p) => {
                   const completedList = Object.entries(completedByPlayer[p] || {}).filter(([, v]) => v).map(([k]) => k);
                   return (
                     <div key={`done_${p}`} className="rounded-lg border p-3">
-                      <div className="mb-2 flex items-center gap-4 text-xs uppercase text-muted-foreground">
+                      <div className="mb-2 flex items-center gap-1 text-xs uppercase text-muted-foreground">
                         <User className="h-3.5 w-3.5" /> {names[p]}
                       </div>
                       {completedList.length === 0 ? (
                         <div className="text-sm text-muted-foreground">No completed heroes yet.</div>
                       ) : (
-                        <ul className="flex flex-wrap gap-4">
+                        <ul className="flex flex-wrap gap-2">
                           {completedList.map((name) => (
                             <li key={`done_${p}_${name}`} className="chip">
                               <span className="chip__name">{name}</span>
