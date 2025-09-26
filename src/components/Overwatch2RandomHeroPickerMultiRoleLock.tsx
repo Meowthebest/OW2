@@ -15,19 +15,20 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 /* ---------- Hero Data ---------- */
-const HEROES: Record<string, string[]> = {
+const HEROES: Record<"Tank" | "Damage" | "Support", string[]> = {
   Tank: ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
   Damage: ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Venture","Widowmaker"],
   Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Zenyatta","Wuyang"],
 };
 const ALL_ROLES = ["All", "Tank", "Damage", "Support"] as const;
 type Role = typeof ALL_ROLES[number];
-type HeroInfo = { name: string; role: keyof typeof HEROES };
+type RoleKey = keyof typeof HEROES;
+type HeroInfo = { name: string; role: RoleKey };
 
-const ALL_HEROES: HeroInfo[] = Object.entries(HEROES).flatMap(([role, list]) =>
-  list.map((name) => ({ name, role: role as keyof typeof HEROES }))
-);
+const ALL_HEROES: HeroInfo[] = (Object.entries(HEROES) as [RoleKey, string[]][])
+  .flatMap(([role, list]) => list.map((name) => ({ name, role })));
 
+/* ---------- Players ---------- */
 const MAX_PLAYERS = 5 as const;
 type PlayerNum = 1 | 2 | 3 | 4 | 5;
 const PLAYERS: PlayerNum[] = [1, 2, 3, 4, 5];
@@ -44,32 +45,37 @@ const K = {
   completed: "ow2_multi_completed",
   history: "ow2_multi_history_global",
   historyBy: "ow2_multi_history_by_player",
-};
+} as const;
 
 export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   /* players 1–5 */
   const [playersCount, setPlayersCount] = useState<number>(() => {
     const n = Number(localStorage.getItem(K.players));
-    return n >= 1 && n <= MAX_PLAYERS ? n : 2;
+    return Number.isFinite(n) && n >= 1 && n <= MAX_PLAYERS ? n : 2;
   });
-  const activePlayers = PLAYERS.slice(0, playersCount);
+  const activePlayers = useMemo<PlayerNum[]>(
+    () => PLAYERS.slice(0, playersCount),
+    [playersCount]
+  );
 
   /* roles per player */
   const [roles, setRoles] = useState<Record<PlayerNum, Role>>(() => {
     try {
-      const parsed = JSON.parse(localStorage.getItem(K.roles) || "{}");
-      const r: any = {}; PLAYERS.forEach((p) => (r[p] = (parsed?.[p] as Role) || "All"));
-      return r as Record<PlayerNum, Role>;
-    } catch { return {1:"All",2:"All",3:"All",4:"All",5:"All"} as any; }
+      const parsed = JSON.parse(localStorage.getItem(K.roles) || "{}") as Partial<Record<PlayerNum, Role>>;
+      const r: Record<PlayerNum, Role> = { 1:"All",2:"All",3:"All",4:"All",5:"All" };
+      PLAYERS.forEach((p) => { r[p] = parsed?.[p] ?? "All"; });
+      return r;
+    } catch { return { 1:"All",2:"All",3:"All",4:"All",5:"All" }; }
   });
 
   /* names per player (optional) */
   const [names, setNames] = useState<Record<PlayerNum, string>>(() => {
     try {
-      const parsed = JSON.parse(localStorage.getItem(K.names) || "{}");
-      const n: any = {}; PLAYERS.forEach((p) => (n[p] = (parsed?.[p] as string) || `Player ${p}`));
-      return n as Record<PlayerNum, string>;
-    } catch { return {1:"Player 1",2:"Player 2",3:"Player 3",4:"Player 4",5:"Player 5"} as any; }
+      const parsed = JSON.parse(localStorage.getItem(K.names) || "{}") as Partial<Record<PlayerNum, string>>;
+      const n: Record<PlayerNum, string> = { 1:"Player 1",2:"Player 2",3:"Player 3",4:"Player 4",5:"Player 5" };
+      PLAYERS.forEach((p) => { n[p] = parsed?.[p] ?? `Player ${p}`; });
+      return n;
+    } catch { return { 1:"Player 1",2:"Player 2",3:"Player 3",4:"Player 4",5:"Player 5" }; }
   });
 
   /* filters & state */
@@ -97,7 +103,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     });
 
   const [picked, setPicked] = useState<Record<PlayerNum, string | null>>(
-    {1:null,2:null,3:null,4:null,5:null} as const
+    {1:null,2:null,3:null,4:null,5:null}
   );
   const [isRolling, setIsRolling] = useState(false);
 
@@ -114,10 +120,13 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   useEffect(() => localStorage.setItem(K.historyBy, JSON.stringify(historyByPlayer)), [historyByPlayer]);
 
   /* helpers */
-  const byRole = (role: Role) => (role === "All" ? ALL_HEROES : ALL_HEROES.filter((h) => h.role === role));
+  const byRole = (role: Role) =>
+    role === "All" ? ALL_HEROES : ALL_HEROES.filter((h) => h.role === (role as RoleKey));
+
   const listBase = useMemo(() => byRole(listRole), [listRole]);
+
   const baseByPlayer = useMemo(() => {
-    const map: Record<PlayerNum, HeroInfo[]> = {} as any;
+    const map = {} as Record<PlayerNum, HeroInfo[]>;
     PLAYERS.forEach((p) => { map[p] = byRole(roles[p]); });
     return map;
   }, [roles]);
@@ -129,7 +138,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
   function computeEligible(base: HeroInfo[], player: PlayerNum) {
     const excludedSet = new Set(Object.entries(excluded).filter(([, v]) => v).map(([k]) => k));
-    const completedForPlayer = new Set(Object.entries(completedByPlayer[player] || {}).filter(([, v]) => v).map(([k]) => k));
+    const completedForPlayer = new Set(
+      Object.entries(completedByPlayer[player] || {}).filter(([, v]) => v).map(([k]) => k)
+    );
     let pool = base.map((h) => h.name).filter((n) => !excludedSet.has(n));
     if (challengeMode) pool = pool.filter((n) => !completedForPlayer.has(n));
     if (!noRepeat) return pool;
@@ -139,7 +150,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   }
 
   const eligibleByPlayer = useMemo(() => {
-    const map: Record<PlayerNum, string[]> = {} as any;
+    const map = {} as Record<PlayerNum, string[]>;
     PLAYERS.forEach((p) => { map[p] = computeEligible(baseByPlayer[p], p); });
     return map;
   }, [baseByPlayer, excluded, completedByPlayer, challengeMode, noRepeat, history]);
@@ -151,8 +162,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     activePlayers.forEach((p) => { pools[p] = eligibleByPlayer[p].slice(); });
 
     if (activePlayers.every((p) => pools[p].length === 0)) {
-      const cleared: any = {}; activePlayers.forEach((p) => (cleared[p] = null));
-      setPicked((prev) => ({ ...prev, ...cleared }));
+      const cleared: Partial<Record<PlayerNum, null>> = {};
+      activePlayers.forEach((p) => (cleared[p] = null));
+      setPicked((prev) => ({ ...prev, ...cleared } as Record<PlayerNum, string | null>));
       return;
     }
 
@@ -161,7 +173,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
     const id = setInterval(() => {
       const chosen = new Set<string>();
-      const next: Record<PlayerNum, string | null> = {} as any;
+      const next = {} as Record<PlayerNum, string | null>;
 
       for (const p of activePlayers) {
         const uniquePool = pools[p].filter((n) => !chosen.has(n));
@@ -200,13 +212,16 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   function finalizeOne(p: PlayerNum, n: string | null) {
     if (!n) return;
     setHistory((prev) => [n, ...prev.filter((x) => x !== n)].slice(0, 20));
-    setHistoryByPlayer((prev) => ({ ...prev, [p]: [n, ...((prev[p] || []).filter((x) => x !== n))].slice(0, 10) }));
+    setHistoryByPlayer((prev) => ({
+      ...prev,
+      [p]: [n, ...((prev[p] || []).filter((x) => x !== n))].slice(0, 10),
+    }));
   }
 
   function finalizeMulti(picks: Record<PlayerNum, string | null>) {
-    const names = activePlayers.map((p) => picks[p]).filter(Boolean) as string[];
-    if (names.length === 0) return;
-    setHistory((prev) => [...names, ...prev.filter((x) => !names.includes(x))].slice(0, 20));
+    const namesPicked = activePlayers.map((p) => picks[p]).filter(Boolean) as string[];
+    if (namesPicked.length === 0) return;
+    setHistory((prev) => [...namesPicked, ...prev.filter((x) => !namesPicked.includes(x))].slice(0, 20));
     setHistoryByPlayer((prev) => {
       const updated = { ...prev };
       for (const p of activePlayers) {
@@ -227,14 +242,14 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     setPicked((prev) => ({ ...prev, [p]: null }));
   }
   function markAllDone() {
-    const updates: Record<PlayerNum, Record<string, boolean>> = {} as any;
-    const cleared: Record<PlayerNum, string | null> = {} as any;
+    const updates: Partial<Record<PlayerNum, Record<string, boolean>>> = {};
+    const cleared: Partial<Record<PlayerNum, null>> = {};
     for (const p of activePlayers) {
       const hero = picked[p]; cleared[p] = null;
       if (hero) updates[p] = { ...(completedByPlayer[p] || {}), [hero]: true };
     }
-    setCompletedByPlayer((prev) => ({ ...prev, ...updates }));
-    setPicked((prev) => ({ ...prev, ...cleared }));
+    setCompletedByPlayer((prev) => ({ ...prev, ...(updates as Record<PlayerNum, Record<string, boolean>>) }));
+    setPicked((prev) => ({ ...prev, ...(cleared as Record<PlayerNum, string | null>) }));
   }
   function undoDone(name: string, player: PlayerNum) {
     setCompletedByPlayer((prev) => ({ ...prev, [player]: { ...(prev[player] || {}), [name]: false } }));
@@ -246,11 +261,11 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   }
   function clearAll() {
     setExcluded({}); setHistory([]); setHistoryByPlayer({});
-    setPicked({1:null,2:null,3:null,4:null,5:null} as any);
+    setPicked({1:null,2:null,3:null,4:null,5:null});
   }
   function resetChallenge() {
     setCompletedByPlayer({} as any);
-    setPicked({1:null,2:null,3:null,4:null,5:null} as any);
+    setPicked({1:null,2:null,3:null,4:null,5:null});
   }
 
   const totals = useMemo(() => {
@@ -260,9 +275,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     const compCounts: Record<PlayerNum, number> = {} as any;
     activePlayers.forEach((p) => { compCounts[p] = Object.values(completedByPlayer[p] || {}).filter(Boolean).length; });
     return { total, excluded: excludedCount, available, compCounts };
-  }, [listBase, excluded, completedByPlayer, playersCount]);
+  }, [listBase, excluded, completedByPlayer, activePlayers]);
 
-  const eligibleBadge = activePlayers.map((p) => `P${p} ${eligibleByPlayer[p].length}`).join(" • ");
+  const eligibleBadge = activePlayers.map((p) => `${names[p] || `P${p}`}: ${eligibleByPlayer[p].length}`).join(" • ");
 
   /* render */
   return (
@@ -344,7 +359,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                 <Switch id="challenge" checked={challengeMode} onCheckedChange={setChallengeMode} />
                 <label htmlFor="challenge" className="text-sm flex items-center gap-1"><Trophy className="h-4 w-4" /> Challenge Mode (per-player)</label>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-1">
                 {activePlayers.map((p) => (
                   <Badge key={`done_badge_${p}`} variant="secondary" className="text-[10px]">
                     {(names[p] || `P${p}`)} {Object.values(completedByPlayer[p] || {}).filter(Boolean).length}
@@ -393,13 +408,29 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
           <CardContent className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Button className="gap-2" onClick={roll} disabled={activePlayers.every((p) => eligibleByPlayer[p].length === 0) || isRolling}>
+              <Button
+                className="gap-2"
+                onClick={roll}
+                disabled={activePlayers.every((p) => eligibleByPlayer[p].length === 0) || isRolling}
+              >
                 <Shuffle className="h-4 w-4" /> {playersCount === 1 ? "Get Random Hero" : "Get Random Heroes"}
               </Button>
-              <Button variant="outline" className="gap-2" onClick={() => { setHistory([]); setHistoryByPlayer({}); }} disabled={history.length === 0 && Object.values(historyByPlayer).every((v) => !v || v.length === 0)}>
+
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => { setHistory([]); setHistoryByPlayer({}); }}
+                disabled={history.length === 0 && Object.values(historyByPlayer).every((v) => !v || v.length === 0)}
+              >
                 <History className="h-4 w-4" /> Clear History
               </Button>
-              <Button variant="outline" className="gap-2" onClick={() => setPicked({1:null,2:null,3:null,4:null,5:null} as any)} disabled={activePlayers.every((p) => !picked[p])}>
+
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => setPicked({1:null,2:null,3:null,4:null,5:null})}
+                disabled={activePlayers.every((p) => !picked[p])}
+              >
                 <Repeat className="h-4 w-4" /> Clear Picks
               </Button>
 
@@ -410,7 +441,13 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               ) : (
                 <>
                   {activePlayers.map((p) => (
-                    <Button key={`mark_${p}`} variant="secondary" className="gap-2 ml-auto" onClick={() => markDone(undefined, p)} disabled={!picked[p]}>
+                    <Button
+                      key={`mark_${p}`}
+                      variant="secondary"
+                      className="gap-2 ml-auto"
+                      onClick={() => markDone(undefined, p)}
+                      disabled={!picked[p]}
+                    >
                       <CheckCircle2 className="h-4 w-4" /> Mark {names[p]} Done
                     </Button>
                   ))}
@@ -421,28 +458,40 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               )}
             </div>
 
-            {/* Picks grid */}
+            {/* Picks grid (gap-fixed) */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {activePlayers.map((p) => {
                 const pick = picked[p];
                 return (
-                  <div key={`pick_${p}`} className="rounded-xl border p-4">
+                  <div key={`pick_${p}`} className="rounded-xl border p-4 pick-card">
                     <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground">
                       <User className="h-3.5 w-3.5" /> {names[p]} • {roles[p]}
                     </div>
+
                     <div className="pick-block mt-2">
                       <AnimatePresence mode="wait">
                         {pick ? (
-                          <motion.div key={pick} initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                                      exit={{ opacity: 0, scale: 0.95 }} transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                                      className="flex items-center justify-between">
+                          <motion.div
+                            key={pick}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+                            className="flex items-center justify-between w-full pr-16"
+                          >
                             <div>
-                              <div className="text-2xl font-bold leading-tight">{pick}</div>
-                              <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find((h) => h.name === pick)?.role as any}>
+                              <div className="pick-title">{pick}</div>
+                              <Badge
+                                variant="outline"
+                                className="role-badge"
+                                data-role={ALL_HEROES.find((h) => h.name === pick)?.role as RoleKey}
+                              >
                                 {ALL_HEROES.find((h) => h.name === pick)?.role}
                               </Badge>
                             </div>
-                            <Badge variant="secondary" className="text-xs">
+
+                            {/* out-of-flow, won’t cause gaps */}
+                            <Badge variant="secondary" className="status-badge">
                               {isRolling ? "Rolling…" : (completedByPlayer[p]?.[pick] ? "Done" : "Locked")}
                             </Badge>
                           </motion.div>
@@ -476,7 +525,11 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                           {list.map((h) => (
                             <li key={`p${p}_${h}`} className="flex items-center justify-between rounded-lg border p-2">
                               <span className="text-sm font-medium">{h}</span>
-                              <Badge variant="outline" className="role-badge" data-role={ALL_HEROES.find((x) => x.name === h)?.role as any}>
+                              <Badge
+                                variant="outline"
+                                className="role-badge"
+                                data-role={ALL_HEROES.find((x) => x.name === h)?.role as RoleKey}
+                              >
                                 {ALL_HEROES.find((x) => x.name === h)?.role}
                               </Badge>
                             </li>
