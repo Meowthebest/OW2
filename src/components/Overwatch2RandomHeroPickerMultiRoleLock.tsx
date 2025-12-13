@@ -29,8 +29,10 @@ const ROLE_STYLES = {
 
 const HERO_DATABASE = {
   Tank:    ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
-  Damage:  ["Ashe","Bastion","Cassidy","Echo","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Venture","Widowmaker"],
-  Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Zenyatta"],
+  // Added Freja and Vendetta
+  Damage:  ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
+  // Added Wuyang
+  Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Wuyang","Zenyatta"],
 } as const;
 
 const ROLES = ["All", "Tank", "Damage", "Support"] as const;
@@ -149,19 +151,12 @@ export default function Overwatch2TacticalPicker() {
     });
   };
 
-  // --- CHANGED LOGIC HERE ---
   const toggleBan = (name: string) => {
     const isBanned = !!bannedHeroes[name];
     const currentCount = Object.values(bannedHeroes).filter(Boolean).length;
-    
-    // Only check limit if adding a new ban
-    if (!isBanned && currentCount >= 4) {
-      alert("Ban limit reached (Max 4).");
-      return; 
-    }
+    if (!isBanned && currentCount >= 4) { alert("Ban limit reached (Max 4)."); return; }
     setBannedHeroes(prev => ({ ...prev, [name]: !prev[name] }));
   };
-  // --------------------------
 
   const completeMission = (p: PlayerID) => {
     const hero = currentLoadout[p]; if (!hero) return;
