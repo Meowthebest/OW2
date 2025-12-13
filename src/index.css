@@ -1,237 +1,203 @@
 /* ===============================
-   1. IMPORTS & FONTS
+   Tailwind (must be first)
    =============================== */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Import "Big Shoulders Display" for headers and "Inter" for UI text */
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap');
-
 /* ===============================
-   2. Design Tokens & Variables
+   Design tokens (light by default)
    =============================== */
 @layer base {
   :root {
-    /* -- Brand Colors (Refined OW2 Palette) -- */
-    --ow-orange: 25 100% 50%; 
-    --ow-blue: 222 30% 18%; 
-    
-    /* -- UI System - Light -- */
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    /* OW2 accent + bg tint */
+    --ow2-orange: #f59e0b;
+    --ow2-blue:   #1b2a41;
 
+    /* Light palette */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-
-    --primary: 25 100% 50%;
-    --primary-foreground: 210 40% 98%;
-
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 24 95% 52%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11.2%;
-
+    --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222 47% 11.2%;
-
+    --accent: 213 94% 68%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 25 100% 50%;
+    --ring: 24 95% 52%;
+    --radius: 0.75rem;
 
-    --radius: 0.5rem;
+    /* convenience for bg */
+    --app-bg: hsl(var(--background));
   }
 
+  /* Dark palette (if you add a toggle later) */
   .dark {
-    /* -- UI System - Dark -- */
-    --background: 222 30% 12%; 
-    --foreground: 210 40% 98%;
+    --background: 240 10% 8%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 24 95% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 8% 20%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 9% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 200 85% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 8% 23%;
+    --input: 240 8% 23%;
+    --ring: 24 95% 58%;
 
-    --card: 222 30% 15%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 30% 15%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 25 100% 50%;
-    --primary-foreground: 222 47% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 25 100% 60%;
+    --app-bg: hsl(var(--background));
   }
 
-  * {
-    @apply border-border;
-  }
-
-  /* Set Global Fonts */
-  html {
-    font-family: 'Inter', sans-serif;
-  }
-  
-  h1, h2, h3, h4, h5, h6, .pick-title {
-    font-family: 'Big Shoulders Display', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-  }
-
-  body {
-    @apply bg-background text-foreground antialiased selection:bg-orange-500/30 selection:text-orange-600;
-  }
+  * { @apply border-border; }
+  html, body, #root { height: 100%; }
+  body { @apply bg-background text-foreground antialiased; }
 }
 
 /* ===============================
-   3. Global Styles & Backgrounds
+   Decorative background
    =============================== */
 body {
-  background-color: hsl(var(--background));
-  background-image: 
-    radial-gradient(circle at 15% 50%, hsla(var(--ow-orange) / 0.08), transparent 25%),
-    radial-gradient(circle at 85% 30%, hsla(210, 100%, 50%, 0.05), transparent 25%);
+  background-image:
+    radial-gradient(1200px 600px at 100% -10%, color-mix(in oklab, var(--ow2-orange), transparent 85%), transparent),
+    radial-gradient(800px 400px at -10% 100%, color-mix(in oklab, var(--ow2-blue), transparent 70%), transparent);
+  background-color: var(--app-bg);
   background-attachment: fixed;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background-color: hsl(var(--muted-foreground) / 0.3);
-  border-radius: 9999px;
-  border: 2px solid transparent;
-  background-clip: content-box;
-}
-::-webkit-scrollbar-thumb:hover {
-  background-color: hsl(var(--muted-foreground) / 0.5);
+/* ===============================
+   Scrollbars
+   =============================== */
+* { scrollbar-width: thin; scrollbar-color: rgba(120,120,120,.35) transparent; }
+*::-webkit-scrollbar { height: 8px; width: 8px; }
+*::-webkit-scrollbar-thumb { background: rgba(120,120,120,.35); border-radius: 999px; }
+
+/* ===============================
+   Inputs legibility
+   =============================== */
+@layer base {
+  input, select, textarea { color: hsl(var(--foreground)); }
+  input::placeholder, textarea::placeholder { color: hsl(var(--muted-foreground)); }
 }
 
 /* ===============================
-   4. Component Classes
+   Components
    =============================== */
 @layer components {
-
-  /* -- Panels -- */
+  /* Panels (use on Cards) */
   .panel {
-    @apply rounded-xl border border-white/50 bg-white/60 
-           backdrop-blur-xl shadow-lg shadow-black/5
-           dark:border-white/10 dark:bg-slate-900/60 dark:shadow-black/20 
-           transition-all duration-300 ease-out;
+    @apply rounded-2xl border border-zinc-200 bg-white/90 backdrop-blur
+           shadow-[0_8px_30px_rgba(0,0,0,0.06)];
   }
 
-  /* -- Toolbar Areas -- */
+  /* Soft toolbars / option strips */
   .toolbar {
-    @apply rounded-lg border border-border/60 bg-secondary/40 p-2 
-           backdrop-blur-md flex flex-wrap gap-2;
+    @apply rounded-xl border border-zinc-200 bg-zinc-100/70 px-3 py-2;
   }
 
-  /* -- Role Badges -- */
-  .role-badge {
-    @apply inline-flex items-center justify-center gap-1.5 rounded-md border 
-           px-2.5 py-1 text-[11px] font-black uppercase tracking-widest shadow-sm select-none;
-  }
-  .role-badge[data-role="Tank"] { 
-    @apply border-blue-200/60 bg-gradient-to-br from-blue-50 to-blue-100/50 text-blue-700 
-           dark:border-blue-800 dark:from-blue-950/60 dark:to-blue-900/40 dark:text-blue-300; 
-  }
-  .role-badge[data-role="Damage"] { 
-    @apply border-rose-200/60 bg-gradient-to-br from-rose-50 to-rose-100/50 text-rose-700 
-           dark:border-rose-800 dark:from-rose-950/60 dark:to-rose-900/40 dark:text-rose-300; 
-  }
-  .role-badge[data-role="Support"] { 
-    @apply border-emerald-200/60 bg-gradient-to-br from-emerald-50 to-emerald-100/50 text-emerald-700 
-           dark:border-emerald-800 dark:from-emerald-950/60 dark:to-emerald-900/40 dark:text-emerald-300; 
-  }
-
-  /* -- HERO PICK CARD -- */
-  .pick-card {
-    @apply relative flex flex-col justify-between overflow-hidden
-           rounded-xl border bg-gradient-to-br from-white/95 via-white/80 to-white/60
-           dark:from-slate-900/95 dark:via-slate-900/80 dark:to-slate-900/60
-           backdrop-blur-xl shadow-md transition-all duration-300
-           hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10 hover:border-orange-500/30;
-  }
-  .pick-block {
-    @apply min-h-[110px] flex items-center justify-center text-center p-4;
-  }
-  .pick-title {
-    @apply text-3xl sm:text-4xl font-black uppercase italic tracking-tighter;
-    background: linear-gradient(to bottom right, hsl(var(--foreground)), hsl(var(--muted-foreground)));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 1px rgba(0,0,0,0.1));
-  }
-  .dark .pick-title {
-    background: linear-gradient(to bottom right, #fff, #94a3b8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-
-  /* -- Chips -- */
+  /* Chips for completed heroes (wrap nicely, no overlap) */
   .chip {
     @apply inline-flex items-center gap-2 max-w-full
-           rounded-lg border bg-background/80 px-3 py-1.5
-           text-xs font-semibold shadow-sm transition-all duration-200
-           hover:bg-accent hover:border-accent-foreground/20 hover:shadow-md;
+           rounded-full border border-zinc-300 bg-white px-3 py-1.5
+           text-sm shadow-sm;
   }
-  .chip__name {
-    @apply truncate max-w-[16ch];
-  }
+  .chip__name { @apply truncate max-w-[22ch] font-medium; }
   .chip__undo {
-    @apply -mr-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full 
-           text-muted-foreground transition-colors 
-           hover:bg-destructive hover:text-white;
+    @apply shrink-0 rounded-full border border-amber-400 px-2 py-0.5
+           text-[12px] font-semibold text-zinc-800 hover:bg-amber-50
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500;
   }
 
-  /* -- Recent Picks List -- */
-  .rp-list {
-    @apply grid grid-cols-1 gap-2.5 sm:grid-cols-2;
+  /* Role badge (Tank / Damage / Support) – single, consistent set */
+  .role-badge {
+    @apply inline-flex items-center rounded-full border px-2 py-0.5
+           text-[11px] font-medium;
   }
-  .rp-item {
-    @apply group grid grid-cols-[1fr_auto] items-center gap-3
-           rounded-lg border border-transparent bg-background/40 px-3 py-2.5 
-           text-sm font-medium shadow-sm transition-all duration-200
-           hover:bg-background/80 hover:border-border hover:shadow-md;
-  }
-  .rp-name {
-    @apply truncate text-foreground/90 group-hover:text-foreground;
-  }
-  .rp-badge {
-    @apply shrink-0 scale-90 origin-right opacity-70 grayscale transition-all
-           group-hover:opacity-100 group-hover:grayscale-0 group-hover:scale-100;
-  }
+  .role-badge[data-role="Tank"]    { @apply bg-emerald-100 text-emerald-700 border-emerald-200; }
+  .role-badge[data-role="Damage"]  { @apply bg-rose-100    text-rose-700    border-rose-200; }
+  .role-badge[data-role="Support"] { @apply bg-sky-100     text-sky-700     border-sky-200; }
 
-  /* -- NEW BUTTON STYLE -- */
-  .btn-roll {
-    @apply flex items-center justify-center gap-3
-           bg-[hsl(var(--ow-orange))] text-white 
-           font-black text-xl uppercase tracking-wider italic
-           px-8 py-4 rounded-md shadow-lg shadow-orange-500/20
-           hover:bg-orange-400 hover:scale-105 hover:shadow-orange-500/40
-           active:scale-95 transition-all duration-200;
-    
-    font-family: 'Big Shoulders Display', sans-serif;
-  }
+  /* Default pick-block to ensure space even with short/long names */
+  .pick-block { @apply min-h-[128px]; }
 }
+
+/* ---- Pick card tightening & anti-gap helpers ---- */
+@layer components {
+  .pick-card { @apply relative; }                 /* needed for absolute badge */
+  .pick-block { @apply min-h-[96px] flex items-center; }
+  @screen sm { .pick-block { @apply min-h-[104px]; } }
+  @screen lg { .pick-block { @apply min-h-[112px]; } }
+
+  /* IMPORTANT: normal wrapping so names don't break character-by-character */
+  .pick-title { @apply text-xl sm:text-2xl font-bold leading-tight whitespace-normal break-normal; }
+
+  .status-badge { @apply absolute top-3 right-3 text-xs; }
+}
+
+@layer components {
+  /* Recent Picks list container: tight, gridy feel */
+  .rp-list { @apply grid grid-cols-2 gap-2; }
+
+  /* Each recent pick pill */
+  .rp-item {
+    @apply flex items-center gap-2 rounded-lg border px-3 py-1.5 bg-white/60;
+  }
+
+  /* Name stays on one line with ellipsis; doesn't collide with badge */
+  .rp-name {
+    @apply min-w-0 flex-1 truncate text-sm font-medium;
+  }
+
+  /* Role badge never wraps and doesn't shrink */
+  .rp-badge { @apply shrink-0; }
+}
+
+/* Optional: make the card background adapt in dark mode */
+.dark .rp-item { @apply bg-zinc-900/40; }
+
+
+
+@layer components {
+  /* grid of items inside each player's Recent Picks card */
+  .rp-list { @apply grid grid-cols-2 gap-2; }
+
+  /* each item = two columns: name (fills) + badge (no shrink) */
+  .rp-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    /* visual styling */
+    @apply rounded-lg border px-3 py-1.5 bg-white/60;
+  }
+  .dark .rp-item { @apply bg-zinc-900/40; }
+
+  /* name stays on ONE line with ellipsis */
+  .rp-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    @apply text-sm font-medium;
+  }
+
+  /* role badge never shrinks or wraps */
+  .rp-badge { @apply shrink-0; }
+}
+
