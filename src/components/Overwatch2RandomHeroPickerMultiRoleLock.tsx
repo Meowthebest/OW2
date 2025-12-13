@@ -222,10 +222,37 @@ export default function Overwatch2TacticalPicker() {
               </div>
               <Separator className="bg-border/60" />
               <div className="space-y-2">
-                 <div className="flex items-center justify-between"><label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned} / 4)</label></div>
-                 <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 h-6 bg-muted/40 p-0.5">{ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[9px] font-bold uppercase">{r}</TabsTrigger>)}</TabsList>
-                 </Tabs>
+<Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
+  <TabsList
+    className="
+      grid w-full grid-cols-4 h-7
+      rounded-full overflow-hidden
+      bg-muted/40 border border-border/40
+      p-1 gap-1
+      shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
+    "
+  >
+    {ROLES.map((r) => (
+      <TabsTrigger
+        key={r}
+        value={r}
+        className="
+          text-[9px] font-black uppercase
+          rounded-full
+          border border-transparent
+          data-[state=active]:bg-background
+          data-[state=active]:border-border/40
+          data-[state=active]:shadow-sm
+          data-[state=active]:text-foreground
+          data-[state=inactive]:text-muted-foreground
+          focus-visible:ring-0 focus-visible:ring-offset-0
+        "
+      >
+        {r}
+      </TabsTrigger>
+    ))}
+  </TabsList>
+</Tabs>
                  <Input placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-7 text-xs bg-background/40 border-border/40" />
                  <div className="h-[180px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
                     <div className="grid grid-cols-2 gap-1">
