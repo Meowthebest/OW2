@@ -53,7 +53,6 @@ function useLocalStorage<T>(key: string, initialValue: T) {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
   });
@@ -61,9 +60,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
   useEffect(() => {
     try {
       window.localStorage.setItem(key, JSON.stringify(storedValue));
-    } catch (error) {
-      console.warn(`Error setting localStorage key "${key}":`, error);
-    }
+    } catch (error) {}
   }, [key, storedValue]);
 
   return [storedValue, setStoredValue] as const;
@@ -117,7 +114,6 @@ export default function Overwatch2TacticalPicker() {
   const generateLoadout = useCallback(() => {
     const availablePools: Record<PlayerID, string[]> = {} as any;
     let hasViablePool = false;
-    
     const sessionBans = new Set(noDuplicates ? missionLog : []); 
     const bannedSet = new Set(Object.keys(bannedHeroes).filter(k => bannedHeroes[k]));
 
@@ -208,39 +204,36 @@ export default function Overwatch2TacticalPicker() {
   };
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300">
-      <div className="mx-auto max-w-7xl p-4 sm:p-6 space-y-8 font-sans">
+    <div className="min-h-screen bg-background transition-colors duration-300 font-sans">
+      <div className="mx-auto max-w-7xl p-4 space-y-6">
       
       {/* HEADER */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between rounded-2xl bg-card/50 p-4 backdrop-blur-sm border shadow-sm">
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-4xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase drop-shadow-sm">
-            Overwatch 2 <span className="text-foreground/70 text-2xl not-italic tracking-normal normal-case">/ Randomizer</span>
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-xl bg-card/50 p-4 border shadow-sm">
+        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+          <h1 className="text-3xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase drop-shadow-sm">
+            Overwatch 2 <span className="text-foreground/70 text-xl not-italic tracking-normal normal-case">/ Randomizer</span>
           </h1>
         </motion.div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
            <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full bg-background/50 border hover:bg-accent text-foreground">
-              <AnimatePresence mode="wait">
-                {theme === 'dark' ? <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-500" /> : <Moon className="h-[1.2rem] w-[1.2rem] text-slate-700" />}
-              </AnimatePresence>
+              {theme === 'dark' ? <Sun className="h-4 w-4 text-yellow-500" /> : <Moon className="h-4 w-4 text-slate-700" />}
            </Button>
            
-           <div className="flex items-center gap-2 bg-background/80 border rounded-full p-1 shadow-sm px-3">
+           <div className="flex items-center gap-2 bg-background/80 border rounded-full p-1 px-3 shadow-sm">
              <Users className="h-4 w-4 text-primary" />
-             {/* FIXED: Correct grammar for 1 Player vs Players */}
              <Select value={String(playerCount)} onValueChange={(v) => setPlayerCount(Number(v))}>
-                 <SelectTrigger className="w-auto h-8 text-xs font-bold uppercase border-0 bg-transparent focus:ring-0 gap-1">
+                 <SelectTrigger className="h-7 text-xs font-bold uppercase border-0 bg-transparent focus:ring-0 gap-1 w-auto">
                     <SelectValue />
                  </SelectTrigger>
                  <SelectContent>
                     {PLAYERS_INDICES.map(n => <SelectItem key={n} value={String(n)}>{n} {n === 1 ? "Player" : "Players"}</SelectItem>)}
                  </SelectContent>
              </Select>
-             <Separator orientation="vertical" className="h-5" />
+             <Separator orientation="vertical" className="h-4" />
              <div className="flex items-center gap-2">
                <label htmlFor="challenge-mode" className="text-xs font-bold uppercase cursor-pointer flex items-center gap-1 text-muted-foreground hover:text-foreground">
-                 <Trophy className="h-3.5 w-3.5 text-amber-500" /> Challenge
+                 <Trophy className="h-3 w-3 text-amber-500" /> Challenge
                </label>
                <Switch id="challenge-mode" checked={challengeMode} onCheckedChange={setChallengeMode} className="scale-75 data-[state=checked]:bg-amber-500" />
              </div>
@@ -251,20 +244,20 @@ export default function Overwatch2TacticalPicker() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* LEFT PANEL */}
         <div className="lg:col-span-4 space-y-4">
-          <Card className="border-border/40 shadow-lg bg-card/30 backdrop-blur-md">
-            <CardHeader className="bg-muted/30 pb-3 border-b border-border/40">
+          <Card className="border-border/40 bg-card/30 backdrop-blur-md">
+            <CardHeader className="bg-muted/30 py-3 px-4 border-b border-border/40">
               <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                <Filter className="h-4 w-4 text-primary" /> Player Setup
+                <Filter className="h-4 w-4 text-primary" /> Setup
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-5 pt-5">
-              <div className="space-y-3">
+            <CardContent className="space-y-4 p-4">
+              <div className="space-y-2">
                  {activePlayers.map(p => (
                    <div key={p} className="flex items-center gap-2">
-                      <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-md bg-background/80 backdrop-blur-md text-xs font-black shadow-sm border-border/50 shrink-0">{p}</Badge>
-                      <Input className="h-8 text-sm font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30 min-w-0" placeholder={`Player ${p}`} value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
+                      <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-md bg-background/80 text-xs font-black shadow-sm border-border/50 shrink-0">{p}</Badge>
+                      <Input className="h-8 text-xs font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30 min-w-0" placeholder={`Player ${p}`} value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
                       <Select value={playerRoles[p]} onValueChange={v => setPlayerRoles(prev => ({...prev, [p]: v as RoleType}))}>
-                        <SelectTrigger className="h-8 w-[105px] text-[10px] font-bold uppercase tracking-wider bg-background/50 border-border/50 shrink-0"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-8 w-[95px] text-[10px] font-bold uppercase tracking-wider bg-background/50 border-border/50 shrink-0"><SelectValue /></SelectTrigger>
                         <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
                       </Select>
                    </div>
@@ -274,35 +267,33 @@ export default function Overwatch2TacticalPicker() {
               <div className="space-y-3">
                  <div className="flex items-center justify-between">
                     <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                       <Ban className="h-3 w-3 text-red-500" /> Hero Bans
+                       <Ban className="h-3 w-3 text-red-500" /> Hero Bans ({poolStats.banned})
                     </label>
-                    <div className="text-[10px] font-bold text-red-500">{poolStats.banned} Banned</div>
                  </div>
                  <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 h-8 bg-muted/40 p-0.5">
-                       {ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[10px] font-bold uppercase data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm">{r}</TabsTrigger>)}
+                    <TabsList className="grid w-full grid-cols-4 h-7 bg-muted/40 p-0.5">
+                       {ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[9px] font-bold uppercase data-[state=active]:bg-background data-[state=active]:text-primary">{r}</TabsTrigger>)}
                     </TabsList>
                  </Tabs>
-                 <Input placeholder="Search heroes..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-8 text-xs bg-background/40 border-border/40" />
-                 <div className="h-[220px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
-                    <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-1">
+                 <Input placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-7 text-xs bg-background/40 border-border/40" />
+                 <div className="h-[200px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
+                    <div className="grid grid-cols-1 min-[350px]:grid-cols-2 gap-1">
                        {filteredPool.map((h) => (
-                         <div key={h.name} className={cn("flex items-center gap-2 rounded-md px-2 py-1.5 transition-all cursor-pointer select-none group border border-transparent", bannedHeroes[h.name] ? "bg-destructive/10 border-destructive/20 opacity-90" : "hover:bg-background/80 hover:border-border/30 hover:shadow-sm")} onClick={() => toggleBan(h.name)}>
-                            <Checkbox id={`ban-${h.name}`} checked={!!bannedHeroes[h.name]} className="h-3.5 w-3.5 rounded-sm data-[state=checked]:bg-destructive data-[state=checked]:border-destructive shrink-0" />
-                            <span className={cn("text-xs flex-1 truncate font-semibold", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90 group-hover:text-foreground")}>{h.name}</span>
+                         <div key={h.name} className={cn("flex items-center gap-2 rounded-md px-2 py-1 transition-all cursor-pointer select-none group border border-transparent", bannedHeroes[h.name] ? "bg-destructive/10 border-destructive/20 opacity-80" : "hover:bg-background/80 hover:border-border/30 hover:shadow-sm")} onClick={() => toggleBan(h.name)}>
+                            <Checkbox id={`ban-${h.name}`} checked={!!bannedHeroes[h.name]} className="h-3 w-3 rounded-sm data-[state=checked]:bg-destructive data-[state=checked]:border-destructive shrink-0" />
+                            <span className={cn("text-[11px] flex-1 truncate font-medium", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90")}>{h.name}</span>
                             <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/10 shrink-0", ROLE_STYLES[h.role].bg.replace("/10", ""))} />
                          </div>
                        ))}
-                       {filteredPool.length === 0 && <div className="col-span-2 text-center text-xs text-muted-foreground py-8 opacity-50">No matching heroes.</div>}
                     </div>
                  </div>
-                 <div className={cn("flex items-center gap-2 rounded-md p-2 border transition-colors", noDuplicates ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/10 border-border/30")}>
+                 <div className={cn("flex items-center gap-2 rounded-md p-1.5 border transition-colors", noDuplicates ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/10 border-border/30")}>
                     <Switch id="unique-mode" checked={noDuplicates} onCheckedChange={setNoDuplicates} className="scale-75 data-[state=checked]:bg-amber-500" />
                     <label htmlFor="unique-mode" className={cn("text-[10px] font-bold uppercase tracking-wide cursor-pointer transition-colors", noDuplicates ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground")}>No Repeats</label>
                  </div>
               </div>
-              <Button variant="outline" className="w-full text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 uppercase tracking-widest font-bold h-9 border-border/40" onClick={factoryReset}>
-                 <Trash2 className="mr-2 h-3.5 w-3.5" /> Reset
+              <Button variant="outline" className="w-full h-8 text-[10px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 uppercase tracking-widest font-bold border-border/40" onClick={factoryReset}>
+                 <Trash2 className="mr-2 h-3 w-3" /> Reset
               </Button>
             </CardContent>
           </Card>
@@ -310,15 +301,15 @@ export default function Overwatch2TacticalPicker() {
 
         {/* RIGHT PANEL */}
         <div className="lg:col-span-8 space-y-6">
-           <div className="flex flex-col sm:flex-row items-center gap-4 bg-card/30 backdrop-blur-md p-4 rounded-2xl border border-border/40 shadow-lg relative overflow-hidden">
-             {/* FIXED: Shorter Button Text */}
-             <Button size="lg" onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[260px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl italic tracking-widest h-16 shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase relative z-10 border-t border-white/20">
-               <Dice5 className={cn("mr-3 h-7 w-7", isRolling && "animate-spin")} />
+           <div className="flex flex-col sm:flex-row items-center gap-4 bg-card/30 backdrop-blur-md p-4 rounded-xl border border-border/40 shadow-lg relative overflow-hidden">
+             {/* FIXED: Reduced width and height slightly */}
+             <Button size="lg" onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[200px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl italic tracking-widest h-14 shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 transition-all uppercase relative z-10 border-t border-white/20 active:scale-[0.98]">
+               <Dice5 className={cn("mr-2 h-6 w-6", isRolling && "animate-spin")} />
                {isRolling ? "Rolling..." : "RANDOMIZE"}
              </Button>
-             <div className="flex gap-3 w-full sm:w-auto z-10">
-                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none bg-background/50 hover:bg-background/80 border border-border/30"><Repeat className="mr-2 h-4 w-4" /> Clear</Button>
-                 {playerCount > 1 && <Button variant="outline" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</Button>}
+             <div className="flex gap-2 w-full sm:w-auto z-10">
+                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none h-14 bg-background/50 hover:bg-background/80 border border-border/30"><Repeat className="mr-2 h-4 w-4" /> Clear</Button>
+                 {playerCount > 1 && <Button variant="outline" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none h-14 border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</Button>}
              </div>
            </div>
 
@@ -330,7 +321,7 @@ export default function Overwatch2TacticalPicker() {
                 const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group min-h-[200px] flex flex-col backdrop-blur-md shadow-md dark:shadow-none", heroName ? "border-primary/40 dark:border-primary/30 bg-gradient-to-br from-card/80 to-background/40" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
+                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group min-h-[180px] flex flex-col backdrop-blur-md shadow-md dark:shadow-none", heroName ? "border-primary/40 dark:border-primary/30 bg-gradient-to-br from-card/80 to-background/40" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
                       {style && <div className={cn("absolute inset-0 opacity-[0.05] dark:opacity-[0.08] pointer-events-none group-hover:opacity-[0.1] transition-opacity bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
                       <div className="p-3 flex justify-between items-start z-10 gap-2">
                          <div className="flex flex-col overflow-hidden">
@@ -342,19 +333,18 @@ export default function Overwatch2TacticalPicker() {
                       <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 overflow-hidden">
                          <AnimatePresence mode="wait">
                             {heroName ? (
-                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} className="flex flex-col items-center gap-3 w-full">
+                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} className="flex flex-col items-center gap-2 w-full">
                                 <div className="relative w-full flex justify-center">
-                                    {style && <style.icon className={cn("h-12 w-12 opacity-10 dark:opacity-20 absolute -top-2 -left-2 transform -rotate-12", style.color)} />}
-                                    {/* FIXED: Text truncation and responsive size to prevent overlap */}
+                                    {style && <style.icon className={cn("h-10 w-10 opacity-10 dark:opacity-20 absolute -top-2 -left-2 transform -rotate-12", style.color)} />}
                                     <h2 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase italic drop-shadow-lg relative z-10 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent truncate w-full text-center px-1">
                                         {heroName}
                                     </h2>
                                 </div>
-                                {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full bg-background/80 backdrop-blur-md border shadow-sm shrink-0", style.color, style.border)}>{heroData?.role}</span>}
+                                {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-2 py-0.5 rounded-full bg-background/80 backdrop-blur-md border shadow-sm shrink-0", style.color, style.border)}>{heroData?.role}</span>}
                              </motion.div>
                             ) : (
                              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/30">
-                                <Activity className="h-10 w-10 mb-2 opacity-30 animate-pulse" />
+                                <Activity className="h-8 w-8 mb-2 opacity-30 animate-pulse" />
                                 <span className="text-[10px] font-black uppercase tracking-[0.25em]">Ready</span>
                              </motion.div>
                             )}
@@ -362,8 +352,8 @@ export default function Overwatch2TacticalPicker() {
                       </div>
                       {heroName && (
                         <div className="p-2 border-t border-border/20 bg-muted/10 backdrop-blur-sm z-10">
-                           <Button size="sm" variant={isCompleted ? "outline" : "secondary"} className={cn("w-full h-8 text-[10px] font-black uppercase tracking-widest transition-all", isCompleted ? "text-muted-foreground border-border/40" : "bg-foreground/90 text-background hover:bg-foreground")} onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}>
-                             {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> Undo</> : <><CheckCircle2 className="mr-2 h-3.5 w-3.5"/> Complete</>}
+                           <Button size="sm" variant={isCompleted ? "outline" : "secondary"} className={cn("w-full h-7 text-[10px] font-black uppercase tracking-widest transition-all", isCompleted ? "text-muted-foreground border-border/40" : "bg-foreground/90 text-background hover:bg-foreground")} onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}>
+                             {isCompleted ? <><Undo2 className="mr-2 h-3 w-3"/> Undo</> : <><CheckCircle2 className="mr-2 h-3 w-3"/> Complete</>}
                            </Button>
                         </div>
                       )}
@@ -375,7 +365,7 @@ export default function Overwatch2TacticalPicker() {
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
-                 <CardHeader className="bg-muted/30 pb-2 border-b border-border/40">
+                 <CardHeader className="bg-muted/30 py-2 px-4 border-b border-border/40">
                     <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-4 w-4 text-amber-500" /> Completed</CardTitle>
                  </CardHeader>
                  <CardContent className="p-4">
@@ -396,11 +386,10 @@ export default function Overwatch2TacticalPicker() {
               </Card>
 
               <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
-                 <CardHeader className="bg-muted/30 pb-2 border-b border-border/40">
+                 <CardHeader className="bg-muted/30 py-2 px-4 border-b border-border/40">
                     <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><History className="h-4 w-4 text-blue-500" /> History</CardTitle>
                  </CardHeader>
                  <CardContent className="p-4 relative">
-                    <div className="absolute inset-0 bg-grid-white/5 [mask-image:linear-gradient(0deg,transparent,black)] pointer-events-none"></div>
                     <div className="h-[150px] overflow-y-auto custom-scrollbar relative z-10">
                         <div className="space-y-1 font-mono text-[11px]">
                             {missionLog.length === 0 && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2 mt-4"><span className="text-[10px] uppercase font-bold tracking-wider">Log Empty</span></div>}
@@ -408,7 +397,7 @@ export default function Overwatch2TacticalPicker() {
                                 const role = FLAT_HERO_LIST.find(x => x.name === h)?.role;
                                 const style = role ? ROLE_STYLES[role] : null;
                                 return (
-                                    <div key={`${h}-${i}`} className="flex items-center justify-between py-1.5 border-b border-dashed border-border/40 last:border-0 hover:bg-muted/20 px-2 rounded-sm group gap-2">
+                                    <div key={`${h}-${i}`} className="flex items-center justify-between py-1 border-b border-dashed border-border/40 last:border-0 hover:bg-muted/20 px-2 rounded-sm group gap-2">
                                         <span className="font-semibold opacity-80 group-hover:opacity-100 transition-opacity truncate flex-1">
                                             <span className="text-muted-foreground/50 mr-2">[{String(i + 1).padStart(2, '0')}]</span>
                                             {h}
