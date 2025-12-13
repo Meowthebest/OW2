@@ -17,10 +17,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-// Import the utility
 import { cn } from "@/lib/utils";
 
-/* ---------- 1. CONFIG ---------- */
+/* ---------- CONFIG ---------- */
 
 const ROLE_STYLES = {
   Tank:    { color: "text-blue-500",    bg: "bg-blue-500/10",    border: "border-blue-500/20",    icon: Shield },
@@ -44,7 +43,7 @@ const FLAT_HERO_LIST = (Object.entries(HERO_DATABASE) as [RoleKey, readonly stri
 const PLAYERS_INDICES = [1, 2, 3, 4, 5] as const;
 type PlayerID = typeof PLAYERS_INDICES[number];
 
-/* ---------- 2. HOOKS ---------- */
+/* ---------- COMPONENT ---------- */
 
 function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
@@ -52,21 +51,13 @@ function useLocalStorage<T>(key: string, initialValue: T) {
       if (typeof window === "undefined") return initialValue;
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      return initialValue;
-    }
+    } catch (error) { return initialValue; }
   });
-
   useEffect(() => {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(storedValue));
-    } catch (error) {}
+    try { window.localStorage.setItem(key, JSON.stringify(storedValue)); } catch (error) {}
   }, [key, storedValue]);
-
   return [storedValue, setStoredValue] as const;
 }
-
-/* ---------- 3. COMPONENT ---------- */
 
 export default function Overwatch2TacticalPicker() {
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("ow2_theme_pref", "dark");
@@ -78,7 +69,6 @@ export default function Overwatch2TacticalPicker() {
   const [bannedHeroes, setBannedHeroes] = useLocalStorage<Record<string, boolean>>("ow2_banned_list", {});
   const [challengeMode, setChallengeMode] = useLocalStorage<boolean>("ow2_mode_challenge", true);
   const [noDuplicates, setNoDuplicates] = useLocalStorage<boolean>("ow2_mode_unique", false);
-  
   const [completedMissions, setCompletedMissions] = useLocalStorage<Record<PlayerID, Record<string, boolean>>>("ow2_missions_done", {1:{},2:{},3:{},4:{},5:{}});
   const [missionLog, setMissionLog] = useLocalStorage<string[]>("ow2_global_log", []);
 
@@ -93,16 +83,11 @@ export default function Overwatch2TacticalPicker() {
   }, [theme]);
 
   const activePlayers = useMemo(() => PLAYERS_INDICES.slice(0, playerCount), [playerCount]);
-
-  const getHeroesByRole = useCallback((r: RoleType) => 
-    r === "All" ? FLAT_HERO_LIST : FLAT_HERO_LIST.filter(h => h.role === (r as RoleKey)), 
-  []);
-
+  const getHeroesByRole = useCallback((r: RoleType) => r === "All" ? FLAT_HERO_LIST : FLAT_HERO_LIST.filter(h => h.role === (r as RoleKey)), []);
   const filteredPool = useMemo(() => {
     const list = getHeroesByRole(filterRole);
     return list.filter(h => h.name.toLowerCase().includes(searchQuery.toLowerCase()));
   }, [filterRole, searchQuery, getHeroesByRole]);
-
   const poolStats = useMemo(() => {
     const total = filteredPool.length;
     const banned = filteredPool.filter(h => bannedHeroes[h.name]).length;
@@ -120,22 +105,13 @@ export default function Overwatch2TacticalPicker() {
     activePlayers.forEach(p => {
       let pool = getHeroesByRole(playerRoles[p]).map(h => h.name);
       pool = pool.filter(n => !bannedSet.has(n));
-      if (challengeMode) {
-        const done = completedMissions[p] || {};
-        pool = pool.filter(n => !done[n]);
-      }
-      if (noDuplicates) {
-         const strictPool = pool.filter(n => !sessionBans.has(n));
-         if (strictPool.length > 0) pool = strictPool;
-      }
+      if (challengeMode) { const done = completedMissions[p] || {}; pool = pool.filter(n => !done[n]); }
+      if (noDuplicates) { const strictPool = pool.filter(n => !sessionBans.has(n)); if (strictPool.length > 0) pool = strictPool; }
       availablePools[p] = pool;
       if (pool.length > 0) hasViablePool = true;
     });
 
-    if (!hasViablePool) {
-      alert("Error: No heroes available. Please unban some heroes.");
-      return;
-    }
+    if (!hasViablePool) { alert("Error: No heroes available."); return; }
 
     setIsRolling(true);
     let ticks = 0;
@@ -143,12 +119,9 @@ export default function Overwatch2TacticalPicker() {
       ticks++;
       const draftPicks = {} as Record<PlayerID, string | null>;
       const takenThisRound = new Set<string>();
-
       activePlayers.forEach(p => {
         const pool = availablePools[p];
-        if (pool.length === 0) {
-          draftPicks[p] = null;
-        } else {
+        if (pool.length === 0) { draftPicks[p] = null; } else {
           const uniquePool = pool.filter(n => !takenThisRound.has(n));
           const finalPool = uniquePool.length > 0 ? uniquePool : pool;
           const pick = finalPool[Math.floor(Math.random() * finalPool.length)];
@@ -156,14 +129,8 @@ export default function Overwatch2TacticalPicker() {
           takenThisRound.add(pick);
         }
       });
-
       setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
-
-      if (ticks >= 10) {
-        clearInterval(timer);
-        setIsRolling(false);
-        finalizeMission(draftPicks);
-      }
+      if (ticks >= 10) { clearInterval(timer); setIsRolling(false); finalizeMission(draftPicks); }
     }, 60);
   }, [activePlayers, playerRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
 
@@ -184,136 +151,103 @@ export default function Overwatch2TacticalPicker() {
 
   const toggleBan = (name: string) => setBannedHeroes(prev => ({ ...prev, [name]: !prev[name] }));
   const completeMission = (p: PlayerID) => {
-    const hero = currentLoadout[p];
-    if (!hero) return;
+    const hero = currentLoadout[p]; if (!hero) return;
     setCompletedMissions(prev => ({ ...prev, [p]: { ...(prev[p] || {}), [hero]: true } }));
     setCurrentLoadout(prev => ({ ...prev, [p]: null }));
   };
   const undoMission = (p: PlayerID, hero: string) => {
-    setCompletedMissions(prev => {
-      const pData = { ...(prev[p] || {}) };
-      delete pData[hero];
-      return { ...prev, [p]: pData };
-    });
+    setCompletedMissions(prev => { const pData = { ...(prev[p] || {}) }; delete pData[hero]; return { ...prev, [p]: pData }; });
   };
   const markAllComplete = () => activePlayers.forEach(p => completeMission(p));
-  const factoryReset = () => {
-    if (confirm("Reset everything?")) {
-      setBannedHeroes({}); setMissionLog([]); setCompletedMissions({1:{},2:{},3:{},4:{},5:{}}); setCurrentLoadout({1:null,2:null,3:null,4:null,5:null});
-    }
-  };
+  const factoryReset = () => { if (confirm("Reset?")) { setBannedHeroes({}); setMissionLog([]); setCompletedMissions({1:{},2:{},3:{},4:{},5:{}}); setCurrentLoadout({1:null,2:null,3:null,4:null,5:null}); } };
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300 font-sans">
-      <div className="mx-auto max-w-7xl p-4 space-y-6">
+    <div className="min-h-screen bg-background transition-colors duration-300 font-sans text-sm">
+      <div className="mx-auto max-w-6xl p-3 space-y-4">
       
       {/* HEADER */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between rounded-xl bg-card/50 p-4 border shadow-sm">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between rounded-xl bg-card/50 p-3 border shadow-sm">
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase drop-shadow-sm">
-            Overwatch 2 <span className="text-foreground/70 text-xl not-italic tracking-normal normal-case">/ Randomizer</span>
+          <h1 className="text-2xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase">
+            Overwatch 2 <span className="text-foreground/70 text-lg not-italic tracking-normal normal-case">/ Randomizer</span>
           </h1>
         </motion.div>
-        
         <div className="flex flex-wrap items-center gap-2">
-           <Button variant="ghost" size="icon" onClick={toggleTheme} className="rounded-full bg-background/50 border hover:bg-accent text-foreground">
+           <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8 rounded-full border hover:bg-accent text-foreground">
               {theme === 'dark' ? <Sun className="h-4 w-4 text-yellow-500" /> : <Moon className="h-4 w-4 text-slate-700" />}
            </Button>
-           
            <div className="flex items-center gap-2 bg-background/80 border rounded-full p-1 px-3 shadow-sm">
-             <Users className="h-4 w-4 text-primary" />
              <Select value={String(playerCount)} onValueChange={(v) => setPlayerCount(Number(v))}>
-                 <SelectTrigger className="h-7 text-xs font-bold uppercase border-0 bg-transparent focus:ring-0 gap-1 w-auto">
-                    <SelectValue />
-                 </SelectTrigger>
-                 <SelectContent>
-                    {PLAYERS_INDICES.map(n => <SelectItem key={n} value={String(n)}>{n} {n === 1 ? "Player" : "Players"}</SelectItem>)}
-                 </SelectContent>
+                 <SelectTrigger className="h-6 text-xs font-bold uppercase border-0 bg-transparent focus:ring-0 gap-1 w-auto"><SelectValue /></SelectTrigger>
+                 <SelectContent>{PLAYERS_INDICES.map(n => <SelectItem key={n} value={String(n)}>{n} {n === 1 ? "Player" : "Players"}</SelectItem>)}</SelectContent>
              </Select>
              <Separator orientation="vertical" className="h-4" />
              <div className="flex items-center gap-2">
-               <label htmlFor="challenge-mode" className="text-xs font-bold uppercase cursor-pointer flex items-center gap-1 text-muted-foreground hover:text-foreground">
-                 <Trophy className="h-3 w-3 text-amber-500" /> Challenge
-               </label>
-               <Switch id="challenge-mode" checked={challengeMode} onCheckedChange={setChallengeMode} className="scale-75 data-[state=checked]:bg-amber-500" />
+               <label className="text-[10px] font-bold uppercase cursor-pointer text-muted-foreground hover:text-foreground">Challenge</label>
+               <Switch checked={challengeMode} onCheckedChange={setChallengeMode} className="scale-75 data-[state=checked]:bg-amber-500" />
              </div>
            </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* LEFT PANEL */}
         <div className="lg:col-span-4 space-y-4">
           <Card className="border-border/40 bg-card/30 backdrop-blur-md">
-            <CardHeader className="bg-muted/30 py-3 px-4 border-b border-border/40">
-              <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                <Filter className="h-4 w-4 text-primary" /> Setup
+            <CardHeader className="bg-muted/30 py-2 px-3 border-b border-border/40">
+              <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                <Filter className="h-3 w-3 text-primary" /> Setup
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 p-4">
+            <CardContent className="space-y-3 p-3">
               <div className="space-y-2">
                  {activePlayers.map(p => (
-                   <div key={p} className="flex items-center gap-2">
-                      <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-md bg-background/80 text-xs font-black shadow-sm border-border/50 shrink-0">{p}</Badge>
-                      <Input className="h-8 text-xs font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30 min-w-0" placeholder={`Player ${p}`} value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
+                   <div key={p} className="flex items-center gap-1">
+                      <Badge variant="outline" className="h-7 w-7 flex items-center justify-center rounded-md bg-background/80 text-[10px] font-black shadow-sm border-border/50 shrink-0">{p}</Badge>
+                      <Input className="h-7 text-xs font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30 min-w-0" value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
                       <Select value={playerRoles[p]} onValueChange={v => setPlayerRoles(prev => ({...prev, [p]: v as RoleType}))}>
-                        <SelectTrigger className="h-8 w-[95px] text-[10px] font-bold uppercase tracking-wider bg-background/50 border-border/50 shrink-0"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-7 w-[90px] text-[9px] font-bold uppercase tracking-wider bg-background/50 border-border/50 shrink-0"><SelectValue /></SelectTrigger>
                         <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
                       </Select>
                    </div>
                  ))}
               </div>
               <Separator className="bg-border/60" />
-              <div className="space-y-3">
-                 <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
-                       <Ban className="h-3 w-3 text-red-500" /> Hero Bans ({poolStats.banned})
-                    </label>
-                 </div>
+              <div className="space-y-2">
+                 <div className="flex items-center justify-between"><label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned})</label></div>
                  <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 h-7 bg-muted/40 p-0.5">
-                       {ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[9px] font-bold uppercase data-[state=active]:bg-background data-[state=active]:text-primary">{r}</TabsTrigger>)}
-                    </TabsList>
+                    <TabsList className="grid w-full grid-cols-4 h-6 bg-muted/40 p-0.5">{ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[9px] font-bold uppercase">{r}</TabsTrigger>)}</TabsList>
                  </Tabs>
                  <Input placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-7 text-xs bg-background/40 border-border/40" />
-                 <div className="h-[200px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
-                    <div className="grid grid-cols-1 min-[350px]:grid-cols-2 gap-1">
+                 <div className="h-[180px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
+                    <div className="grid grid-cols-2 gap-1">
                        {filteredPool.map((h) => (
-                         <div key={h.name} className={cn("flex items-center gap-2 rounded-md px-2 py-1 transition-all cursor-pointer select-none group border border-transparent", bannedHeroes[h.name] ? "bg-destructive/10 border-destructive/20 opacity-80" : "hover:bg-background/80 hover:border-border/30 hover:shadow-sm")} onClick={() => toggleBan(h.name)}>
-                            <Checkbox id={`ban-${h.name}`} checked={!!bannedHeroes[h.name]} className="h-3 w-3 rounded-sm data-[state=checked]:bg-destructive data-[state=checked]:border-destructive shrink-0" />
-                            <span className={cn("text-[11px] flex-1 truncate font-medium", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90")}>{h.name}</span>
-                            <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/10 shrink-0", ROLE_STYLES[h.role].bg.replace("/10", ""))} />
+                         <div key={h.name} className={cn("flex items-center gap-1 rounded-md px-1.5 py-1 transition-all cursor-pointer select-none border border-transparent", bannedHeroes[h.name] ? "bg-destructive/10 border-destructive/20 opacity-80" : "hover:bg-background/80 hover:border-border/30")} onClick={() => toggleBan(h.name)}>
+                            <Checkbox checked={!!bannedHeroes[h.name]} className="h-3 w-3 rounded-sm" />
+                            <span className={cn("text-[10px] flex-1 truncate font-medium", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90")}>{h.name}</span>
                          </div>
                        ))}
                     </div>
                  </div>
-                 <div className={cn("flex items-center gap-2 rounded-md p-1.5 border transition-colors", noDuplicates ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/10 border-border/30")}>
-                    <Switch id="unique-mode" checked={noDuplicates} onCheckedChange={setNoDuplicates} className="scale-75 data-[state=checked]:bg-amber-500" />
-                    <label htmlFor="unique-mode" className={cn("text-[10px] font-bold uppercase tracking-wide cursor-pointer transition-colors", noDuplicates ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground")}>No Repeats</label>
-                 </div>
               </div>
-              <Button variant="outline" className="w-full h-8 text-[10px] text-muted-foreground hover:text-destructive hover:bg-destructive/10 uppercase tracking-widest font-bold border-border/40" onClick={factoryReset}>
-                 <Trash2 className="mr-2 h-3 w-3" /> Reset
-              </Button>
+              <Button variant="outline" className="w-full h-7 text-[10px] text-muted-foreground hover:text-destructive uppercase tracking-widest font-bold border-border/40" onClick={factoryReset}><Trash2 className="mr-2 h-3 w-3" /> Reset</Button>
             </CardContent>
           </Card>
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="lg:col-span-8 space-y-6">
-           <div className="flex flex-col sm:flex-row items-center gap-4 bg-card/30 backdrop-blur-md p-4 rounded-xl border border-border/40 shadow-lg relative overflow-hidden">
-             {/* FIXED: Reduced width and height slightly */}
-             <Button size="lg" onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[200px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl italic tracking-widest h-14 shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 transition-all uppercase relative z-10 border-t border-white/20 active:scale-[0.98]">
-               <Dice5 className={cn("mr-2 h-6 w-6", isRolling && "animate-spin")} />
-               {isRolling ? "Rolling..." : "RANDOMIZE"}
+        <div className="lg:col-span-8 space-y-4">
+           <div className="flex flex-col sm:flex-row items-center gap-3 bg-card/30 backdrop-blur-md p-3 rounded-xl border border-border/40 shadow-lg relative overflow-hidden">
+             <Button size="lg" onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[200px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-lg italic tracking-widest h-12 shadow-xl shadow-orange-500/20 uppercase relative z-10 border-t border-white/20 active:scale-[0.98]">
+               <Dice5 className={cn("mr-2 h-5 w-5", isRolling && "animate-spin")} /> {isRolling ? "Rolling..." : "RANDOMIZE"}
              </Button>
              <div className="flex gap-2 w-full sm:w-auto z-10">
-                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none h-14 bg-background/50 hover:bg-background/80 border border-border/30"><Repeat className="mr-2 h-4 w-4" /> Clear</Button>
-                 {playerCount > 1 && <Button variant="outline" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none h-14 border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</Button>}
+                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none h-12 bg-background/50 hover:bg-background/80 border border-border/30"><Repeat className="mr-2 h-4 w-4" /> Clear</Button>
+                 {playerCount > 1 && <Button variant="outline" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none h-12 border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</Button>}
              </div>
            </div>
 
-           <div className={cn("grid gap-4", playerCount === 1 ? "grid-cols-1 max-w-md mx-auto" : playerCount === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
+           <div className={cn("grid gap-3", playerCount === 1 ? "grid-cols-1 max-w-md mx-auto" : playerCount === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
               {activePlayers.map(p => {
                 const heroName = currentLoadout[p];
                 const heroData = heroName ? FLAT_HERO_LIST.find(h => h.name === heroName) : null;
@@ -321,31 +255,29 @@ export default function Overwatch2TacticalPicker() {
                 const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group min-h-[180px] flex flex-col backdrop-blur-md shadow-md dark:shadow-none", heroName ? "border-primary/40 dark:border-primary/30 bg-gradient-to-br from-card/80 to-background/40" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
-                      {style && <div className={cn("absolute inset-0 opacity-[0.05] dark:opacity-[0.08] pointer-events-none group-hover:opacity-[0.1] transition-opacity bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
-                      <div className="p-3 flex justify-between items-start z-10 gap-2">
+                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group min-h-[160px] flex flex-col backdrop-blur-md shadow-md dark:shadow-none", heroName ? "border-primary/40 dark:border-primary/30 bg-gradient-to-br from-card/80 to-background/40" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
+                      {style && <div className={cn("absolute inset-0 opacity-[0.05] dark:opacity-[0.08] pointer-events-none transition-opacity bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
+                      <div className="p-2 flex justify-between items-start z-10 gap-2">
                          <div className="flex flex-col overflow-hidden">
                             <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70 truncate">Player {p}</span>
-                            <span className="text-xs font-bold text-foreground truncate">{playerNames[p]}</span>
+                            <span className="text-[10px] font-bold text-foreground truncate">{playerNames[p]}</span>
                          </div>
                          <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-background/50 backdrop-blur-sm border-border/40 text-muted-foreground shrink-0">{playerRoles[p]}</Badge>
                       </div>
-                      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 overflow-hidden">
+                      <div className="flex-1 flex flex-col items-center justify-center p-3 relative z-10 overflow-hidden">
                          <AnimatePresence mode="wait">
                             {heroName ? (
-                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} className="flex flex-col items-center gap-2 w-full">
+                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-1 w-full">
                                 <div className="relative w-full flex justify-center">
-                                    {style && <style.icon className={cn("h-10 w-10 opacity-10 dark:opacity-20 absolute -top-2 -left-2 transform -rotate-12", style.color)} />}
-                                    <h2 className="text-2xl sm:text-3xl font-black tracking-tighter uppercase italic drop-shadow-lg relative z-10 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent truncate w-full text-center px-1">
-                                        {heroName}
-                                    </h2>
+                                    {style && <style.icon className={cn("h-8 w-8 opacity-10 dark:opacity-20 absolute -top-1 -left-1 transform -rotate-12", style.color)} />}
+                                    <h2 className="text-xl sm:text-2xl font-black tracking-tighter uppercase italic drop-shadow-lg relative z-10 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent truncate w-full text-center px-1">{heroName}</h2>
                                 </div>
                                 {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-2 py-0.5 rounded-full bg-background/80 backdrop-blur-md border shadow-sm shrink-0", style.color, style.border)}>{heroData?.role}</span>}
                              </motion.div>
                             ) : (
                              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/30">
-                                <Activity className="h-8 w-8 mb-2 opacity-30 animate-pulse" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em]">Ready</span>
+                                <Activity className="h-6 w-6 mb-1 opacity-30 animate-pulse" />
+                                <span className="text-[9px] font-black uppercase tracking-[0.25em]">Ready</span>
                              </motion.div>
                             )}
                          </AnimatePresence>
@@ -363,48 +295,29 @@ export default function Overwatch2TacticalPicker() {
               })}
            </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
-                 <CardHeader className="bg-muted/30 py-2 px-4 border-b border-border/40">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-4 w-4 text-amber-500" /> Completed</CardTitle>
-                 </CardHeader>
-                 <CardContent className="p-4">
-                    <div className="h-[150px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+                 <CardHeader className="bg-muted/30 py-2 px-3 border-b border-border/40"><CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-3 w-3 text-amber-500" /> Completed</CardTitle></CardHeader>
+                 <CardContent className="p-3">
+                    <div className="h-[120px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                         {activePlayers.map(p => {
-                            const completed = Object.keys(completedMissions[p] || {});
-                            if(completed.length === 0) return null;
-                            return (
-                                <div key={p} className="flex flex-col gap-1">
-                                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider pl-1 opacity-70">{playerNames[p]}</span>
-                                    <div className="flex flex-wrap gap-1.5">{completed.map(c => <Badge key={c} variant="secondary" className="text-[9px] px-2 h-5 cursor-pointer hover:bg-destructive hover:text-white transition-colors border border-border/30 bg-background/50" onClick={() => undoMission(p, c)}>{c}</Badge>)}</div>
-                                </div>
-                            )
+                            const completed = Object.keys(completedMissions[p] || {}); if(completed.length === 0) return null;
+                            return ( <div key={p} className="flex flex-col gap-1"><span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider pl-1 opacity-70">{playerNames[p]}</span><div className="flex flex-wrap gap-1.5">{completed.map(c => <Badge key={c} variant="secondary" className="text-[9px] px-1.5 h-4 cursor-pointer hover:bg-destructive hover:text-white transition-colors border border-border/30 bg-background/50" onClick={() => undoMission(p, c)}>{c}</Badge>)}</div></div> )
                         })}
-                        {activePlayers.every(p => Object.keys(completedMissions[p] || {}).length === 0) && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2"><AlertCircle className="h-6 w-6 opacity-40" /><span className="text-[10px] uppercase font-bold tracking-wider">No Data</span></div>}
+                        {activePlayers.every(p => Object.keys(completedMissions[p] || {}).length === 0) && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2"><AlertCircle className="h-5 w-5 opacity-40" /><span className="text-[9px] uppercase font-bold tracking-wider">No Data</span></div>}
                     </div>
                  </CardContent>
               </Card>
-
               <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
-                 <CardHeader className="bg-muted/30 py-2 px-4 border-b border-border/40">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><History className="h-4 w-4 text-blue-500" /> History</CardTitle>
-                 </CardHeader>
-                 <CardContent className="p-4 relative">
-                    <div className="h-[150px] overflow-y-auto custom-scrollbar relative z-10">
-                        <div className="space-y-1 font-mono text-[11px]">
-                            {missionLog.length === 0 && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2 mt-4"><span className="text-[10px] uppercase font-bold tracking-wider">Log Empty</span></div>}
+                 <CardHeader className="bg-muted/30 py-2 px-3 border-b border-border/40"><CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><History className="h-3 w-3 text-blue-500" /> History</CardTitle></CardHeader>
+                 <CardContent className="p-3 relative">
+                    <div className="h-[120px] overflow-y-auto custom-scrollbar relative z-10">
+                        <div className="space-y-1 font-mono text-[10px]">
+                            {missionLog.length === 0 && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2 mt-4"><span className="text-[9px] uppercase font-bold tracking-wider">Log Empty</span></div>}
                             {missionLog.map((h, i) => {
                                 const role = FLAT_HERO_LIST.find(x => x.name === h)?.role;
                                 const style = role ? ROLE_STYLES[role] : null;
-                                return (
-                                    <div key={`${h}-${i}`} className="flex items-center justify-between py-1 border-b border-dashed border-border/40 last:border-0 hover:bg-muted/20 px-2 rounded-sm group gap-2">
-                                        <span className="font-semibold opacity-80 group-hover:opacity-100 transition-opacity truncate flex-1">
-                                            <span className="text-muted-foreground/50 mr-2">[{String(i + 1).padStart(2, '0')}]</span>
-                                            {h}
-                                        </span>
-                                        {style && <span className={cn("text-[9px] font-black uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity shrink-0", style.color)}>{role}</span>}
-                                    </div>
-                                );
+                                return ( <div key={`${h}-${i}`} className="flex items-center justify-between py-1 border-b border-dashed border-border/40 last:border-0 hover:bg-muted/20 px-2 rounded-sm group gap-2"><span className="font-semibold opacity-80 group-hover:opacity-100 transition-opacity truncate flex-1"><span className="text-muted-foreground/50 mr-2">[{String(i + 1).padStart(2, '0')}]</span>{h}</span>{style && <span className={cn("text-[9px] font-black uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity shrink-0", style.color)}>{role}</span>}</div> );
                             })}
                         </div>
                     </div>
