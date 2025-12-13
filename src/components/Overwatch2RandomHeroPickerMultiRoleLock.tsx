@@ -75,7 +75,7 @@ export default function Overwatch2TacticalPicker() {
   
   // --- Persistent Settings ---
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("ow2_theme_pref", "dark");
-  const [playerCount, setPlayerCount] = useLocalStorage<number>("ow2_player_count", 2); // Renamed from squadSize
+  const [playerCount, setPlayerCount] = useLocalStorage<number>("ow2_player_count", 2);
   const [playerRoles, setPlayerRoles] = useLocalStorage<Record<PlayerID, RoleType>>("ow2_player_roles", { 1:"All", 2:"All", 3:"All", 4:"All", 5:"All" });
   const [playerNames, setPlayerNames] = useLocalStorage<Record<PlayerID, string>>("ow2_player_names", { 1:"Player 1", 2:"Player 2", 3:"Player 3", 4:"Player 4", 5:"Player 5" });
   
@@ -126,23 +126,18 @@ export default function Overwatch2TacticalPicker() {
     const availablePools: Record<PlayerID, string[]> = {} as any;
     let hasViablePool = false;
     
-    // Create sets for filtering
     const sessionBans = new Set(noDuplicates ? missionLog : []); 
     const bannedSet = new Set(Object.keys(bannedHeroes).filter(k => bannedHeroes[k]));
 
     activePlayers.forEach(p => {
       let pool = getHeroesByRole(playerRoles[p]).map(h => h.name);
-      
-      // 1. Remove BANNED heroes (This handles your request to filter out 4 selected bans)
       pool = pool.filter(n => !bannedSet.has(n));
       
-      // 2. Remove Completed (if challenge mode)
       if (challengeMode) {
         const done = completedMissions[p] || {};
         pool = pool.filter(n => !done[n]);
       }
       
-      // 3. Remove Session Duplicates
       if (noDuplicates) {
          const strictPool = pool.filter(n => !sessionBans.has(n));
          if (strictPool.length > 0) pool = strictPool;
@@ -231,7 +226,7 @@ export default function Overwatch2TacticalPicker() {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between rounded-2xl bg-card/50 p-4 backdrop-blur-sm border shadow-sm">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <h1 className="text-4xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase drop-shadow-sm">
-            Overwatch 2 <span className="text-foreground/70 text-2xl not-italic tracking-normal normal-case">/ Randomizer</span>
+            Overwatch 2 <span className="text-foreground/70 text-2xl not-italic tracking-normal normal-case">/ Tactical Link</span>
           </h1>
         </motion.div>
         
@@ -281,10 +276,10 @@ export default function Overwatch2TacticalPicker() {
               <div className="space-y-3">
                  {activePlayers.map(p => (
                    <div key={p} className="flex items-center gap-2">
-                      <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-md bg-background/80 backdrop-blur-md text-xs font-black shadow-sm border-border/50">{p}</Badge>
-                      <Input className="h-8 text-sm font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30" placeholder={`Player ${p}`} value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
+                      <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-md bg-background/80 backdrop-blur-md text-xs font-black shadow-sm border-border/50 shrink-0">{p}</Badge>
+                      <Input className="h-8 text-sm font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30 min-w-0" placeholder={`Player ${p}`} value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
                       <Select value={playerRoles[p]} onValueChange={v => setPlayerRoles(prev => ({...prev, [p]: v as RoleType}))}>
-                        <SelectTrigger className="h-8 w-[105px] text-[10px] font-bold uppercase tracking-wider bg-background/50 border-border/50"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="h-8 w-[105px] text-[10px] font-bold uppercase tracking-wider bg-background/50 border-border/50 shrink-0"><SelectValue /></SelectTrigger>
                         <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
                       </Select>
                    </div>
@@ -303,7 +298,7 @@ export default function Overwatch2TacticalPicker() {
                  </div>
                  
                  <p className="text-[10px] text-muted-foreground italic">
-                    Select the 4 heroes banned in-game to exclude them.
+                    Select heroes to ban from the roll.
                  </p>
 
                  <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
@@ -312,11 +307,11 @@ export default function Overwatch2TacticalPicker() {
                     </TabsList>
                  </Tabs>
 
-                 <Input placeholder="Search heroes to ban..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-8 text-xs bg-background/40 border-border/40 focus-visible:ring-primary/30" />
+                 <Input placeholder="Search heroes..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-8 text-xs bg-background/40 border-border/40 focus-visible:ring-primary/30" />
                  
                  {/* HERO LIST */}
                  <div className="h-[220px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
-                    <div className="grid grid-cols-2 gap-1">
+                    <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-1">
                        {filteredPool.map((h) => (
                          <div key={h.name} 
                               className={cn("flex items-center gap-2 rounded-md px-2 py-1.5 transition-all cursor-pointer select-none group border border-transparent", 
@@ -324,9 +319,9 @@ export default function Overwatch2TacticalPicker() {
                               )} 
                               onClick={() => toggleBan(h.name)}
                          >
-                            <Checkbox id={`ban-${h.name}`} checked={!!bannedHeroes[h.name]} className="h-3.5 w-3.5 rounded-sm data-[state=checked]:bg-destructive data-[state=checked]:border-destructive" />
+                            <Checkbox id={`ban-${h.name}`} checked={!!bannedHeroes[h.name]} className="h-3.5 w-3.5 rounded-sm data-[state=checked]:bg-destructive data-[state=checked]:border-destructive shrink-0" />
                             <span className={cn("text-xs flex-1 truncate font-semibold", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90 group-hover:text-foreground")}>{h.name}</span>
-                            <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/10", ROLE_STYLES[h.role].bg.replace("/10", ""))} />
+                            <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/10 shrink-0", ROLE_STYLES[h.role].bg.replace("/10", ""))} />
                          </div>
                        ))}
                        {filteredPool.length === 0 && <div className="col-span-2 text-center text-xs text-muted-foreground py-8 opacity-50">No matching heroes.</div>}
@@ -349,19 +344,18 @@ export default function Overwatch2TacticalPicker() {
         {/* 3. RIGHT PANEL: ACTION */}
         <div className="lg:col-span-8 space-y-6">
            
-           {/* MAIN BUTTONS - Fixed Layout */}
+           {/* MAIN BUTTONS */}
            <div className="flex flex-col sm:flex-row items-center gap-4 bg-card/30 backdrop-blur-md p-4 rounded-2xl border border-border/40 shadow-lg relative overflow-hidden">
              
-             {/* THE BIG ORANGE BUTTON */}
+             {/* ORANGE BUTTON - Shorter Text */}
              <Button 
                 size="lg" 
                 onClick={generateLoadout} 
                 disabled={isRolling} 
-                // Hardcoded HEX orange to ensure it works even if Tailwind config is weird
                 className="w-full sm:w-auto min-w-[260px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl italic tracking-widest h-16 shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase relative z-10 border-t border-white/20"
              >
                <Dice5 className={cn("mr-3 h-7 w-7", isRolling && "animate-spin")} />
-               {isRolling ? "Rolling..." : "RANDOMIZE"}
+               {isRolling ? "Rolling..." : "DEPLOY SQUAD"}
              </Button>
 
              <div className="flex gap-3 w-full sm:w-auto z-10">
@@ -386,22 +380,27 @@ export default function Overwatch2TacticalPicker() {
                 return (
                   <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group min-h-[200px] flex flex-col backdrop-blur-md shadow-md dark:shadow-none", heroName ? "border-primary/40 dark:border-primary/30 bg-gradient-to-br from-card/80 to-background/40" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
                       {style && <div className={cn("absolute inset-0 opacity-[0.05] dark:opacity-[0.08] pointer-events-none group-hover:opacity-[0.1] transition-opacity bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
-                      <div className="p-3 flex justify-between items-start z-10">
-                         <div className="flex flex-col">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Player {p}</span>
-                            <span className="text-xs font-bold text-foreground">{playerNames[p]}</span>
+                      
+                      {/* Header with truncated name */}
+                      <div className="p-3 flex justify-between items-start z-10 gap-2">
+                         <div className="flex flex-col overflow-hidden">
+                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70 truncate">Player {p}</span>
+                            <span className="text-xs font-bold text-foreground truncate">{playerNames[p]}</span>
                          </div>
-                         <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-background/50 backdrop-blur-sm border-border/40 text-muted-foreground">{playerRoles[p]}</Badge>
+                         <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-background/50 backdrop-blur-sm border-border/40 text-muted-foreground shrink-0">{playerRoles[p]}</Badge>
                       </div>
-                      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
+                      
+                      {/* Body with responsive/truncated hero name */}
+                      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 overflow-hidden">
                          <AnimatePresence mode="wait">
                             {heroName ? (
-                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} className="flex flex-col items-center gap-3">
-                                <div className="relative">
+                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }} className="flex flex-col items-center gap-3 w-full">
+                                <div className="relative w-full flex justify-center">
                                     {style && <style.icon className={cn("h-12 w-12 opacity-10 dark:opacity-20 absolute -top-2 -left-2 transform -rotate-12", style.color)} />}
-                                    <h2 className="text-3xl sm:text-4xl font-black tracking-tighter uppercase italic drop-shadow-lg relative z-10 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent">{heroName}</h2>
+                                    {/* Responsive font size and truncation for long names */}
+                                    <h2 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tighter uppercase italic drop-shadow-lg relative z-10 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent truncate max-w-full px-2">{heroName}</h2>
                                 </div>
-                                {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full bg-background/80 backdrop-blur-md border shadow-sm", style.color, style.border)}>{heroData?.role}</span>}
+                                {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full bg-background/80 backdrop-blur-md border shadow-sm shrink-0", style.color, style.border)}>{heroData?.role}</span>}
                              </motion.div>
                             ) : (
                              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/30">
@@ -459,9 +458,13 @@ export default function Overwatch2TacticalPicker() {
                                 const role = FLAT_HERO_LIST.find(x => x.name === h)?.role;
                                 const style = role ? ROLE_STYLES[role] : null;
                                 return (
-                                    <div key={`${h}-${i}`} className="flex items-center justify-between py-1.5 border-b border-dashed border-border/40 last:border-0 hover:bg-muted/20 px-2 rounded-sm group">
-                                        <span className="font-semibold opacity-80 group-hover:opacity-100 transition-opacity"><span className="text-muted-foreground/50 mr-2">[{String(i + 1).padStart(2, '0')}]</span> {h}</span>
-                                        {style && <span className={cn("text-[9px] font-black uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity", style.color)}>{role}</span>}
+                                    // Added gap, truncate and flex-1 to handle long names in history
+                                    <div key={`${h}-${i}`} className="flex items-center justify-between py-1.5 border-b border-dashed border-border/40 last:border-0 hover:bg-muted/20 px-2 rounded-sm group gap-2">
+                                        <span className="font-semibold opacity-80 group-hover:opacity-100 transition-opacity truncate flex-1">
+                                            <span className="text-muted-foreground/50 mr-2">[{String(i + 1).padStart(2, '0')}]</span>
+                                            {h}
+                                        </span>
+                                        {style && <span className={cn("text-[9px] font-black uppercase tracking-wider opacity-50 group-hover:opacity-100 transition-opacity shrink-0", style.color)}>{role}</span>}
                                     </div>
                                 );
                             })}
