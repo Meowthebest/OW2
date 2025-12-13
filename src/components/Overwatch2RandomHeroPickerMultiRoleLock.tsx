@@ -6,7 +6,8 @@ import {
   Shuffle, Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart
 } from "lucide-react";
-// Ensure you have these shadcn/ui components installed or available:
+
+// Ensure you have these shadcn/ui components available:
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,13 +18,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-// If you don't have clsx/tailwind-merge installed, run: npm install clsx tailwind-merge
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-/* ---------- Utility Helper (Fixes the missing import) ---------- */
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+/* ---------- Utility Helper (No external dependencies) ---------- */
+// This replaces clsx/tailwind-merge so you don't need to npm install anything.
+function cn(...classes: (string | undefined | null | false)[]) {
+  return classes.filter(Boolean).join(" ");
 }
 
 /* ---------- Configuration & Data ---------- */
@@ -413,7 +411,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                  </div>
               </div>
 
-              {/* FIXED BUTTON: Removed duplicate variant, kept ghost */}
+              {/* Reset Button (Fixed duplicate variant) */}
               <Button variant="ghost" className="w-full h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50" onClick={resetAllFilters}>
                  <Trash2 className="mr-2 h-3 w-3" /> Reset Everything
               </Button>
