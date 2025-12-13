@@ -8,27 +8,57 @@
   :root {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
+    
+    --card: 217 33% 17%;
     --card-foreground: 210 40% 98%;
+ 
     --popover: 222 47% 11%;
     --popover-foreground: 210 40% 98%;
-    --primary: 25 100% 50%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
+ 
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+ 
+    --secondary: 217 33% 17%;
     --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+ 
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+ 
+    --accent: 217 33% 17%;
     --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
+ 
+    --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 25 100% 60%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 25 95% 53%;
+ 
     --radius: 0.5rem;
   }
-  * { @apply border-border; }
-  html { font-family: 'Inter', sans-serif; }
-  h1, h2, h3, h4, h5, h6 { font-family: 'Big Shoulders Display', sans-serif; letter-spacing: 0.02em; }
-  body { @apply bg-background text-foreground antialiased; }
+ 
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    /* ... same colors for consistency in dark mode ... */
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Big Shoulders Display', sans-serif;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* Fix z-index for dropdowns */
+[data-radix-popper-content-wrapper] {
+  z-index: 50 !important;
 }
