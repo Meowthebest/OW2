@@ -1,12 +1,13 @@
 // src/components/Overwatch2RandomHeroPickerMultiRoleLock.tsx
 
-import { useEffect, useMemo, useState, useCallback, useRef } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Shuffle, Dice5, Filter, Trash2, History, Repeat,
-  CheckCircle2, Undo2, Trophy, Users, User, Shield, Sword, Heart
+  CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+// Ensure you have these shadcn/ui components installed or available:
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -15,7 +16,15 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { cn } from "@/lib/utils"; // Assuming you have a cn utility, otherwise use classnames or template literals
+
+// If you don't have clsx/tailwind-merge installed, run: npm install clsx tailwind-merge
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+/* ---------- Utility Helper (Fixes the missing import) ---------- */
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 /* ---------- Configuration & Data ---------- */
 
@@ -47,6 +56,7 @@ type PlayerNum = typeof PLAYERS[number];
 function usePersistentState<T>(key: string, initialValue: T) {
   const [state, setState] = useState<T>(() => {
     try {
+      if (typeof window === "undefined") return initialValue;
       const item = localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
@@ -403,7 +413,8 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                  </div>
               </div>
 
-              <Button variant="destructive" variant="ghost" className="w-full h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50" onClick={resetAllFilters}>
+              {/* FIXED BUTTON: Removed duplicate variant, kept ghost */}
+              <Button variant="ghost" className="w-full h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50" onClick={resetAllFilters}>
                  <Trash2 className="mr-2 h-3 w-3" /> Reset Everything
               </Button>
 
