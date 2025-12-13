@@ -149,7 +149,20 @@ export default function Overwatch2TacticalPicker() {
     });
   };
 
-  const toggleBan = (name: string) => setBannedHeroes(prev => ({ ...prev, [name]: !prev[name] }));
+  // --- CHANGED LOGIC HERE ---
+  const toggleBan = (name: string) => {
+    const isBanned = !!bannedHeroes[name];
+    const currentCount = Object.values(bannedHeroes).filter(Boolean).length;
+    
+    // Only check limit if adding a new ban
+    if (!isBanned && currentCount >= 4) {
+      alert("Ban limit reached (Max 4).");
+      return; 
+    }
+    setBannedHeroes(prev => ({ ...prev, [name]: !prev[name] }));
+  };
+  // --------------------------
+
   const completeMission = (p: PlayerID) => {
     const hero = currentLoadout[p]; if (!hero) return;
     setCompletedMissions(prev => ({ ...prev, [p]: { ...(prev[p] || {}), [hero]: true } }));
@@ -214,7 +227,7 @@ export default function Overwatch2TacticalPicker() {
               </div>
               <Separator className="bg-border/60" />
               <div className="space-y-2">
-                 <div className="flex items-center justify-between"><label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned})</label></div>
+                 <div className="flex items-center justify-between"><label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned} / 4)</label></div>
                  <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
                     <TabsList className="grid w-full grid-cols-4 h-6 bg-muted/40 p-0.5">{ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[9px] font-bold uppercase">{r}</TabsTrigger>)}</TabsList>
                  </Tabs>
