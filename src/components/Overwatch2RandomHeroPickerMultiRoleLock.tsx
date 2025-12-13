@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, Terminal
+  Activity, AlertCircle, Sun, Moon, Ban
 } from "lucide-react";
 
 // Shadcn UI Components
@@ -46,7 +46,6 @@ type PlayerID = typeof PLAYERS_INDICES[number];
 
 /* ---------- 2. HOOKS ---------- */
 
-// Hook for localStorage persistence
 function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
     try {
@@ -76,9 +75,9 @@ export default function Overwatch2TacticalPicker() {
   
   // --- Persistent Settings ---
   const [theme, setTheme] = useLocalStorage<'light' | 'dark'>("ow2_theme_pref", "dark");
-  const [squadSize, setSquadSize] = useLocalStorage<number>("ow2_squad_size", 2);
-  const [squadRoles, setSquadRoles] = useLocalStorage<Record<PlayerID, RoleType>>("ow2_squad_roles", { 1:"All", 2:"All", 3:"All", 4:"All", 5:"All" });
-  const [agentNames, setAgentNames] = useLocalStorage<Record<PlayerID, string>>("ow2_agent_names", { 1:"Agent 1", 2:"Agent 2", 3:"Agent 3", 4:"Agent 4", 5:"Agent 5" });
+  const [playerCount, setPlayerCount] = useLocalStorage<number>("ow2_player_count", 2); // Renamed from squadSize
+  const [playerRoles, setPlayerRoles] = useLocalStorage<Record<PlayerID, RoleType>>("ow2_player_roles", { 1:"All", 2:"All", 3:"All", 4:"All", 5:"All" });
+  const [playerNames, setPlayerNames] = useLocalStorage<Record<PlayerID, string>>("ow2_player_names", { 1:"Player 1", 2:"Player 2", 3:"Player 3", 4:"Player 4", 5:"Player 5" });
   
   const [filterRole, setFilterRole] = useLocalStorage<RoleType>("ow2_filter_role", "All");
   const [bannedHeroes, setBannedHeroes] = useLocalStorage<Record<string, boolean>>("ow2_banned_list", {});
@@ -92,10 +91,9 @@ export default function Overwatch2TacticalPicker() {
   // --- Live State ---
   const [searchQuery, setSearchQuery] = useState("");
   const [currentLoadout, setCurrentLoadout] = useState<Record<PlayerID, string | null>>({1:null, 2:null, 3:null, 4:null, 5:null});
-  const [isComputing, setIsComputing] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
 
   // --- Effects ---
-  // Apply theme class to html element
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
@@ -103,7 +101,7 @@ export default function Overwatch2TacticalPicker() {
   }, [theme]);
 
   // --- Derived Data ---
-  const activeSquad = useMemo(() => PLAYERS_INDICES.slice(0, squadSize), [squadSize]);
+  const activePlayers = useMemo(() => PLAYERS_INDICES.slice(0, playerCount), [playerCount]);
 
   const getHeroesByRole = useCallback((r: RoleType) => 
     r === "All" ? FLAT_HERO_LIST : FLAT_HERO_LIST.filter(h => h.role === (r as RoleKey)), 
@@ -127,37 +125,46 @@ export default function Overwatch2TacticalPicker() {
   const generateLoadout = useCallback(() => {
     const availablePools: Record<PlayerID, string[]> = {} as any;
     let hasViablePool = false;
+    
+    // Create sets for filtering
     const sessionBans = new Set(noDuplicates ? missionLog : []); 
     const bannedSet = new Set(Object.keys(bannedHeroes).filter(k => bannedHeroes[k]));
 
-    activeSquad.forEach(p => {
-      let pool = getHeroesByRole(squadRoles[p]).map(h => h.name);
+    activePlayers.forEach(p => {
+      let pool = getHeroesByRole(playerRoles[p]).map(h => h.name);
+      
+      // 1. Remove BANNED heroes (This handles your request to filter out 4 selected bans)
       pool = pool.filter(n => !bannedSet.has(n));
+      
+      // 2. Remove Completed (if challenge mode)
       if (challengeMode) {
         const done = completedMissions[p] || {};
         pool = pool.filter(n => !done[n]);
       }
+      
+      // 3. Remove Session Duplicates
       if (noDuplicates) {
          const strictPool = pool.filter(n => !sessionBans.has(n));
          if (strictPool.length > 0) pool = strictPool;
       }
+      
       availablePools[p] = pool;
       if (pool.length > 0) hasViablePool = true;
     });
 
     if (!hasViablePool) {
-      alert("Tactical Error: Pool empty due to constraints.");
+      alert("Error: No heroes available. Please unban some heroes or reset filters.");
       return;
     }
 
-    setIsComputing(true);
+    setIsRolling(true);
     let ticks = 0;
     const timer = setInterval(() => {
       ticks++;
       const draftPicks = {} as Record<PlayerID, string | null>;
       const takenThisRound = new Set<string>();
 
-      activeSquad.forEach(p => {
+      activePlayers.forEach(p => {
         const pool = availablePools[p];
         if (pool.length === 0) {
           draftPicks[p] = null;
@@ -172,18 +179,18 @@ export default function Overwatch2TacticalPicker() {
 
       setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
 
-      if (ticks >= 12) {
+      if (ticks >= 10) {
         clearInterval(timer);
-        setIsComputing(false);
+        setIsRolling(false);
         finalizeMission(draftPicks);
       }
     }, 60);
-  }, [activeSquad, squadRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
+  }, [activePlayers, playerRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
 
   const finalizeMission = (picks: Record<PlayerID, string | null>) => {
     setMissionLog(prev => {
       const nextLog = [...prev];
-      activeSquad.forEach(p => {
+      activePlayers.forEach(p => {
         const hero = picks[p];
         if (hero) {
            const idx = nextLog.indexOf(hero);
@@ -209,9 +216,9 @@ export default function Overwatch2TacticalPicker() {
       return { ...prev, [p]: pData };
     });
   };
-  const markAllComplete = () => activeSquad.forEach(p => completeMission(p));
+  const markAllComplete = () => activePlayers.forEach(p => completeMission(p));
   const factoryReset = () => {
-    if (confirm("WARNING: Wipe all mission data?")) {
+    if (confirm("Reset everything?")) {
       setBannedHeroes({}); setMissionLog([]); setCompletedMissions({1:{},2:{},3:{},4:{},5:{}}); setCurrentLoadout({1:null,2:null,3:null,4:null,5:null});
     }
   };
@@ -224,11 +231,8 @@ export default function Overwatch2TacticalPicker() {
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between rounded-2xl bg-card/50 p-4 backdrop-blur-sm border shadow-sm">
         <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
           <h1 className="text-4xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase drop-shadow-sm">
-            Overwatch 2 <span className="text-foreground/70 text-2xl not-italic tracking-normal normal-case">/ Tactical Link</span>
+            Overwatch 2 <span className="text-foreground/70 text-2xl not-italic tracking-normal normal-case">/ Randomizer</span>
           </h1>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] mt-1 pl-1">
-            Squad Randomization Protocol • v2.5
-          </p>
         </motion.div>
         
         <div className="flex items-center gap-3">
@@ -245,9 +249,9 @@ export default function Overwatch2TacticalPicker() {
            <div className="flex items-center gap-3 bg-background/80 border rounded-full p-1.5 shadow-sm pl-4">
              <div className="flex items-center gap-2">
                <Users className="h-4 w-4 text-primary" />
-               <Select value={String(squadSize)} onValueChange={(v) => setSquadSize(Number(v))}>
+               <Select value={String(playerCount)} onValueChange={(v) => setPlayerCount(Number(v))}>
                  <SelectTrigger className="w-[90px] h-8 text-xs font-bold uppercase border-0 bg-transparent focus:ring-0"><SelectValue /></SelectTrigger>
-                 <SelectContent>{PLAYERS_INDICES.map(n => <SelectItem key={n} value={String(n)}>{n} Agents</SelectItem>)}</SelectContent>
+                 <SelectContent>{PLAYERS_INDICES.map(n => <SelectItem key={n} value={String(n)}>{n} Players</SelectItem>)}</SelectContent>
                </Select>
              </div>
              <Separator orientation="vertical" className="h-5" />
@@ -263,85 +267,117 @@ export default function Overwatch2TacticalPicker() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         
-        {/* 2. LEFT PANEL */}
+        {/* 2. LEFT PANEL: CONFIG */}
         <div className="lg:col-span-4 space-y-4">
           <Card className="border-border/40 shadow-lg bg-card/30 backdrop-blur-md overflow-hidden">
             <CardHeader className="bg-muted/30 pb-3 border-b border-border/40">
               <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                <Filter className="h-4 w-4 text-primary" /> Squad Parameters
+                <Filter className="h-4 w-4 text-primary" /> Player Setup
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-5 pt-5">
+              
+              {/* Names & Roles */}
               <div className="space-y-3">
-                 {activeSquad.map(p => (
+                 {activePlayers.map(p => (
                    <div key={p} className="flex items-center gap-2">
                       <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-md bg-background/80 backdrop-blur-md text-xs font-black shadow-sm border-border/50">{p}</Badge>
-                      <Input className="h-8 text-sm font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30" placeholder={`Agent ${p}`} value={agentNames[p]} onChange={e => setAgentNames(prev => ({...prev, [p]: e.target.value}))} />
-                      <Select value={squadRoles[p]} onValueChange={v => setSquadRoles(prev => ({...prev, [p]: v as RoleType}))}>
+                      <Input className="h-8 text-sm font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30" placeholder={`Player ${p}`} value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
+                      <Select value={playerRoles[p]} onValueChange={v => setPlayerRoles(prev => ({...prev, [p]: v as RoleType}))}>
                         <SelectTrigger className="h-8 w-[105px] text-[10px] font-bold uppercase tracking-wider bg-background/50 border-border/50"><SelectValue /></SelectTrigger>
                         <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
                       </Select>
                    </div>
                  ))}
               </div>
+
               <Separator className="bg-border/60" />
+
+              {/* BANS SECTION */}
               <div className="space-y-3">
                  <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">DB Status: <span className="text-primary">{poolStats.ready} Ready</span> <span className="opacity-50">/ {poolStats.banned} Banned</span></label>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-background" onClick={() => setBannedHeroes({})} title="Reset Bans"><Undo2 className="h-3.5 w-3.5" /></Button>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                       <Ban className="h-3 w-3 text-red-500" /> Hero Pool & Bans
+                    </label>
+                    <div className="text-[10px] font-bold text-red-500">{poolStats.banned} Banned</div>
                  </div>
+                 
+                 <p className="text-[10px] text-muted-foreground italic">
+                    Select the 4 heroes banned in-game to exclude them.
+                 </p>
+
                  <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
                     <TabsList className="grid w-full grid-cols-4 h-8 bg-muted/40 p-0.5">
                        {ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[10px] font-bold uppercase data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm">{r}</TabsTrigger>)}
                     </TabsList>
                  </Tabs>
-                 <Input placeholder="Search database..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-8 text-xs bg-background/40 border-border/40 focus-visible:ring-primary/30" />
+
+                 <Input placeholder="Search heroes to ban..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-8 text-xs bg-background/40 border-border/40 focus-visible:ring-primary/30" />
+                 
+                 {/* HERO LIST */}
                  <div className="h-[220px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
                     <div className="grid grid-cols-2 gap-1">
                        {filteredPool.map((h) => (
-                         <div key={h.name} className={cn("flex items-center gap-2 rounded-md px-2 py-1.5 transition-all cursor-pointer select-none group border border-transparent", bannedHeroes[h.name] ? "bg-destructive/5 opacity-60" : "hover:bg-background/80 hover:border-border/30 hover:shadow-sm")} onClick={() => toggleBan(h.name)}>
-                            <Checkbox id={`ban-${h.name}`} checked={!!bannedHeroes[h.name]} className="h-3.5 w-3.5 rounded-sm data-[state=checked]:bg-destructive data-[state=checked]:border-destructive/80" />
-                            <span className={cn("text-xs flex-1 truncate font-semibold", bannedHeroes[h.name] ? "text-muted-foreground line-through decoration-destructive/50" : "text-foreground/90 group-hover:text-foreground")}>{h.name}</span>
+                         <div key={h.name} 
+                              className={cn("flex items-center gap-2 rounded-md px-2 py-1.5 transition-all cursor-pointer select-none group border border-transparent", 
+                                bannedHeroes[h.name] ? "bg-destructive/10 border-destructive/20 opacity-90" : "hover:bg-background/80 hover:border-border/30 hover:shadow-sm"
+                              )} 
+                              onClick={() => toggleBan(h.name)}
+                         >
+                            <Checkbox id={`ban-${h.name}`} checked={!!bannedHeroes[h.name]} className="h-3.5 w-3.5 rounded-sm data-[state=checked]:bg-destructive data-[state=checked]:border-destructive" />
+                            <span className={cn("text-xs flex-1 truncate font-semibold", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90 group-hover:text-foreground")}>{h.name}</span>
                             <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/10", ROLE_STYLES[h.role].bg.replace("/10", ""))} />
                          </div>
                        ))}
-                       {filteredPool.length === 0 && <div className="col-span-2 text-center text-xs text-muted-foreground py-8 opacity-50">No matching data found.</div>}
+                       {filteredPool.length === 0 && <div className="col-span-2 text-center text-xs text-muted-foreground py-8 opacity-50">No matching heroes.</div>}
                     </div>
                  </div>
+
                  <div className={cn("flex items-center gap-2 rounded-md p-2 border transition-colors", noDuplicates ? "bg-amber-500/10 border-amber-500/30" : "bg-muted/10 border-border/30")}>
                     <Switch id="unique-mode" checked={noDuplicates} onCheckedChange={setNoDuplicates} className="scale-75 data-[state=checked]:bg-amber-500" />
-                    <label htmlFor="unique-mode" className={cn("text-[10px] font-bold uppercase tracking-wide cursor-pointer transition-colors", noDuplicates ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground")}>Unique Protocol (No Session Repeats)</label>
+                    <label htmlFor="unique-mode" className={cn("text-[10px] font-bold uppercase tracking-wide cursor-pointer transition-colors", noDuplicates ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground")}>No Repeats Mode</label>
                  </div>
               </div>
+
               <Button variant="outline" className="w-full text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 uppercase tracking-widest font-bold h-9 border-border/40" onClick={factoryReset}>
-                 <Trash2 className="mr-2 h-3.5 w-3.5" /> Abort & Factory Reset
+                 <Trash2 className="mr-2 h-3.5 w-3.5" /> Reset Everything
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        {/* 3. RIGHT PANEL */}
+        {/* 3. RIGHT PANEL: ACTION */}
         <div className="lg:col-span-8 space-y-6">
+           
+           {/* MAIN BUTTONS - Fixed Layout */}
            <div className="flex flex-col sm:flex-row items-center gap-4 bg-card/30 backdrop-blur-md p-4 rounded-2xl border border-border/40 shadow-lg relative overflow-hidden">
-             <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-transparent pointer-events-none" />
-             <Button size="lg" onClick={generateLoadout} disabled={isComputing} className="w-full sm:w-auto min-w-[260px] bg-gradient-to-r from-[#f99e1a] to-[#e0890d] hover:from-[#ffaa33] hover:to-[#f99e1a] text-white font-black text-xl italic tracking-widest h-16 shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase relative z-10 border-t border-white/20">
-               <Dice5 className={cn("mr-3 h-7 w-7", isComputing && "animate-spin")} />
-               {isComputing ? "DEPLOYING..." : "INITIATE DEPLOYMENT"}
+             
+             {/* THE BIG ORANGE BUTTON */}
+             <Button 
+                size="lg" 
+                onClick={generateLoadout} 
+                disabled={isRolling} 
+                // Hardcoded HEX orange to ensure it works even if Tailwind config is weird
+                className="w-full sm:w-auto min-w-[260px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl italic tracking-widest h-16 shadow-xl shadow-orange-500/20 hover:shadow-orange-500/40 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase relative z-10 border-t border-white/20"
+             >
+               <Dice5 className={cn("mr-3 h-7 w-7", isRolling && "animate-spin")} />
+               {isRolling ? "Rolling..." : "RANDOMIZE"}
              </Button>
+
              <div className="flex gap-3 w-full sm:w-auto z-10">
-                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isComputing} className="flex-1 sm:flex-none bg-background/50 hover:bg-background/80 border border-border/30">
+                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none bg-background/50 hover:bg-background/80 border border-border/30">
                     <Repeat className="mr-2 h-4 w-4" /> Clear
                  </Button>
-                 {squadSize > 1 && (
+                 {playerCount > 1 && (
                    <Button variant="outline" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400">
-                     <CheckCircle2 className="mr-2 h-4 w-4" /> Complete All
+                     <CheckCircle2 className="mr-2 h-4 w-4" /> All Done
                    </Button>
                  )}
              </div>
            </div>
 
-           <div className={cn("grid gap-4", squadSize === 1 ? "grid-cols-1 max-w-md mx-auto" : squadSize === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
-              {activeSquad.map(p => {
+           <div className={cn("grid gap-4", playerCount === 1 ? "grid-cols-1 max-w-md mx-auto" : playerCount === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
+              {activePlayers.map(p => {
                 const heroName = currentLoadout[p];
                 const heroData = heroName ? FLAT_HERO_LIST.find(h => h.name === heroName) : null;
                 const style = heroData ? ROLE_STYLES[heroData.role] : null;
@@ -352,10 +388,10 @@ export default function Overwatch2TacticalPicker() {
                       {style && <div className={cn("absolute inset-0 opacity-[0.05] dark:opacity-[0.08] pointer-events-none group-hover:opacity-[0.1] transition-opacity bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
                       <div className="p-3 flex justify-between items-start z-10">
                          <div className="flex flex-col">
-                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Operative {p}</span>
-                            <span className="text-xs font-bold text-foreground">{agentNames[p]}</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Player {p}</span>
+                            <span className="text-xs font-bold text-foreground">{playerNames[p]}</span>
                          </div>
-                         <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-background/50 backdrop-blur-sm border-border/40 text-muted-foreground">{squadRoles[p]}</Badge>
+                         <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-background/50 backdrop-blur-sm border-border/40 text-muted-foreground">{playerRoles[p]}</Badge>
                       </div>
                       <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
                          <AnimatePresence mode="wait">
@@ -370,7 +406,7 @@ export default function Overwatch2TacticalPicker() {
                             ) : (
                              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/30">
                                 <Activity className="h-10 w-10 mb-2 opacity-30 animate-pulse" />
-                                <span className="text-[10px] font-black uppercase tracking-[0.25em]">Awaiting Orders</span>
+                                <span className="text-[10px] font-black uppercase tracking-[0.25em]">Ready</span>
                              </motion.div>
                             )}
                          </AnimatePresence>
@@ -378,11 +414,11 @@ export default function Overwatch2TacticalPicker() {
                       {heroName && (
                         <div className="p-2 border-t border-border/20 bg-muted/10 backdrop-blur-sm z-10">
                            <Button size="sm" variant={isCompleted ? "outline" : "secondary"} className={cn("w-full h-8 text-[10px] font-black uppercase tracking-widest transition-all", isCompleted ? "text-muted-foreground border-border/40" : "bg-foreground/90 text-background hover:bg-foreground")} onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}>
-                             {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> Reactivate</> : <><CheckCircle2 className="mr-2 h-3.5 w-3.5"/> Mark Complete</>}
+                             {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> Undo</> : <><CheckCircle2 className="mr-2 h-3.5 w-3.5"/> Complete</>}
                            </Button>
                         </div>
                       )}
-                      {isCompleted && <div className="absolute inset-0 bg-background/60 dark:bg-background/80 backdrop-blur-[1px] z-0 flex items-center justify-center pointer-events-none"><Badge className="bg-green-500 dark:bg-green-600 text-white border-none text-[10px] font-black uppercase tracking-widest px-3 py-1 shadow-lg animate-in zoom-in">Mission Complete</Badge></div>}
+                      {isCompleted && <div className="absolute inset-0 bg-background/60 dark:bg-background/80 backdrop-blur-[1px] z-0 flex items-center justify-center pointer-events-none"><Badge className="bg-green-500 dark:bg-green-600 text-white border-none text-[10px] font-black uppercase tracking-widest px-3 py-1 shadow-lg animate-in zoom-in">Complete</Badge></div>}
                   </Card>
                 );
               })}
@@ -391,28 +427,28 @@ export default function Overwatch2TacticalPicker() {
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
                  <CardHeader className="bg-muted/30 pb-2 border-b border-border/40">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-4 w-4 text-amber-500" /> Mission Debrief</CardTitle>
+                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-4 w-4 text-amber-500" /> Completed</CardTitle>
                  </CardHeader>
                  <CardContent className="p-4">
                     <div className="h-[150px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-                        {activeSquad.map(p => {
+                        {activePlayers.map(p => {
                             const completed = Object.keys(completedMissions[p] || {});
                             if(completed.length === 0) return null;
                             return (
                                 <div key={p} className="flex flex-col gap-1">
-                                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider pl-1 opacity-70">{agentNames[p]}</span>
+                                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider pl-1 opacity-70">{playerNames[p]}</span>
                                     <div className="flex flex-wrap gap-1.5">{completed.map(c => <Badge key={c} variant="secondary" className="text-[9px] px-2 h-5 cursor-pointer hover:bg-destructive hover:text-white transition-colors border border-border/30 bg-background/50" onClick={() => undoMission(p, c)}>{c}</Badge>)}</div>
                                 </div>
                             )
                         })}
-                        {activeSquad.every(p => Object.keys(completedMissions[p] || {}).length === 0) && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2"><AlertCircle className="h-6 w-6 opacity-40" /><span className="text-[10px] uppercase font-bold tracking-wider">No successful missions logged</span></div>}
+                        {activePlayers.every(p => Object.keys(completedMissions[p] || {}).length === 0) && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2"><AlertCircle className="h-6 w-6 opacity-40" /><span className="text-[10px] uppercase font-bold tracking-wider">No Data</span></div>}
                     </div>
                  </CardContent>
               </Card>
 
               <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
                  <CardHeader className="bg-muted/30 pb-2 border-b border-border/40">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Terminal className="h-4 w-4 text-blue-500" /> Operation Log</CardTitle>
+                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><History className="h-4 w-4 text-blue-500" /> History</CardTitle>
                  </CardHeader>
                  <CardContent className="p-4 relative">
                     <div className="absolute inset-0 bg-grid-white/5 [mask-image:linear-gradient(0deg,transparent,black)] pointer-events-none"></div>
