@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Shuffle, Dice5, Filter, Trash2, History, Repeat,
-  CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart
+  Dice5, Filter, Trash2, History, Repeat,
+  CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart, 
+  Activity, AlertCircle
 } from "lucide-react";
 
 // Shadcn UI Components
@@ -16,42 +17,59 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-// Import the utility from src/lib/utils.ts
+// Import the utility
 import { cn } from "@/lib/utils";
 
-/* ---------- Configuration & Data ---------- */
+/* ---------- 1. DATA: Thematic Config ---------- */
 
-const ROLE_CONFIG = {
-  Tank: { color: "text-blue-500", bg: "bg-blue-500/10", border: "border-blue-500/20", icon: Shield },
-  Damage: { color: "text-red-500", bg: "bg-red-500/10", border: "border-red-500/20", icon: Sword },
+const ROLE_STYLES = {
+  Tank:    { color: "text-blue-500",    bg: "bg-blue-500/10",    border: "border-blue-500/20",    icon: Shield },
+  Damage:  { color: "text-red-500",     bg: "bg-red-500/10",     border: "border-red-500/20",     icon: Sword },
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
-// Fixed Hero List (Removed duplicates like Wuyang and non-existent heroes)
-const HEROES = {
-  Tank: ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
-  Damage: ["Ashe","Bastion","Cassidy","Echo","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Venture","Widowmaker"],
-  Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Zenyatta"],
+// CLEAN Hero List (No fake heroes)
+const HERO_DATABASE = {
+Tank: [
+  "D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa",
+  "Ramattra","Reinhardt","Roadhog","Sigma","Winston",
+  "Wrecking Ball","Zarya"
+],
+
+Damage: [
+  "Ashe","Bastion","Cassidy","Echo","Genji","Hanzo","Junkrat",
+  "Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra",
+  "Symmetra","Torbjörn","Tracer","Venture","Widowmaker",
+  "Freja","Vendetta"
+],
+
+Support: [
+  "Ana","Baptiste","Brigitte","Illari","Juno","Kiriko",
+  "Lifeweaver","Lúcio","Mercy","Moira","Zenyatta",
+  "Wuyang"
+]
+,
 } as const;
 
-const ALL_ROLES = ["All", "Tank", "Damage", "Support"] as const;
-type Role = typeof ALL_ROLES[number];
-type RoleKey = keyof typeof HEROES;
-type HeroInfo = { name: string; role: RoleKey };
+const ROLES = ["All", "Tank", "Damage", "Support"] as const;
+type RoleType = typeof ROLES[number];
+type RoleKey = keyof typeof HERO_DATABASE;
 
-const ALL_HEROES: HeroInfo[] = (Object.entries(HEROES) as [RoleKey, readonly string[]][])
+// Flatten database for searching
+const FLAT_HERO_LIST = (Object.entries(HERO_DATABASE) as [RoleKey, readonly string[]][])
   .flatMap(([role, list]) => list.map((name) => ({ name, role })));
 
-const PLAYERS = [1, 2, 3, 4, 5] as const;
-type PlayerNum = typeof PLAYERS[number];
+const MAX_PLAYERS = 5;
+const PLAYERS_INDICES = [1, 2, 3, 4, 5] as const;
+type PlayerID = typeof PLAYERS_INDICES[number];
 
-/* ---------- Custom Hook for Storage ---------- */
+/* ---------- 2. HOOK: Persistent Storage ---------- */
 
-function usePersistentState<T>(key: string, initialValue: T) {
-  const [state, setState] = useState<T>(() => {
+function useLocalStorage<T>(key: string, initialValue: T) {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     try {
       if (typeof window === "undefined") return initialValue;
-      const item = localStorage.getItem(key);
+      const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
@@ -61,213 +79,211 @@ function usePersistentState<T>(key: string, initialValue: T) {
 
   useEffect(() => {
     try {
-      localStorage.setItem(key, JSON.stringify(state));
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
     } catch (error) {
       console.warn(`Error setting localStorage key "${key}":`, error);
     }
-  }, [key, state]);
+  }, [key, storedValue]);
 
-  return [state, setState] as const;
+  return [storedValue, setStoredValue] as const;
 }
 
-/* ---------- Main Component ---------- */
+/* ---------- 3. MAIN COMPONENT ---------- */
 
-export default function Overwatch2RandomHeroPickerMultiRoleLock() {
-  // -- State --
-  const [playersCount, setPlayersCount] = usePersistentState<number>("ow2_multi_players", 2);
-  const [roles, setRoles] = usePersistentState<Record<PlayerNum, Role>>("ow2_multi_roles", { 1:"All",2:"All",3:"All",4:"All",5:"All" });
-  const [names, setNames] = usePersistentState<Record<PlayerNum, string>>("ow2_multi_names", { 1:"Player 1",2:"Player 2",3:"Player 3",4:"Player 4",5:"Player 5" });
-  const [listRole, setListRole] = usePersistentState<Role>("ow2_multi_list_role", "All");
-  const [excluded, setExcluded] = usePersistentState<Record<string, boolean>>("ow2_multi_excluded", {});
-  const [challengeMode, setChallengeMode] = usePersistentState<boolean>("ow2_multi_challenge", true);
-  const [noRepeat, setNoRepeat] = usePersistentState<boolean>("ow2_multi_norepeat", false);
-  const [completedByPlayer, setCompletedByPlayer] = usePersistentState<Record<PlayerNum, Record<string, boolean>>>("ow2_multi_completed", {1:{},2:{},3:{},4:{},5:{}});
-  const [history, setHistory] = usePersistentState<string[]>("ow2_multi_history_global", []);
+export default function Overwatch2TacticalPicker() {
   
-  // Transient state
-  const [query, setQuery] = useState("");
-  const [picked, setPicked] = useState<Record<PlayerNum, string | null>>({1:null,2:null,3:null,4:null,5:null});
-  const [isRolling, setIsRolling] = useState(false);
+  // --- Persistent State (Saved Settings) ---
+  const [squadSize, setSquadSize] = useLocalStorage<number>("ow2_squad_size", 2);
+  const [squadRoles, setSquadRoles] = useLocalStorage<Record<PlayerID, RoleType>>("ow2_squad_roles", { 1:"All", 2:"All", 3:"All", 4:"All", 5:"All" });
+  const [agentNames, setAgentNames] = useLocalStorage<Record<PlayerID, string>>("ow2_agent_names", { 1:"Agent 1", 2:"Agent 2", 3:"Agent 3", 4:"Agent 4", 5:"Agent 5" });
+  
+  const [filterRole, setFilterRole] = useLocalStorage<RoleType>("ow2_filter_role", "All");
+  const [bannedHeroes, setBannedHeroes] = useLocalStorage<Record<string, boolean>>("ow2_banned_list", {});
+  const [challengeMode, setChallengeMode] = useLocalStorage<boolean>("ow2_mode_challenge", true);
+  const [noDuplicates, setNoDuplicates] = useLocalStorage<boolean>("ow2_mode_unique", false);
+  
+  const [completedMissions, setCompletedMissions] = useLocalStorage<Record<PlayerID, Record<string, boolean>>>("ow2_missions_done", {1:{},2:{},3:{},4:{},5:{}});
+  const [missionLog, setMissionLog] = useLocalStorage<string[]>("ow2_global_log", []);
 
-  // -- Derived --
-  const activePlayers = useMemo(() => PLAYERS.slice(0, playersCount), [playersCount]);
+  // --- Transient State (Live Data) ---
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentLoadout, setCurrentLoadout] = useState<Record<PlayerID, string | null>>({1:null, 2:null, 3:null, 4:null, 5:null});
+  const [isComputing, setIsComputing] = useState(false);
 
-  const byRole = useCallback((role: Role) => 
-    role === "All" ? ALL_HEROES : ALL_HEROES.filter((h) => h.role === (role as RoleKey)), 
+  // --- Derived Data ---
+  const activeSquad = useMemo(() => PLAYERS_INDICES.slice(0, squadSize), [squadSize]);
+
+  const getHeroesByRole = useCallback((r: RoleType) => 
+    r === "All" ? FLAT_HERO_LIST : FLAT_HERO_LIST.filter(h => h.role === (r as RoleKey)), 
   []);
 
-  const listBase = useMemo(() => byRole(listRole), [listRole, byRole]);
+  const filteredPool = useMemo(() => {
+    const list = getHeroesByRole(filterRole);
+    return list.filter(h => h.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [filterRole, searchQuery, getHeroesByRole]);
 
-  const visibleHeroes = useMemo(() => 
-    listBase.filter((h) => h.name.toLowerCase().includes(query.toLowerCase())),
-    [listBase, query]
-  );
+  // Calculate stats for the UI
+  const poolStats = useMemo(() => {
+    const total = filteredPool.length;
+    const banned = filteredPool.filter(h => bannedHeroes[h.name]).length;
+    return { total, banned, ready: Math.max(0, total - banned) };
+  }, [filteredPool, bannedHeroes]);
 
-  const eligibleByPlayer = useMemo(() => {
-    const map = {} as Record<PlayerNum, string[]>;
-    const excludedSet = new Set(Object.keys(excluded).filter(k => excluded[k]));
-    const usedInCurrentSession = new Set(history);
-
-    activePlayers.forEach((p) => {
-      let pool = byRole(roles[p]).map(h => h.name);
-      pool = pool.filter(n => !excludedSet.has(n));
-      if (challengeMode) {
-        const completed = completedByPlayer[p] || {};
-        pool = pool.filter(n => !completed[n]);
-      }
-      if (noRepeat) {
-        const remaining = pool.filter(n => !usedInCurrentSession.has(n));
-        if (remaining.length > 0) pool = remaining;
-      }
-      map[p] = pool;
-    });
-    return map;
-  }, [roles, excluded, challengeMode, completedByPlayer, noRepeat, history, activePlayers, byRole]);
-
-  // -- Actions --
-  const roll = useCallback(() => {
-    const pools: Record<PlayerNum, string[]> = {} as any;
-    let canRoll = false;
-
-    activePlayers.forEach(p => {
-      pools[p] = eligibleByPlayer[p];
-      if (pools[p].length > 0) canRoll = true;
-    });
-
-    if (!canRoll) return;
-
-    setIsRolling(true);
-    const duration = 800;
-    const intervalTime = 60;
-    let elapsed = 0;
-
-    const intervalId = setInterval(() => {
-      const currentPicks = {} as Record<PlayerNum, string | null>;
-      const sessionPicked = new Set<string>();
-
-      activePlayers.forEach(p => {
-        const pool = pools[p];
-        if (pool.length === 0) {
-          currentPicks[p] = null;
-        } else {
-          const available = pool.filter(n => !sessionPicked.has(n));
-          const finalPool = available.length > 0 ? available : pool;
-          const randomHero = finalPool[Math.floor(Math.random() * finalPool.length)];
-          currentPicks[p] = randomHero;
-          sessionPicked.add(randomHero);
-        }
-      });
-
-      setPicked(prev => ({ ...prev, ...currentPicks }));
-      elapsed += intervalTime;
-
-      if (elapsed >= duration) {
-        clearInterval(intervalId);
-        setIsRolling(false);
-        finalizeRoll(currentPicks);
-      }
-    }, intervalTime);
-  }, [activePlayers, eligibleByPlayer]);
-
-  const finalizeRoll = (finalPicks: Record<PlayerNum, string | null>) => {
-    setHistory(prevHistory => {
-      const newGlobalHistory = [...prevHistory];
-      activePlayers.forEach(p => {
-        const hero = finalPicks[p];
-        if (hero) {
-          if (!newGlobalHistory.includes(hero)) {
-            newGlobalHistory.unshift(hero);
-          } else {
-            const idx = newGlobalHistory.indexOf(hero);
-            newGlobalHistory.splice(idx, 1);
-            newGlobalHistory.unshift(hero);
-          }
-        }
-      });
-      return newGlobalHistory.slice(0, 30);
-    });
-  };
-
-  const toggleExclude = (name: string) => setExcluded(prev => ({ ...prev, [name]: !prev[name] }));
+  // --- Logic Engine ---
   
-  const markDone = (player: PlayerNum) => {
-    const hero = picked[player];
-    if (!hero) return;
-    setCompletedByPlayer(prev => ({
-      ...prev,
-      [player]: { ...(prev[player] || {}), [hero]: true }
-    }));
-    setPicked(prev => ({ ...prev, [player]: null }));
-  };
+  const generateLoadout = useCallback(() => {
+    // 1. Validate if we can roll
+    const availablePools: Record<PlayerID, string[]> = {} as any;
+    let hasViablePool = false;
 
-  const markAllDone = () => {
-    setCompletedByPlayer(prev => {
-      const next = { ...prev };
-      activePlayers.forEach(p => {
-        const hero = picked[p];
-        if (hero) next[p] = { ...(next[p] || {}), [hero]: true };
+    const sessionBans = new Set(noDuplicates ? missionLog : []); 
+    const bannedSet = new Set(Object.keys(bannedHeroes).filter(k => bannedHeroes[k]));
+
+    activeSquad.forEach(p => {
+      // Start with role-based list
+      let pool = getHeroesByRole(squadRoles[p]).map(h => h.name);
+      
+      // Remove Global Bans
+      pool = pool.filter(n => !bannedSet.has(n));
+      
+      // Remove Completed Challenges (if mode active)
+      if (challengeMode) {
+        const done = completedMissions[p] || {};
+        pool = pool.filter(n => !done[n]);
+      }
+
+      // Remove Session Duplicates (if mode active)
+      if (noDuplicates) {
+         // Try to remove recent history
+         const strictPool = pool.filter(n => !sessionBans.has(n));
+         if (strictPool.length > 0) pool = strictPool;
+      }
+      
+      availablePools[p] = pool;
+      if (pool.length > 0) hasViablePool = true;
+    });
+
+    if (!hasViablePool) {
+      alert("Tactical Error: No heroes available in the pool based on current filters.");
+      return;
+    }
+
+    // 2. Animate the Roll
+    setIsComputing(true);
+    let ticks = 0;
+    const maxTicks = 12; // Length of animation
+    const interval = 60; // Speed of shuffle
+
+    const timer = setInterval(() => {
+      ticks++;
+      const draftPicks = {} as Record<PlayerID, string | null>;
+      const takenThisRound = new Set<string>();
+
+      activeSquad.forEach(p => {
+        const pool = availablePools[p];
+        if (pool.length === 0) {
+          draftPicks[p] = null;
+        } else {
+          // Avoid duplicate heroes across players in the same roll
+          const uniquePool = pool.filter(n => !takenThisRound.has(n));
+          const finalPool = uniquePool.length > 0 ? uniquePool : pool;
+          
+          const pick = finalPool[Math.floor(Math.random() * finalPool.length)];
+          draftPicks[p] = pick;
+          takenThisRound.add(pick);
+        }
       });
-      return next;
-    });
-    setPicked(prev => {
-        const cleared = { ...prev };
-        activePlayers.forEach(p => cleared[p] = null);
-        return cleared;
+
+      setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
+
+      if (ticks >= maxTicks) {
+        clearInterval(timer);
+        setIsComputing(false);
+        finalizeMission(draftPicks);
+      }
+    }, interval);
+  }, [activeSquad, squadRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
+
+  const finalizeMission = (picks: Record<PlayerID, string | null>) => {
+    setMissionLog(prev => {
+      const nextLog = [...prev];
+      activeSquad.forEach(p => {
+        const hero = picks[p];
+        if (hero) {
+           // Remove if exists to move to top
+           const idx = nextLog.indexOf(hero);
+           if (idx > -1) nextLog.splice(idx, 1);
+           nextLog.unshift(hero);
+        }
+      });
+      return nextLog.slice(0, 40); // Keep last 40
     });
   };
 
-  const undoDone = (player: PlayerNum, hero: string) => {
-    setCompletedByPlayer(prev => {
-      const newMap = { ...(prev[player] || {}) };
-      delete newMap[hero];
-      return { ...prev, [player]: newMap };
+  // --- Interactions ---
+
+  const toggleBan = (name: string) => setBannedHeroes(prev => ({ ...prev, [name]: !prev[name] }));
+  
+  const completeMission = (p: PlayerID) => {
+    const hero = currentLoadout[p];
+    if (!hero) return;
+    setCompletedMissions(prev => ({
+      ...prev,
+      [p]: { ...(prev[p] || {}), [hero]: true }
+    }));
+    // Clear pick visually to show done state
+    setCurrentLoadout(prev => ({ ...prev, [p]: null }));
+  };
+
+  const undoMission = (p: PlayerID, hero: string) => {
+    setCompletedMissions(prev => {
+      const pData = { ...(prev[p] || {}) };
+      delete pData[hero];
+      return { ...prev, [p]: pData };
     });
   };
 
-  const resetAllFilters = () => {
-    if(confirm("Reset all filters, history, and challenge progress?")) {
-      setExcluded({});
-      setHistory([]);
-      setCompletedByPlayer({1:{},2:{},3:{},4:{},5:{}});
-      setPicked({1:null,2:null,3:null,4:null,5:null});
+  const markAllComplete = () => {
+    activeSquad.forEach(p => completeMission(p));
+  };
+
+  const factoryReset = () => {
+    if (confirm("WARNING: This will wipe all mission data and configurations. Proceed?")) {
+      setBannedHeroes({});
+      setMissionLog([]);
+      setCompletedMissions({1:{},2:{},3:{},4:{},5:{}});
+      setCurrentLoadout({1:null,2:null,3:null,4:null,5:null});
     }
   };
 
-  const clearPicks = () => setPicked({1:null,2:null,3:null,4:null,5:null});
-
-  const poolStats = useMemo(() => {
-    const total = listBase.length;
-    const excludedCount = listBase.filter(h => excluded[h.name]).length;
-    return { total, excluded: excludedCount, available: Math.max(0, total - excludedCount) };
-  }, [listBase, excluded]);
-
   return (
-    <div className="mx-auto max-w-7xl p-4 sm:p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl font-black italic tracking-tighter bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent uppercase">
-            Overwatch 2 Randomizer
+    <div className="mx-auto max-w-7xl p-4 sm:p-6 space-y-8 font-sans">
+      
+      {/* 1. TOP BAR */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
+          <h1 className="text-4xl font-black italic tracking-tighter bg-gradient-to-r from-orange-500 to-yellow-500 bg-clip-text text-transparent uppercase drop-shadow-sm">
+            Overwatch 2 <span className="text-foreground/80 text-2xl not-italic tracking-normal normal-case">/ Tactical Link</span>
           </h1>
-          <p className="text-sm text-muted-foreground font-medium">
-            Multi-player role lock • Challenge Mode • Smart Filtering
+          <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest mt-1">
+            Squad Randomization Protocol • v2.4
           </p>
         </motion.div>
         
-        <div className="flex items-center gap-4 rounded-lg border bg-card/50 p-2 shadow-sm backdrop-blur-sm">
-           <div className="flex items-center gap-2">
-             <Users className="h-4 w-4 text-muted-foreground" />
-             <Select value={String(playersCount)} onValueChange={(v) => setPlayersCount(Number(v))}>
-               <SelectTrigger className="w-[80px] h-8 text-xs font-bold"><SelectValue /></SelectTrigger>
+        <div className="flex items-center gap-3 bg-card border rounded-lg p-2 shadow-sm">
+           <div className="flex items-center gap-2 px-2">
+             <Users className="h-4 w-4 text-primary" />
+             <Select value={String(squadSize)} onValueChange={(v) => setSquadSize(Number(v))}>
+               <SelectTrigger className="w-[110px] h-8 text-xs font-bold uppercase"><SelectValue /></SelectTrigger>
                <SelectContent>
-                 {PLAYERS.map(n => <SelectItem key={n} value={String(n)}>{n} Players</SelectItem>)}
+                 {PLAYERS_INDICES.map(n => <SelectItem key={n} value={String(n)}>{n} Operatives</SelectItem>)}
                </SelectContent>
              </Select>
            </div>
            <Separator orientation="vertical" className="h-6" />
-           <div className="flex items-center gap-2">
-             <Switch id="challenge" checked={challengeMode} onCheckedChange={setChallengeMode} className="scale-75 origin-right" />
-             <label htmlFor="challenge" className="text-xs font-bold cursor-pointer select-none flex items-center gap-1 uppercase tracking-wider">
+           <div className="flex items-center gap-2 px-2">
+             <Switch id="challenge-mode" checked={challengeMode} onCheckedChange={setChallengeMode} />
+             <label htmlFor="challenge-mode" className="text-xs font-bold uppercase cursor-pointer flex items-center gap-1">
                <Trophy className="h-3 w-3 text-amber-500" /> Challenge
              </label>
            </div>
@@ -275,134 +291,214 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        {/* LEFT COLUMN: Controls */}
+        
+        {/* 2. LEFT PANEL: CONFIGURATION */}
         <div className="lg:col-span-4 space-y-4">
-          <Card className="border-muted/60 shadow-sm">
-            <CardHeader className="pb-3 bg-muted/20">
-              <CardTitle className="text-base flex items-center gap-2 font-bold uppercase tracking-wide">
-                <Filter className="h-4 w-4" /> Player Setup & Pool
+          <Card className="border-border/60 shadow-md">
+            <CardHeader className="bg-muted/30 pb-3 border-b">
+              <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+                <Filter className="h-4 w-4 text-primary" /> Squad Configuration
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 pt-4">
+            <CardContent className="space-y-5 pt-5">
+              
+              {/* Squad Setup */}
               <div className="space-y-3">
-                 {activePlayers.map(p => (
-                   <div key={p} className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-black text-muted-foreground shadow-inner border">P{p}</div>
-                      <Input className="h-8 text-sm font-medium" placeholder={`Player ${p}`} value={names[p]} onChange={e => setNames(prev => ({...prev, [p]: e.target.value}))} />
-                      <Select value={roles[p]} onValueChange={v => setRoles(prev => ({...prev, [p]: v as Role}))}>
-                        <SelectTrigger className="h-8 w-[110px] text-xs font-bold uppercase"><SelectValue /></SelectTrigger>
-                        <SelectContent>{ALL_ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
+                 {activeSquad.map(p => (
+                   <div key={p} className="flex items-center gap-2 animate-in slide-in-from-left-2 fade-in duration-300" style={{ animationDelay: `${p * 50}ms` }}>
+                      <Badge variant="outline" className="h-8 w-8 flex items-center justify-center rounded-md bg-background text-xs font-black shadow-sm">
+                        {p}
+                      </Badge>
+                      <Input 
+                        className="h-8 text-sm font-semibold bg-background/50" 
+                        placeholder={`Agent ${p}`} 
+                        value={agentNames[p]} 
+                        onChange={e => setAgentNames(prev => ({...prev, [p]: e.target.value}))} 
+                      />
+                      <Select value={squadRoles[p]} onValueChange={v => setSquadRoles(prev => ({...prev, [p]: v as RoleType}))}>
+                        <SelectTrigger className="h-8 w-[110px] text-[10px] font-bold uppercase tracking-wider"><SelectValue /></SelectTrigger>
+                        <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
                       </Select>
                    </div>
                  ))}
               </div>
+
               <Separator />
-              <div className="space-y-2">
+
+              {/* Hero Pool Filter */}
+              <div className="space-y-3">
                  <div className="flex items-center justify-between">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Hero Pool ({poolStats.available})</label>
-                    <div className="flex gap-2">
-                         <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-muted" onClick={() => setExcluded({})}><Undo2 className="h-3 w-3" /></Button>
-                    </div>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                       Database Status: <span className="text-primary">{poolStats.ready} Ready</span> <span className="text-muted-foreground/50">/ {poolStats.banned} Banned</span>
+                    </label>
+                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setBannedHeroes({})} title="Unban All">
+                       <Undo2 className="h-3 w-3" />
+                    </Button>
                  </div>
-                 <Tabs value={listRole} onValueChange={v => setListRole(v as Role)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 h-8 bg-muted/40">
-                       {ALL_ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[10px] font-bold uppercase">{r}</TabsTrigger>)}
+
+                 <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
+                    <TabsList className="grid w-full grid-cols-4 h-8">
+                       {ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[10px] font-bold uppercase">{r}</TabsTrigger>)}
                     </TabsList>
                  </Tabs>
-                 <Input placeholder="Search heroes..." value={query} onChange={e => setQuery(e.target.value)} className="h-8 text-xs" />
-                 <div className="h-[200px] overflow-y-auto rounded-md border p-1 bg-muted/10">
+
+                 <Input 
+                    placeholder="Search database..." 
+                    value={searchQuery} 
+                    onChange={e => setSearchQuery(e.target.value)} 
+                    className="h-8 text-xs bg-background/50"
+                 />
+
+                 <div className="h-[220px] overflow-y-auto rounded-md border bg-muted/20 p-1">
                     <div className="grid grid-cols-2 gap-1">
-                       {visibleHeroes.map((h) => (
-                         <div key={h.name} className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted/50 transition-colors group">
-                            <Checkbox id={`ex-${h.name}`} checked={!!excluded[h.name]} onCheckedChange={() => toggleExclude(h.name)} className="h-3.5 w-3.5" />
-                            <label htmlFor={`ex-${h.name}`} className={cn("text-xs flex-1 cursor-pointer select-none truncate font-medium group-hover:text-foreground transition-colors", excluded[h.name] ? "text-muted-foreground line-through decoration-destructive/50" : "text-muted-foreground")}>{h.name}</label>
-                            <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/20", ROLE_CONFIG[h.role].bg.replace("/10", ""))} />
+                       {filteredPool.map((h) => (
+                         <div key={h.name} 
+                              className={cn(
+                                "flex items-center gap-2 rounded px-2 py-1.5 transition-all cursor-pointer select-none group border border-transparent",
+                                bannedHeroes[h.name] ? "bg-destructive/10 opacity-70" : "hover:bg-background hover:border-border hover:shadow-sm"
+                              )}
+                              onClick={() => toggleBan(h.name)}
+                         >
+                            <Checkbox 
+                                id={`ban-${h.name}`} 
+                                checked={!!bannedHeroes[h.name]} 
+                                className="h-3.5 w-3.5 data-[state=checked]:bg-destructive data-[state=checked]:border-destructive" 
+                            />
+                            <span className={cn(
+                                "text-xs flex-1 truncate font-semibold", 
+                                bannedHeroes[h.name] ? "text-muted-foreground line-through decoration-destructive" : "text-foreground"
+                            )}>
+                                {h.name}
+                            </span>
+                            <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/10", ROLE_STYLES[h.role].bg.replace("/10", ""))} />
                          </div>
                        ))}
-                       {visibleHeroes.length === 0 && <div className="col-span-2 text-center text-xs text-muted-foreground py-4">No heroes found</div>}
+                       {filteredPool.length === 0 && <div className="col-span-2 text-center text-xs text-muted-foreground py-8">No matching data found.</div>}
                     </div>
                  </div>
-                 <div className="flex items-center gap-2 pt-2 rounded-md bg-muted/30 p-2 border border-dashed">
-                    <Switch id="norepeat" checked={noRepeat} onCheckedChange={setNoRepeat} className="scale-75" />
-                    <label htmlFor="norepeat" className="text-xs font-semibold text-muted-foreground cursor-pointer select-none">No repeats this session</label>
+
+                 <div className="flex items-center gap-2 rounded-md bg-amber-500/10 p-2 border border-amber-500/20">
+                    <Switch id="unique-mode" checked={noDuplicates} onCheckedChange={setNoDuplicates} className="scale-75 data-[state=checked]:bg-amber-500" />
+                    <label htmlFor="unique-mode" className="text-[10px] font-bold uppercase tracking-wide text-amber-600 dark:text-amber-400 cursor-pointer">
+                       Unique Protocol (No Session Repeats)
+                    </label>
                  </div>
               </div>
-              <Button variant="ghost" className="w-full h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 font-bold uppercase tracking-wide" onClick={resetAllFilters}>
-                 <Trash2 className="mr-2 h-3 w-3" /> Reset Everything
+
+              <Button variant="outline" className="w-full text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 uppercase tracking-widest font-bold h-9" onClick={factoryReset}>
+                 <Trash2 className="mr-2 h-3 w-3" /> Abort & Factory Reset
               </Button>
+
             </CardContent>
           </Card>
         </div>
 
-        {/* RIGHT COLUMN: The Picker */}
+        {/* 3. RIGHT PANEL: MISSION CONTROL */}
         <div className="lg:col-span-8 space-y-6">
+           
+           {/* Command Bar */}
            <div className="flex flex-col sm:flex-row items-center gap-4 bg-card p-4 rounded-xl border shadow-sm">
-             
-             {/* THE ROLL BUTTON - NOW FORCED ORANGE VIA HEX TO GUARANTEE VISIBILITY */}
              <Button 
                size="lg" 
-               onClick={roll} 
-               disabled={isRolling}
-               className="w-full sm:w-auto min-w-[200px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl shadow-lg uppercase italic tracking-wider h-14 transition-all hover:scale-105 active:scale-95"
+               onClick={generateLoadout} 
+               disabled={isComputing}
+               // Used HEX color to guarantee orange visibility regardless of tailwind config issues
+               className="w-full sm:w-auto min-w-[240px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl italic tracking-widest h-14 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all uppercase"
              >
-               <Dice5 className={cn("mr-3 h-6 w-6", isRolling && "animate-spin")} />
-               {isRolling ? "Rolling..." : "ROLL HEROES"}
+               <Dice5 className={cn("mr-3 h-6 w-6", isComputing && "animate-spin")} />
+               {isComputing ? "DEPLOYING..." : "INITIATE DEPLOYMENT"}
              </Button>
 
              <div className="flex gap-2 w-full sm:w-auto">
-                 <Button variant="outline" onClick={clearPicks} disabled={isRolling} className="flex-1 sm:flex-none">
+                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isComputing} className="flex-1 sm:flex-none">
                     <Repeat className="mr-2 h-4 w-4" /> Clear
                  </Button>
-                 {playersCount > 1 && (
-                   <Button variant="secondary" onClick={markAllDone} disabled={Object.values(picked).every(v => !v)} className="flex-1 sm:flex-none">
-                     <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> All Done
+                 {squadSize > 1 && (
+                   <Button variant="outline" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none border-green-500/30 hover:bg-green-500/10 hover:text-green-600">
+                     <CheckCircle2 className="mr-2 h-4 w-4" /> Complete All
                    </Button>
                  )}
              </div>
            </div>
 
-           <div className={cn("grid gap-4", playersCount === 1 ? "grid-cols-1 max-w-md mx-auto" : playersCount === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
-              {activePlayers.map(p => {
-                const heroName = picked[p];
-                const heroData = heroName ? ALL_HEROES.find(h => h.name === heroName) : null;
-                const roleConfig = heroData ? ROLE_CONFIG[heroData.role] : null;
-                const isDone = heroName && completedByPlayer[p]?.[heroName];
+           {/* Deployment Grid */}
+           <div className={cn("grid gap-4", squadSize === 1 ? "grid-cols-1 max-w-md mx-auto" : squadSize === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
+              {activeSquad.map(p => {
+                const heroName = currentLoadout[p];
+                const heroData = heroName ? FLAT_HERO_LIST.find(h => h.name === heroName) : null;
+                const style = heroData ? ROLE_STYLES[heroData.role] : null;
+                const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group", heroName ? "border-opacity-100 shadow-md ring-1 ring-black/5 dark:ring-white/10" : "border-dashed border-opacity-60 bg-muted/10", roleConfig ? roleConfig.border : "border-border")}>
-                      {roleConfig && <div className={cn("absolute inset-0 opacity-[0.03] pointer-events-none group-hover:opacity-[0.07] transition-opacity", roleConfig.bg.replace("/10", ""))} />}
-                      <CardHeader className="p-4 pb-2">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="h-5 px-1.5 text-[10px] uppercase tracking-wider font-bold bg-background/50 backdrop-blur-sm">{names[p]}</Badge>
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{roles[p]}</span>
-                            </div>
-                            {isDone && <Badge variant="secondary" className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-bold tracking-wide">DONE</Badge>}
-                        </div>
-                      </CardHeader>
-                      <CardContent className="p-4 pt-2 min-h-[120px] flex flex-col justify-center items-center text-center">
+                  <Card key={p} className={cn(
+                      "relative overflow-hidden transition-all duration-300 group min-h-[180px] flex flex-col", 
+                      heroName ? "border-primary/50 shadow-lg" : "border-dashed border-border/60 bg-muted/5",
+                      style ? style.border : ""
+                  )}>
+                      {style && <div className={cn("absolute inset-0 opacity-[0.04] pointer-events-none group-hover:opacity-[0.08] transition-opacity", style.bg.replace("/10", ""))} />}
+                      
+                      {/* Card Header */}
+                      <div className="p-3 flex justify-between items-start z-10">
+                         <div className="flex flex-col">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground opacity-70">Operative {p}</span>
+                            <span className="text-xs font-bold text-foreground">{agentNames[p]}</span>
+                         </div>
+                         <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-background/80 backdrop-blur-sm border-border/50">
+                            {squadRoles[p]}
+                         </Badge>
+                      </div>
+
+                      {/* Card Body */}
+                      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
                          <AnimatePresence mode="wait">
                             {heroName ? (
-                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9 }} transition={{ type: "spring", bounce: 0.5 }} className="space-y-3">
-                                <div className="flex flex-col items-center justify-center gap-1">
-                                    {roleConfig && <roleConfig.icon className={cn("h-8 w-8 opacity-80", roleConfig.color)} />}
-                                    <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-sm">{heroName}</h2>
+                             <motion.div 
+                               key={heroName}
+                               initial={{ opacity: 0, scale: 0.8, filter: "blur(10px)" }}
+                               animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                               className="flex flex-col items-center gap-2"
+                             >
+                                <div className="relative">
+                                    {style && <style.icon className={cn("h-10 w-10 opacity-20 absolute -top-1 -left-1", style.color)} />}
+                                    <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-md relative z-10">
+                                       {heroName}
+                                    </h2>
                                 </div>
-                                {roleConfig && <span className={cn("inline-block text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-secondary/50", roleConfig.color)}>{heroData?.role}</span>}
+                                {style && (
+                                   <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-2 py-0.5 rounded-full bg-background/50 border", style.color, style.border)}>
+                                     {heroData?.role}
+                                   </span>
+                                )}
                              </motion.div>
                             ) : (
-                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-muted-foreground/40 flex flex-col items-center">
-                                <Shuffle className="h-10 w-10 mb-3 opacity-20" />
-                                <span className="text-sm font-bold uppercase tracking-widest opacity-60">Ready to roll</span>
+                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/30">
+                                <Activity className="h-12 w-12 mb-2 opacity-20 animate-pulse" />
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em]">Awaiting Orders</span>
                              </motion.div>
                             )}
                          </AnimatePresence>
-                      </CardContent>
+                      </div>
+
+                      {/* Card Footer */}
                       {heroName && (
-                        <div className="border-t p-2 flex justify-center bg-muted/30 backdrop-blur-sm">
-                           <Button size="sm" variant={isDone ? "outline" : "secondary"} className={cn("w-full text-xs h-8 font-bold uppercase tracking-wider", isDone && "text-muted-foreground opacity-70")} onClick={() => isDone ? undoDone(p, heroName) : markDone(p)}>
-                             {isDone ? <><Undo2 className="mr-2 h-3 w-3"/> Undo</> : <><CheckCircle2 className="mr-2 h-3 w-3"/> Complete</>}
+                        <div className="p-2 border-t bg-muted/10 backdrop-blur-sm z-10">
+                           <Button 
+                             size="sm" 
+                             variant={isCompleted ? "outline" : "secondary"}
+                             className={cn("w-full h-8 text-[10px] font-black uppercase tracking-widest transition-all", isCompleted ? "text-muted-foreground" : "bg-foreground text-background hover:bg-foreground/90")}
+                             onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}
+                           >
+                             {isCompleted ? <><Undo2 className="mr-2 h-3 w-3"/> Reactivate</> : <><CheckCircle2 className="mr-2 h-3 w-3"/> Mark Complete</>}
                            </Button>
+                        </div>
+                      )}
+                      
+                      {/* Success Overlay */}
+                      {isCompleted && (
+                        <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px] z-0 flex items-center justify-center pointer-events-none">
+                           <Badge className="bg-green-500 text-white border-none text-xs font-black uppercase tracking-widest px-3 py-1 shadow-lg animate-in zoom-in">
+                              Mission Complete
+                           </Badge>
                         </div>
                       )}
                   </Card>
@@ -410,51 +506,74 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               })}
            </div>
 
-           {/* History & Completed Stats */}
+           {/* 4. STATS AREA */}
            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              
+              {/* Completed List */}
               <Card>
-                 <CardHeader className="p-4 pb-2 bg-muted/10">
-                    <CardTitle className="text-sm flex items-center gap-2 font-bold uppercase tracking-wide"><Trophy className="h-4 w-4 text-amber-500" /> Session Completed</CardTitle>
+                 <CardHeader className="bg-muted/20 pb-2">
+                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-amber-500" /> Mission Debrief
+                    </CardTitle>
                  </CardHeader>
-                 <CardContent className="p-4 pt-4">
-                    <div className="h-[150px] overflow-y-auto pr-2 space-y-4">
-                        {activePlayers.map(p => {
-                            const completed = Object.keys(completedByPlayer[p] || {});
+                 <CardContent className="p-4">
+                    <div className="h-[140px] overflow-y-auto pr-2 space-y-3">
+                        {activeSquad.map(p => {
+                            const completed = Object.keys(completedMissions[p] || {});
                             if(completed.length === 0) return null;
                             return (
-                                <div key={p} className="text-sm">
-                                    <span className="text-[10px] font-black text-muted-foreground block mb-1.5 uppercase tracking-wider">{names[p]}</span>
-                                    <div className="flex flex-wrap gap-1.5">{completed.map(c => <Badge key={c} variant="secondary" className="text-[10px] px-2 h-6 cursor-pointer hover:line-through hover:bg-destructive hover:text-white transition-colors" onClick={() => undoDone(p, c)}>{c}</Badge>)}</div>
+                                <div key={p} className="flex flex-col gap-1">
+                                    <span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider pl-1">{agentNames[p]}</span>
+                                    <div className="flex flex-wrap gap-1">
+                                        {completed.map(c => (
+                                            <Badge key={c} variant="secondary" className="text-[9px] px-2 h-5 cursor-pointer hover:bg-destructive hover:text-white transition-colors" onClick={() => undoMission(p, c)}>
+                                                {c}
+                                            </Badge>
+                                        ))}
+                                    </div>
                                 </div>
                             )
                         })}
-                        {activePlayers.every(p => Object.keys(completedByPlayer[p] || {}).length === 0) && <div className="h-full flex items-center justify-center text-xs font-medium text-muted-foreground/60 italic">No challenges completed yet.</div>}
+                        {activeSquad.every(p => Object.keys(completedMissions[p] || {}).length === 0) && (
+                            <div className="h-full flex flex-col items-center justify-center text-muted-foreground/40 gap-2">
+                                <AlertCircle className="h-6 w-6 opacity-50" />
+                                <span className="text-[10px] uppercase font-bold tracking-wider">No successful missions logged</span>
+                            </div>
+                        )}
                     </div>
                  </CardContent>
               </Card>
 
+              {/* History Log */}
               <Card>
-                 <CardHeader className="p-4 pb-2 bg-muted/10">
-                    <CardTitle className="text-sm flex items-center gap-2 font-bold uppercase tracking-wide"><History className="h-4 w-4" /> Global History (Last 20)</CardTitle>
+                 <CardHeader className="bg-muted/20 pb-2">
+                    <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+                        <History className="h-4 w-4 text-blue-500" /> Operation Log
+                    </CardTitle>
                  </CardHeader>
-                 <CardContent className="p-4 pt-4">
-                    <div className="h-[150px] overflow-y-auto custom-scrollbar">
-                        <ul className="space-y-1">
-                            {history.length === 0 && <div className="h-full flex items-center justify-center text-xs font-medium text-muted-foreground/60 italic pt-10">History is empty.</div>}
-                            {history.map((h, i) => {
-                                const role = ALL_HEROES.find(x => x.name === h)?.role;
-                                const style = role ? ROLE_CONFIG[role] : null;
+                 <CardContent className="p-4">
+                    <div className="h-[140px] overflow-y-auto custom-scrollbar">
+                        <div className="space-y-1 font-mono text-xs">
+                            {missionLog.length === 0 && (
+                                <div className="h-full flex flex-col items-center justify-center text-muted-foreground/40 gap-2 mt-4">
+                                    <span className="text-[10px] uppercase font-bold tracking-wider">Log Empty</span>
+                                </div>
+                            )}
+                            {missionLog.map((h, i) => {
+                                const role = FLAT_HERO_LIST.find(x => x.name === h)?.role;
+                                const style = role ? ROLE_STYLES[role] : null;
                                 return (
-                                    <li key={`${h}-${i}`} className="flex items-center justify-between text-xs py-1.5 border-b last:border-0 border-dashed border-muted">
-                                        <span className="font-medium text-foreground/80">{h}</span>
-                                        {style && <Badge variant="outline" className={cn("text-[9px] h-4 px-1 uppercase tracking-wider", style.color, style.bg, "border-0")}>{role}</Badge>}
-                                    </li>
+                                    <div key={`${h}-${i}`} className="flex items-center justify-between py-1 border-b border-dashed border-border/50 last:border-0 hover:bg-muted/20 px-1">
+                                        <span className="font-semibold opacity-90">{i + 1}. {h}</span>
+                                        {style && <span className={cn("text-[9px] font-black uppercase tracking-wider opacity-60", style.color)}>{role}</span>}
+                                    </div>
                                 );
                             })}
-                        </ul>
+                        </div>
                     </div>
                  </CardContent>
               </Card>
+
            </div>
         </div>
       </div>
