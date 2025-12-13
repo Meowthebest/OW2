@@ -5,7 +5,7 @@ import {
   CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart
 } from "lucide-react";
 
-// Shadcn UI Components
+// Shadcn UI Components (Adjust paths if your project uses different structure)
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -336,20 +336,21 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         {/* RIGHT COLUMN: The Picker */}
         <div className="lg:col-span-8 space-y-6">
            <div className="flex flex-col sm:flex-row items-center gap-4 bg-card p-4 rounded-xl border shadow-sm">
-             {/* THE ROLL BUTTON - NOW FIXED TO BE ORANGE AND VISIBLE */}
+             
+             {/* THE ROLL BUTTON - NOW FORCED ORANGE VIA TAILWIND UTILITIES */}
              <Button 
                size="lg" 
                onClick={roll} 
                disabled={isRolling}
-               className="w-full sm:w-auto min-w-[200px] bg-[hsl(25,100%,50%)] hover:bg-[hsl(25,100%,45%)] text-white font-black text-xl shadow-lg hover:shadow-orange-500/25 active:scale-95 transition-all uppercase italic tracking-wider h-14"
+               className="w-full sm:w-auto min-w-[200px] bg-orange-600 hover:bg-orange-700 text-white font-black text-xl shadow-lg uppercase italic tracking-wider h-14"
              >
                <Dice5 className={cn("mr-3 h-6 w-6", isRolling && "animate-spin")} />
                {isRolling ? "Rolling..." : "ROLL HEROES"}
              </Button>
 
              <div className="flex gap-2 w-full sm:w-auto">
-                 {/* CLEAR BUTTON - FIXED VISIBILITY */}
-                 <Button variant="outline" onClick={clearPicks} disabled={isRolling} className="flex-1 sm:flex-none bg-secondary/50 hover:bg-secondary">
+                 {/* CLEAR BUTTON - VISIBILITY FIXED */}
+                 <Button variant="outline" onClick={clearPicks} disabled={isRolling} className="flex-1 sm:flex-none">
                     <Repeat className="mr-2 h-4 w-4" /> Clear
                  </Button>
                  {playersCount > 1 && (
