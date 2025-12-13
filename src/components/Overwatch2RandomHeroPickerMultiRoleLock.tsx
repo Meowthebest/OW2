@@ -5,7 +5,7 @@ import {
   CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart
 } from "lucide-react";
 
-// Shadcn UI Components (Adjust paths if your project uses different structure)
+// Shadcn UI Components
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-// Import the utility we created in Step 1
+// Import the utility from src/lib/utils.ts
 import { cn } from "@/lib/utils";
 
 /* ---------- Configuration & Data ---------- */
@@ -27,10 +27,11 @@ const ROLE_CONFIG = {
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
+// Fixed Hero List (Removed duplicates like Wuyang and non-existent heroes)
 const HEROES = {
   Tank: ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
-  Damage: ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
-  Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Zenyatta","Wuyang"],
+  Damage: ["Ashe","Bastion","Cassidy","Echo","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Venture","Widowmaker"],
+  Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Zenyatta"],
 } as const;
 
 const ALL_ROLES = ["All", "Tank", "Damage", "Support"] as const;
@@ -337,19 +338,18 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         <div className="lg:col-span-8 space-y-6">
            <div className="flex flex-col sm:flex-row items-center gap-4 bg-card p-4 rounded-xl border shadow-sm">
              
-             {/* THE ROLL BUTTON - NOW FORCED ORANGE VIA TAILWIND UTILITIES */}
+             {/* THE ROLL BUTTON - NOW FORCED ORANGE VIA HEX TO GUARANTEE VISIBILITY */}
              <Button 
                size="lg" 
                onClick={roll} 
                disabled={isRolling}
-               className="w-full sm:w-auto min-w-[200px] bg-orange-600 hover:bg-orange-700 text-white font-black text-xl shadow-lg uppercase italic tracking-wider h-14"
+               className="w-full sm:w-auto min-w-[200px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-xl shadow-lg uppercase italic tracking-wider h-14 transition-all hover:scale-105 active:scale-95"
              >
                <Dice5 className={cn("mr-3 h-6 w-6", isRolling && "animate-spin")} />
                {isRolling ? "Rolling..." : "ROLL HEROES"}
              </Button>
 
              <div className="flex gap-2 w-full sm:w-auto">
-                 {/* CLEAR BUTTON - VISIBILITY FIXED */}
                  <Button variant="outline" onClick={clearPicks} disabled={isRolling} className="flex-1 sm:flex-none">
                     <Repeat className="mr-2 h-4 w-4" /> Clear
                  </Button>
