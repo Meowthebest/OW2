@@ -1,5 +1,3 @@
-// src/components/Overwatch2RandomHeroPickerMultiRoleLock.tsx
-
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -7,7 +5,7 @@ import {
   CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart
 } from "lucide-react";
 
-// Ensure you have these shadcn/ui components available:
+// Shadcn UI Components
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,11 +16,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
-/* ---------- Utility Helper (No external dependencies) ---------- */
-// This replaces clsx/tailwind-merge so you don't need to npm install anything.
-function cn(...classes: (string | undefined | null | false)[]) {
-  return classes.filter(Boolean).join(" ");
-}
+// Import the utility we just fixed
+import { cn } from "@/lib/utils";
 
 /* ---------- Configuration & Data ---------- */
 
@@ -34,7 +29,7 @@ const ROLE_CONFIG = {
 
 const HEROES = {
   Tank: ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
-  Damage: ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Venture","Widowmaker"],
+  Damage: ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
   Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Zenyatta","Wuyang"],
 } as const;
 
@@ -188,43 +183,49 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       if (elapsed >= duration) {
         clearInterval(intervalId);
         setIsRolling(false);
+        // Call finalize logic cleanly
         finalizeRoll(currentPicks);
       }
     }, intervalTime);
   }, [activePlayers, eligibleByPlayer]);
 
   const finalizeRoll = (finalPicks: Record<PlayerNum, string | null>) => {
-    const newGlobalHistory = [...history];
-    const newPlayerHistory = { ...historyByPlayer };
-
-    activePlayers.forEach(p => {
-      const hero = finalPicks[p];
-      if (hero) {
-        // Update global history
-        if (!newGlobalHistory.includes(hero)) {
-          newGlobalHistory.unshift(hero);
-        } else {
-           // Move to top
-           const idx = newGlobalHistory.indexOf(hero);
-           newGlobalHistory.splice(idx, 1);
-           newGlobalHistory.unshift(hero);
+    setHistory(prevHistory => {
+      const newGlobalHistory = [...prevHistory];
+      
+      activePlayers.forEach(p => {
+        const hero = finalPicks[p];
+        if (hero) {
+          if (!newGlobalHistory.includes(hero)) {
+            newGlobalHistory.unshift(hero);
+          } else {
+            const idx = newGlobalHistory.indexOf(hero);
+            newGlobalHistory.splice(idx, 1);
+            newGlobalHistory.unshift(hero);
+          }
         }
-
-        // Update player history
-        const pHist = [...(newPlayerHistory[p] || [])];
-        if (!pHist.includes(hero)) {
-          pHist.unshift(hero);
-        } else {
-           const idx = pHist.indexOf(hero);
-           pHist.splice(idx, 1);
-           pHist.unshift(hero);
-        }
-        newPlayerHistory[p] = pHist.slice(0, 15); // Keep last 15
-      }
+      });
+      return newGlobalHistory.slice(0, 30);
     });
 
-    setHistory(newGlobalHistory.slice(0, 30));
-    setHistoryByPlayer(newPlayerHistory);
+    setHistoryByPlayer(prev => {
+      const newPlayerHistory = { ...prev };
+      activePlayers.forEach(p => {
+        const hero = finalPicks[p];
+        if (hero) {
+          const pHist = [...(newPlayerHistory[p] || [])];
+          if (!pHist.includes(hero)) {
+            pHist.unshift(hero);
+          } else {
+            const idx = pHist.indexOf(hero);
+            pHist.splice(idx, 1);
+            pHist.unshift(hero);
+          }
+          newPlayerHistory[p] = pHist.slice(0, 15);
+        }
+      });
+      return newPlayerHistory;
+    });
   };
 
   // -- Handlers --
@@ -291,30 +292,30 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       {/* Header */}
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-black italic tracking-tighter bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent uppercase">
             Overwatch 2 Randomizer
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground font-medium">
             Multi-player role lock • Challenge Mode • Smart Filtering
           </p>
         </motion.div>
         
-        <div className="flex items-center gap-4 rounded-lg border bg-card p-2 shadow-sm">
+        <div className="flex items-center gap-4 rounded-lg border bg-card/50 p-2 shadow-sm backdrop-blur-sm">
            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <Select value={String(playersCount)} onValueChange={(v) => setPlayersCount(Number(v))}>
-                <SelectTrigger className="w-[70px] h-8 text-xs">
-                    <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PLAYERS.map(n => <SelectItem key={n} value={String(n)}>{n} P</SelectItem>)}
-                </SelectContent>
-              </Select>
+             <Users className="h-4 w-4 text-muted-foreground" />
+             <Select value={String(playersCount)} onValueChange={(v) => setPlayersCount(Number(v))}>
+               <SelectTrigger className="w-[80px] h-8 text-xs font-bold">
+                   <SelectValue />
+               </SelectTrigger>
+               <SelectContent>
+                 {PLAYERS.map(n => <SelectItem key={n} value={String(n)}>{n} Players</SelectItem>)}
+               </SelectContent>
+             </Select>
            </div>
            <Separator orientation="vertical" className="h-6" />
            <div className="flex items-center gap-2">
              <Switch id="challenge" checked={challengeMode} onCheckedChange={setChallengeMode} className="scale-75 origin-right" />
-             <label htmlFor="challenge" className="text-xs font-medium cursor-pointer select-none flex items-center gap-1">
+             <label htmlFor="challenge" className="text-xs font-bold cursor-pointer select-none flex items-center gap-1 uppercase tracking-wider">
                <Trophy className="h-3 w-3 text-amber-500" /> Challenge
              </label>
            </div>
@@ -325,29 +326,29 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         
         {/* LEFT COLUMN: Controls & Filters (4 cols) */}
         <div className="lg:col-span-4 space-y-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base flex items-center gap-2">
+          <Card className="border-muted/60 shadow-sm">
+            <CardHeader className="pb-3 bg-muted/20">
+              <CardTitle className="text-base flex items-center gap-2 font-bold uppercase tracking-wide">
                 <Filter className="h-4 w-4" /> Player Setup & Pool
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 pt-4">
               
               {/* Player Configuration Rows */}
               <div className="space-y-3">
                  {activePlayers.map(p => (
                    <div key={p} className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-xs font-black text-muted-foreground shadow-inner border">
                         P{p}
                       </div>
                       <Input 
-                        className="h-8 text-sm" 
+                        className="h-8 text-sm font-medium" 
                         placeholder={`Player ${p}`} 
                         value={names[p]} 
                         onChange={e => setNames(prev => ({...prev, [p]: e.target.value}))} 
                       />
                       <Select value={roles[p]} onValueChange={v => setRoles(prev => ({...prev, [p]: v as Role}))}>
-                        <SelectTrigger className="h-8 w-[100px] text-xs">
+                        <SelectTrigger className="h-8 w-[110px] text-xs font-bold uppercase">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -363,56 +364,56 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               {/* Pool Filters */}
               <div className="space-y-2">
                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-semibold uppercase text-muted-foreground">Hero Pool ({poolStats.available})</label>
+                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Hero Pool ({poolStats.available})</label>
                     <div className="flex gap-2">
-                         <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setExcluded({})}>
+                         <Button variant="ghost" size="icon" className="h-6 w-6 hover:bg-muted" onClick={() => setExcluded({})}>
                             <Undo2 className="h-3 w-3" />
                          </Button>
                     </div>
                  </div>
 
                  <Tabs value={listRole} onValueChange={v => setListRole(v as Role)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 h-8">
-                       {ALL_ROLES.map(r => <TabsTrigger key={r} value={r} className="text-xs">{r}</TabsTrigger>)}
+                    <TabsList className="grid w-full grid-cols-4 h-8 bg-muted/40">
+                       {ALL_ROLES.map(r => <TabsTrigger key={r} value={r} className="text-[10px] font-bold uppercase">{r}</TabsTrigger>)}
                     </TabsList>
                  </Tabs>
 
                  <Input 
-                    placeholder="Search heroes..." 
-                    value={query} 
-                    onChange={e => setQuery(e.target.value)} 
-                    className="h-8 text-xs"
+                   placeholder="Search heroes..." 
+                   value={query} 
+                   onChange={e => setQuery(e.target.value)} 
+                   className="h-8 text-xs"
                  />
 
-                 <div className="h-[200px] overflow-y-auto rounded-md border p-1 bg-muted/30">
+                 <div className="h-[200px] overflow-y-auto rounded-md border p-1 bg-muted/10">
                     <div className="grid grid-cols-2 gap-1">
                        {visibleHeroes.map((h) => (
-                         <div key={h.name} className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted/50 transition-colors">
+                         <div key={h.name} className="flex items-center gap-2 rounded px-2 py-1.5 hover:bg-muted/50 transition-colors group">
                             <Checkbox 
                                 id={`ex-${h.name}`} 
                                 checked={!!excluded[h.name]} 
                                 onCheckedChange={() => toggleExclude(h.name)}
-                                className="h-3.5 w-3.5"
+                                className="h-3.5 w-3.5 data-[state=checked]:bg-destructive data-[state=checked]:border-destructive"
                             />
-                            <label htmlFor={`ex-${h.name}`} className={cn("text-xs flex-1 cursor-pointer select-none truncate", excluded[h.name] && "text-muted-foreground line-through")}>
+                            <label htmlFor={`ex-${h.name}`} className={cn("text-xs flex-1 cursor-pointer select-none truncate font-medium group-hover:text-foreground transition-colors", excluded[h.name] ? "text-muted-foreground line-through decoration-destructive/50" : "text-muted-foreground")}>
                                 {h.name}
                             </label>
                             {/* Dot indicator for role */}
-                            <div className={cn("h-1.5 w-1.5 rounded-full", ROLE_CONFIG[h.role].bg.replace("/10", ""))} />
+                            <div className={cn("h-1.5 w-1.5 rounded-full ring-1 ring-inset ring-white/20", ROLE_CONFIG[h.role].bg.replace("/10", ""))} />
                          </div>
                        ))}
                        {visibleHeroes.length === 0 && <div className="col-span-2 text-center text-xs text-muted-foreground py-4">No heroes found</div>}
                     </div>
                  </div>
 
-                 <div className="flex items-center gap-2 pt-2">
+                 <div className="flex items-center gap-2 pt-2 rounded-md bg-muted/30 p-2 border border-dashed">
                     <Switch id="norepeat" checked={noRepeat} onCheckedChange={setNoRepeat} className="scale-75" />
-                    <label htmlFor="norepeat" className="text-xs text-muted-foreground cursor-pointer">No repeats this session</label>
+                    <label htmlFor="norepeat" className="text-xs font-semibold text-muted-foreground cursor-pointer select-none">No repeats this session</label>
                  </div>
               </div>
 
-              {/* Reset Button (Fixed duplicate variant) */}
-              <Button variant="ghost" className="w-full h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50" onClick={resetAllFilters}>
+              {/* Reset Button */}
+              <Button variant="ghost" className="w-full h-8 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 font-bold uppercase tracking-wide" onClick={resetAllFilters}>
                  <Trash2 className="mr-2 h-3 w-3" /> Reset Everything
               </Button>
 
@@ -424,28 +425,28 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         <div className="lg:col-span-8 space-y-6">
            
            {/* Action Bar */}
-           <div className="flex flex-wrap items-center gap-2">
-              <Button 
-                size="lg" 
-                onClick={roll} 
-                disabled={isRolling}
-                className="bg-orange-600 hover:bg-orange-700 text-white font-bold shadow-md active:scale-95 transition-all"
-              >
-                <Dice5 className={cn("mr-2 h-5 w-5", isRolling && "animate-spin")} />
-                {isRolling ? "Rolling..." : "ROLL HEROES"}
-              </Button>
+           <div className="flex flex-col sm:flex-row items-center gap-4 bg-card p-4 rounded-xl border shadow-sm">
+             <Button 
+               size="lg" 
+               onClick={roll} 
+               disabled={isRolling}
+               className="w-full sm:w-auto min-w-[200px] bg-[hsl(25,100%,50%)] hover:bg-[hsl(25,100%,45%)] text-white font-black text-xl shadow-lg hover:shadow-orange-500/25 active:scale-95 transition-all uppercase italic tracking-wider h-14"
+             >
+               <Dice5 className={cn("mr-3 h-6 w-6", isRolling && "animate-spin")} />
+               {isRolling ? "Rolling..." : "ROLL HEROES"}
+             </Button>
 
-              <Button variant="outline" onClick={clearPicks} disabled={isRolling}>
-                 <Repeat className="mr-2 h-4 w-4" /> Clear
-              </Button>
-              
-              <div className="ml-auto flex gap-2">
+             <div className="flex gap-2 w-full sm:w-auto">
+                 <Button variant="outline" onClick={clearPicks} disabled={isRolling} className="flex-1 sm:flex-none">
+                    <Repeat className="mr-2 h-4 w-4" /> Clear
+                 </Button>
+                 
                  {playersCount > 1 && (
-                   <Button variant="secondary" size="sm" onClick={markAllDone} disabled={Object.values(picked).every(v => !v)}>
-                     <CheckCircle2 className="mr-1 h-3 w-3" /> All Done
+                   <Button variant="secondary" onClick={markAllDone} disabled={Object.values(picked).every(v => !v)} className="flex-1 sm:flex-none">
+                     <CheckCircle2 className="mr-2 h-4 w-4 text-green-600" /> All Done
                    </Button>
                  )}
-              </div>
+             </div>
            </div>
 
            {/* Hero Cards Grid */}
@@ -462,68 +463,68 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                 const isDone = heroName && completedByPlayer[p]?.[heroName];
                 
                 return (
-                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300", 
-                     heroName ? "border-opacity-100 shadow-md" : "border-dashed border-opacity-60",
-                     roleConfig ? roleConfig.border : "border-border"
+                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group", 
+                      heroName ? "border-opacity-100 shadow-md ring-1 ring-black/5 dark:ring-white/10" : "border-dashed border-opacity-60 bg-muted/10",
+                      roleConfig ? roleConfig.border : "border-border"
                   )}>
-                     {/* Background tint based on role */}
-                     {roleConfig && <div className={cn("absolute inset-0 opacity-5 pointer-events-none", roleConfig.bg)} />}
+                      {/* Background tint based on role */}
+                      {roleConfig && <div className={cn("absolute inset-0 opacity-[0.03] pointer-events-none group-hover:opacity-[0.07] transition-opacity", roleConfig.bg.replace("/10", ""))} />}
 
-                     <CardHeader className="p-4 pb-2">
+                      <CardHeader className="p-4 pb-2">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="h-6 px-2 text-[10px] uppercase tracking-wider font-semibold">
+                                <Badge variant="outline" className="h-5 px-1.5 text-[10px] uppercase tracking-wider font-bold bg-background/50 backdrop-blur-sm">
                                     {names[p]}
                                 </Badge>
-                                <span className="text-xs text-muted-foreground">{roles[p]}</span>
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{roles[p]}</span>
                             </div>
-                            {isDone && <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-200">DONE</Badge>}
+                            {isDone && <Badge variant="secondary" className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 font-bold tracking-wide">DONE</Badge>}
                         </div>
-                     </CardHeader>
-                     
-                     <CardContent className="p-4 pt-2 min-h-[100px] flex flex-col justify-center items-center text-center">
-                        <AnimatePresence mode="wait">
-                           {heroName ? (
+                      </CardHeader>
+                      
+                      <CardContent className="p-4 pt-2 min-h-[120px] flex flex-col justify-center items-center text-center">
+                         <AnimatePresence mode="wait">
+                            {heroName ? (
                              <motion.div 
                                key={heroName}
                                initial={{ opacity: 0, scale: 0.8, y: 10 }}
                                animate={{ opacity: 1, scale: 1, y: 0 }}
                                exit={{ opacity: 0, scale: 0.9 }}
                                transition={{ type: "spring", bounce: 0.5 }}
-                               className="space-y-2"
+                               className="space-y-3"
                              >
-                                <div className="flex items-center justify-center gap-2">
-                                    {roleConfig && <roleConfig.icon className={cn("h-5 w-5", roleConfig.color)} />}
-                                    <h2 className="text-2xl font-black tracking-tight">{heroName}</h2>
+                                <div className="flex flex-col items-center justify-center gap-1">
+                                    {roleConfig && <roleConfig.icon className={cn("h-8 w-8 opacity-80", roleConfig.color)} />}
+                                    <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-sm">{heroName}</h2>
                                 </div>
                                 {roleConfig && (
-                                    <span className={cn("text-xs font-bold uppercase tracking-widest", roleConfig.color)}>
+                                    <span className={cn("inline-block text-[10px] font-black uppercase tracking-[0.2em] px-2 py-0.5 rounded-full bg-secondary/50", roleConfig.color)}>
                                         {heroData?.role}
                                     </span>
                                 )}
                              </motion.div>
-                           ) : (
-                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-muted-foreground/40">
-                                <Shuffle className="h-8 w-8 mx-auto mb-2 opacity-20" />
-                                <span className="text-sm font-medium">Ready to roll</span>
+                            ) : (
+                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-muted-foreground/40 flex flex-col items-center">
+                                <Shuffle className="h-10 w-10 mb-3 opacity-20" />
+                                <span className="text-sm font-bold uppercase tracking-widest opacity-60">Ready to roll</span>
                              </motion.div>
-                           )}
-                        </AnimatePresence>
-                     </CardContent>
+                            )}
+                         </AnimatePresence>
+                      </CardContent>
 
-                     {/* Card Actions */}
-                     {heroName && (
-                        <div className="border-t p-2 flex justify-center bg-muted/20">
+                      {/* Card Actions */}
+                      {heroName && (
+                        <div className="border-t p-2 flex justify-center bg-muted/30 backdrop-blur-sm">
                            <Button 
                              size="sm" 
                              variant={isDone ? "outline" : "secondary"}
-                             className={cn("w-full text-xs h-8", isDone && "text-muted-foreground")}
+                             className={cn("w-full text-xs h-8 font-bold uppercase tracking-wider", isDone && "text-muted-foreground opacity-70")}
                              onClick={() => isDone ? undoDone(p, heroName) : markDone(p)}
                            >
-                             {isDone ? "Undo Completion" : "Mark Complete"}
+                             {isDone ? <><Undo2 className="mr-2 h-3 w-3"/> Undo</> : <><CheckCircle2 className="mr-2 h-3 w-3"/> Complete</>}
                            </Button>
                         </div>
-                     )}
+                      )}
                   </Card>
                 );
               })}
@@ -534,23 +535,23 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               
               {/* Completed List (Collapsible/Scrollable) */}
               <Card>
-                 <CardHeader className="p-4 pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
+                 <CardHeader className="p-4 pb-2 bg-muted/10">
+                    <CardTitle className="text-sm flex items-center gap-2 font-bold uppercase tracking-wide">
                         <Trophy className="h-4 w-4 text-amber-500" /> 
                         Session Completed
                     </CardTitle>
                  </CardHeader>
-                 <CardContent className="p-4 pt-2">
-                    <div className="h-[150px] overflow-y-auto pr-2 space-y-3">
+                 <CardContent className="p-4 pt-4">
+                    <div className="h-[150px] overflow-y-auto pr-2 space-y-4">
                         {activePlayers.map(p => {
                             const completed = Object.keys(completedByPlayer[p] || {});
                             if(completed.length === 0) return null;
                             return (
                                 <div key={p} className="text-sm">
-                                    <span className="text-xs font-bold text-muted-foreground block mb-1">{names[p]}</span>
+                                    <span className="text-[10px] font-black text-muted-foreground block mb-1.5 uppercase tracking-wider">{names[p]}</span>
                                     <div className="flex flex-wrap gap-1.5">
                                         {completed.map(c => (
-                                            <Badge key={c} variant="secondary" className="text-[10px] px-1.5 h-5 cursor-pointer hover:line-through hover:bg-destructive/10 hover:text-destructive" onClick={() => undoDone(p, c)}>
+                                            <Badge key={c} variant="secondary" className="text-[10px] px-2 h-6 cursor-pointer hover:line-through hover:bg-destructive hover:text-white transition-colors" onClick={() => undoDone(p, c)}>
                                                 {c}
                                             </Badge>
                                         ))}
@@ -559,7 +560,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                             )
                         })}
                         {activePlayers.every(p => Object.keys(completedByPlayer[p] || {}).length === 0) && (
-                            <div className="h-full flex items-center justify-center text-xs text-muted-foreground">
+                            <div className="h-full flex items-center justify-center text-xs font-medium text-muted-foreground/60 italic">
                                 No challenges completed yet.
                             </div>
                         )}
@@ -569,17 +570,17 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
               {/* Recent History */}
               <Card>
-                 <CardHeader className="p-4 pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
+                 <CardHeader className="p-4 pb-2 bg-muted/10">
+                    <CardTitle className="text-sm flex items-center gap-2 font-bold uppercase tracking-wide">
                         <History className="h-4 w-4" /> 
                         Global History (Last 20)
                     </CardTitle>
                  </CardHeader>
-                 <CardContent className="p-4 pt-2">
-                    <div className="h-[150px] overflow-y-auto">
+                 <CardContent className="p-4 pt-4">
+                    <div className="h-[150px] overflow-y-auto custom-scrollbar">
                         <ul className="space-y-1">
                             {history.length === 0 && (
-                                <div className="h-full flex items-center justify-center text-xs text-muted-foreground pt-10">
+                                <div className="h-full flex items-center justify-center text-xs font-medium text-muted-foreground/60 italic pt-10">
                                     History is empty.
                                 </div>
                             )}
@@ -587,10 +588,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                                 const role = ALL_HEROES.find(x => x.name === h)?.role;
                                 const style = role ? ROLE_CONFIG[role] : null;
                                 return (
-                                    <li key={`${h}-${i}`} className="flex items-center justify-between text-xs py-1 border-b last:border-0">
-                                        <span>{h}</span>
+                                    <li key={`${h}-${i}`} className="flex items-center justify-between text-xs py-1.5 border-b last:border-0 border-dashed border-muted">
+                                        <span className="font-medium text-foreground/80">{h}</span>
                                         {style && (
-                                            <Badge variant="outline" className={cn("text-[10px] h-4 px-1", style.color, style.bg, "border-0")}>
+                                            <Badge variant="outline" className={cn("text-[9px] h-4 px-1 uppercase tracking-wider", style.color, style.bg, "border-0")}>
                                                 {role}
                                             </Badge>
                                         )}
