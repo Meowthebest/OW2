@@ -222,14 +222,15 @@ export default function Overwatch2TacticalPicker() {
               </div>
               <Separator className="bg-border/60" />
               <div className="space-y-2">
-<Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
+<Tabs value={filterRole} onValueChange={(v) => setFilterRole(v as RoleType)} className="w-full">
   <TabsList
     className="
-      grid w-full grid-cols-4 h-7
-      rounded-full overflow-hidden
-      bg-muted/40 border border-border/40
-      p-1 gap-1
-      shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]
+      grid w-full grid-cols-4
+      h-8 p-[3px]
+      rounded-full
+      bg-muted/30
+      border border-border/40
+      shadow-sm
     "
   >
     {ROLES.map((r) => (
@@ -237,14 +238,15 @@ export default function Overwatch2TacticalPicker() {
         key={r}
         value={r}
         className="
-          text-[9px] font-black uppercase
+          h-full flex-1
           rounded-full
-          border border-transparent
-          data-[state=active]:bg-background
-          data-[state=active]:border-border/40
-          data-[state=active]:shadow-sm
+          px-0
+          text-[10px] font-black uppercase tracking-wider
+          text-muted-foreground
+          transition-all
+          data-[state=active]:bg-background/70
           data-[state=active]:text-foreground
-          data-[state=inactive]:text-muted-foreground
+          data-[state=active]:shadow-[0_0_0_1px_rgba(255,255,255,0.06),_0_4px_10px_rgba(0,0,0,0.25)]
           focus-visible:ring-0 focus-visible:ring-offset-0
         "
       >
