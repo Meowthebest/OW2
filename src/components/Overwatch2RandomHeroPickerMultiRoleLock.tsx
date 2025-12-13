@@ -29,9 +29,7 @@ const ROLE_STYLES = {
 
 const HERO_DATABASE = {
   Tank:    ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
-  // Added Freja and Vendetta
   Damage:  ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
-  // Added Wuyang
   Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Wuyang","Zenyatta"],
 } as const;
 
@@ -222,39 +220,23 @@ export default function Overwatch2TacticalPicker() {
               </div>
               <Separator className="bg-border/60" />
               <div className="space-y-2">
-<Tabs value={filterRole} onValueChange={(v) => setFilterRole(v as RoleType)} className="w-full">
-  <TabsList
-    className="
-      grid w-full grid-cols-4
-      h-8 p-[3px]
-      rounded-full
-      bg-muted/30
-      border border-border/40
-      shadow-sm
-    "
-  >
-    {ROLES.map((r) => (
-      <TabsTrigger
-        key={r}
-        value={r}
-        className="
-          h-full flex-1
-          rounded-full
-          px-0
-          text-[10px] font-black uppercase tracking-wider
-          text-muted-foreground
-          transition-all
-          data-[state=active]:bg-background/70
-          data-[state=active]:text-foreground
-          data-[state=active]:shadow-[0_0_0_1px_rgba(255,255,255,0.06),_0_4px_10px_rgba(0,0,0,0.25)]
-          focus-visible:ring-0 focus-visible:ring-offset-0
-        "
-      >
-        {r}
-      </TabsTrigger>
-    ))}
-  </TabsList>
-</Tabs>
+                 <div className="flex items-center justify-between"><label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned} / 4)</label></div>
+                 
+                 {/* FIXED TABS LIST: Cleaned up classes to remove conflicting borders */}
+                 <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
+                    <TabsList className="grid w-full grid-cols-4 h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground border border-border/20">
+                       {ROLES.map(r => (
+                         <TabsTrigger 
+                           key={r} 
+                           value={r} 
+                           className="rounded-md px-2 py-1 text-[10px] font-bold uppercase shadow-none data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
+                         >
+                           {r}
+                         </TabsTrigger>
+                       ))}
+                    </TabsList>
+                 </Tabs>
+
                  <Input placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-7 text-xs bg-background/40 border-border/40" />
                  <div className="h-[180px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
                     <div className="grid grid-cols-2 gap-1">
