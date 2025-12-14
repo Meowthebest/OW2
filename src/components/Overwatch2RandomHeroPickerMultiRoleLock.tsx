@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, ChevronDown, Check, Search, Ban
+  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown, Sparkles
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -25,8 +25,8 @@ const AnimatedButton = ({ children, onClick, disabled, className, variant = 'pri
 
   return (
     <motion.button
-      whileHover={{ scale: disabled ? 1 : 1.05 }}
-      whileTap={{ scale: disabled ? 1 : 0.95 }}
+      whileHover={{ scale: disabled ? 1 : 1.02 }}
+      whileTap={{ scale: disabled ? 1 : 0.98 }}
       onClick={onClick}
       disabled={disabled}
       className={cn(baseStyle, variants[variant], className)}
@@ -51,38 +51,38 @@ const CustomDropdown = ({ value, options, onChange, label }: any) => {
   return (
     <div className="relative" ref={ref}>
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-8 items-center justify-between gap-2 rounded-full border border-border/50 bg-background/50 px-3 text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-accent transition-colors min-w-[80px]"
+        className="flex h-9 items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/50 px-3 text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-accent hover:text-accent-foreground transition-all min-w-[100px]"
       >
         <span className="truncate">{label || value}</span>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
-          <ChevronDown className="h-3 w-3 opacity-50" />
+          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </motion.div>
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            initial={{ opacity: 0, y: -5, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full z-50 mt-1 w-40 overflow-hidden rounded-xl border border-border/50 bg-popover p-1 text-popover-foreground shadow-xl backdrop-blur-md"
+            exit={{ opacity: 0, y: -5, scale: 0.98 }}
+            transition={{ duration: 0.1 }}
+            className="absolute right-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl border border-border/50 bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-xl"
           >
             {options.map((opt: any) => (
               <button
                 key={opt}
                 onClick={() => { onChange(opt); setIsOpen(false); }}
                 className={cn(
-                  "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2 pl-2 pr-8 text-[10px] font-bold uppercase tracking-wider outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
-                  value === opt && "bg-accent/50 text-orange-500"
+                  "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-3 pr-8 text-[10px] font-bold uppercase tracking-wider outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
+                  value === opt && "bg-orange-500/10 text-orange-500"
                 )}
               >
                 {opt}
                 {value === opt && (
-                  <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <span className="absolute right-3 flex h-3.5 w-3.5 items-center justify-center">
                     <Check className="h-3 w-3" />
                   </span>
                 )}
@@ -103,9 +103,8 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
-// IMPORTANT: These files MUST be in `public/icons`
 const HERO_IMAGES: Record<string, string> = {
-  // TANKS
+  // --- TANKS ---
   "D.Va": "icons/000000038C19.webp",
   "Doomfist": "icons/000000038C1A.webp",
   "Hazard": "icons/000000044C5E.webp",
@@ -120,7 +119,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Wrecking Ball": "icons/000000038C26.webp",
   "Zarya": "icons/000000038C28.webp",
 
-  // DAMAGE (Updated with your files)
+  // --- DAMAGE ---
   "Ashe": "icons/150px-Ashe_mini_portrait.png",
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
@@ -142,8 +141,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Venture": "icons/150px-Venture_mini_portrait.png",
   "Widowmaker": "icons/150px-Widowmaker_OW2_mini_portrait.png",
 
-
-  // --- SUPPORT (PNGs) ---
+  // --- SUPPORT ---
   "Ana": "icons/150px-Ana_OW2_mini_portrait.png",
   "Baptiste": "icons/150px-Baptiste_mini_portrait.png",
   "Brigitte": "icons/150px-Brigitte_OW2_mini_portrait.png",
@@ -157,7 +155,6 @@ const HERO_IMAGES: Record<string, string> = {
   "Wuyang": "icons/150px-Wuyang_mini_portrait.png",
   "Zenyatta": "icons/150px-Zenyatta_OW2_mini_portrait.png",
 };
-
 
 const HERO_DATABASE = {
   Tank:    ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
@@ -260,7 +257,6 @@ export default function Overwatch2TacticalPicker() {
         }
       });
       setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
-      // Faster animation loop (40ms) and slightly longer duration (20 ticks) for smoothness
       if (ticks >= 20) { clearInterval(timer); setIsRolling(false); finalizeMission(draftPicks); }
     }, 40); 
   }, [activePlayers, playerRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
@@ -300,49 +296,76 @@ export default function Overwatch2TacticalPicker() {
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300 font-sans text-sm selection:bg-orange-500/30">
-      <div className="mx-auto max-w-6xl p-3 space-y-4">
+      <div className="mx-auto max-w-6xl p-4 space-y-6">
       
-      {/* HEADER */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between rounded-3xl bg-card/50 p-4 border border-border/40 shadow-lg backdrop-blur-md">
-        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
-          <h1 className="text-3xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase">
-            Overwatch 2 <span className="text-foreground/70 text-lg not-italic tracking-normal normal-case">/ Randomizer</span>
-          </h1>
-        </motion.div>
-        <div className="flex flex-wrap items-center gap-3">
-           <motion.button whileHover={{scale: 1.1}} whileTap={{scale: 0.9}} onClick={toggleTheme} className="h-10 w-10 rounded-full border border-border/50 flex items-center justify-center hover:bg-accent text-foreground transition-colors bg-background/50 backdrop-blur-sm">
-              {theme === 'dark' ? <Sun className="h-5 w-5 text-yellow-500" /> : <Moon className="h-5 w-5 text-slate-700" />}
-           </motion.button>
-           <div className="flex items-center gap-3 bg-background/80 border border-border/50 rounded-full p-1.5 px-4 shadow-sm">
-             <CustomDropdown 
-                value={`${playerCount} ${playerCount === 1 ? "Player" : "Players"}`}
-                options={PLAYERS_INDICES.map(n => `${n} ${n === 1 ? "Player" : "Players"}`)}
-                onChange={(val: string) => setPlayerCount(parseInt(val.split(" ")[0]))}
-             />
-             <div className="w-[1px] h-5 bg-border/50"></div>
-             <div className="flex items-center gap-2 px-1">
-               <label className="text-xs font-bold uppercase cursor-pointer text-muted-foreground hover:text-foreground">Challenge</label>
-               <input type="checkbox" checked={challengeMode} onChange={(e) => setChallengeMode(e.target.checked)} className="accent-orange-500 h-4 w-4" />
+      {/* --- NEW CLEAN HEADER --- */}
+      <div className="relative overflow-hidden rounded-2xl bg-card border border-border/40 shadow-xl">
+        {/* Background Accent */}
+        <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6">
+          {/* Logo / Title Area */}
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
+              <Sparkles className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black italic tracking-tighter uppercase text-foreground leading-none">
+                Overwatch 2 <span className="text-orange-500">/</span> Randomizer
+              </h1>
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mt-1">
+                Tactical Hero Selector
+              </p>
+            </div>
+          </div>
+
+          {/* Controls Area */}
+          <div className="flex flex-wrap items-center gap-3">
+             <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-xl border border-border/40 backdrop-blur-sm">
+                <CustomDropdown 
+                  value={`${playerCount} ${playerCount === 1 ? "Player" : "Players"}`}
+                  options={PLAYERS_INDICES.map(n => `${n} ${n === 1 ? "Player" : "Players"}`)}
+                  onChange={(val: string) => setPlayerCount(parseInt(val.split(" ")[0]))}
+                />
+                <div className="w-[1px] h-6 bg-border/40 mx-1"></div>
+                <div className="flex items-center gap-2 px-2 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setChallengeMode(!challengeMode)}>
+                   <div className={cn("w-4 h-4 rounded border flex items-center justify-center transition-colors", challengeMode ? "bg-orange-500 border-orange-500" : "border-muted-foreground")}>
+                      {challengeMode && <Check className="h-3 w-3 text-white" />}
+                   </div>
+                   <span className="text-[10px] font-bold uppercase text-muted-foreground">Challenge</span>
+                </div>
              </div>
-           </div>
+
+             <motion.button 
+                whileHover={{scale: 1.05}} whileTap={{scale: 0.95}} 
+                onClick={toggleTheme} 
+                className="h-10 w-10 rounded-xl border border-border/40 flex items-center justify-center hover:bg-muted/50 text-foreground transition-colors bg-card/50"
+             >
+                {theme === 'dark' ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-600" />}
+             </motion.button>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
         {/* LEFT PANEL */}
-        <div className="lg:col-span-4 space-y-4">
-          <div className="rounded-3xl border border-border/40 bg-card/30 backdrop-blur-md shadow-sm overflow-hidden">
-            <div className="bg-muted/30 py-3 px-4 border-b border-border/40">
-              <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-                <Filter className="h-4 w-4 text-primary" /> Setup
+        <div className="lg:col-span-4 space-y-6">
+          <div className="rounded-2xl border border-border/40 bg-card/50 backdrop-blur-md shadow-sm overflow-hidden flex flex-col h-full">
+            <div className="bg-muted/30 py-3 px-5 border-b border-border/40">
+              <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-muted-foreground">
+                <Filter className="h-3.5 w-3.5" /> Configuration
               </h3>
             </div>
-            <div className="space-y-4 p-4">
+            <div className="p-5 space-y-5 flex-1">
               <div className="space-y-3">
                  {activePlayers.map(p => (
-                   <motion.div initial={{opacity: 0, x: -10}} animate={{opacity: 1, x: 0}} key={p} className="flex items-center gap-2">
-                      <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-background/80 text-xs font-black shadow-sm border border-border/50 shrink-0 text-muted-foreground">{p}</div>
-                      <input className="h-9 w-full rounded-xl border border-input bg-background/50 px-3 py-1 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 transition-all" value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
+                   <motion.div initial={{opacity: 0, x: -10}} animate={{opacity: 1, x: 0}} key={p} className="flex items-center gap-3">
+                      <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-muted/50 text-xs font-black shadow-sm border border-border/40 shrink-0 text-muted-foreground">{p}</div>
+                      <div className="flex-1 space-y-1">
+                        <input className="w-full bg-transparent text-sm font-bold focus:outline-none placeholder:text-muted-foreground/50" value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
+                        <div className="h-[1px] w-full bg-border/40"></div>
+                      </div>
                       <CustomDropdown 
                         value={playerRoles[p]} 
                         options={ROLES} 
@@ -351,62 +374,63 @@ export default function Overwatch2TacticalPicker() {
                    </motion.div>
                  ))}
               </div>
-              <div className="h-[1px] w-full bg-border/40"></div>
-              <div className="space-y-3">
-                 <div className="flex items-center justify-between"><label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned} / 4)</label></div>
+              
+              <div className="space-y-3 pt-2">
+                 <div className="flex items-center justify-between"><label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Ban Heroes ({poolStats.banned}/4)</label></div>
                  
-                 <div className="grid w-full grid-cols-4 h-10 bg-muted/40 p-1 rounded-xl border border-border/20">
+                 <div className="grid w-full grid-cols-4 bg-muted/40 p-1 rounded-xl border border-border/20">
                     {ROLES.map(r => (
                         <button 
                             key={r} 
                             onClick={() => setFilterRole(r)}
-                            className={cn("text-[10px] font-bold uppercase rounded-lg transition-all", filterRole === r ? "bg-background text-foreground shadow-sm scale-105" : "text-muted-foreground hover:text-foreground")}
+                            className={cn("h-8 text-[9px] font-bold uppercase rounded-lg transition-all", filterRole === r ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
                         >
                             {r}
                         </button>
                     ))}
                  </div>
 
-                 <div className="relative">
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <input placeholder="Search heroes..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex h-9 w-full rounded-xl border border-input bg-background/40 pl-9 pr-3 py-1 text-xs shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50" />
+                 <div className="relative group">
+                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground group-focus-within:text-foreground transition-colors" />
+                    <input placeholder="Type to search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex h-9 w-full rounded-xl border border-border/40 bg-background/40 pl-9 pr-3 py-1 text-xs transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50" />
                  </div>
                  
-                 <div className="h-[200px] overflow-y-auto rounded-2xl border border-border/40 bg-background/20 p-2 custom-scrollbar">
+                 <div className="h-[240px] overflow-y-auto rounded-2xl border border-border/40 bg-background/30 p-2 custom-scrollbar">
                     <div className="grid grid-cols-2 gap-2">
                        {filteredPool.map((h) => (
-                         <motion.div whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} key={h.name} className={cn("flex items-center gap-2 rounded-xl px-2 py-2 transition-all cursor-pointer select-none border border-transparent", bannedHeroes[h.name] ? "bg-red-500/10 border-red-500/20 opacity-70" : "hover:bg-background/80 hover:border-border/30 hover:shadow-sm")} onClick={() => toggleBan(h.name)}>
-                            <div className="relative h-6 w-6 shrink-0 rounded-lg overflow-hidden bg-black/20">
+                         <motion.div whileHover={{scale: 1.02}} whileTap={{scale: 0.98}} key={h.name} className={cn("flex items-center gap-2 rounded-xl px-2 py-2 transition-all cursor-pointer select-none border", bannedHeroes[h.name] ? "bg-red-500/5 border-red-500/20" : "border-transparent hover:bg-background/60 hover:border-border/40")} onClick={() => toggleBan(h.name)}>
+                            <div className="relative h-8 w-8 shrink-0 rounded-lg overflow-hidden bg-muted/50 border border-white/5">
                                 {HERO_IMAGES[h.name] ? (
                                   <img 
                                     src={HERO_IMAGES[h.name]} 
                                     alt={h.name} 
-                                    className="h-full w-full object-cover"
+                                    className={cn("h-full w-full object-cover transition-opacity", bannedHeroes[h.name] && "opacity-50 grayscale")}
                                     onError={(e) => e.currentTarget.style.display = 'none'} 
                                   />
-                                ) : <div className="h-full w-full bg-muted/50" />}
+                                ) : null}
                             </div>
-                            <span className={cn("text-[11px] flex-1 truncate font-bold", bannedHeroes[h.name] ? "text-red-500 line-through" : "text-foreground/80")}>{h.name}</span>
-                            {bannedHeroes[h.name] && <Ban className="h-3.5 w-3.5 text-red-500" />}
+                            <span className={cn("text-[11px] flex-1 truncate font-bold", bannedHeroes[h.name] ? "text-red-500 line-through decoration-2" : "text-foreground/80")}>{h.name}</span>
                          </motion.div>
                        ))}
                     </div>
                  </div>
               </div>
-              <AnimatedButton variant="outline" className="w-full h-9 text-[10px] border-dashed" onClick={factoryReset}><Trash2 className="mr-2 h-3.5 w-3.5" /> RESET DATA</AnimatedButton>
+              <AnimatedButton variant="outline" className="w-full h-10 text-[10px] border-dashed border-border/40 hover:border-red-500/50 hover:text-red-500 hover:bg-red-500/5" onClick={factoryReset}><Trash2 className="mr-2 h-3.5 w-3.5" /> RESET ALL DATA</AnimatedButton>
             </div>
           </div>
         </div>
 
         {/* RIGHT PANEL */}
-        <div className="lg:col-span-8 space-y-4">
-           <div className="flex flex-col sm:flex-row items-center gap-4 bg-card/30 backdrop-blur-md p-5 rounded-3xl border border-border/40 shadow-xl relative overflow-hidden">
-             <AnimatedButton onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[240px] h-14 text-xl italic shadow-orange-500/20">
-               <Dice5 className={cn("mr-3 h-6 w-6", isRolling && "animate-spin")} /> {isRolling ? "ROLLING..." : "RANDOMIZE"}
+        <div className="lg:col-span-8 space-y-6">
+           <div className="flex flex-col sm:flex-row items-center gap-4 bg-gradient-to-b from-card/80 to-card/40 backdrop-blur-md p-6 rounded-3xl border border-border/40 shadow-xl relative overflow-hidden group">
+             <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+             
+             <AnimatedButton onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[260px] h-16 text-xl italic shadow-2xl shadow-orange-500/20 relative z-10">
+               <Dice5 className={cn("mr-3 h-6 w-6", isRolling && "animate-spin")} /> {isRolling ? "ROLLING..." : "RANDOMIZE HEROES"}
              </AnimatedButton>
              <div className="flex gap-3 w-full sm:w-auto z-10">
-                 <AnimatedButton variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none h-14 px-6"><Repeat className="mr-2 h-4 w-4" /> Clear</AnimatedButton>
-                 {playerCount > 1 && <AnimatedButton variant="ghost" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none h-14 px-6 border border-green-500/20 text-green-600 hover:bg-green-500/10"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</AnimatedButton>}
+                 <AnimatedButton variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none h-16 px-8 rounded-xl bg-card border-border/40 hover:bg-accent"><Repeat className="mr-2 h-4 w-4" /> Clear</AnimatedButton>
+                 {playerCount > 1 && <AnimatedButton variant="ghost" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none h-16 px-8 rounded-xl border border-green-500/20 text-green-600 hover:bg-green-500/10 hover:border-green-500/30"><CheckCircle2 className="mr-2 h-4 w-4" /> Finish All</AnimatedButton>}
              </div>
            </div>
 
@@ -418,80 +442,87 @@ export default function Overwatch2TacticalPicker() {
                 const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={p} className={cn("relative overflow-hidden transition-all duration-500 group min-h-[220px] flex flex-col backdrop-blur-md shadow-lg rounded-3xl border-2", heroName ? "border-orange-500/30 bg-gradient-to-b from-card/90 to-background/60" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
+                  <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={p} className={cn("relative overflow-hidden transition-all duration-500 group min-h-[280px] flex flex-col backdrop-blur-md shadow-lg rounded-[2rem] border-[1px]", heroName ? "border-white/10 dark:border-white/5 bg-gradient-to-b from-card/95 to-background/80" : "border-dashed border-border/30 bg-muted/5 dark:bg-card/5", style ? style.border : "")}>
                       {style && <div className={cn("absolute inset-0 opacity-[0.03] pointer-events-none bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
-                      <div className="p-4 flex justify-between items-start z-10 gap-2">
+                      
+                      {/* Card Header */}
+                      <div className="p-5 flex justify-between items-start z-10 gap-2">
                          <div className="flex flex-col">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">Player {p}</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 mb-0.5">Player {p}</span>
                             <span className="text-sm font-bold text-foreground truncate">{playerNames[p]}</span>
                          </div>
-                         <div className="inline-flex items-center rounded-lg border border-border/30 bg-background/50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground shadow-sm backdrop-blur-sm">{playerRoles[p]}</div>
+                         <div className="inline-flex items-center rounded-lg border border-border/30 bg-background/40 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground shadow-sm backdrop-blur-md">{playerRoles[p]}</div>
                       </div>
                       
-                      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10">
+                      {/* Hero Content */}
+                      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 -mt-2">
                          <AnimatePresence mode="wait">
                             {heroName ? (
                              <motion.div 
                                key={heroName} 
-                               initial={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }} 
+                               initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} 
                                animate={{ 
                                  opacity: 1, 
-                                 scale: isRolling ? [1, 1.1, 1] : 1, 
+                                 scale: isRolling ? [1, 1.05, 1] : 1, 
                                  filter: isRolling ? "blur(4px)" : "blur(0px)",
-                                 y: isRolling ? [0, -5, 5, 0] : 0
                                }} 
                                transition={{ duration: isRolling ? 0.1 : 0.4, type: "spring" }}
-                               className="flex flex-col items-center gap-4 w-full"
+                               className="flex flex-col items-center gap-5 w-full"
                              >
-                                <div className="relative group-hover:scale-105 transition-transform duration-300">
-                                    {/* GLOW EFFECT BEHIND ICON */}
-                                    <div className={cn("absolute inset-0 blur-2xl opacity-30 scale-150 rounded-full", style ? style.bg.replace("/10", "/50") : "bg-white/10")} />
+                                <div className="relative group-hover:scale-105 transition-transform duration-500 ease-out">
+                                    {/* GLOW */}
+                                    <div className={cn("absolute inset-0 blur-3xl opacity-20 scale-150 rounded-full", style ? style.bg.replace("/10", "/60") : "bg-white/10")} />
                                     
-                                    {/* HERO ICON - BIGGER NOW */}
+                                    {/* ICON */}
                                     {HERO_IMAGES[heroName] ? (
-                                      <img 
-                                        src={HERO_IMAGES[heroName]} 
-                                        alt={heroName} 
-                                        className={cn("h-24 w-24 rounded-2xl object-cover shadow-2xl border-2 border-white/10 relative z-10", isRolling && "grayscale")}
-                                        onError={(e) => e.currentTarget.style.display = 'none'} 
-                                      />
+                                      <div className="relative rounded-3xl overflow-hidden border-[3px] border-white/10 shadow-2xl">
+                                          <img 
+                                            src={HERO_IMAGES[heroName]} 
+                                            alt={heroName} 
+                                            className={cn("h-28 w-28 object-cover transform transition-transform duration-700", isRolling && "grayscale blur-sm")}
+                                            onError={(e) => e.currentTarget.style.display = 'none'} 
+                                          />
+                                      </div>
                                     ) : (
-                                       <div className="h-24 w-24 rounded-2xl bg-gradient-to-br from-muted to-muted/50 border-2 border-white/5 flex items-center justify-center relative z-10 shadow-inner">
-                                          {style && <style.icon className={cn("h-10 w-10 opacity-20", style.color)} />}
+                                       <div className="h-28 w-28 rounded-3xl bg-gradient-to-br from-muted to-muted/50 border-[3px] border-white/5 flex items-center justify-center relative z-10 shadow-inner">
+                                          {style && <style.icon className={cn("h-12 w-12 opacity-20", style.color)} />}
                                        </div>
                                     )}
                                 </div>
                                 
-                                <div className="text-center space-y-1">
-                                  <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-sm bg-gradient-to-b from-foreground to-foreground/60 bg-clip-text text-transparent px-1">{heroName}</h2>
-                                  {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full border bg-background/50 backdrop-blur-sm shadow-sm", style.color, style.border)}>{heroData?.role}</span>}
+                                <div className="text-center space-y-2">
+                                  <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-sm bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent px-1">{heroName}</h2>
+                                  {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full border bg-background/30 backdrop-blur-md shadow-sm", style.color, style.border)}>{heroData?.role}</span>}
                                 </div>
                              </motion.div>
                             ) : (
-                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/20">
-                                <Activity className="h-10 w-10 mb-2 opacity-50 animate-pulse" />
-                                <span className="text-xs font-black uppercase tracking-[0.3em]">Ready</span>
+                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/10 space-y-4">
+                                <div className="h-24 w-24 rounded-full border-4 border-dashed border-current flex items-center justify-center">
+                                    <Activity className="h-8 w-8 animate-pulse" />
+                                </div>
+                                <span className="text-xs font-black uppercase tracking-[0.3em]">Ready to Roll</span>
                              </motion.div>
                             )}
                          </AnimatePresence>
                       </div>
 
+                      {/* Action Button */}
                       {heroName && (
-                        <div className="p-3 z-10">
-                           <AnimatedButton 
-                             variant={isCompleted ? "outline" : "secondary"} 
-                             className={cn("w-full h-9 text-xs", !isCompleted && "bg-white/5 hover:bg-white/10 border-white/10")}
+                        <div className="p-4 z-10">
+                           <motion.button 
+                             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                             className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-xl text-xs font-black transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 w-full h-11 uppercase tracking-widest", isCompleted ? "border border-border/50 bg-transparent text-muted-foreground hover:bg-muted/20" : "bg-foreground text-background hover:bg-foreground/90 shadow-lg")} 
                              onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}
                            >
-                             {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> UNDO</> : <><CheckCircle2 className="mr-2 h-3.5 w-3.5"/> COMPLETE</>}
-                           </AnimatedButton>
+                             {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> Undo Completion</> : <><CheckCircle2 className="mr-2 h-4 w-4"/> Mark Complete</>}
+                           </motion.button>
                         </div>
                       )}
                       
                       {isCompleted && (
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/60 backdrop-blur-[2px]">
-                          <motion.div initial={{scale: 0.5, opacity: 0}} animate={{scale: 1, opacity: 1}} className="bg-green-500 text-white px-5 py-2 rounded-full font-black text-sm uppercase tracking-widest shadow-2xl flex items-center gap-2">
-                            <Check className="h-4 w-4" /> Complete
+                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/40 backdrop-blur-sm transition-all duration-500">
+                          <motion.div initial={{scale: 0.5, opacity: 0, y: 20}} animate={{scale: 1, opacity: 1, y: 0}} className="bg-green-500 text-white px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl flex items-center gap-3 border border-white/20">
+                            <Check className="h-5 w-5" /> Completed
                           </motion.div>
                         </div>
                       )}
@@ -500,32 +531,32 @@ export default function Overwatch2TacticalPicker() {
               })}
            </div>
 
-           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* COMPLETED LIST */}
-              <div className="rounded-3xl border border-border/40 bg-card/30 backdrop-blur-md shadow-md">
-                 <div className="bg-muted/30 py-3 px-4 border-b border-border/40"><h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-4 w-4 text-amber-500" /> Completed</h3></div>
-                 <div className="p-4">
-                    <div className="h-[120px] overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+              <div className="rounded-[2rem] border border-border/40 bg-card/30 backdrop-blur-md shadow-md overflow-hidden">
+                 <div className="bg-muted/30 py-4 px-6 border-b border-border/40"><h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-muted-foreground"><Trophy className="h-4 w-4 text-amber-500" /> Completed Missions</h3></div>
+                 <div className="p-6">
+                    <div className="h-[140px] overflow-y-auto pr-2 space-y-4 custom-scrollbar">
                         {activePlayers.map(p => {
                             const completed = Object.keys(completedMissions[p] || {}); if(completed.length === 0) return null;
-                            return ( <div key={p} className="flex flex-col gap-1.5"><span className="text-[10px] font-black text-muted-foreground uppercase tracking-wider pl-1 opacity-70">{playerNames[p]}</span><div className="flex flex-wrap gap-2">{completed.map(c => <div key={c} className="inline-flex items-center rounded-lg border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider transition-colors border-border/30 bg-background/50 hover:bg-red-500 hover:text-white hover:border-red-500 cursor-pointer shadow-sm" onClick={() => undoMission(p, c)}>{c}</div>)}</div></div> )
+                            return ( <div key={p} className="flex flex-col gap-2"><span className="text-[10px] font-black text-muted-foreground/70 uppercase tracking-wider pl-1">{playerNames[p]}</span><div className="flex flex-wrap gap-2">{completed.map(c => <div key={c} className="inline-flex items-center rounded-lg border px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-colors border-border/40 bg-background/40 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/50 cursor-pointer shadow-sm group" onClick={() => undoMission(p, c)}>{c} <Trash2 className="ml-1.5 h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" /></div>)}</div></div> )
                         })}
-                        {activePlayers.every(p => Object.keys(completedMissions[p] || {}).length === 0) && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-1"><AlertCircle className="h-5 w-5" /><span className="text-[10px] font-bold">No Data</span></div>}
+                        {activePlayers.every(p => Object.keys(completedMissions[p] || {}).length === 0) && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/20 gap-2"><Trophy className="h-8 w-8" /><span className="text-[10px] font-bold uppercase tracking-widest">No Missions Completed</span></div>}
                     </div>
                  </div>
               </div>
               
               {/* HISTORY LOG */}
-              <div className="rounded-3xl border border-border/40 bg-card/30 backdrop-blur-md shadow-md">
-                 <div className="bg-muted/30 py-3 px-4 border-b border-border/40"><h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2"><History className="h-4 w-4 text-blue-500" /> History</h3></div>
-                 <div className="p-4">
-                    <div className="h-[120px] overflow-y-auto custom-scrollbar">
+              <div className="rounded-[2rem] border border-border/40 bg-card/30 backdrop-blur-md shadow-md overflow-hidden">
+                 <div className="bg-muted/30 py-4 px-6 border-b border-border/40"><h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2 text-muted-foreground"><History className="h-4 w-4 text-blue-500" /> Recent History</h3></div>
+                 <div className="p-6">
+                    <div className="h-[140px] overflow-y-auto custom-scrollbar">
                         <div className="space-y-1 font-mono text-[11px]">
-                            {missionLog.length === 0 && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-1 mt-6"><span className="text-[10px] font-bold">Log Empty</span></div>}
+                            {missionLog.length === 0 && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/20 gap-2"><History className="h-8 w-8" /><span className="text-[10px] font-bold uppercase tracking-widest">Log Empty</span></div>}
                             {missionLog.map((h, i) => {
                                 const role = FLAT_HERO_LIST.find(x => x.name === h)?.role;
                                 const style = role ? ROLE_STYLES[role] : null;
-                                return ( <div key={`${h}-${i}`} className="flex items-center justify-between py-1.5 border-b border-dashed border-border/30 last:border-0 hover:bg-muted/20 px-2 rounded-lg group"><span className="font-bold opacity-70 group-hover:opacity-100 transition-opacity"><span className="text-muted-foreground/40 mr-3">#{String(i + 1).padStart(2, '0')}</span>{h}</span>{style && <span className={cn("text-[9px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity", style.color)}>{role}</span>}</div> );
+                                return ( <div key={`${h}-${i}`} className="flex items-center justify-between py-2 border-b border-dashed border-border/30 last:border-0 hover:bg-muted/20 px-3 rounded-lg group transition-colors"><span className="font-bold opacity-70 group-hover:opacity-100 transition-opacity"><span className="text-muted-foreground/30 mr-3">#{String(i + 1).padStart(2, '0')}</span>{h}</span>{style && <span className={cn("text-[8px] font-black uppercase tracking-widest opacity-40 group-hover:opacity-100 transition-opacity px-2 py-0.5 rounded bg-background/50", style.color)}>{role}</span>}</div> );
                             })}
                         </div>
                     </div>
