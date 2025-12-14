@@ -2,158 +2,38 @@ import React, { useEffect, useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
-  CheckCircle2, Undo2, Trophy, Users, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, Ban, ChevronDown, Check
+  CheckCircle2, Undo2, Trophy, Shield, Sword, Heart, 
+  Activity, AlertCircle, Sun, Moon, Ban
 } from "lucide-react";
-import * as SelectPrimitive from "@radix-ui/react-select";
-import * as SwitchPrimitive from "@radix-ui/react-switch";
-import * as TabsPrimitive from "@radix-ui/react-tabs";
-import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-/* =========================================================================
-   1. INTERNAL UI COMPONENTS (Required to prevent build crash)
-   ========================================================================= */
-
+// --- UTILS ---
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-xl border bg-card text-card-foreground shadow", className)} {...props} />
-));
-Card.displayName = "Card";
-
-const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />
-));
-CardHeader.displayName = "CardHeader";
-
-const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(({ className, ...props }, ref) => (
-  <h3 ref={ref} className={cn("font-semibold leading-none tracking-tight", className)} {...props} />
-));
-CardTitle.displayName = "CardTitle";
-
-const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-));
-CardContent.displayName = "CardContent";
-
-const Badge = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { variant?: "default" | "secondary" | "destructive" | "outline" }>(({ className, variant = "default", ...props }, ref) => {
-  const variants = {
-    default: "border-transparent bg-primary text-primary-foreground shadow hover:bg-primary/80",
-    secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-    destructive: "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
-    outline: "text-foreground",
-  };
-  return <div ref={ref} className={cn("inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2", variants[variant], className)} {...props} />;
-});
-Badge.displayName = "Badge";
-
-const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link", size?: "default" | "sm" | "lg" | "icon" }>(({ className, variant = "default", size = "default", ...props }, ref) => {
-  const variants = {
-    default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-    destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-    outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-    secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-    ghost: "hover:bg-accent hover:text-accent-foreground",
-    link: "text-primary underline-offset-4 hover:underline",
-  };
-  const sizes = {
-    default: "h-9 px-4 py-2",
-    sm: "h-8 rounded-md px-3 text-xs",
-    lg: "h-10 rounded-md px-8",
-    icon: "h-9 w-9",
-  };
-  return <button ref={ref} className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50", variants[variant], sizes[size], className)} {...props} />;
-});
-Button.displayName = "Button";
-
-const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(({ className, type, ...props }, ref) => (
-  <input type={type} className={cn("flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50", className)} ref={ref} {...props} />
-));
-Input.displayName = "Input";
-
-const Separator = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { orientation?: "horizontal" | "vertical" }>(({ className, orientation = "horizontal", ...props }, ref) => (
-  <div ref={ref} className={cn("shrink-0 bg-border", orientation === "horizontal" ? "h-[1px] w-full" : "h-full w-[1px]", className)} {...props} />
-));
-Separator.displayName = "Separator";
-
-const Switch = React.forwardRef<React.ElementRef<typeof SwitchPrimitive.Root>, React.ComponentPropsWithoutRef<typeof SwitchPrimitive.Root>>(({ className, ...props }, ref) => (
-  <SwitchPrimitive.Root className={cn("peer inline-flex h-[20px] w-[36px] shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input", className)} {...props} ref={ref}>
-    <SwitchPrimitive.Thumb className={cn("pointer-events-none block h-4 w-4 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-4 data-[state=unchecked]:translate-x-0")} />
-  </SwitchPrimitive.Root>
-));
-Switch.displayName = SwitchPrimitive.Root.displayName;
-
-const Checkbox = React.forwardRef<React.ElementRef<typeof CheckboxPrimitive.Root>, React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root>>(({ className, ...props }, ref) => (
-  <CheckboxPrimitive.Root ref={ref} className={cn("peer h-4 w-4 shrink-0 rounded-sm border border-primary shadow focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground", className)} {...props}>
-    <CheckboxPrimitive.Indicator className={cn("flex items-center justify-center text-current")}><Check className="h-4 w-4" /></CheckboxPrimitive.Indicator>
-  </CheckboxPrimitive.Root>
-));
-Checkbox.displayName = CheckboxPrimitive.Root.displayName;
-
-const Tabs = TabsPrimitive.Root;
-const TabsList = React.forwardRef<React.ElementRef<typeof TabsPrimitive.List>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>>(({ className, ...props }, ref) => (
-  <TabsPrimitive.List ref={ref} className={cn("inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground", className)} {...props} />
-));
-TabsList.displayName = TabsPrimitive.List.displayName;
-const TabsTrigger = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>>(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger ref={ref} className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow", className)} {...props} />
-));
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
-
-const Select = SelectPrimitive.Root;
-const SelectValue = SelectPrimitive.Value;
-const SelectTrigger = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>>(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger ref={ref} className={cn("flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1", className)} {...props}>
-    {children}
-    <SelectPrimitive.Icon asChild><ChevronDown className="h-4 w-4 opacity-50" /></SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-));
-SelectTrigger.displayName = SelectPrimitive.Trigger.displayName;
-const SelectContent = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Content>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>>(({ className, children, position = "popper", ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Content ref={ref} className={cn("relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2", position === "popper" && "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1", className)} position={position} {...props}>
-      <SelectPrimitive.Viewport className={cn("p-1", position === "popper" && "h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]")}>{children}</SelectPrimitive.Viewport>
-    </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-));
-SelectContent.displayName = SelectPrimitive.Content.displayName;
-const SelectItem = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Item>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>>(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Item ref={ref} className={cn("relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50", className)} {...props}>
-    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center"><SelectPrimitive.ItemIndicator><Check className="h-4 w-4" /></SelectPrimitive.ItemIndicator></span>
-    <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
-  </SelectPrimitive.Item>
-));
-SelectItem.displayName = SelectPrimitive.Item.displayName;
-
-/* =========================================================================
-   2. MAIN APPLICATION CODE & ICONS
-   ========================================================================= */
-
+// --- CONFIG ---
 const ROLE_STYLES = {
   Tank:    { color: "text-blue-500",    bg: "bg-blue-500/10",    border: "border-blue-500/20",    icon: Shield },
   Damage:  { color: "text-red-500",     bg: "bg-red-500/10",     border: "border-red-500/20",     icon: Sword },
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
-// --- HERO ICONS MAP (Mapped to your upload names) ---
-// IMPORTANT: These files must be in 'public/icons'
+// --- HERO ICONS MAP ---
+// IMPORTANT: Using relative path "icons/" to fix GitHub Pages issues.
 const HERO_IMAGES: Record<string, string> = {
-  // Tanks
-  "D.Va": "/icons/000000038C19.webp",
-  "Doomfist": "/icons/000000038C1A.webp",
-  "Hazard": "/icons/000000044C5E.webp",
-  "Junker Queen": "/icons/000000038C1B.webp",
-  "Mauga": "/icons/00000003DC9C.webp",
-  "Orisa": "/icons/000000038C1C.webp",
-  "Ramattra": "/icons/000000038C1D.webp",
-  "Reinhardt": "/icons/000000038C1E.webp",
-  "Roadhog": "/icons/000000038C1F.webp",
-  "Sigma": "/icons/000000038C27.webp",
-  "Winston": "/icons/000000038C25.webp",
-  "Wrecking Ball": "/icons/000000038C26.webp",
-  "Zarya": "/icons/000000038C28.webp",
+  "D.Va": "icons/000000038C19.webp",
+  "Doomfist": "icons/000000038C1A.webp",
+  "Hazard": "icons/000000044C5E.webp",
+  "Junker Queen": "icons/000000038C1B.webp",
+  "Mauga": "icons/00000003DC9C.webp",
+  "Orisa": "icons/000000038C1C.webp",
+  "Ramattra": "icons/000000038C1D.webp",
+  "Reinhardt": "icons/000000038C1E.webp",
+  "Roadhog": "icons/000000038C1F.webp",
+  "Sigma": "icons/000000038C27.webp",
+  "Winston": "icons/000000038C25.webp",
+  "Wrecking Ball": "icons/000000038C26.webp",
+  "Zarya": "icons/000000038C28.webp",
 };
 
 const HERO_DATABASE = {
@@ -257,9 +137,8 @@ export default function Overwatch2TacticalPicker() {
         }
       });
       setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
-      // Faster animation loop (40ms) and slightly longer duration (20 ticks) for smoothness
       if (ticks >= 20) { clearInterval(timer); setIsRolling(false); finalizeMission(draftPicks); }
-    }, 40); 
+    }, 40);
   }, [activePlayers, playerRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
 
   const finalizeMission = (picks: Record<PlayerID, string | null>) => {
@@ -300,25 +179,28 @@ export default function Overwatch2TacticalPicker() {
       <div className="mx-auto max-w-6xl p-3 space-y-4">
       
       {/* HEADER */}
-      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between rounded-xl bg-card/50 p-3 border shadow-sm">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between rounded-xl bg-card/50 p-3 border border-border/40 shadow-sm">
         <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
           <h1 className="text-2xl font-black italic tracking-tighter bg-gradient-to-br from-orange-400 to-amber-600 dark:from-orange-500 dark:to-yellow-500 bg-clip-text text-transparent uppercase">
             Overwatch 2 <span className="text-foreground/70 text-lg not-italic tracking-normal normal-case">/ Randomizer</span>
           </h1>
         </motion.div>
         <div className="flex flex-wrap items-center gap-2">
-           <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8 rounded-full border hover:bg-accent text-foreground">
+           <button onClick={toggleTheme} className="h-8 w-8 rounded-full border border-border/50 flex items-center justify-center hover:bg-accent text-foreground transition-colors">
               {theme === 'dark' ? <Sun className="h-4 w-4 text-yellow-500" /> : <Moon className="h-4 w-4 text-slate-700" />}
-           </Button>
-           <div className="flex items-center gap-2 bg-background/80 border rounded-full p-1 px-3 shadow-sm">
-             <Select value={String(playerCount)} onValueChange={(v) => setPlayerCount(Number(v))}>
-                 <SelectTrigger className="h-6 text-xs font-bold uppercase border-0 bg-transparent focus:ring-0 gap-1 w-auto"><SelectValue /></SelectTrigger>
-                 <SelectContent>{PLAYERS_INDICES.map(n => <SelectItem key={n} value={String(n)}>{n} {n === 1 ? "Player" : "Players"}</SelectItem>)}</SelectContent>
-             </Select>
-             <Separator orientation="vertical" className="h-4" />
+           </button>
+           <div className="flex items-center gap-2 bg-background/80 border border-border/50 rounded-full p-1 px-3 shadow-sm">
+             <select 
+                value={playerCount} 
+                onChange={(e) => setPlayerCount(Number(e.target.value))}
+                className="h-6 text-xs font-bold uppercase border-0 bg-transparent focus:ring-0 gap-1 w-auto outline-none cursor-pointer"
+             >
+                 {PLAYERS_INDICES.map(n => <option key={n} value={n}>{n} {n === 1 ? "Player" : "Players"}</option>)}
+             </select>
+             <div className="w-[1px] h-4 bg-border/50"></div>
              <div className="flex items-center gap-2">
                <label className="text-[10px] font-bold uppercase cursor-pointer text-muted-foreground hover:text-foreground">Challenge</label>
-               <Switch checked={challengeMode} onCheckedChange={setChallengeMode} className="scale-75 data-[state=checked]:bg-amber-500" />
+               <input type="checkbox" checked={challengeMode} onChange={(e) => setChallengeMode(e.target.checked)} className="accent-amber-500" />
              </div>
            </div>
         </div>
@@ -327,44 +209,46 @@ export default function Overwatch2TacticalPicker() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* LEFT PANEL */}
         <div className="lg:col-span-4 space-y-4">
-          <Card className="border-border/40 bg-card/30 backdrop-blur-md">
-            <CardHeader className="bg-muted/30 py-2 px-3 border-b border-border/40">
-              <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+          <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-md shadow-sm">
+            <div className="bg-muted/30 py-2 px-3 border-b border-border/40">
+              <h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
                 <Filter className="h-3 w-3 text-primary" /> Setup
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 p-3">
+              </h3>
+            </div>
+            <div className="space-y-3 p-3">
               <div className="space-y-2">
                  {activePlayers.map(p => (
                    <div key={p} className="flex items-center gap-1">
-                      <Badge variant="outline" className="h-7 w-7 flex items-center justify-center rounded-md bg-background/80 text-[10px] font-black shadow-sm border-border/50 shrink-0">{p}</Badge>
-                      <Input className="h-7 text-xs font-semibold bg-background/50 border-border/50 focus-visible:ring-primary/30 min-w-0" value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
-                      <Select value={playerRoles[p]} onValueChange={v => setPlayerRoles(prev => ({...prev, [p]: v as RoleType}))}>
-                        <SelectTrigger className="h-7 w-[90px] text-[9px] font-bold uppercase tracking-wider bg-background/50 border-border/50 shrink-0"><SelectValue /></SelectTrigger>
-                        <SelectContent>{ROLES.map(r => <SelectItem key={r} value={r}>{r}</SelectItem>)}</SelectContent>
-                      </Select>
+                      <div className="h-7 w-7 flex items-center justify-center rounded-md bg-background/80 text-[10px] font-black shadow-sm border border-border/50 shrink-0">{p}</div>
+                      <input className="h-7 w-full rounded-md border border-input bg-background/50 px-2 py-1 text-xs font-semibold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring" value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
+                      <select 
+                        value={playerRoles[p]} 
+                        onChange={e => setPlayerRoles(prev => ({...prev, [p]: e.target.value as RoleType}))}
+                        className="h-7 w-[90px] rounded-md border border-input bg-background/50 px-2 text-[9px] font-bold uppercase tracking-wider outline-none"
+                      >
+                        {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
+                      </select>
                    </div>
                  ))}
               </div>
-              <Separator className="bg-border/60" />
+              <div className="h-[1px] w-full bg-border/60"></div>
               <div className="space-y-2">
                  <div className="flex items-center justify-between"><label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned} / 4)</label></div>
                  
-                 <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground border border-border/20">
-                       {ROLES.map(r => (
-                         <TabsTrigger 
-                           key={r} 
-                           value={r} 
-                           className="rounded-md px-2 py-1 text-[10px] font-bold uppercase shadow-none data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm transition-all"
-                         >
-                           {r}
-                         </TabsTrigger>
-                       ))}
-                    </TabsList>
-                 </Tabs>
+                 <div className="grid w-full grid-cols-4 h-8 bg-muted/40 p-0.5 rounded-lg border border-border/20">
+                    {ROLES.map(r => (
+                        <button 
+                            key={r} 
+                            onClick={() => setFilterRole(r)}
+                            className={cn("text-[9px] font-bold uppercase rounded-md transition-all", filterRole === r ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+                        >
+                            {r}
+                        </button>
+                    ))}
+                 </div>
 
-                 <Input placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="h-7 text-xs bg-background/40 border-border/40" />
+                 <input placeholder="Search..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="flex h-7 w-full rounded-md border border-input bg-background/40 px-3 py-1 text-xs shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none" />
+                 
                  <div className="h-[180px] overflow-y-auto rounded-md border border-border/40 bg-background/20 p-1 custom-scrollbar">
                     <div className="grid grid-cols-2 gap-1">
                        {filteredPool.map((h) => (
@@ -377,27 +261,27 @@ export default function Overwatch2TacticalPicker() {
                                 onError={(e) => e.currentTarget.style.display = 'none'} 
                               />
                             }
-                            <Checkbox checked={!!bannedHeroes[h.name]} className="h-3 w-3 rounded-sm" />
+                            <input type="checkbox" checked={!!bannedHeroes[h.name]} readOnly className="h-3 w-3 rounded-sm accent-destructive" />
                             <span className={cn("text-[10px] flex-1 truncate font-medium", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90")}>{h.name}</span>
                          </div>
                        ))}
                     </div>
                  </div>
               </div>
-              <Button variant="outline" className="w-full h-7 text-[10px] text-muted-foreground hover:text-destructive uppercase tracking-widest font-bold border-border/40" onClick={factoryReset}><Trash2 className="mr-2 h-3 w-3" /> Reset</Button>
-            </CardContent>
-          </Card>
+              <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-bold transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-destructive w-full h-7 uppercase tracking-widest text-muted-foreground" onClick={factoryReset}><Trash2 className="mr-2 h-3 w-3" /> Reset</button>
+            </div>
+          </div>
         </div>
 
         {/* RIGHT PANEL */}
         <div className="lg:col-span-8 space-y-4">
            <div className="flex flex-col sm:flex-row items-center gap-3 bg-card/30 backdrop-blur-md p-3 rounded-xl border border-border/40 shadow-lg relative overflow-hidden">
-             <Button size="lg" onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[200px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-lg italic tracking-widest h-12 shadow-xl shadow-orange-500/20 uppercase relative z-10 border-t border-white/20 active:scale-[0.98]">
+             <button onClick={generateLoadout} disabled={isRolling} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 w-full sm:w-auto min-w-[200px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black text-lg italic tracking-widest h-12 shadow-xl shadow-orange-500/20 uppercase relative z-10 border-t border-white/20 active:scale-[0.98]">
                <Dice5 className={cn("mr-2 h-5 w-5", isRolling && "animate-spin")} /> {isRolling ? "Rolling..." : "RANDOMIZE"}
-             </Button>
+             </button>
              <div className="flex gap-2 w-full sm:w-auto z-10">
-                 <Button variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none h-12 bg-background/50 hover:bg-background/80 border border-border/30"><Repeat className="mr-2 h-4 w-4" /> Clear</Button>
-                 {playerCount > 1 && <Button variant="outline" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none h-12 border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</Button>}
+                 <button onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 flex-1 sm:flex-none h-12 border border-border/30"><Repeat className="mr-2 h-4 w-4" /> Clear</button>
+                 {playerCount > 1 && <button onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground flex-1 sm:flex-none h-12 border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</button>}
              </div>
            </div>
 
@@ -409,14 +293,14 @@ export default function Overwatch2TacticalPicker() {
                 const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  <Card key={p} className={cn("relative overflow-hidden transition-all duration-300 group min-h-[160px] flex flex-col backdrop-blur-md shadow-md dark:shadow-none", heroName ? "border-primary/40 dark:border-primary/30 bg-gradient-to-br from-card/80 to-background/40" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
+                  <div key={p} className={cn("relative overflow-hidden transition-all duration-300 group min-h-[160px] flex flex-col backdrop-blur-md shadow-md dark:shadow-none rounded-xl border", heroName ? "border-primary/40 dark:border-primary/30 bg-gradient-to-br from-card/80 to-background/40" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
                       {style && <div className={cn("absolute inset-0 opacity-[0.05] dark:opacity-[0.08] pointer-events-none transition-opacity bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
                       <div className="p-2 flex justify-between items-start z-10 gap-2">
                          <div className="flex flex-col overflow-hidden">
                             <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground opacity-70 truncate">Player {p}</span>
                             <span className="text-[10px] font-bold text-foreground truncate">{playerNames[p]}</span>
                          </div>
-                         <Badge variant="outline" className="text-[9px] uppercase tracking-wider bg-background/50 backdrop-blur-sm border-border/40 text-muted-foreground shrink-0">{playerRoles[p]}</Badge>
+                         <div className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none border-transparent bg-background/50 text-foreground shadow hover:bg-background/80 text-[9px] uppercase tracking-wider backdrop-blur-sm border-border/40 text-muted-foreground shrink-0">{playerRoles[p]}</div>
                       </div>
                       <div className="flex-1 flex flex-col items-center justify-center p-3 relative z-10 overflow-hidden">
                          <AnimatePresence mode="wait">
@@ -459,33 +343,33 @@ export default function Overwatch2TacticalPicker() {
                       </div>
                       {heroName && (
                         <div className="p-2 border-t border-border/20 bg-muted/10 backdrop-blur-sm z-10">
-                           <Button size="sm" variant={isCompleted ? "outline" : "secondary"} className={cn("w-full h-7 text-[10px] font-black uppercase tracking-widest transition-all", isCompleted ? "text-muted-foreground border-border/40" : "bg-foreground/90 text-background hover:bg-foreground")} onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}>
+                           <button className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-md text-xs font-bold transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 w-full h-7 uppercase tracking-widest transition-all", isCompleted ? "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground text-muted-foreground border-border/40" : "bg-foreground/90 text-background hover:bg-foreground shadow-sm")} onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}>
                              {isCompleted ? <><Undo2 className="mr-2 h-3 w-3"/> Undo</> : <><CheckCircle2 className="mr-2 h-3 w-3"/> Complete</>}
-                           </Button>
+                           </button>
                         </div>
                       )}
-                      {isCompleted && <div className="absolute inset-0 bg-background/60 dark:bg-background/80 backdrop-blur-[1px] z-0 flex items-center justify-center pointer-events-none"><Badge className="bg-green-500 dark:bg-green-600 text-white border-none text-[10px] font-black uppercase tracking-widest px-3 py-1 shadow-lg animate-in zoom-in">Complete</Badge></div>}
-                  </Card>
+                      {isCompleted && <div className="absolute inset-0 bg-background/60 dark:bg-background/80 backdrop-blur-[1px] z-0 flex items-center justify-center pointer-events-none"><div className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 bg-green-500 dark:bg-green-600 text-white border-none text-[10px] font-black uppercase tracking-widest px-3 py-1 shadow-lg animate-in zoom-in">Complete</div></div>}
+                  </div>
                 );
               })}
            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
-                 <CardHeader className="bg-muted/30 py-2 px-3 border-b border-border/40"><CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-3 w-3 text-amber-500" /> Completed</CardTitle></CardHeader>
-                 <CardContent className="p-3">
+              <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-md shadow-md">
+                 <div className="bg-muted/30 py-2 px-3 border-b border-border/40"><h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><Trophy className="h-3 w-3 text-amber-500" /> Completed</h3></div>
+                 <div className="p-3">
                     <div className="h-[120px] overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                         {activePlayers.map(p => {
                             const completed = Object.keys(completedMissions[p] || {}); if(completed.length === 0) return null;
-                            return ( <div key={p} className="flex flex-col gap-1"><span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider pl-1 opacity-70">{playerNames[p]}</span><div className="flex flex-wrap gap-1.5">{completed.map(c => <Badge key={c} variant="secondary" className="text-[9px] px-1.5 h-4 cursor-pointer hover:bg-destructive hover:text-white transition-colors border border-border/30 bg-background/50" onClick={() => undoMission(p, c)}>{c}</Badge>)}</div></div> )
+                            return ( <div key={p} className="flex flex-col gap-1"><span className="text-[9px] font-black text-muted-foreground uppercase tracking-wider pl-1 opacity-70">{playerNames[p]}</span><div className="flex flex-wrap gap-1.5">{completed.map(c => <div key={c} className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80 text-[9px] px-1.5 h-4 cursor-pointer hover:bg-destructive hover:text-white transition-colors border-border/30 bg-background/50" onClick={() => undoMission(p, c)}>{c}</div>)}</div></div> )
                         })}
                         {activePlayers.every(p => Object.keys(completedMissions[p] || {}).length === 0) && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2"><AlertCircle className="h-5 w-5 opacity-40" /><span className="text-[9px] uppercase font-bold tracking-wider">No Data</span></div>}
                     </div>
-                 </CardContent>
-              </Card>
-              <Card className="border-border/40 shadow-md bg-card/30 backdrop-blur-md">
-                 <CardHeader className="bg-muted/30 py-2 px-3 border-b border-border/40"><CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><History className="h-3 w-3 text-blue-500" /> History</CardTitle></CardHeader>
-                 <CardContent className="p-3 relative">
+                 </div>
+              </div>
+              <div className="rounded-xl border border-border/40 bg-card/30 backdrop-blur-md shadow-md">
+                 <div className="bg-muted/30 py-2 px-3 border-b border-border/40"><h3 className="text-xs font-black uppercase tracking-widest flex items-center gap-2"><History className="h-3 w-3 text-blue-500" /> History</h3></div>
+                 <div className="p-3 relative">
                     <div className="h-[120px] overflow-y-auto custom-scrollbar relative z-10">
                         <div className="space-y-1 font-mono text-[10px]">
                             {missionLog.length === 0 && <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 gap-2 mt-4"><span className="text-[9px] uppercase font-bold tracking-wider">Log Empty</span></div>}
@@ -496,8 +380,8 @@ export default function Overwatch2TacticalPicker() {
                             })}
                         </div>
                     </div>
-                 </CardContent>
-              </Card>
+                 </div>
+              </div>
            </div>
         </div>
       </div>
