@@ -36,7 +36,7 @@ const AnimatedButton = ({ children, onClick, disabled, className, variant = 'pri
   );
 };
 
-const CustomDropdown = ({ value, options, onChange, label }: any) => {
+const CustomDropdown = ({ value, options, onChange, label, align = "left" }: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -49,7 +49,7 @@ const CustomDropdown = ({ value, options, onChange, label }: any) => {
   }, []);
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative z-50" ref={ref}>
       <motion.button
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
@@ -65,11 +65,14 @@ const CustomDropdown = ({ value, options, onChange, label }: any) => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -5, scale: 0.98 }}
+            initial={{ opacity: 0, y: -5, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -5, scale: 0.98 }}
+            exit={{ opacity: 0, y: -5, scale: 0.95 }}
             transition={{ duration: 0.1 }}
-            className="absolute right-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl border border-border/50 bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-xl"
+            className={cn(
+              "absolute top-full mt-1 w-48 overflow-hidden rounded-xl border border-border/50 bg-popover/95 p-1 text-popover-foreground shadow-2xl backdrop-blur-xl z-[100]",
+              align === "right" ? "right-0" : "left-0"
+            )}
           >
             {options.map((opt: any) => (
               <button
@@ -298,11 +301,15 @@ export default function Overwatch2TacticalPicker() {
     <div className="min-h-screen bg-background transition-colors duration-300 font-sans text-sm selection:bg-orange-500/30">
       <div className="mx-auto max-w-6xl p-4 space-y-6">
       
-      {/* --- CLEAN MODERN HEADER --- */}
-      <div className="relative overflow-hidden rounded-2xl bg-card border border-border/40 shadow-xl">
-        <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
+      {/* --- HEADER (NO OVERFLOW HIDDEN) --- */}
+      <div className="relative rounded-2xl bg-card border border-border/40 shadow-xl">
+        {/* Background Effects (Clipped) */}
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+            <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-orange-500/10 blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"></div>
+        </div>
 
+        {/* Content (Visible Overflow for Dropdowns) */}
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6">
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
@@ -324,6 +331,7 @@ export default function Overwatch2TacticalPicker() {
                   value={`${playerCount} ${playerCount === 1 ? "Player" : "Players"}`}
                   options={PLAYERS_INDICES.map(n => `${n} ${n === 1 ? "Player" : "Players"}`)}
                   onChange={(val: string) => setPlayerCount(parseInt(val.split(" ")[0]))}
+                  align="right"
                 />
                 <div className="w-[1px] h-6 bg-border/40 mx-1"></div>
                 <div className="flex items-center gap-2 px-2 cursor-pointer hover:opacity-80 transition-opacity" onClick={() => setChallengeMode(!challengeMode)}>
@@ -354,8 +362,8 @@ export default function Overwatch2TacticalPicker() {
                 <Filter className="h-3.5 w-3.5" /> Configuration
               </h3>
             </div>
-            <div className="p-5 space-y-5 flex-1">
-              <div className="space-y-3">
+            <div className="p-5 space-y-5 flex-1 overflow-visible">
+              <div className="space-y-3 relative z-20">
                  {activePlayers.map(p => (
                    <motion.div initial={{opacity: 0, x: -10}} animate={{opacity: 1, x: 0}} key={p} className="flex items-center gap-3">
                       <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-muted/50 text-xs font-black shadow-sm border border-border/40 shrink-0 text-muted-foreground">{p}</div>
@@ -372,7 +380,7 @@ export default function Overwatch2TacticalPicker() {
                  ))}
               </div>
               
-              <div className="space-y-3 pt-2">
+              <div className="space-y-3 pt-2 relative z-10">
                  <div className="flex items-center justify-between"><label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Ban Heroes ({poolStats.banned}/4)</label></div>
                  
                  <div className="grid w-full grid-cols-4 bg-muted/40 p-1 rounded-xl border border-border/20">
@@ -439,90 +447,98 @@ export default function Overwatch2TacticalPicker() {
                 const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={p} className={cn("relative overflow-hidden transition-all duration-500 group min-h-[280px] flex flex-col backdrop-blur-md shadow-lg rounded-[2rem] border-[1px]", heroName ? "border-white/10 dark:border-white/5 bg-gradient-to-b from-card/95 to-background/80" : "border-dashed border-border/30 bg-muted/5 dark:bg-card/5", style ? style.border : "")}>
-                      {style && <div className={cn("absolute inset-0 opacity-[0.03] pointer-events-none bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
+                  // PLAYER CARD (NO OVERFLOW HIDDEN ON PARENT TO FIX DROPDOWN)
+                  <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={p} className={cn("relative transition-all duration-500 group min-h-[280px] flex flex-col backdrop-blur-md shadow-lg rounded-[2rem] border-[1px]", heroName ? "border-white/10 dark:border-white/5 bg-gradient-to-b from-card/95 to-background/80" : "border-dashed border-border/30 bg-muted/5 dark:bg-card/5", style ? style.border : "")}>
                       
-                      {/* Card Header */}
-                      <div className="p-5 flex justify-between items-start z-10 gap-2">
-                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 mb-0.5">Player {p}</span>
-                            <span className="text-sm font-bold text-foreground truncate">{playerNames[p]}</span>
-                         </div>
-                         <div className="inline-flex items-center rounded-lg border border-border/30 bg-background/40 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground shadow-sm backdrop-blur-md">{playerRoles[p]}</div>
+                      {/* Background Effects (Clipped) */}
+                      <div className="absolute inset-0 overflow-hidden rounded-[2rem] pointer-events-none">
+                          {style && <div className={cn("absolute inset-0 opacity-[0.03] bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
                       </div>
                       
-                      {/* Hero Content */}
-                      <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 -mt-2">
-                         <AnimatePresence mode="wait">
-                            {heroName ? (
-                             <motion.div 
-                               key={heroName} 
-                               initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} 
-                               animate={{ 
-                                 opacity: 1, 
-                                 scale: isRolling ? [1, 1.05, 1] : 1, 
-                                 filter: isRolling ? "blur(4px)" : "blur(0px)",
-                               }} 
-                               transition={{ duration: isRolling ? 0.1 : 0.4, type: "spring" }}
-                               className="flex flex-col items-center gap-5 w-full"
-                             >
-                                <div className="relative group-hover:scale-105 transition-transform duration-500 ease-out">
-                                    {/* GLOW */}
-                                    <div className={cn("absolute inset-0 blur-3xl opacity-20 scale-150 rounded-full", style ? style.bg.replace("/10", "/60") : "bg-white/10")} />
+                      {/* Content (Visible Overflow) */}
+                      <div className="relative z-10 flex-1 flex flex-col">
+                          {/* Card Header */}
+                          <div className="p-5 flex justify-between items-start z-10 gap-2">
+                             <div className="flex flex-col">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 mb-0.5">Player {p}</span>
+                                <span className="text-sm font-bold text-foreground truncate">{playerNames[p]}</span>
+                             </div>
+                             <div className="inline-flex items-center rounded-lg border border-border/30 bg-background/40 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground shadow-sm backdrop-blur-md">{playerRoles[p]}</div>
+                          </div>
+                          
+                          {/* Hero Content */}
+                          <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 -mt-2">
+                             <AnimatePresence mode="wait">
+                                {heroName ? (
+                                 <motion.div 
+                                   key={heroName} 
+                                   initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }} 
+                                   animate={{ 
+                                     opacity: 1, 
+                                     scale: isRolling ? [1, 1.05, 1] : 1, 
+                                     filter: isRolling ? "blur(4px)" : "blur(0px)",
+                                   }} 
+                                   transition={{ duration: isRolling ? 0.1 : 0.4, type: "spring" }}
+                                   className="flex flex-col items-center gap-5 w-full"
+                                 >
+                                    <div className="relative group-hover:scale-105 transition-transform duration-500 ease-out">
+                                        {/* GLOW */}
+                                        <div className={cn("absolute inset-0 blur-3xl opacity-20 scale-150 rounded-full", style ? style.bg.replace("/10", "/60") : "bg-white/10")} />
+                                        
+                                        {/* ICON */}
+                                        {HERO_IMAGES[heroName] ? (
+                                          <div className="relative rounded-3xl overflow-hidden border-[3px] border-white/10 shadow-2xl">
+                                              <img 
+                                                src={HERO_IMAGES[heroName]} 
+                                                alt={heroName} 
+                                                className={cn("h-28 w-28 object-cover transform transition-transform duration-700", isRolling && "grayscale blur-sm")}
+                                                onError={(e) => e.currentTarget.style.display = 'none'} 
+                                              />
+                                          </div>
+                                        ) : (
+                                           <div className="h-28 w-28 rounded-3xl bg-gradient-to-br from-muted to-muted/50 border-[3px] border-white/5 flex items-center justify-center relative z-10 shadow-inner">
+                                              {style && <style.icon className={cn("h-12 w-12 opacity-20", style.color)} />}
+                                           </div>
+                                        )}
+                                    </div>
                                     
-                                    {/* ICON */}
-                                    {HERO_IMAGES[heroName] ? (
-                                      <div className="relative rounded-3xl overflow-hidden border-[3px] border-white/10 shadow-2xl">
-                                          <img 
-                                            src={HERO_IMAGES[heroName]} 
-                                            alt={heroName} 
-                                            className={cn("h-28 w-28 object-cover transform transition-transform duration-700", isRolling && "grayscale blur-sm")}
-                                            onError={(e) => e.currentTarget.style.display = 'none'} 
-                                          />
-                                      </div>
-                                    ) : (
-                                       <div className="h-28 w-28 rounded-3xl bg-gradient-to-br from-muted to-muted/50 border-[3px] border-white/5 flex items-center justify-center relative z-10 shadow-inner">
-                                          {style && <style.icon className={cn("h-12 w-12 opacity-20", style.color)} />}
-                                       </div>
-                                    )}
-                                </div>
-                                
-                                <div className="text-center space-y-2">
-                                  <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-sm bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent px-1">{heroName}</h2>
-                                  {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full border bg-background/30 backdrop-blur-md shadow-sm", style.color, style.border)}>{heroData?.role}</span>}
-                                </div>
-                             </motion.div>
-                            ) : (
-                             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/10 space-y-4">
-                                <div className="h-24 w-24 rounded-full border-4 border-dashed border-current flex items-center justify-center">
-                                    <Activity className="h-8 w-8 animate-pulse" />
-                                </div>
-                                <span className="text-xs font-black uppercase tracking-[0.3em]">Ready to Roll</span>
-                             </motion.div>
-                            )}
-                         </AnimatePresence>
-                      </div>
+                                    <div className="text-center space-y-2">
+                                      <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-sm bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent px-1">{heroName}</h2>
+                                      {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full border bg-background/30 backdrop-blur-md shadow-sm", style.color, style.border)}>{heroData?.role}</span>}
+                                    </div>
+                                 </motion.div>
+                                ) : (
+                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center text-muted-foreground/10 space-y-4">
+                                    <div className="h-24 w-24 rounded-full border-4 border-dashed border-current flex items-center justify-center">
+                                        <Activity className="h-8 w-8 animate-pulse" />
+                                    </div>
+                                    <span className="text-xs font-black uppercase tracking-[0.3em]">Ready to Roll</span>
+                                 </motion.div>
+                                )}
+                             </AnimatePresence>
+                          </div>
 
-                      {/* Action Button */}
-                      {heroName && (
-                        <div className="p-4 z-10">
-                           <motion.button 
-                             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                             className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-xl text-xs font-black transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 w-full h-11 uppercase tracking-widest", isCompleted ? "border border-border/50 bg-transparent text-muted-foreground hover:bg-muted/20" : "bg-foreground text-background hover:bg-foreground/90 shadow-lg")} 
-                             onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}
-                           >
-                             {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> Undo Completion</> : <><CheckCircle2 className="mr-2 h-4 w-4"/> Mark Complete</>}
-                           </motion.button>
-                        </div>
-                      )}
-                      
-                      {isCompleted && (
-                        <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/40 backdrop-blur-sm transition-all duration-500">
-                          <motion.div initial={{scale: 0.5, opacity: 0, y: 20}} animate={{scale: 1, opacity: 1, y: 0}} className="bg-green-500 text-white px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl flex items-center gap-3 border border-white/20">
-                            <Check className="h-5 w-5" /> Completed
-                          </motion.div>
-                        </div>
-                      )}
+                          {/* Action Button */}
+                          {heroName && (
+                            <div className="p-4 z-10">
+                               <motion.button 
+                                 whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                 className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-xl text-xs font-black transition-all focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 w-full h-11 uppercase tracking-widest", isCompleted ? "border border-border/50 bg-transparent text-muted-foreground hover:bg-muted/20" : "bg-foreground text-background hover:bg-foreground/90 shadow-lg")} 
+                                 onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}
+                               >
+                                 {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> Undo Completion</> : <><CheckCircle2 className="mr-2 h-4 w-4"/> Mark Complete</>}
+                               </motion.button>
+                            </div>
+                          )}
+                          
+                          {isCompleted && (
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-background/40 backdrop-blur-sm transition-all duration-500 rounded-[2rem] overflow-hidden">
+                              <motion.div initial={{scale: 0.5, opacity: 0, y: 20}} animate={{scale: 1, opacity: 1, y: 0}} className="bg-green-500 text-white px-6 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl flex items-center gap-3 border border-white/20">
+                                <Check className="h-5 w-5" /> Completed
+                              </motion.div>
+                            </div>
+                          )}
+                      </div>
                   </motion.div>
                 );
               })}
