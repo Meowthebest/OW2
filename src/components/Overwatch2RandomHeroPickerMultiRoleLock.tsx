@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from "react";
+import React, { useEffect, useMemo, useState, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
@@ -11,6 +11,90 @@ import { twMerge } from "tailwind-merge";
 // --- UTILS ---
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
+// --- CUSTOM ANIMATED COMPONENTS ---
+
+const AnimatedButton = ({ children, onClick, disabled, className, variant = 'primary' }: any) => {
+  const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-black uppercase tracking-wider transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 h-10 px-4 shadow-sm";
+  const variants: any = {
+    primary: "bg-orange-500 hover:bg-orange-600 text-white border-t border-white/20 shadow-orange-500/20 shadow-lg",
+    secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border/50",
+    outline: "border-2 border-border/50 bg-transparent hover:bg-accent hover:text-accent-foreground text-muted-foreground",
+    ghost: "hover:bg-accent hover:text-accent-foreground border-transparent",
+    danger: "border border-red-500/30 text-red-500 hover:bg-red-500/10"
+  };
+
+  return (
+    <motion.button
+      whileHover={{ scale: disabled ? 1 : 1.05 }}
+      whileTap={{ scale: disabled ? 1 : 0.95 }}
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(baseStyle, variants[variant], className)}
+    >
+      {children}
+    </motion.button>
+  );
+};
+
+const CustomDropdown = ({ value, options, onChange, label }: any) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: any) {
+      if (ref.current && !ref.current.contains(event.target)) setIsOpen(false);
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={ref}>
+      <motion.button
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex h-8 items-center justify-between gap-2 rounded-full border border-border/50 bg-background/50 px-3 text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-accent transition-colors min-w-[80px]"
+      >
+        <span className="truncate">{label || value}</span>
+        <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
+          <ChevronDown className="h-3 w-3 opacity-50" />
+        </motion.div>
+      </motion.button>
+
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-full z-50 mt-1 w-40 overflow-hidden rounded-xl border border-border/50 bg-popover p-1 text-popover-foreground shadow-xl backdrop-blur-md"
+          >
+            {options.map((opt: any) => (
+              <button
+                key={opt}
+                onClick={() => { onChange(opt); setIsOpen(false); }}
+                className={cn(
+                  "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2 pl-2 pr-8 text-[10px] font-bold uppercase tracking-wider outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
+                  value === opt && "bg-accent/50 text-orange-500"
+                )}
+              >
+                {opt}
+                {value === opt && (
+                  <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+                    <Check className="h-3 w-3" />
+                  </span>
+                )}
+              </button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
 // --- CONFIG ---
 const ROLE_STYLES = {
   Tank:    { color: "text-blue-500",    bg: "bg-blue-500/10",    border: "border-blue-500/20",    icon: Shield },
@@ -18,8 +102,10 @@ const ROLE_STYLES = {
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
-// --- HERO ICONS ---
+// --- HERO ICONS MAP ---
+// IMPORTANT: Ensure these files are in `public/icons`
 const HERO_IMAGES: Record<string, string> = {
+  // --- TANKS ---
   "D.Va": "icons/000000038C19.webp",
   "Doomfist": "icons/000000038C1A.webp",
   "Hazard": "icons/000000044C5E.webp",
@@ -33,6 +119,30 @@ const HERO_IMAGES: Record<string, string> = {
   "Winston": "icons/000000038C25.webp",
   "Wrecking Ball": "icons/000000038C26.webp",
   "Zarya": "icons/000000038C28.webp",
+
+  // --- DAMAGE (Mapped to your .png uploads) ---
+  "Ashe": "icons/150px-Ashe_mini_portrait.png",
+  "Bastion": "icons/150px-Bastion_mini_portrait.png",
+  "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
+  "Echo": "icons/150px-Echo_mini_portrait.png",
+  "Freja": "icons/150px-Freja_mini_portrait.png",
+  "Genji": "icons/150px-Genji_OW2_mini_portrait.png",
+  "Hanzo": "icons/150px-Hanzo_mini_portrait.png",
+  "Junkrat": "icons/150px-Junkrat_OW2_mini_portrait.png",
+  "Mei": "icons/150px-Mei_OW2_mini_portrait.png",
+  "Pharah": "icons/150px-Pharah_OW2_mini_portrait.png",
+  "Reaper": "icons/150px-Reaper_OW2_mini_portrait.png",
+  "Sojourn": "icons/150px-Sojourn_mini_portrait.png",
+  "Soldier: 76": "icons/150px-Soldier_OW2_mini_portrait.png",
+  "Sombra": "icons/150px-Sombra_OW2_mini_portrait.png",
+  "Symmetra": "icons/150px-Symmetra_OW2_mini_portrait.png",
+  "Torbjörn": "icons/150px-Torbjorn_OW2_mini_portrait.png",
+  "Tracer": "icons/150px-Tracer_OW2_mini_portrait.png",
+  "Venture": "icons/150px-Venture_mini_portrait.png",
+  "Widowmaker": "icons/150px-Widowmaker_OW2_mini_portrait.png",
+  
+  // Missing file for Vendetta, please upload it to add it here
+  "Vendetta": "", 
 };
 
 const HERO_DATABASE = {
@@ -190,13 +300,11 @@ export default function Overwatch2TacticalPicker() {
               {theme === 'dark' ? <Sun className="h-5 w-5 text-yellow-500" /> : <Moon className="h-5 w-5 text-slate-700" />}
            </motion.button>
            <div className="flex items-center gap-3 bg-background/80 border border-border/50 rounded-full p-1.5 px-4 shadow-sm">
-             <select 
-                value={playerCount} 
-                onChange={(e) => setPlayerCount(Number(e.target.value))}
-                className="h-7 text-sm font-bold uppercase border-0 bg-transparent focus:ring-0 gap-1 w-auto outline-none cursor-pointer"
-             >
-                 {PLAYERS_INDICES.map(n => <option key={n} value={n}>{n} {n === 1 ? "Player" : "Players"}</option>)}
-             </select>
+             <CustomDropdown 
+                value={`${playerCount} ${playerCount === 1 ? "Player" : "Players"}`}
+                options={PLAYERS_INDICES.map(n => `${n} ${n === 1 ? "Player" : "Players"}`)}
+                onChange={(val: string) => setPlayerCount(parseInt(val.split(" ")[0]))}
+             />
              <div className="w-[1px] h-5 bg-border/50"></div>
              <div className="flex items-center gap-2 px-1">
                <label className="text-xs font-bold uppercase cursor-pointer text-muted-foreground hover:text-foreground">Challenge</label>
@@ -221,13 +329,11 @@ export default function Overwatch2TacticalPicker() {
                    <motion.div initial={{opacity: 0, x: -10}} animate={{opacity: 1, x: 0}} key={p} className="flex items-center gap-2">
                       <div className="h-9 w-9 flex items-center justify-center rounded-xl bg-background/80 text-xs font-black shadow-sm border border-border/50 shrink-0 text-muted-foreground">{p}</div>
                       <input className="h-9 w-full rounded-xl border border-input bg-background/50 px-3 py-1 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/50 transition-all" value={playerNames[p]} onChange={e => setPlayerNames(prev => ({...prev, [p]: e.target.value}))} />
-                      <select 
+                      <CustomDropdown 
                         value={playerRoles[p]} 
-                        onChange={e => setPlayerRoles(prev => ({...prev, [p]: e.target.value as RoleType}))}
-                        className="h-9 w-[100px] rounded-xl border border-input bg-background/50 px-3 text-[10px] font-bold uppercase tracking-wider outline-none cursor-pointer"
-                      >
-                        {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
-                      </select>
+                        options={ROLES} 
+                        onChange={(v: RoleType) => setPlayerRoles(prev => ({...prev, [p]: v}))} 
+                      />
                    </motion.div>
                  ))}
               </div>
@@ -273,7 +379,7 @@ export default function Overwatch2TacticalPicker() {
                     </div>
                  </div>
               </div>
-              <button className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-xs font-bold transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-destructive w-full h-9 uppercase tracking-widest text-muted-foreground" onClick={factoryReset}><Trash2 className="mr-2 h-3.5 w-3.5" /> RESET DATA</button>
+              <AnimatedButton variant="outline" className="w-full h-9 text-[10px] border-dashed" onClick={factoryReset}><Trash2 className="mr-2 h-3.5 w-3.5" /> RESET DATA</AnimatedButton>
             </div>
           </div>
         </div>
@@ -281,12 +387,12 @@ export default function Overwatch2TacticalPicker() {
         {/* RIGHT PANEL */}
         <div className="lg:col-span-8 space-y-4">
            <div className="flex flex-col sm:flex-row items-center gap-4 bg-card/30 backdrop-blur-md p-5 rounded-3xl border border-border/40 shadow-xl relative overflow-hidden">
-             <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} onClick={generateLoadout} disabled={isRolling} className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-lg transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 w-full sm:w-auto min-w-[240px] bg-[#f99e1a] hover:bg-[#e0890d] text-white font-black italic tracking-widest h-14 shadow-2xl shadow-orange-500/30 uppercase relative z-10 border-t border-white/20 active:scale-[0.98]">
+             <AnimatedButton onClick={generateLoadout} disabled={isRolling} className="w-full sm:w-auto min-w-[240px] h-14 text-xl italic shadow-orange-500/20">
                <Dice5 className={cn("mr-3 h-6 w-6", isRolling && "animate-spin")} /> {isRolling ? "ROLLING..." : "RANDOMIZE"}
-             </motion.button>
+             </AnimatedButton>
              <div className="flex gap-3 w-full sm:w-auto z-10">
-                 <button onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-bold transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 flex-1 sm:flex-none h-14 px-6 border border-border/30"><Repeat className="mr-2 h-4 w-4" /> Clear</button>
-                 {playerCount > 1 && <button onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-bold transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground flex-1 sm:flex-none h-14 px-6 border-green-500/30 hover:bg-green-500/10 hover:text-green-500 dark:hover:text-green-400"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</button>}
+                 <AnimatedButton variant="secondary" onClick={() => setCurrentLoadout({1:null,2:null,3:null,4:null,5:null})} disabled={isRolling} className="flex-1 sm:flex-none h-14 px-6"><Repeat className="mr-2 h-4 w-4" /> Clear</AnimatedButton>
+                 {playerCount > 1 && <AnimatedButton variant="ghost" onClick={markAllComplete} disabled={Object.values(currentLoadout).every(v => !v)} className="flex-1 sm:flex-none h-14 px-6 border border-green-500/20 text-green-600 hover:bg-green-500/10"><CheckCircle2 className="mr-2 h-4 w-4" /> All Done</AnimatedButton>}
              </div>
            </div>
 
@@ -298,7 +404,7 @@ export default function Overwatch2TacticalPicker() {
                 const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={p} className={cn("relative overflow-hidden transition-all duration-500 group min-h-[220px] flex flex-col backdrop-blur-md shadow-lg rounded-3xl border-2", heroName ? "border-orange-500/30 bg-gradient-to-b from-card/90 to-background/60" : "border-dashed border-border/40 bg-muted/5", style ? style.border : "")}>
+                  <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={p} className={cn("relative overflow-hidden transition-all duration-500 group min-h-[220px] flex flex-col backdrop-blur-md shadow-lg rounded-3xl border-2", heroName ? "border-orange-500/30 bg-gradient-to-b from-card/90 to-background/60" : "border-dashed border-border/40 bg-muted/5 dark:bg-card/10", style ? style.border : "")}>
                       {style && <div className={cn("absolute inset-0 opacity-[0.03] pointer-events-none bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
                       <div className="p-4 flex justify-between items-start z-10 gap-2">
                          <div className="flex flex-col">
@@ -358,13 +464,13 @@ export default function Overwatch2TacticalPicker() {
 
                       {heroName && (
                         <div className="p-3 z-10">
-                           <motion.button 
-                             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                             className={cn("inline-flex items-center justify-center whitespace-nowrap rounded-xl text-xs font-black transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 w-full h-9 uppercase tracking-widest transition-all", isCompleted ? "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground text-muted-foreground border-border/40" : "bg-foreground/90 text-background hover:bg-foreground shadow-lg")} 
+                           <AnimatedButton 
+                             variant={isCompleted ? "outline" : "secondary"} 
+                             className={cn("w-full h-9 text-xs", !isCompleted && "bg-white/5 hover:bg-white/10 border-white/10")}
                              onClick={() => isCompleted ? undoMission(p, heroName) : completeMission(p)}
                            >
                              {isCompleted ? <><Undo2 className="mr-2 h-3.5 w-3.5"/> UNDO</> : <><CheckCircle2 className="mr-2 h-3.5 w-3.5"/> COMPLETE</>}
-                           </motion.button>
+                           </AnimatedButton>
                         </div>
                       )}
                       
