@@ -11,7 +11,7 @@ import { twMerge } from "tailwind-merge";
 // --- UTILS ---
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
-// --- CUSTOM ANIMATED COMPONENTS (Safe Mode - No Crashes) ---
+// --- CUSTOM ANIMATED COMPONENTS (Safe Mode) ---
 
 const AnimatedButton = ({ children, onClick, disabled, className, variant = 'primary' }: any) => {
   const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-black uppercase tracking-wider transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 h-10 px-4 shadow-sm";
@@ -120,7 +120,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Wrecking Ball": "icons/000000038C26.webp",
   "Zarya": "icons/000000038C28.webp",
 
-  // --- DAMAGE ---
+  // --- DAMAGE (New Icons Added) ---
   "Ashe": "icons/150px-Ashe_mini_portrait.png",
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
@@ -138,7 +138,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Symmetra": "icons/150px-Symmetra_OW2_mini_portrait.png",
   "Torbjörn": "icons/150px-Torbjorn_OW2_mini_portrait.png",
   "Tracer": "icons/150px-Tracer_OW2_mini_portrait.png",
-  "Vendetta": "icons/Vendetta_2D_portrait.png", // Added Vendetta!
+  "Vendetta": "icons/Vendetta_2D_portrait.png",
   "Venture": "icons/150px-Venture_mini_portrait.png",
   "Widowmaker": "icons/150px-Widowmaker_OW2_mini_portrait.png",
 };
