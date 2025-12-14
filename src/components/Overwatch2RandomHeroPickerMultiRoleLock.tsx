@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown, Sparkles
+  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -25,8 +25,8 @@ const AnimatedButton = ({ children, onClick, disabled, className, variant = 'pri
 
   return (
     <motion.button
-      whileHover={{ scale: disabled ? 1 : 1.02 }}
-      whileTap={{ scale: disabled ? 1 : 0.98 }}
+      whileHover={{ scale: disabled ? 1 : 1.05 }}
+      whileTap={{ scale: disabled ? 1 : 0.95 }}
       onClick={onClick}
       disabled={disabled}
       className={cn(baseStyle, variants[variant], className)}
@@ -51,38 +51,38 @@ const CustomDropdown = ({ value, options, onChange, label }: any) => {
   return (
     <div className="relative" ref={ref}>
       <motion.button
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-9 items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/50 px-3 text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-accent hover:text-accent-foreground transition-all min-w-[100px]"
+        className="flex h-8 items-center justify-between gap-2 rounded-full border border-border/50 bg-background/50 px-3 text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-accent transition-colors min-w-[80px]"
       >
         <span className="truncate">{label || value}</span>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
-          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+          <ChevronDown className="h-3 w-3 opacity-50" />
         </motion.div>
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -5, scale: 0.98 }}
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -5, scale: 0.98 }}
-            transition={{ duration: 0.1 }}
-            className="absolute right-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl border border-border/50 bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-xl"
+            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-full z-50 mt-1 w-40 overflow-hidden rounded-xl border border-border/50 bg-popover p-1 text-popover-foreground shadow-xl backdrop-blur-md"
           >
             {options.map((opt: any) => (
               <button
                 key={opt}
                 onClick={() => { onChange(opt); setIsOpen(false); }}
                 className={cn(
-                  "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-3 pr-8 text-[10px] font-bold uppercase tracking-wider outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
-                  value === opt && "bg-orange-500/10 text-orange-500"
+                  "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2 pl-2 pr-8 text-[10px] font-bold uppercase tracking-wider outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
+                  value === opt && "bg-accent/50 text-orange-500"
                 )}
               >
                 {opt}
                 {value === opt && (
-                  <span className="absolute right-3 flex h-3.5 w-3.5 items-center justify-center">
+                  <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
                     <Check className="h-3 w-3" />
                   </span>
                 )}
@@ -103,8 +103,9 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
+// These match the exact filenames you uploaded to `public/icons`
 const HERO_IMAGES: Record<string, string> = {
-  // --- TANKS ---
+  // --- TANKS (WebP) ---
   "D.Va": "icons/000000038C19.webp",
   "Doomfist": "icons/000000038C1A.webp",
   "Hazard": "icons/000000044C5E.webp",
@@ -119,7 +120,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Wrecking Ball": "icons/000000038C26.webp",
   "Zarya": "icons/000000038C28.webp",
 
-  // --- DAMAGE ---
+  // --- DAMAGE (PNG) ---
   "Ashe": "icons/150px-Ashe_mini_portrait.png",
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
@@ -141,7 +142,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Venture": "icons/150px-Venture_mini_portrait.png",
   "Widowmaker": "icons/150px-Widowmaker_OW2_mini_portrait.png",
 
-  // --- SUPPORT ---
+  // --- SUPPORT (PNG) ---
   "Ana": "icons/150px-Ana_OW2_mini_portrait.png",
   "Baptiste": "icons/150px-Baptiste_mini_portrait.png",
   "Brigitte": "icons/150px-Brigitte_OW2_mini_portrait.png",
@@ -257,6 +258,7 @@ export default function Overwatch2TacticalPicker() {
         }
       });
       setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
+      // Faster animation loop (40ms) and slightly longer duration (20 ticks) for smoothness
       if (ticks >= 20) { clearInterval(timer); setIsRolling(false); finalizeMission(draftPicks); }
     }, 40); 
   }, [activePlayers, playerRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
@@ -308,7 +310,7 @@ export default function Overwatch2TacticalPicker() {
           {/* Logo / Title Area */}
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <Sparkles className="h-6 w-6 text-white" />
+              <Dice5 className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-black italic tracking-tighter uppercase text-foreground leading-none">
