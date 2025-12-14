@@ -27,6 +27,27 @@ const ROLE_STYLES = {
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
+// --- HERO ICONS MAP ---
+// These filenames match the ones you uploaded.
+const HERO_IMAGES: Record<string, string> = {
+  // Tanks
+  "D.Va": "/icons/000000038C19.webp",
+  "Doomfist": "/icons/000000038C1A.webp",
+  "Hazard": "/icons/000000044C5E.webp",
+  "Junker Queen": "/icons/000000038C1B.webp",
+  "Mauga": "/icons/00000003DC9C.webp",
+  "Orisa": "/icons/000000038C1C.webp",
+  "Ramattra": "/icons/000000038C1D.webp",
+  "Reinhardt": "/icons/000000038C1E.webp",
+  "Roadhog": "/icons/000000038C1F.webp",
+  "Sigma": "/icons/000000038C27.webp",
+  "Winston": "/icons/000000038C25.webp",
+  "Wrecking Ball": "/icons/000000038C26.webp",
+  "Zarya": "/icons/000000038C28.webp",
+  
+  // You can add Damage/Support icons here later following the same pattern
+};
+
 const HERO_DATABASE = {
   Tank:    ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
   Damage:  ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
@@ -222,7 +243,6 @@ export default function Overwatch2TacticalPicker() {
               <div className="space-y-2">
                  <div className="flex items-center justify-between"><label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Bans ({poolStats.banned} / 4)</label></div>
                  
-                 {/* FIXED TABS LIST: Cleaned up classes to remove conflicting borders */}
                  <Tabs value={filterRole} onValueChange={v => setFilterRole(v as RoleType)} className="w-full">
                     <TabsList className="grid w-full grid-cols-4 h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground border border-border/20">
                        {ROLES.map(r => (
@@ -242,6 +262,14 @@ export default function Overwatch2TacticalPicker() {
                     <div className="grid grid-cols-2 gap-1">
                        {filteredPool.map((h) => (
                          <div key={h.name} className={cn("flex items-center gap-1 rounded-md px-1.5 py-1 transition-all cursor-pointer select-none border border-transparent", bannedHeroes[h.name] ? "bg-destructive/10 border-destructive/20 opacity-80" : "hover:bg-background/80 hover:border-border/30")} onClick={() => toggleBan(h.name)}>
+                            {HERO_IMAGES[h.name] && 
+                              <img 
+                                src={HERO_IMAGES[h.name]} 
+                                alt={h.name} 
+                                className="h-4 w-4 rounded-sm object-cover mr-1"
+                                onError={(e) => e.currentTarget.style.display = 'none'} 
+                              />
+                            }
                             <Checkbox checked={!!bannedHeroes[h.name]} className="h-3 w-3 rounded-sm" />
                             <span className={cn("text-[10px] flex-1 truncate font-medium", bannedHeroes[h.name] ? "text-destructive line-through" : "text-foreground/90")}>{h.name}</span>
                          </div>
@@ -287,8 +315,19 @@ export default function Overwatch2TacticalPicker() {
                          <AnimatePresence mode="wait">
                             {heroName ? (
                              <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-1 w-full">
-                                <div className="relative w-full flex justify-center">
+                                <div className="relative w-full flex justify-center items-center flex-col">
                                     {style && <style.icon className={cn("h-8 w-8 opacity-10 dark:opacity-20 absolute -top-1 -left-1 transform -rotate-12", style.color)} />}
+                                    
+                                    {/* --- BIG ICON IN CARD --- */}
+                                    {HERO_IMAGES[heroName] && 
+                                      <img 
+                                        src={HERO_IMAGES[heroName]} 
+                                        alt={heroName} 
+                                        className="h-16 w-16 mb-2 rounded-lg object-cover shadow-lg border border-white/10"
+                                        onError={(e) => e.currentTarget.style.display = 'none'} 
+                                      />
+                                    }
+                                    
                                     <h2 className="text-xl sm:text-2xl font-black tracking-tighter uppercase italic drop-shadow-lg relative z-10 bg-gradient-to-b from-foreground to-foreground/70 bg-clip-text text-transparent truncate w-full text-center px-1">{heroName}</h2>
                                 </div>
                                 {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-2 py-0.5 rounded-full bg-background/80 backdrop-blur-md border shadow-sm shrink-0", style.color, style.border)}>{heroData?.role}</span>}
