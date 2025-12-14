@@ -137,9 +137,10 @@ const ROLE_STYLES = {
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
-// --- HERO ICONS MAP ---
-// IMPORTANT: These files must be in 'public/icons'
+// --- HERO ICONS MAP (Mapped to the filenames you uploaded) ---
+// IMPORTANT: These files MUST be in `public/icons`, NOT `src/public/icons`
 const HERO_IMAGES: Record<string, string> = {
+  // Tanks
   "D.Va": "/icons/000000038C19.webp",
   "Doomfist": "/icons/000000038C1A.webp",
   "Hazard": "/icons/000000044C5E.webp",
