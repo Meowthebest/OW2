@@ -13,7 +13,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 /* =========================================================================
-   1. INTERNAL UI COMPONENTS (Inlined to fix "Missing File" errors)
+   1. INTERNAL UI COMPONENTS (This fixes the missing file errors)
    ========================================================================= */
 
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
@@ -128,7 +128,7 @@ const SelectItem = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Item
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
 /* =========================================================================
-   2. MAIN APPLICATION CODE
+   2. MAIN APPLICATION CODE & ICONS
    ========================================================================= */
 
 const ROLE_STYLES = {
@@ -137,7 +137,8 @@ const ROLE_STYLES = {
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
-// MAPPED TO THE FILES YOU UPLOADED
+// --- HERO ICONS MAP (Using your exact filenames) ---
+// IMPORTANT: These files must be in your `public/icons` folder!
 const HERO_IMAGES: Record<string, string> = {
   // Tanks
   "D.Va": "/icons/000000038C19.webp",
@@ -153,7 +154,6 @@ const HERO_IMAGES: Record<string, string> = {
   "Winston": "/icons/000000038C25.webp",
   "Wrecking Ball": "/icons/000000038C26.webp",
   "Zarya": "/icons/000000038C28.webp",
-  // No icons yet for others
 };
 
 const HERO_DATABASE = {
