@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown
+  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown, Sparkles
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -25,8 +25,8 @@ const AnimatedButton = ({ children, onClick, disabled, className, variant = 'pri
 
   return (
     <motion.button
-      whileHover={{ scale: disabled ? 1 : 1.05 }}
-      whileTap={{ scale: disabled ? 1 : 0.95 }}
+      whileHover={{ scale: disabled ? 1 : 1.02 }}
+      whileTap={{ scale: disabled ? 1 : 0.98 }}
       onClick={onClick}
       disabled={disabled}
       className={cn(baseStyle, variants[variant], className)}
@@ -51,38 +51,38 @@ const CustomDropdown = ({ value, options, onChange, label }: any) => {
   return (
     <div className="relative" ref={ref}>
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="flex h-8 items-center justify-between gap-2 rounded-full border border-border/50 bg-background/50 px-3 text-[10px] font-bold uppercase tracking-wider shadow-sm hover:bg-accent transition-colors min-w-[80px]"
+        className="flex h-9 items-center justify-between gap-3 rounded-lg border border-border/40 bg-background/50 px-3 text-xs font-bold uppercase tracking-wider shadow-sm hover:bg-accent hover:text-accent-foreground transition-all min-w-[100px]"
       >
         <span className="truncate">{label || value}</span>
         <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
-          <ChevronDown className="h-3 w-3 opacity-50" />
+          <ChevronDown className="h-3.5 w-3.5 opacity-50" />
         </motion.div>
       </motion.button>
 
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            initial={{ opacity: 0, y: -5, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full z-50 mt-1 w-40 overflow-hidden rounded-xl border border-border/50 bg-popover p-1 text-popover-foreground shadow-xl backdrop-blur-md"
+            exit={{ opacity: 0, y: -5, scale: 0.98 }}
+            transition={{ duration: 0.1 }}
+            className="absolute right-0 top-full z-50 mt-1 w-48 overflow-hidden rounded-xl border border-border/50 bg-popover/95 p-1 text-popover-foreground shadow-xl backdrop-blur-xl"
           >
             {options.map((opt: any) => (
               <button
                 key={opt}
                 onClick={() => { onChange(opt); setIsOpen(false); }}
                 className={cn(
-                  "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2 pl-2 pr-8 text-[10px] font-bold uppercase tracking-wider outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
-                  value === opt && "bg-accent/50 text-orange-500"
+                  "relative flex w-full cursor-pointer select-none items-center rounded-lg py-2.5 pl-3 pr-8 text-[10px] font-bold uppercase tracking-wider outline-none transition-colors hover:bg-accent hover:text-accent-foreground",
+                  value === opt && "bg-orange-500/10 text-orange-500"
                 )}
               >
                 {opt}
                 {value === opt && (
-                  <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+                  <span className="absolute right-3 flex h-3.5 w-3.5 items-center justify-center">
                     <Check className="h-3 w-3" />
                   </span>
                 )}
@@ -103,7 +103,7 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
-// These match the exact filenames you uploaded to `public/icons`
+// These are mapped to the EXACT files you uploaded
 const HERO_IMAGES: Record<string, string> = {
   // --- TANKS (WebP) ---
   "D.Va": "icons/000000038C19.webp",
@@ -300,17 +300,15 @@ export default function Overwatch2TacticalPicker() {
     <div className="min-h-screen bg-background transition-colors duration-300 font-sans text-sm selection:bg-orange-500/30">
       <div className="mx-auto max-w-6xl p-4 space-y-6">
       
-      {/* --- NEW CLEAN HEADER --- */}
+      {/* --- CLEAN MODERN HEADER --- */}
       <div className="relative overflow-hidden rounded-2xl bg-card border border-border/40 shadow-xl">
-        {/* Background Accent */}
         <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-orange-500/10 blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6">
-          {/* Logo / Title Area */}
           <div className="flex items-center gap-4">
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <Dice5 className="h-6 w-6 text-white" />
+              <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div>
               <h1 className="text-2xl font-black italic tracking-tighter uppercase text-foreground leading-none">
@@ -322,7 +320,6 @@ export default function Overwatch2TacticalPicker() {
             </div>
           </div>
 
-          {/* Controls Area */}
           <div className="flex flex-wrap items-center gap-3">
              <div className="flex items-center gap-2 bg-muted/30 p-1.5 rounded-xl border border-border/40 backdrop-blur-sm">
                 <CustomDropdown 
