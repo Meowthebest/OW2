@@ -11,7 +11,7 @@ import { twMerge } from "tailwind-merge";
 // --- UTILS ---
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
-// --- CUSTOM ANIMATED COMPONENTS ---
+// --- CUSTOM ANIMATED COMPONENTS (No External Deps to prevent crashes) ---
 
 const AnimatedButton = ({ children, onClick, disabled, className, variant = 'primary' }: any) => {
   const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-black uppercase tracking-wider transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 h-10 px-4 shadow-sm";
@@ -103,7 +103,6 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
-// IMPORTANT: Ensure these files are in `public/icons`
 const HERO_IMAGES: Record<string, string> = {
   // --- TANKS ---
   "D.Va": "icons/000000038C19.webp",
@@ -141,7 +140,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Venture": "icons/150px-Venture_mini_portrait.png",
   "Widowmaker": "icons/150px-Widowmaker_OW2_mini_portrait.png",
   
-  // Missing file for Vendetta, please upload it to add it here
+  // NOTE: 'Vendetta' icon is missing from your uploads.
   "Vendetta": "", 
 };
 
