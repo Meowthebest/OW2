@@ -154,8 +154,8 @@ const HERO_IMAGES: Record<string, string> = {
   "Lúcio": "icons/150px-Lucio_OW2_mini_portrait.png",
   "Mercy": "icons/150px-Mercy_OW2_mini_portrait.png",
   "Moira": "icons/150px-Moira_OW2_mini_portrait.png",
-  "Wuyang": "150px-Wuyang_mini_portrait.png",
-  "Zenyatta": "150px-Zenyatta_OW2_mini_portrait.png",
+  "Wuyang": "icons/150px-Wuyang_mini_portrait.png",
+  "Zenyatta": "icons/150px-Zenyatta_OW2_mini_portrait.png",
 };
 
 
