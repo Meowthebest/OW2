@@ -103,7 +103,6 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
-// These are mapped to the EXACT files you uploaded
 const HERO_IMAGES: Record<string, string> = {
   // --- TANKS (WebP) ---
   "D.Va": "icons/000000038C19.webp",
@@ -258,7 +257,6 @@ export default function Overwatch2TacticalPicker() {
         }
       });
       setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
-      // Faster animation loop (40ms) and slightly longer duration (20 ticks) for smoothness
       if (ticks >= 20) { clearInterval(timer); setIsRolling(false); finalizeMission(draftPicks); }
     }, 40); 
   }, [activePlayers, playerRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
