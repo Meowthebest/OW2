@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, Ban, Search, Check
+  Activity, AlertCircle, Sun, Moon, ChevronDown, Check, Search, Ban
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -103,9 +103,9 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
-// IMPORTANT: We use "icons/..." so it works with the Base Path
+// IMPORTANT: These files MUST be in `public/icons`
 const HERO_IMAGES: Record<string, string> = {
-  // --- TANKS ---
+  // TANKS
   "D.Va": "icons/000000038C19.webp",
   "Doomfist": "icons/000000038C1A.webp",
   "Hazard": "icons/000000044C5E.webp",
@@ -120,7 +120,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Wrecking Ball": "icons/000000038C26.webp",
   "Zarya": "icons/000000038C28.webp",
 
-  // --- DAMAGE (Mapped to your .png uploads) ---
+  // DAMAGE (Updated with your files)
   "Ashe": "icons/150px-Ashe_mini_portrait.png",
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
