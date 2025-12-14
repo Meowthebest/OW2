@@ -106,6 +106,7 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
+// Ensure these match your uploaded filenames exactly!
 const HERO_IMAGES: Record<string, string> = {
   // --- TANKS (WebP) ---
   "D.Va": "icons/000000038C19.webp",
@@ -301,7 +302,7 @@ export default function Overwatch2TacticalPicker() {
     <div className="min-h-screen bg-background transition-colors duration-300 font-sans text-sm selection:bg-orange-500/30">
       <div className="mx-auto max-w-6xl p-4 space-y-6">
       
-      {/* --- HEADER (NO OVERFLOW HIDDEN) --- */}
+      {/* --- HEADER (FIXED DROPDOWN CLIPPING) --- */}
       <div className="relative rounded-2xl bg-card border border-border/40 shadow-xl">
         {/* Background Effects (Clipped) */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
@@ -312,8 +313,15 @@ export default function Overwatch2TacticalPicker() {
         {/* Content (Visible Overflow for Dropdowns) */}
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6">
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <Sparkles className="h-6 w-6 text-white" />
+            {/* LOGO SLOT - Use your ISO dice here! */}
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 overflow-hidden">
+              <img 
+                src="icons/logo.png" 
+                alt="OW2" 
+                className="h-full w-full object-cover" 
+                onError={(e) => { e.currentTarget.style.display='none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }}
+              />
+              <Dice5 className="h-6 w-6 text-white hidden" />
             </div>
             <div>
               <h1 className="text-2xl font-black italic tracking-tighter uppercase text-foreground leading-none">
@@ -447,17 +455,11 @@ export default function Overwatch2TacticalPicker() {
                 const isCompleted = heroName && completedMissions[p]?.[heroName];
                 
                 return (
-                  // PLAYER CARD (NO OVERFLOW HIDDEN ON PARENT TO FIX DROPDOWN)
                   <motion.div layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} key={p} className={cn("relative transition-all duration-500 group min-h-[280px] flex flex-col backdrop-blur-md shadow-lg rounded-[2rem] border-[1px]", heroName ? "border-white/10 dark:border-white/5 bg-gradient-to-b from-card/95 to-background/80" : "border-dashed border-border/30 bg-muted/5 dark:bg-card/5", style ? style.border : "")}>
-                      
-                      {/* Background Effects (Clipped) */}
                       <div className="absolute inset-0 overflow-hidden rounded-[2rem] pointer-events-none">
                           {style && <div className={cn("absolute inset-0 opacity-[0.03] bg-gradient-to-br", style.bg.replace("/10", "/30"))} />}
                       </div>
-                      
-                      {/* Content (Visible Overflow) */}
                       <div className="relative z-10 flex-1 flex flex-col">
-                          {/* Card Header */}
                           <div className="p-5 flex justify-between items-start z-10 gap-2">
                              <div className="flex flex-col">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 mb-0.5">Player {p}</span>
@@ -466,7 +468,6 @@ export default function Overwatch2TacticalPicker() {
                              <div className="inline-flex items-center rounded-lg border border-border/30 bg-background/40 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground shadow-sm backdrop-blur-md">{playerRoles[p]}</div>
                           </div>
                           
-                          {/* Hero Content */}
                           <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-10 -mt-2">
                              <AnimatePresence mode="wait">
                                 {heroName ? (
@@ -482,10 +483,7 @@ export default function Overwatch2TacticalPicker() {
                                    className="flex flex-col items-center gap-5 w-full"
                                  >
                                     <div className="relative group-hover:scale-105 transition-transform duration-500 ease-out">
-                                        {/* GLOW */}
                                         <div className={cn("absolute inset-0 blur-3xl opacity-20 scale-150 rounded-full", style ? style.bg.replace("/10", "/60") : "bg-white/10")} />
-                                        
-                                        {/* ICON */}
                                         {HERO_IMAGES[heroName] ? (
                                           <div className="relative rounded-3xl overflow-hidden border-[3px] border-white/10 shadow-2xl">
                                               <img 
@@ -501,7 +499,6 @@ export default function Overwatch2TacticalPicker() {
                                            </div>
                                         )}
                                     </div>
-                                    
                                     <div className="text-center space-y-2">
                                       <h2 className="text-3xl font-black tracking-tighter uppercase italic drop-shadow-sm bg-gradient-to-b from-foreground to-foreground/50 bg-clip-text text-transparent px-1">{heroName}</h2>
                                       {style && <span className={cn("text-[9px] font-black uppercase tracking-[0.3em] px-3 py-1 rounded-full border bg-background/30 backdrop-blur-md shadow-sm", style.color, style.border)}>{heroData?.role}</span>}
@@ -518,7 +515,6 @@ export default function Overwatch2TacticalPicker() {
                              </AnimatePresence>
                           </div>
 
-                          {/* Action Button */}
                           {heroName && (
                             <div className="p-4 z-10">
                                <motion.button 
