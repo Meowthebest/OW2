@@ -13,7 +13,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 /* =========================================================================
-   1. INTERNAL UI COMPONENTS (Fixes "Could not load ui/card" errors)
+   1. INTERNAL UI COMPONENTS (Required to prevent build crash)
    ========================================================================= */
 
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
@@ -137,8 +137,8 @@ const ROLE_STYLES = {
   Support: { color: "text-emerald-500", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: Heart },
 };
 
-// --- HERO ICONS MAP (Mapped to the filenames you uploaded) ---
-// IMPORTANT: These files MUST be in `public/icons`, NOT `src/public/icons`
+// --- HERO ICONS MAP (Mapped to your upload names) ---
+// IMPORTANT: These files must be in 'public/icons'
 const HERO_IMAGES: Record<string, string> = {
   // Tanks
   "D.Va": "/icons/000000038C19.webp",
@@ -257,8 +257,9 @@ export default function Overwatch2TacticalPicker() {
         }
       });
       setCurrentLoadout(prev => ({ ...prev, ...draftPicks }));
-      if (ticks >= 10) { clearInterval(timer); setIsRolling(false); finalizeMission(draftPicks); }
-    }, 60);
+      // Faster animation loop (40ms) and slightly longer duration (20 ticks) for smoothness
+      if (ticks >= 20) { clearInterval(timer); setIsRolling(false); finalizeMission(draftPicks); }
+    }, 40); 
   }, [activePlayers, playerRoles, bannedHeroes, challengeMode, noDuplicates, missionLog, completedMissions, getHeroesByRole]);
 
   const finalizeMission = (picks: Record<PlayerID, string | null>) => {
@@ -420,7 +421,17 @@ export default function Overwatch2TacticalPicker() {
                       <div className="flex-1 flex flex-col items-center justify-center p-3 relative z-10 overflow-hidden">
                          <AnimatePresence mode="wait">
                             {heroName ? (
-                             <motion.div key={heroName} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center gap-1 w-full">
+                             <motion.div 
+                               key={heroName} 
+                               initial={{ opacity: 0, scale: 0.8, filter: "blur(4px)" }} 
+                               animate={{ 
+                                 opacity: 1, 
+                                 scale: isRolling ? [1, 1.05, 1] : 1, 
+                                 filter: isRolling ? "blur(2px)" : "blur(0px)" 
+                               }} 
+                               transition={{ duration: isRolling ? 0.1 : 0.3 }}
+                               className="flex flex-col items-center gap-1 w-full"
+                             >
                                 <div className="relative w-full flex justify-center items-center flex-col">
                                     {style && <style.icon className={cn("h-8 w-8 opacity-10 dark:opacity-20 absolute -top-1 -left-1 transform -rotate-12", style.color)} />}
                                     
@@ -429,7 +440,7 @@ export default function Overwatch2TacticalPicker() {
                                       <img 
                                         src={HERO_IMAGES[heroName]} 
                                         alt={heroName} 
-                                        className="h-16 w-16 mb-2 rounded-lg object-cover shadow-lg border border-white/10"
+                                        className={cn("h-16 w-16 mb-2 rounded-lg object-cover shadow-lg border border-white/10", isRolling && "scale-105")}
                                         onError={(e) => e.currentTarget.style.display = 'none'} 
                                       />
                                     }
