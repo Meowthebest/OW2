@@ -11,7 +11,7 @@ import { twMerge } from "tailwind-merge";
 // --- UTILS ---
 function cn(...inputs: ClassValue[]) { return twMerge(clsx(inputs)); }
 
-// --- CUSTOM ANIMATED COMPONENTS (Safe Mode) ---
+// --- CUSTOM ANIMATED COMPONENTS (Safe Mode - No External Libraries) ---
 
 const AnimatedButton = ({ children, onClick, disabled, className, variant = 'primary' }: any) => {
   const baseStyle = "inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-black uppercase tracking-wider transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 h-10 px-4 shadow-sm";
@@ -103,9 +103,9 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
-// Ensure all these files are in `public/icons`!
+// IMPORTANT: Ensure these files are in `public/icons`!
 const HERO_IMAGES: Record<string, string> = {
-  // --- TANKS ---
+  // --- TANKS (WebP) ---
   "D.Va": "icons/000000038C19.webp",
   "Doomfist": "icons/000000038C1A.webp",
   "Hazard": "icons/000000044C5E.webp",
@@ -120,7 +120,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Wrecking Ball": "icons/000000038C26.webp",
   "Zarya": "icons/000000038C28.webp",
 
-  // --- DAMAGE (New Icons Added) ---
+  // --- DAMAGE (PNGs you uploaded) ---
   "Ashe": "icons/150px-Ashe_mini_portrait.png",
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
