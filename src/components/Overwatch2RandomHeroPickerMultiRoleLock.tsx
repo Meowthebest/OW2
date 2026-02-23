@@ -129,7 +129,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
   "Echo": "icons/150px-Echo_mini_portrait.png",
-  "Emre": "", // No PNG yet, will use placeholder sword icon
+  "Emre": "", "icons/Emre.png",
   "Freja": "icons/150px-Freja_mini_portrait.png",
   "Genji": "icons/150px-Genji_OW2_mini_portrait.png",
   "Hanzo": "icons/150px-Hanzo_mini_portrait.png",
@@ -152,13 +152,13 @@ const HERO_IMAGES: Record<string, string> = {
   "Baptiste": "icons/150px-Baptiste_mini_portrait.png",
   "Brigitte": "icons/150px-Brigitte_OW2_mini_portrait.png",
   "Illari": "icons/150px-Illari_mini_portrait.png",
-  "Jetpack Cat": "", // No PNG yet, will use placeholder heart icon
+  "Jetpack Cat": "", "icons/JetpackCat.png",
   "Juno": "icons/150px-Juno_mini_portrait.png",
   "Kiriko": "icons/150px-Kiriko_OW2_mini_portrait.png",
   "Lifeweaver": "icons/150px-Lifeweaver_mini_portrait.png",
   "Lúcio": "icons/150px-Lucio_OW2_mini_portrait.png",
   "Mercy": "icons/150px-Mercy_OW2_mini_portrait.png",
-  "Mizuki": "", // No PNG yet, will use placeholder heart icon
+  "Mizuki": "", "icons/Mizuku.png",
   "Moira": "icons/150px-Moira_OW2_mini_portrait.png",
   "Wuyang": "icons/150px-Wuyang_mini_portrait.png",
   "Zenyatta": "icons/150px-Zenyatta_OW2_mini_portrait.png",
