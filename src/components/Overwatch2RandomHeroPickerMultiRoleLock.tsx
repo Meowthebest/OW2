@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown, Sparkles
+  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -106,10 +106,10 @@ const ROLE_STYLES = {
 };
 
 // --- HERO ICONS MAP ---
-// Ensure these match your uploaded filenames exactly!
 const HERO_IMAGES: Record<string, string> = {
-  // --- TANKS (WebP) ---
+  // --- TANKS ---
   "D.Va": "icons/000000038C19.webp",
+  "Domina": "icons/Domina.png",
   "Doomfist": "icons/000000038C1A.webp",
   "Hazard": "icons/000000044C5E.webp",
   "Junker Queen": "icons/000000038C1B.webp",
@@ -123,7 +123,8 @@ const HERO_IMAGES: Record<string, string> = {
   "Wrecking Ball": "icons/000000038C26.webp",
   "Zarya": "icons/000000038C28.webp",
 
-  // --- DAMAGE (PNG) ---
+  // --- DAMAGE ---
+  "Anran": "icons/Anran.png",
   "Ashe": "icons/150px-Ashe_mini_portrait.png",
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
@@ -145,7 +146,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Venture": "icons/150px-Venture_mini_portrait.png",
   "Widowmaker": "icons/150px-Widowmaker_OW2_mini_portrait.png",
 
-  // --- SUPPORT (PNG) ---
+  // --- SUPPORT ---
   "Ana": "icons/150px-Ana_OW2_mini_portrait.png",
   "Baptiste": "icons/150px-Baptiste_mini_portrait.png",
   "Brigitte": "icons/150px-Brigitte_OW2_mini_portrait.png",
@@ -161,8 +162,8 @@ const HERO_IMAGES: Record<string, string> = {
 };
 
 const HERO_DATABASE = {
-  Tank:    ["D.Va","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
-  Damage:  ["Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
+  Tank:    ["D.Va","Domina","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
+  Damage:  ["Anran","Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
   Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Wuyang","Zenyatta"],
 } as const;
 
@@ -313,11 +314,11 @@ export default function Overwatch2TacticalPicker() {
         {/* Content (Visible Overflow for Dropdowns) */}
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6">
           <div className="flex items-center gap-4">
-            {/* LOGO SLOT - Use your ISO dice here! */}
-            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 overflow-hidden">
+            {/* LOGO SLOT */}
+            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 overflow-hidden border border-white/10">
               <img 
-                src="icons/logo.png" 
-                alt="OW2" 
+                src="icons/logo.jpg" 
+                alt="Logo" 
                 className="h-full w-full object-cover" 
                 onError={(e) => { e.currentTarget.style.display='none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }}
               />
@@ -353,7 +354,7 @@ export default function Overwatch2TacticalPicker() {
              <motion.button 
                 whileHover={{scale: 1.05}} whileTap={{scale: 0.95}} 
                 onClick={toggleTheme} 
-                className="h-10 w-10 rounded-xl border border-border/40 flex items-center justify-center hover:bg-muted/50 text-foreground transition-colors bg-card/50"
+                className="h-10 w-10 rounded-xl border border-border/40 flex items-center justify-center hover:bg-muted/50 text-foreground transition-colors bg-card/50 shadow-sm"
              >
                 {theme === 'dark' ? <Sun className="h-5 w-5 text-amber-400" /> : <Moon className="h-5 w-5 text-slate-600" />}
              </motion.button>
@@ -383,6 +384,7 @@ export default function Overwatch2TacticalPicker() {
                         value={playerRoles[p]} 
                         options={ROLES} 
                         onChange={(v: RoleType) => setPlayerRoles(prev => ({...prev, [p]: v}))} 
+                        align="right"
                       />
                    </motion.div>
                  ))}
@@ -485,7 +487,7 @@ export default function Overwatch2TacticalPicker() {
                                     <div className="relative group-hover:scale-105 transition-transform duration-500 ease-out">
                                         <div className={cn("absolute inset-0 blur-3xl opacity-20 scale-150 rounded-full", style ? style.bg.replace("/10", "/60") : "bg-white/10")} />
                                         {HERO_IMAGES[heroName] ? (
-                                          <div className="relative rounded-3xl overflow-hidden border-[3px] border-white/10 shadow-2xl">
+                                          <div className="relative rounded-3xl overflow-hidden border-[3px] border-white/10 shadow-2xl bg-black/20">
                                               <img 
                                                 src={HERO_IMAGES[heroName]} 
                                                 alt={heroName} 
