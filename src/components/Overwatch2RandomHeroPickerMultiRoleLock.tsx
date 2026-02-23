@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Dice5, Filter, Trash2, History, Repeat,
   CheckCircle2, Undo2, Trophy, Shield, Sword, Heart, 
-  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown
+  Activity, AlertCircle, Sun, Moon, Ban, Search, Check, ChevronDown, Sparkles
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -129,6 +129,7 @@ const HERO_IMAGES: Record<string, string> = {
   "Bastion": "icons/150px-Bastion_mini_portrait.png",
   "Cassidy": "icons/150px-Cassidy_OW2_mini_portrait.png",
   "Echo": "icons/150px-Echo_mini_portrait.png",
+  "Emre": "", // No PNG yet, will use placeholder sword icon
   "Freja": "icons/150px-Freja_mini_portrait.png",
   "Genji": "icons/150px-Genji_OW2_mini_portrait.png",
   "Hanzo": "icons/150px-Hanzo_mini_portrait.png",
@@ -151,11 +152,13 @@ const HERO_IMAGES: Record<string, string> = {
   "Baptiste": "icons/150px-Baptiste_mini_portrait.png",
   "Brigitte": "icons/150px-Brigitte_OW2_mini_portrait.png",
   "Illari": "icons/150px-Illari_mini_portrait.png",
+  "Jetpack Cat": "", // No PNG yet, will use placeholder heart icon
   "Juno": "icons/150px-Juno_mini_portrait.png",
   "Kiriko": "icons/150px-Kiriko_OW2_mini_portrait.png",
   "Lifeweaver": "icons/150px-Lifeweaver_mini_portrait.png",
   "Lúcio": "icons/150px-Lucio_OW2_mini_portrait.png",
   "Mercy": "icons/150px-Mercy_OW2_mini_portrait.png",
+  "Mizuki": "", // No PNG yet, will use placeholder heart icon
   "Moira": "icons/150px-Moira_OW2_mini_portrait.png",
   "Wuyang": "icons/150px-Wuyang_mini_portrait.png",
   "Zenyatta": "icons/150px-Zenyatta_OW2_mini_portrait.png",
@@ -163,8 +166,8 @@ const HERO_IMAGES: Record<string, string> = {
 
 const HERO_DATABASE = {
   Tank:    ["D.Va","Domina","Doomfist","Hazard","Junker Queen","Mauga","Orisa","Ramattra","Reinhardt","Roadhog","Sigma","Winston","Wrecking Ball","Zarya"],
-  Damage:  ["Anran","Ashe","Bastion","Cassidy","Echo","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
-  Support: ["Ana","Baptiste","Brigitte","Illari","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Moira","Wuyang","Zenyatta"],
+  Damage:  ["Anran","Ashe","Bastion","Cassidy","Echo","Emre","Freja","Genji","Hanzo","Junkrat","Mei","Pharah","Reaper","Sojourn","Soldier: 76","Sombra","Symmetra","Torbjörn","Tracer","Vendetta","Venture","Widowmaker"],
+  Support: ["Ana","Baptiste","Brigitte","Illari","Jetpack Cat","Juno","Kiriko","Lifeweaver","Lúcio","Mercy","Mizuki","Moira","Wuyang","Zenyatta"],
 } as const;
 
 const ROLES = ["All", "Tank", "Damage", "Support"] as const;
@@ -303,18 +306,15 @@ export default function Overwatch2TacticalPicker() {
     <div className="min-h-screen bg-background transition-colors duration-300 font-sans text-sm selection:bg-orange-500/30">
       <div className="mx-auto max-w-6xl p-4 space-y-6">
       
-      {/* --- HEADER (FIXED DROPDOWN CLIPPING) --- */}
+      {/* --- HEADER --- */}
       <div className="relative rounded-2xl bg-card border border-border/40 shadow-xl">
-        {/* Background Effects (Clipped) */}
         <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
             <div className="absolute top-0 right-0 -mt-16 -mr-16 h-64 w-64 rounded-full bg-orange-500/10 blur-3xl"></div>
             <div className="absolute bottom-0 left-0 -mb-16 -ml-16 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"></div>
         </div>
 
-        {/* Content (Visible Overflow for Dropdowns) */}
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between p-6 gap-6">
           <div className="flex items-center gap-4">
-            {/* LOGO SLOT */}
             <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center shadow-lg shadow-orange-500/20 overflow-hidden border border-white/10">
               <img 
                 src="icons/logo.jpg" 
