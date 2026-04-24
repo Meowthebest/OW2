@@ -630,7 +630,7 @@ html[data-theme="light"] select {
 
 .pool-tabs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
@@ -734,22 +734,6 @@ html[data-theme="light"] select {
 }
 .hero-chip.role-Support {
   border-left: 3px solid var(--role-support);
-}
-
-.hero-chip.banned {
-  opacity: 0.6;
-  background: rgba(255, 107, 107, 0.05);
-  border-color: rgba(255, 107, 107, 0.4);
-  border-left-color: rgba(255, 107, 107, 0.6);
-}
-
-.hero-chip.banned .hero-chip-name {
-  text-decoration: line-through;
-  text-decoration-color: rgba(255, 107, 107, 0.7);
-}
-
-.hero-chip.banned .hero-thumb img {
-  filter: grayscale(0.85);
 }
 
 .hero-chip.favorited {

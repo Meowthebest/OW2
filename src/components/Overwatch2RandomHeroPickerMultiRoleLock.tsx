@@ -5,7 +5,7 @@ type RoleFilter = (typeof ROLE_ORDER)[number];
 type Role = Exclude<RoleFilter, "All">;
 type PlayerId = 1 | 2 | 3 | 4 | 5;
 type SortMode = "name" | "progress" | "completion" | "status";
-type PoolTab = "all" | "favorites" | "banned";
+type PoolTab = "all" | "favorites";
 
 const HERO_BY_ROLE: Record<Role, string[]> = {
   Tank: ["D.Va", "Domina", "Doomfist", "Hazard", "Junker Queen", "Mauga", "Orisa", "Ramattra", "Reinhardt", "Roadhog", "Sigma", "Winston", "Wrecking Ball", "Zarya"],
@@ -154,9 +154,6 @@ const Ic = {
   Trash: () => (
     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>
   ),
-  Ban: () => (
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
-  ),
   Trophy: () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21h8" /><path d="M12 17v4" /><path d="M17 3H7v5a5 5 0 0 0 10 0V3Z" /><path d="M17 5h3v2a3 3 0 0 1-3 3" /><path d="M7 5H4v2a3 3 0 0 0 3 3" /></svg>
   ),
@@ -204,7 +201,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [lineup, setLineup] = useStoredState<Record<PlayerId, string | null>>("ow2_lineup", {
     1: null, 2: null, 3: null, 4: null, 5: null,
   });
-  const [banSet, setBanSet] = useStoredState<Record<string, boolean>>("ow2_bans", {});
   const [favorites, setFavorites] = useStoredState<Record<string, boolean>>("ow2_favorites", {});
   const [uniqueTeam, setUniqueTeam] = useStoredState<boolean>("ow2_unique", true);
   const [progress, setProgress] = useStoredState<Record<PlayerId, ProgressInfo>>("ow2_progress", DEFAULT_PROGRESS);
@@ -247,10 +243,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       if (heroFilter !== "All" && h.role !== heroFilter) return false;
       if (!h.name.toLowerCase().includes(heroSearch.toLowerCase())) return false;
       if (poolTab === "favorites" && !favorites[h.name]) return false;
-      if (poolTab === "banned" && !banSet[h.name]) return false;
       return true;
     });
-  }, [flatHeroes, heroFilter, heroSearch, poolTab, favorites, banSet]);
+  }, [flatHeroes, heroFilter, heroSearch, poolTab, favorites]);
 
   const roleByHero = useMemo(() => {
     const out: Record<string, Role> = {};
@@ -283,13 +278,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     return rows;
   }, [activePlayers, completedHeroes, roleByHero, lineup, playerNames, playerSearch, playerStatus, progress, sortMode]);
 
-  const banCount = useMemo(() => Object.values(banSet).filter(Boolean).length, [banSet]);
   const favCount = useMemo(() => Object.values(favorites).filter(Boolean).length, [favorites]);
-
-  const toggleBan = useCallback(
-    (name: string) => setBanSet((cur) => ({ ...cur, [name]: !cur[name] })),
-    [setBanSet],
-  );
   const toggleFav = useCallback(
     (name: string) => setFavorites((cur) => ({ ...cur, [name]: !cur[name] })),
     [setFavorites],
@@ -299,12 +288,12 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     (playerId: PlayerId, taken: Set<string>) => {
       const role = playerRoles[playerId];
       const source = role === "All" ? flatHeroes : HERO_BY_ROLE[role].map((name) => ({ name, role }));
-      const names = source.map((h) => h.name).filter((n) => !banSet[n] && (!uniqueTeam || !taken.has(n)));
+      const names = source.map((h) => h.name).filter((n) => !uniqueTeam || !taken.has(n));
       if (names.length === 0) return null;
       const weighted = names.flatMap((n) => (favorites[n] ? [n, n, n] : [n]));
       return randomItem(weighted);
     },
-    [banSet, favorites, flatHeroes, playerRoles, uniqueTeam],
+    [favorites, flatHeroes, playerRoles, uniqueTeam],
   );
 
   const addPickHistory = useCallback(
@@ -339,7 +328,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           if (role) newEntries.push({ hero: pick, role, player: playerNames[id] });
         }
       }
-      if (!any) setError("No heroes available. Adjust bans, favorites, or roles.");
+      if (!any) setError("No heroes available. Adjust favorites or roles.");
       setLineup(next);
       addPickHistory(newEntries);
       setRolling(false);
@@ -368,11 +357,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const clearLineup = () => {
     if (!window.confirm("Clear current lineup?")) return;
     setLineup({ 1: null, 2: null, 3: null, 4: null, 5: null });
-  };
-
-  const clearBans = () => {
-    if (!window.confirm("Remove all bans?")) return;
-    setBanSet({});
   };
 
   const clearFavorites = () => {
@@ -704,7 +688,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           <div className="sidebar-head">
             <div className="section-title-group">
               <span className="section-eyebrow">Hero Pool</span>
-              <h3>Bans · Favorites</h3>
+              <h3>Favorites</h3>
             </div>
             <div className="pool-tabs" role="tablist">
               <button
@@ -723,14 +707,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               >
                 <Ic.Star filled={poolTab === "favorites"} /> {favCount}
               </button>
-              <button
-                type="button"
-                role="tab"
-                className={`pool-tab ${poolTab === "banned" ? "active" : ""}`}
-                onClick={() => setPoolTab("banned")}
-              >
-                <Ic.Ban /> {banCount}
-              </button>
             </div>
           </div>
 
@@ -748,9 +724,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           </div>
 
           <div className="sidebar-actions">
-            <button className="btn sm ghost" type="button" onClick={clearBans} disabled={banCount === 0}>
-              <Ic.Ban /> Clear bans
-            </button>
             <button className="btn sm ghost" type="button" onClick={clearFavorites} disabled={favCount === 0}>
               <Ic.Star /> Clear favs
             </button>
@@ -765,13 +738,13 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               {heroPool.map((hero) => (
                 <div
                   key={hero.name}
-                  className={`hero-chip role-${hero.role} ${banSet[hero.name] ? "banned" : ""} ${favorites[hero.name] ? "favorited" : ""}`}
+                  className={`hero-chip role-${hero.role} ${favorites[hero.name] ? "favorited" : ""}`}
                 >
                   <button
                     type="button"
                     className="hero-chip-main"
-                    onClick={() => toggleBan(hero.name)}
-                    title={banSet[hero.name] ? "Unban" : "Ban"}
+                    onClick={() => toggleFav(hero.name)}
+                    title={favorites[hero.name] ? "Remove favorite" : "Add favorite"}
                   >
                     <HeroImage name={hero.name} size={36} />
                     <div className="hero-meta">
