@@ -6,7 +6,6 @@ type Role = Exclude<RoleFilter, "All">;
 type PlayerId = 1 | 2 | 3 | 4 | 5;
 type SortMode = "name" | "progress" | "completion" | "status";
 type PoolTab = "all" | "favorites" | "banned";
-type ChallengeMode = "random" | "daily" | "team" | "dare";
 
 const HERO_BY_ROLE: Record<Role, string[]> = {
   Tank: ["D.Va", "Domina", "Doomfist", "Hazard", "Junker Queen", "Mauga", "Orisa", "Ramattra", "Reinhardt", "Roadhog", "Sigma", "Winston", "Wrecking Ball", "Zarya"],
@@ -67,40 +66,9 @@ const HERO_IMAGE_MAP: Record<string, string> = {
   "Jetpack Cat": "icons/JetpackCat.png",
 };
 
-const CHALLENGES = [
-  "No healing allowed",
-  "Melee eliminations only",
-  "No ultimate abilities",
-  "Pacifist run - no eliminations",
-  "Primary fire only",
-  "Backup hero only",
-  "Low HP hero only",
-  "Mystery role draft",
-  "No movement abilities",
-  "Crouch-walk only",
-  "Voice line after every elim",
-  "No scoped weapons",
-  "Team-up mandatory",
-  "Switch hero every 60 seconds",
-  "Stay within 10m of your tank",
-  "One shot only",
-];
-
-const DARES = [
-  "Do a silly dance in spawn",
-  "Say 'oof' after every death",
-  "Only emote, no voice lines",
-  "Compliment each teammate once",
-  "Announce every ultimate in chat",
-  "Thank the enemy after every elim",
-  "Sing your ultimate voice line",
-  "Only type in team chat",
-  "Follow your tank for a minute",
-  "Finish each round with an emote",
-];
-
 type ProgressInfo = { completed: number; target: number; notes: string };
 type HistoryEntry = { id: string; hero: string; role: Role; player: string; at: number };
+type MatchResult = { id: string; result: "W" | "L"; at: number };
 
 const PLAYER_IDS: PlayerId[] = [1, 2, 3, 4, 5];
 const DEFAULT_NAMES: Record<PlayerId, string> = { 1: "Player 1", 2: "Player 2", 3: "Player 3", 4: "Player 4", 5: "Player 5" };
@@ -139,11 +107,6 @@ function formatRelative(at: number) {
   if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
   if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
   return `${Math.floor(diff / 86_400_000)}d ago`;
-}
-
-function dayIndex(date = new Date()) {
-  const local = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
-  return Math.floor(local / 86_400_000);
 }
 
 function useStoredState<T>(key: string, initial: T) {
@@ -209,9 +172,6 @@ const Ic = {
   Sparkle: () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2 2-5z" /></svg>
   ),
-  Bolt: () => (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 11 14 10 22 21 10 13 10 13 2" /></svg>
-  ),
   Target: () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /></svg>
   ),
@@ -235,7 +195,6 @@ function HeroImage({ name, size = 48 }: { name: string | null; size?: number }) 
 }
 
 export default function Overwatch2RandomHeroPickerMultiRoleLock() {
-  /* ---------- State ---------- */
   const [theme, setTheme] = useStoredState<"dark" | "light">("ow2_theme", "dark");
   const [playerCount, setPlayerCount] = useStoredState<number>("ow2_player_count", 3);
   const [playerNames, setPlayerNames] = useStoredState<Record<PlayerId, string>>("ow2_names", DEFAULT_NAMES);
@@ -253,22 +212,17 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     "ow2_completed_heroes",
     DEFAULT_COMPLETED,
   );
-  const [history, setHistory] = useStoredState<HistoryEntry[]>("ow2_history", []);
+  const [history, setHistory] = useStoredState<HistoryEntry[]>("ow2_pick_history", []);
+  const [results, setResults] = useStoredState<MatchResult[]>("ow2_match_results", []);
 
-  // Streaks
-  const [winStreak, setWinStreak] = useStoredState<number>("ow2_win_streak", 0);
-  const [bestWinStreak, setBestWinStreak] = useStoredState<number>("ow2_win_streak_best", 0);
+  const [wins, setWins] = useStoredState<number>("ow2_wins", 0);
+  const [losses, setLosses] = useStoredState<number>("ow2_losses", 0);
+
+  const [manualOverride, setManualOverride] = useStoredState<boolean>("ow2_manual_override", false);
+
   const [completionStreak, setCompletionStreak] = useStoredState<number>("ow2_comp_streak", 0);
   const [bestCompletionStreak, setBestCompletionStreak] = useStoredState<number>("ow2_comp_streak_best", 0);
 
-  // Challenges
-  const [challengeEnabled, setChallengeEnabled] = useStoredState<boolean>("ow2_challenge_on", false);
-  const [challengeMode, setChallengeMode] = useStoredState<ChallengeMode>("ow2_challenge_mode", "random");
-  const [challengeText, setChallengeText] = useStoredState<string>("ow2_challenge_text", "");
-  const [dareText, setDareText] = useStoredState<string>("ow2_dare_text", "");
-  const [dailySeed, setDailySeed] = useStoredState<number>("ow2_daily_seed", -1);
-
-  // UI-only
   const [heroFilter, setHeroFilter] = useState<RoleFilter>("All");
   const [heroSearch, setHeroSearch] = useState("");
   const [poolTab, setPoolTab] = useState<PoolTab>("all");
@@ -277,22 +231,13 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [sortMode, setSortMode] = useState<SortMode>("name");
   const [error, setError] = useState("");
   const [rolling, setRolling] = useState(false);
-  const [editing, setEditing] = useState<PlayerId | null>(null);
+  const [editingPlayer, setEditingPlayer] = useState<PlayerId | null>(null);
+  const [summaryOpen, setSummaryOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(true);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
-
-  // Auto-roll daily challenge when date changes
-  useEffect(() => {
-    if (challengeMode !== "daily") return;
-    const today = dayIndex();
-    if (dailySeed !== today) {
-      setDailySeed(today);
-      setChallengeText(CHALLENGES[today % CHALLENGES.length]);
-    }
-  }, [challengeMode, dailySeed, setChallengeText, setDailySeed]);
 
   const flatHeroes = useMemo(() => allHeroes(), []);
   const activePlayers = useMemo(() => PLAYER_IDS.slice(0, playerCount), [playerCount]);
@@ -307,6 +252,14 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     });
   }, [flatHeroes, heroFilter, heroSearch, poolTab, favorites, banSet]);
 
+  const roleByHero = useMemo(() => {
+    const out: Record<string, Role> = {};
+    flatHeroes.forEach((h) => {
+      out[h.name] = h.role;
+    });
+    return out;
+  }, [flatHeroes]);
+
   const visiblePlayers = useMemo(() => {
     const rows = activePlayers
       .map((id) => {
@@ -314,7 +267,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         const pct = completionPercent(info);
         const status = pct >= 100 ? "completed" : info.completed > 0 ? "in-progress" : "not-started";
         const hero = lineup[id];
-        const heroRole = hero ? flatHeroes.find((h) => h.name === hero)?.role ?? null : null;
+        const heroRole = hero ? roleByHero[hero] ?? null : null;
         const doneList = completedHeroes[id] ?? [];
         const heroIsDone = !!hero && doneList.includes(hero);
         return { id, name: playerNames[id], progress: info, hero, heroRole, status, pct, doneList, heroIsDone };
@@ -328,7 +281,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       return a.status.localeCompare(b.status);
     });
     return rows;
-  }, [activePlayers, completedHeroes, flatHeroes, lineup, playerNames, playerSearch, playerStatus, progress, sortMode]);
+  }, [activePlayers, completedHeroes, roleByHero, lineup, playerNames, playerSearch, playerStatus, progress, sortMode]);
 
   const banCount = useMemo(() => Object.values(banSet).filter(Boolean).length, [banSet]);
   const favCount = useMemo(() => Object.values(favorites).filter(Boolean).length, [favorites]);
@@ -342,7 +295,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     [setFavorites],
   );
 
-  /* ---------- Draft logic (weighted by favorites) ---------- */
   const pickHeroFor = useCallback(
     (playerId: PlayerId, taken: Set<string>) => {
       const role = playerRoles[playerId];
@@ -355,7 +307,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     [banSet, favorites, flatHeroes, playerRoles, uniqueTeam],
   );
 
-  const addHistory = useCallback(
+  const addPickHistory = useCallback(
     (entries: Array<Omit<HistoryEntry, "id" | "at">>) => {
       if (entries.length === 0) return;
       const now = Date.now();
@@ -364,7 +316,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         at: now + i,
         id: `${now}-${i}-${Math.random().toString(36).slice(2, 7)}`,
       }));
-      setHistory((cur) => [...full, ...cur].slice(0, 30));
+      setHistory((cur) => [...full, ...cur].slice(0, 40));
     },
     [setHistory],
   );
@@ -389,10 +341,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       }
       if (!any) setError("No heroes available. Adjust bans, favorites, or roles.");
       setLineup(next);
-      addHistory(newEntries);
-      if (challengeEnabled && !challengeText && challengeMode !== "daily") {
-        rerollChallengeInternal();
-      }
+      addPickHistory(newEntries);
       setRolling(false);
     }, 420);
   };
@@ -410,8 +359,8 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     }
     setError("");
     setLineup((cur) => ({ ...cur, [id]: pick }));
-    const role = flatHeroes.find((h) => h.name === pick)?.role;
-    if (role) addHistory([{ hero: pick, role, player: playerNames[id] }]);
+    const role = roleByHero[pick];
+    if (role) addPickHistory([{ hero: pick, role, player: playerNames[id] }]);
   };
 
   const rerollAll = () => runDraft();
@@ -431,8 +380,8 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     setFavorites({});
   };
 
-  const clearHistory = () => {
-    if (!window.confirm("Clear match history?")) return;
+  const clearPickHistory = () => {
+    if (!window.confirm("Clear recent picks?")) return;
     setHistory([]);
   };
 
@@ -509,15 +458,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const copyLineup = async () => {
     const text = activePlayers
       .map((id) => `${playerNames[id]}: ${lineup[id] ?? "No pick"}`)
-      .concat(
-        challengeEnabled && (challengeText || dareText)
-          ? [
-              "",
-              challengeText ? `Challenge: ${challengeText}` : "",
-              dareText ? `Dare: ${dareText}` : "",
-            ].filter(Boolean)
-          : [],
-      )
       .join("\n");
     try {
       await navigator.clipboard.writeText(text);
@@ -526,58 +466,143 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     }
   };
 
-  /* ---------- Streak helpers ---------- */
-  const registerWin = () => {
-    setWinStreak((ws) => {
-      const next = ws + 1;
-      setBestWinStreak((best) => Math.max(best, next));
-      return next;
-    });
+  const registerResult = (result: "W" | "L") => {
+    if (result === "W") setWins((v) => v + 1);
+    else setLosses((v) => v + 1);
+    const now = Date.now();
+    setResults((cur) => [{ id: `${now}-${result}`, result, at: now }, ...cur].slice(0, 20));
   };
 
-  const registerLoss = () => setWinStreak(0);
-
-  /* ---------- Challenge helpers ---------- */
-  function rerollChallengeInternal() {
-    if (challengeMode === "dare") {
-      setDareText(randomItem(DARES));
-      setChallengeText(randomItem(CHALLENGES));
-    } else if (challengeMode === "daily") {
-      const today = dayIndex();
-      setDailySeed(today);
-      setChallengeText(CHALLENGES[today % CHALLENGES.length]);
-      setDareText("");
-    } else {
-      setChallengeText(randomItem(CHALLENGES));
-      setDareText("");
-    }
-  }
-
-  const rerollChallenge = () => {
-    if (!challengeEnabled) setChallengeEnabled(true);
-    rerollChallengeInternal();
-  };
-
-  const clearChallenge = () => {
-    setChallengeText("");
-    setDareText("");
-  };
+  const totalMatches = wins + losses;
+  const winRate = totalMatches === 0 ? 0 : Math.round((wins / totalMatches) * 100);
 
   const anyHeroPicked = activePlayers.some((id) => !!lineup[id]);
+  const totalCompleted = activePlayers.reduce((acc, id) => acc + (completedHeroes[id]?.length ?? 0), 0);
+  const avgProgress = activePlayers.length
+    ? Math.round(activePlayers.reduce((acc, id) => acc + completionPercent(progress[id]), 0) / activePlayers.length)
+    : 0;
+
+  const summaryData = useMemo(
+    () => ({
+      players: activePlayers.map((id) => ({
+        name: playerNames[id],
+        role: playerRoles[id],
+        hero: lineup[id],
+        completed: completedHeroes[id] ?? [],
+        progress: progress[id],
+      })),
+      wins,
+      losses,
+      totalMatches,
+      winRate,
+      totalCompleted,
+      avgProgress,
+    }),
+    [activePlayers, completedHeroes, lineup, losses, playerNames, playerRoles, progress, totalCompleted, totalMatches, winRate, wins, avgProgress],
+  );
+
+  const exportSummaryPng = () => {
+    const w = 1100;
+    const h = 760;
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const grd = ctx.createLinearGradient(0, 0, 0, h);
+    grd.addColorStop(0, "#0d0d11");
+    grd.addColorStop(1, "#131319");
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.fillStyle = "#f79a2e";
+    ctx.font = "700 38px Inter, Segoe UI, sans-serif";
+    ctx.fillText("OW2 Draft Summary", 48, 62);
+    ctx.fillStyle = "#9b9aa3";
+    ctx.font = "600 16px Inter, Segoe UI, sans-serif";
+    ctx.fillText(`Generated ${new Date().toLocaleString()}`, 50, 90);
+
+    const panel = (x: number, y: number, pw: number, ph: number, title: string) => {
+      ctx.fillStyle = "#1a1a20";
+      ctx.strokeStyle = "#2f2f3a";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.roundRect(x, y, pw, ph, 14);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = "#ffb34d";
+      ctx.font = "700 16px Inter, Segoe UI, sans-serif";
+      ctx.fillText(title, x + 16, y + 28);
+    };
+
+    panel(42, 118, 500, 586, "Players");
+    panel(560, 118, 498, 268, "Match Stats");
+    panel(560, 402, 498, 302, "Recent Match Results");
+
+    ctx.fillStyle = "#f3f1ec";
+    ctx.font = "600 14px Inter, Segoe UI, sans-serif";
+    let y = 154;
+    summaryData.players.forEach((p) => {
+      const hero = p.hero ?? "No pick";
+      const done = p.completed.length;
+      const percent = completionPercent(p.progress);
+      ctx.fillStyle = "#f3f1ec";
+      ctx.font = "700 15px Inter, Segoe UI, sans-serif";
+      ctx.fillText(`${p.name} (${p.role})`, 58, y + 18);
+      ctx.fillStyle = "#9b9aa3";
+      ctx.font = "600 13px Inter, Segoe UI, sans-serif";
+      ctx.fillText(`Drafted: ${hero}`, 58, y + 38);
+      ctx.fillText(`Completed heroes: ${done}   Progress: ${percent}%`, 58, y + 56);
+      y += 86;
+    });
+
+    ctx.fillStyle = "#f3f1ec";
+    ctx.font = "700 18px Inter, Segoe UI, sans-serif";
+    ctx.fillText(`Wins: ${summaryData.wins}`, 580, 170);
+    ctx.fillText(`Losses: ${summaryData.losses}`, 580, 200);
+    ctx.fillText(`Matches: ${summaryData.totalMatches}`, 580, 230);
+    ctx.fillText(`Win Rate: ${summaryData.winRate}%`, 580, 260);
+    ctx.fillText(`Total Completed Heroes: ${summaryData.totalCompleted}`, 580, 290);
+    ctx.fillText(`Average Progress: ${summaryData.avgProgress}%`, 580, 320);
+
+    const resultsToShow = results.slice(0, 10);
+    if (resultsToShow.length === 0) {
+      ctx.fillStyle = "#9b9aa3";
+      ctx.font = "600 14px Inter, Segoe UI, sans-serif";
+      ctx.fillText("No recorded results yet.", 580, 446);
+    } else {
+      let ry = 438;
+      resultsToShow.forEach((r, idx) => {
+        ctx.fillStyle = r.result === "W" ? "#58c088" : "#ff6b6b";
+        ctx.font = "700 15px Inter, Segoe UI, sans-serif";
+        ctx.fillText(`#${resultsToShow.length - idx}  ${r.result === "W" ? "Win" : "Loss"}`, 580, ry);
+        ctx.fillStyle = "#9b9aa3";
+        ctx.font = "600 13px Inter, Segoe UI, sans-serif";
+        ctx.fillText(new Date(r.at).toLocaleString(), 700, ry);
+        ry += 26;
+      });
+    }
+
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `ow2-summary-${Date.now()}.png`;
+    a.click();
+  };
 
   return (
     <div className={`ow2-root ${theme}`}>
       {/* STATS STRIP ---------------------------------------------------- */}
       <div className="stats-strip card">
         <div className="stat">
-          <span className="stat-label"><Ic.Flame /> Win streak</span>
+          <span className="stat-label"><Ic.Win /> Match results</span>
           <div className="stat-value">
-            <strong>{winStreak}</strong>
-            <small>best {bestWinStreak}</small>
+            <strong>{wins}-{losses}</strong>
+            <small>{winRate}% WR</small>
           </div>
           <div className="stat-actions">
-            <button className="btn sm" type="button" onClick={registerWin} title="Record a win">+W</button>
-            <button className="btn sm ghost" type="button" onClick={registerLoss} title="Record a loss">L</button>
+            <button className="btn sm" type="button" onClick={() => registerResult("W")} title="Record a win">Win</button>
+            <button className="btn sm ghost" type="button" onClick={() => registerResult("L")} title="Record a loss">Loss</button>
           </div>
         </div>
         <div className="stat">
@@ -598,10 +623,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           </div>
         </div>
         <div className="stat">
-          <span className="stat-label"><Ic.Target /> Team draft</span>
+          <span className="stat-label"><Ic.Target /> Match stats</span>
           <div className="stat-value">
-            <strong>{activePlayers.filter((id) => lineup[id]).length}/{activePlayers.length}</strong>
-            <small>{banCount} bans · {favCount} favs</small>
+            <strong>{totalMatches}</strong>
+            <small>matches played</small>
           </div>
           <div className="stat-actions">
             <button className="btn sm" type="button" onClick={rerollAll} disabled={rolling}>
@@ -643,6 +668,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           <label className="toggle">
             <input type="checkbox" checked={uniqueTeam} onChange={(e) => setUniqueTeam(e.target.checked)} />
             Unique per team
+          </label>
+          <label className="toggle">
+            <input type="checkbox" checked={manualOverride} onChange={(e) => setManualOverride(e.target.checked)} />
+            Manual override
           </label>
           <button
             className={`btn primary glow ${rolling ? "rolling" : ""}`}
@@ -765,74 +794,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           )}
         </aside>
 
-        {/* MAIN COLUMN --------------------------------- */}
         <div className="main-column">
-          {/* CHALLENGE BANNER */}
-          <section className={`challenge card ${challengeEnabled ? "on" : ""}`}>
-            <div className="challenge-head">
-              <label className="toggle compact">
-                <input
-                  type="checkbox"
-                  checked={challengeEnabled}
-                  onChange={(e) => setChallengeEnabled(e.target.checked)}
-                />
-                Challenge mode
-              </label>
-              <div className="challenge-modes">
-                {(["random", "daily", "team", "dare"] as ChallengeMode[]).map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    className={`mode-pill ${challengeMode === m ? "active" : ""}`}
-                    onClick={() => setChallengeMode(m)}
-                    disabled={!challengeEnabled}
-                  >
-                    {m === "random" && <><Ic.Dice /> Random</>}
-                    {m === "daily" && <><Ic.Sparkle /> Daily</>}
-                    {m === "team" && <><Ic.Target /> Team</>}
-                    {m === "dare" && <><Ic.Bolt /> Dare</>}
-                  </button>
-                ))}
-              </div>
-              <div className="challenge-actions">
-                <button className="btn sm" type="button" onClick={rerollChallenge}>
-                  <Ic.Refresh /> Reroll
-                </button>
-                <button
-                  className="btn sm ghost"
-                  type="button"
-                  onClick={clearChallenge}
-                  disabled={!challengeText && !dareText}
-                >
-                  <Ic.Trash /> Clear
-                </button>
-              </div>
-            </div>
-            {challengeEnabled && (challengeText || dareText) ? (
-              <div className="challenge-body">
-                {challengeText && (
-                  <div className="challenge-card">
-                    <span className="section-eyebrow">
-                      {challengeMode === "daily" ? "Today's challenge" : challengeMode === "team" ? "Team challenge" : "Challenge"}
-                    </span>
-                    <p>{challengeText}</p>
-                  </div>
-                )}
-                {challengeMode === "dare" && dareText && (
-                  <div className="challenge-card dare">
-                    <span className="section-eyebrow">Dare</span>
-                    <p>{dareText}</p>
-                  </div>
-                )}
-              </div>
-            ) : challengeEnabled ? (
-              <div className="challenge-hint">Hit Reroll to draw a {challengeMode} challenge.</div>
-            ) : (
-              <div className="challenge-hint">Enable to spice up your games with challenges, daily modes, and fun dares.</div>
-            )}
-          </section>
-
-          {/* PLAYER TOOLS */}
           <div className="ow2-player-tools card">
             <input
               value={playerSearch}
@@ -926,7 +888,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                     <button className="btn sm" type="button" onClick={() => rerollPlayer(row.id)} disabled={rolling}>
                       <Ic.Refresh /> Reroll
                     </button>
-                    <button className="btn sm" type="button" onClick={() => setEditing(row.id)}>
+                    <button className="btn sm" type="button" onClick={() => setEditingPlayer(row.id)}>
                       <Ic.Edit /> Edit
                     </button>
                     <button className="btn sm ghost" type="button" onClick={() => resetPlayerProgress(row.id)}>
@@ -963,7 +925,41 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             ))}
           </section>
 
-          {/* HISTORY */}
+          <section className="card summary">
+            <button className="summary-head" type="button" onClick={() => setSummaryOpen((v) => !v)}>
+              <div className="section-title-group">
+                <span className="section-eyebrow"><Ic.Sparkle /> End result summary</span>
+                <h3>Draft + progress + match outcome</h3>
+              </div>
+              <span className={`chev ${summaryOpen ? "open" : ""}`} aria-hidden>▾</span>
+            </button>
+            {summaryOpen && (
+              <div className="summary-body">
+                <div className="summary-grid">
+                  {summaryData.players.map((p) => (
+                    <div key={p.name} className="summary-player">
+                      <strong>{p.name}</strong>
+                      <span>{p.hero ?? "No pick"} · {p.role}</span>
+                      <small>{p.completed.length} completed · {completionPercent(p.progress)}%</small>
+                    </div>
+                  ))}
+                </div>
+                <div className="summary-stats">
+                  <span>Total completed heroes: <strong>{summaryData.totalCompleted}</strong></span>
+                  <span>Matches: <strong>{summaryData.totalMatches}</strong></span>
+                  <span>Wins/Losses: <strong>{summaryData.wins}/{summaryData.losses}</strong></span>
+                  <span>Win rate: <strong>{summaryData.winRate}%</strong></span>
+                  <span>Average progress: <strong>{summaryData.avgProgress}%</strong></span>
+                </div>
+                <div className="summary-actions">
+                  <button className="btn" type="button" onClick={exportSummaryPng}>
+                    <Ic.Copy /> Export PNG
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+
           <section className="card history">
             <button
               type="button"
@@ -981,7 +977,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               <>
                 {history.length === 0 ? (
                   <div className="empty compact">
-                    <p>Picks will appear here after your next randomize.</p>
+                    <p>Recent picks and match results will appear here.</p>
                   </div>
                 ) : (
                   <div className="history-list">
@@ -1001,7 +997,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                 )}
                 {history.length > 0 && (
                   <div className="history-foot">
-                    <button className="btn sm ghost" type="button" onClick={clearHistory}>
+                    <button className="btn sm ghost" type="button" onClick={clearPickHistory}>
                       <Ic.Trash /> Clear history
                     </button>
                   </div>
@@ -1009,43 +1005,118 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               </>
             )}
           </section>
+
+          <section className="card history">
+            <div className="section-title-group">
+              <span className="section-eyebrow"><Ic.Win /> Recent results</span>
+              <h3>Match result history</h3>
+            </div>
+            {results.length === 0 ? (
+              <div className="empty compact"><p>No results recorded yet.</p></div>
+            ) : (
+              <div className="result-list">
+                {results.slice(0, 12).map((r) => (
+                  <div key={r.id} className={`result-row ${r.result === "W" ? "win" : "loss"}`}>
+                    <strong>{r.result === "W" ? "Win" : "Loss"}</strong>
+                    <small>{new Date(r.at).toLocaleString()}</small>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         </div>
       </div>
 
-      {editing !== null && (
-        <ProgressModal
-          playerName={playerNames[editing]}
-          value={progress[editing]}
-          onClose={() => setEditing(null)}
-          onSave={(val) => {
-            setProgress((cur) => ({ ...cur, [editing]: val }));
-            setEditing(null);
+      {editingPlayer !== null && (
+        <EditPlayerModal
+          playerName={playerNames[editingPlayer]}
+          playerRole={playerRoles[editingPlayer]}
+          value={progress[editingPlayer]}
+          allHeroes={flatHeroes}
+          roleByHero={roleByHero}
+          currentHero={lineup[editingPlayer]}
+          completedList={completedHeroes[editingPlayer] ?? []}
+          allowOverride={manualOverride}
+          onClose={() => setEditingPlayer(null)}
+          onSaveProgress={(val) => {
+            setProgress((cur) => ({ ...cur, [editingPlayer]: val }));
           }}
+          onSetHero={(hero) => {
+            setLineup((cur) => ({ ...cur, [editingPlayer]: hero }));
+            if (hero) {
+              const role = roleByHero[hero];
+              if (role) addPickHistory([{ hero, role, player: playerNames[editingPlayer] }]);
+            }
+          }}
+          onMarkManualComplete={(hero) => {
+            if (!hero) return;
+            setCompletedHeroes((cur) => {
+              const list = cur[editingPlayer] ?? [];
+              if (list.includes(hero)) return cur;
+              return { ...cur, [editingPlayer]: [...list, hero] };
+            });
+            setProgress((cur) => ({
+              ...cur,
+              [editingPlayer]: {
+                ...cur[editingPlayer],
+                completed: Math.min(999, cur[editingPlayer].completed + 1),
+              },
+            }));
+          }}
+          onUndoManualComplete={(hero) => undoComplete(editingPlayer, hero)}
+          onDone={() => setEditingPlayer(null)}
         />
       )}
     </div>
   );
 }
 
-function ProgressModal({
+function EditPlayerModal({
   playerName,
+  playerRole,
   value,
+  allHeroes,
+  roleByHero,
+  currentHero,
+  completedList,
+  allowOverride,
   onClose,
-  onSave,
+  onSaveProgress,
+  onSetHero,
+  onMarkManualComplete,
+  onUndoManualComplete,
+  onDone,
 }: {
   playerName: string;
+  playerRole: RoleFilter;
   value: ProgressInfo;
+  allHeroes: { name: string; role: Role }[];
+  roleByHero: Record<string, Role>;
+  currentHero: string | null;
+  completedList: string[];
+  allowOverride: boolean;
   onClose: () => void;
-  onSave: (v: ProgressInfo) => void;
+  onSaveProgress: (v: ProgressInfo) => void;
+  onSetHero: (hero: string | null) => void;
+  onMarkManualComplete: (hero: string | null) => void;
+  onUndoManualComplete: (hero: string) => void;
+  onDone: () => void;
 }) {
   const [completed, setCompleted] = useState(value.completed);
   const [target, setTarget] = useState(value.target);
   const [notes, setNotes] = useState(value.notes);
+  const [heroChoice, setHeroChoice] = useState<string>(currentHero ?? "");
+  const [completionHeroChoice, setCompletionHeroChoice] = useState<string>(currentHero ?? "");
+
+  const selectableHeroes = useMemo(() => {
+    if (allowOverride || playerRole === "All") return allHeroes;
+    return allHeroes.filter((h) => h.role === playerRole);
+  }, [allowOverride, allHeroes, playerRole]);
 
   const save = () => {
     const safeTarget = Math.max(1, Math.floor(target));
     const safeCompleted = Math.max(0, Math.min(999, Math.floor(completed)));
-    onSave({ completed: safeCompleted, target: safeTarget, notes: notes.trim() });
+    onSaveProgress({ completed: safeCompleted, target: safeTarget, notes: notes.trim() });
   };
 
   return (
@@ -1065,14 +1136,53 @@ function ProgressModal({
             <input type="number" min={1} value={target} onChange={(e) => setTarget(Number(e.target.value))} />
           </label>
           <label className="wide">
+            Draft hero
+            <select value={heroChoice} onChange={(e) => setHeroChoice(e.target.value)}>
+              <option value="">No pick</option>
+              {selectableHeroes.map((h) => (
+                <option key={h.name} value={h.name}>{h.name} · {h.role}</option>
+              ))}
+            </select>
+          </label>
+          <label className="wide">
+            Manual complete hero
+            <select value={completionHeroChoice} onChange={(e) => setCompletionHeroChoice(e.target.value)}>
+              <option value="">Choose hero...</option>
+              {allHeroes.map((h) => (
+                <option key={h.name} value={h.name}>{h.name} · {h.role}</option>
+              ))}
+            </select>
+          </label>
+          <label className="wide">
             Notes
             <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </label>
         </div>
+        {completedList.length > 0 && (
+          <div className="modal-completed">
+            <span className="section-eyebrow">Completed heroes</span>
+            <div className="pc-completed-chips">
+              {completedList.map((h) => (
+                <button key={h} className="chip" type="button" onClick={() => onUndoManualComplete(h)}>
+                  {h} · {roleByHero[h]}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="modal-actions">
           <button className="btn ghost" type="button" onClick={onClose}>Cancel</button>
+          <button className="btn" type="button" onClick={() => onSetHero(heroChoice || null)}>
+            <Ic.Edit /> Set Hero
+          </button>
+          <button className="btn" type="button" onClick={() => onMarkManualComplete(completionHeroChoice || null)}>
+            <Ic.Check /> Add Completion
+          </button>
           <button className="btn primary" type="button" onClick={save}>
-            <Ic.Check /> Save
+            <Ic.Check /> Save Progress
+          </button>
+          <button className="btn primary" type="button" onClick={onDone}>
+            Done
           </button>
         </div>
       </div>
