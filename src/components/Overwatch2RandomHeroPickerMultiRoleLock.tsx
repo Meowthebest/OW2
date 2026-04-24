@@ -75,6 +75,7 @@ const DEFAULT_PROGRESS: Record<PlayerId, ProgressInfo> = {
   4: { completed: 0, target: 10, notes: "" },
   5: { completed: 0, target: 10, notes: "" },
 };
+const DEFAULT_COMPLETED: Record<PlayerId, string[]> = { 1: [], 2: [], 3: [], 4: [], 5: [] };
 
 function allHeroes() {
   return (Object.entries(HERO_BY_ROLE) as [Role, string[]][])
@@ -115,6 +116,40 @@ function useStoredState<T>(key: string, initial: T) {
   return [value, setValue] as const;
 }
 
+/* -------- Icons (inline SVG, no dependency) -------- */
+const Ic = {
+  Dice: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8" cy="8" r="1.2" fill="currentColor" /><circle cx="16" cy="16" r="1.2" fill="currentColor" /><circle cx="16" cy="8" r="1.2" fill="currentColor" /><circle cx="8" cy="16" r="1.2" fill="currentColor" /><circle cx="12" cy="12" r="1.2" fill="currentColor" /></svg>
+  ),
+  Check: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+  ),
+  Undo: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6" /><path d="M21 17a9 9 0 0 0-15-6.7L3 13" /></svg>
+  ),
+  Refresh: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7" /><path d="M21 4v5h-5" /></svg>
+  ),
+  Edit: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+  ),
+  Reset: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /></svg>
+  ),
+  Copy: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
+  ),
+  Trash: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>
+  ),
+  Ban: () => (
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" /></svg>
+  ),
+  Trophy: () => (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21h8" /><path d="M12 17v4" /><path d="M17 3H7v5a5 5 0 0 0 10 0V3Z" /><path d="M17 5h3v2a3 3 0 0 1-3 3" /><path d="M7 5H4v2a3 3 0 0 0 3 3" /></svg>
+  ),
+};
+
 function HeroImage({ name, size = 48 }: { name: string | null; size?: number }) {
   const [failed, setFailed] = useState(false);
   const src = name ? HERO_IMAGE_MAP[name] : undefined;
@@ -150,6 +185,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [banSet, setBanSet] = useStoredState<Record<string, boolean>>("ow2_bans", {});
   const [uniqueTeam, setUniqueTeam] = useStoredState<boolean>("ow2_unique", true);
   const [progress, setProgress] = useStoredState<Record<PlayerId, ProgressInfo>>("ow2_progress", DEFAULT_PROGRESS);
+  const [completedHeroes, setCompletedHeroes] = useStoredState<Record<PlayerId, string[]>>(
+    "ow2_completed_heroes",
+    DEFAULT_COMPLETED,
+  );
 
   const [heroFilter, setHeroFilter] = useState<RoleFilter>("All");
   const [heroSearch, setHeroSearch] = useState("");
@@ -182,7 +221,21 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         const info = progress[id];
         const pct = completionPercent(info);
         const status = pct >= 100 ? "completed" : info.completed > 0 ? "in-progress" : "not-started";
-        return { id, name: playerNames[id], progress: info, hero: lineup[id], status, pct };
+        const hero = lineup[id];
+        const heroRole = hero ? flatHeroes.find((h) => h.name === hero)?.role ?? null : null;
+        const doneList = completedHeroes[id] ?? [];
+        const heroIsDone = !!hero && doneList.includes(hero);
+        return {
+          id,
+          name: playerNames[id],
+          progress: info,
+          hero,
+          heroRole,
+          status,
+          pct,
+          doneList,
+          heroIsDone,
+        };
       })
       .filter((r) => r.name.toLowerCase().includes(playerSearch.toLowerCase()))
       .filter((r) => playerStatus === "all" || r.status === playerStatus);
@@ -193,11 +246,24 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       return a.status.localeCompare(b.status);
     });
     return rows;
-  }, [activePlayers, lineup, playerNames, playerSearch, playerStatus, progress, sortMode]);
+  }, [
+    activePlayers,
+    completedHeroes,
+    flatHeroes,
+    lineup,
+    playerNames,
+    playerSearch,
+    playerStatus,
+    progress,
+    sortMode,
+  ]);
 
-  const toggleBan = useCallback((name: string) => {
-    setBanSet((cur) => ({ ...cur, [name]: !cur[name] }));
-  }, [setBanSet]);
+  const toggleBan = useCallback(
+    (name: string) => {
+      setBanSet((cur) => ({ ...cur, [name]: !cur[name] }));
+    },
+    [setBanSet],
+  );
 
   const pickHeroFor = useCallback(
     (playerId: PlayerId, taken: Set<string>) => {
@@ -230,7 +296,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       if (!any) setError("No heroes available. Adjust bans or roles.");
       setLineup(next);
       setRolling(false);
-    }, 220);
+    }, 420);
   };
 
   const rerollPlayer = (id: PlayerId) => {
@@ -261,6 +327,61 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const resetPlayerProgress = (id: PlayerId) => {
     if (!window.confirm(`Reset progress for ${playerNames[id]}?`)) return;
     setProgress((cur) => ({ ...cur, [id]: { ...cur[id], completed: 0, notes: "" } }));
+    setCompletedHeroes((cur) => ({ ...cur, [id]: [] }));
+  };
+
+  const markComplete = (id: PlayerId) => {
+    const hero = lineup[id];
+    if (!hero) return;
+    setError("");
+    setCompletedHeroes((cur) => {
+      const list = cur[id] ?? [];
+      if (list.includes(hero)) return cur;
+      return { ...cur, [id]: [...list, hero] };
+    });
+    setProgress((cur) => {
+      const info = cur[id];
+      const nextCompleted = Math.min(999, info.completed + 1);
+      return { ...cur, [id]: { ...info, completed: nextCompleted } };
+    });
+  };
+
+  const undoComplete = (id: PlayerId, hero: string) => {
+    setCompletedHeroes((cur) => {
+      const list = cur[id] ?? [];
+      if (!list.includes(hero)) return cur;
+      return { ...cur, [id]: list.filter((h) => h !== hero) };
+    });
+    setProgress((cur) => {
+      const info = cur[id];
+      return { ...cur, [id]: { ...info, completed: Math.max(0, info.completed - 1) } };
+    });
+  };
+
+  const finishAll = () => {
+    const targets = activePlayers.filter((id) => {
+      const hero = lineup[id];
+      if (!hero) return false;
+      return !(completedHeroes[id] ?? []).includes(hero);
+    });
+    if (targets.length === 0) return;
+    setCompletedHeroes((cur) => {
+      const next = { ...cur };
+      targets.forEach((id) => {
+        const hero = lineup[id];
+        if (!hero) return;
+        const list = next[id] ?? [];
+        next[id] = [...list, hero];
+      });
+      return next;
+    });
+    setProgress((cur) => {
+      const next = { ...cur };
+      targets.forEach((id) => {
+        next[id] = { ...next[id], completed: Math.min(999, next[id].completed + 1) };
+      });
+      return next;
+    });
   };
 
   const copyLineup = async () => {
@@ -271,6 +392,8 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       setError("Clipboard copy not supported in this browser.");
     }
   };
+
+  const anyHeroPicked = activePlayers.some((id) => !!lineup[id]);
 
   return (
     <div className={`ow2-root ${theme}`}>
@@ -308,14 +431,26 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             <input type="checkbox" checked={uniqueTeam} onChange={(e) => setUniqueTeam(e.target.checked)} />
             Unique per team
           </label>
-          <button className="btn primary" type="button" onClick={runDraft} disabled={rolling}>
+          <button
+            className={`btn primary glow ${rolling ? "rolling" : ""}`}
+            type="button"
+            onClick={runDraft}
+            disabled={rolling}
+          >
+            <Ic.Dice />
             {rolling ? "Rolling..." : "Randomize"}
           </button>
-          <button className="btn" type="button" onClick={copyLineup}>
+          <button className="btn" type="button" onClick={finishAll} disabled={!anyHeroPicked} title="Mark every current pick as completed">
+            <Ic.Trophy />
+            Finish All
+          </button>
+          <button className="btn" type="button" onClick={copyLineup} disabled={!anyHeroPicked}>
+            <Ic.Copy />
             Copy
           </button>
-          <button className="btn ghost" type="button" onClick={clearLineup}>
-            Clear Picks
+          <button className="btn ghost" type="button" onClick={clearLineup} disabled={!anyHeroPicked}>
+            <Ic.Trash />
+            Clear
           </button>
         </div>
       </div>
@@ -326,7 +461,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           onChange={(e) => setPlayerSearch(e.target.value)}
           placeholder="Search players..."
         />
-        <select value={playerStatus} onChange={(e) => setPlayerStatus(e.target.value as "all" | "in-progress" | "completed" | "not-started")}>
+        <select
+          value={playerStatus}
+          onChange={(e) => setPlayerStatus(e.target.value as "all" | "in-progress" | "completed" | "not-started")}
+        >
           <option value="all">All statuses</option>
           <option value="in-progress">In progress</option>
           <option value="completed">Completed</option>
@@ -344,14 +482,22 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           </div>
         )}
         {visiblePlayers.map((row) => (
-          <article key={row.id} className={`player-card card ${row.hero ? "filled" : ""}`}>
-            <div className="player-head">
-              <input
-                className="name-input"
-                value={playerNames[row.id]}
-                onChange={(e) => setPlayerNames((p) => ({ ...p, [row.id]: e.target.value }))}
-              />
+          <article
+            key={row.id}
+            className={`player-card card ${row.hero ? "filled" : ""} ${rolling ? "is-rolling" : ""} role-${row.heroRole ?? "none"}`}
+          >
+            <header className="pc-head">
+              <div className="pc-meta">
+                <span className="pc-label">Player {row.id}</span>
+                <input
+                  className="pc-name"
+                  value={playerNames[row.id]}
+                  onChange={(e) => setPlayerNames((p) => ({ ...p, [row.id]: e.target.value }))}
+                  placeholder={`Player ${row.id}`}
+                />
+              </div>
               <select
+                className="pc-role"
                 value={playerRoles[row.id]}
                 onChange={(e) => setPlayerRoles((p) => ({ ...p, [row.id]: e.target.value as RoleFilter }))}
               >
@@ -361,49 +507,99 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                   </option>
                 ))}
               </select>
-            </div>
+            </header>
 
-            <div className="hero-slot">
-              <HeroImage name={row.hero ?? null} size={64} />
-              <div>
-                <p className="hero-name">{row.hero ?? "Awaiting draft"}</p>
-                <p className="hero-role">
-                  {row.hero ? flatHeroes.find((h) => h.name === row.hero)?.role ?? "Unknown" : "No pick"}
-                </p>
+            <div className="pc-hero" key={row.hero ?? "empty"}>
+              <div className="pc-hero-thumb">
+                <HeroImage name={row.hero ?? null} size={60} />
+                {row.heroIsDone && (
+                  <span className="pc-done-badge" title="Already completed">
+                    <Ic.Check />
+                  </span>
+                )}
+              </div>
+              <div className="pc-hero-info">
+                <span className="pc-hero-name">{row.hero ?? "Ready to roll"}</span>
+                <span className="pc-hero-role">{row.hero ? row.heroRole ?? "Unknown" : "No pick yet"}</span>
               </div>
             </div>
 
-            <div className="progress-block">
-              <div className="progress-row">
+            <div className="pc-progress">
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${Math.min(100, row.pct)}%` }} />
+              </div>
+              <div className="pc-progress-meta">
                 <strong>{row.pct}%</strong>
                 <span>
                   {row.progress.completed}/{row.progress.target}
                 </span>
               </div>
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: `${Math.min(100, row.pct)}%` }} />
-              </div>
-              {row.progress.notes && <p className="notes">{row.progress.notes}</p>}
             </div>
 
-            <div className="player-actions">
-              <button className="btn" type="button" onClick={() => rerollPlayer(row.id)}>
-                Reroll
+            {row.progress.notes && <p className="notes">{row.progress.notes}</p>}
+
+            <div className="pc-actions">
+              <button
+                className={`btn primary full ${row.heroIsDone ? "is-done" : ""}`}
+                type="button"
+                onClick={() => (row.heroIsDone ? row.hero && undoComplete(row.id, row.hero) : markComplete(row.id))}
+                disabled={!row.hero}
+              >
+                {row.heroIsDone ? (
+                  <>
+                    <Ic.Undo /> Undo Complete
+                  </>
+                ) : (
+                  <>
+                    <Ic.Check /> Mark Complete
+                  </>
+                )}
               </button>
-              <button className="btn" type="button" onClick={() => setEditing(row.id)}>
-                Edit
-              </button>
-              <button className="btn ghost" type="button" onClick={() => resetPlayerProgress(row.id)}>
-                Reset
-              </button>
+              <div className="pc-actions-row">
+                <button className="btn sm" type="button" onClick={() => rerollPlayer(row.id)} disabled={rolling}>
+                  <Ic.Refresh /> Reroll
+                </button>
+                <button className="btn sm" type="button" onClick={() => setEditing(row.id)}>
+                  <Ic.Edit /> Edit
+                </button>
+                <button className="btn sm ghost" type="button" onClick={() => resetPlayerProgress(row.id)}>
+                  <Ic.Reset /> Reset
+                </button>
+              </div>
             </div>
+
+            {row.doneList.length > 0 && (
+              <div className="pc-completed">
+                <span className="pc-completed-label">
+                  <Ic.Trophy />
+                  Completed · {row.doneList.length}
+                </span>
+                <div className="pc-completed-chips">
+                  {row.doneList.slice(-6).map((h) => (
+                    <button
+                      key={h}
+                      className="chip"
+                      type="button"
+                      title={`Click to undo ${h}`}
+                      onClick={() => undoComplete(row.id, h)}
+                    >
+                      {h}
+                    </button>
+                  ))}
+                  {row.doneList.length > 6 && <span className="chip more">+{row.doneList.length - 6}</span>}
+                </div>
+              </div>
+            )}
           </article>
         ))}
       </section>
 
       <section className="card bans">
         <div className="section-head">
-          <h3>Hero Pool</h3>
+          <div className="section-title-group">
+            <span className="section-eyebrow">Hero Pool</span>
+            <h3>Pick bans for the next draft</h3>
+          </div>
           <div className="section-controls">
             <select value={heroFilter} onChange={(e) => setHeroFilter(e.target.value as RoleFilter)}>
               {ROLE_ORDER.map((r) => (
@@ -418,6 +614,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               placeholder="Search heroes..."
             />
             <button className="btn ghost" type="button" onClick={clearBans}>
+              <Ic.Ban />
               Clear Bans
             </button>
           </div>
@@ -431,7 +628,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             {heroPool.map((hero) => (
               <button
                 key={hero.name}
-                className={`hero-chip ${banSet[hero.name] ? "banned" : ""}`}
+                className={`hero-chip role-${hero.role} ${banSet[hero.name] ? "banned" : ""}`}
                 type="button"
                 onClick={() => toggleBan(hero.name)}
                 title={banSet[hero.name] ? "Unban" : "Ban"}
@@ -441,6 +638,11 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                   <span className="hero-chip-name">{hero.name}</span>
                   <small>{hero.role}</small>
                 </div>
+                {banSet[hero.name] && (
+                  <span className="hero-chip-x" aria-hidden>
+                    <Ic.Ban />
+                  </span>
+                )}
               </button>
             ))}
           </div>
@@ -486,7 +688,10 @@ function ProgressModal({
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal card" onClick={(e) => e.stopPropagation()}>
-        <h4>Edit Progress - {playerName}</h4>
+        <h4>
+          <span className="section-eyebrow">Edit progress</span>
+          {playerName}
+        </h4>
         <div className="modal-grid">
           <label>
             Completed
@@ -506,7 +711,7 @@ function ProgressModal({
             Cancel
           </button>
           <button className="btn primary" type="button" onClick={save}>
-            Save
+            <Ic.Check /> Save
           </button>
         </div>
       </div>
