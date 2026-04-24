@@ -1,378 +1,345 @@
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Inter:wght@400;500;600&display=swap');
-
-/* ===============================
-
-   Tailwind (must be first)
-
-   =============================== */
-
-@tailwind base;
-
-@tailwind components;
-
-@tailwind utilities;
-
-
-/* ===============================
-
-   Design tokens (light by default)
-
-   =============================== */
-
-@layer base {
-
-  :root {
-
-    /* OW2 accent + bg tint */
-
-    --ow2-orange: #f59e0b;
-
-    --ow2-blue:   #1b2a41;
-
-
-    /* Light palette */
-
-    --background: 0 0% 100%;
-
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 24 95% 52%;
-
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 210 40% 96.1%;
-
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 213 94% 68%;
-
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84.2% 60.2%;
-
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-
-    --input: 214.3 31.8% 91.4%;
-
-    --ring: 24 95% 52%;
-
-    --radius: 0.75rem;
-
-
-    /* convenience for bg */
-
-    --app-bg: hsl(var(--background));
-
-  }
-
-
-  /* Dark palette (if you add a toggle later) */
-
-  .dark {
-
-    --background: 240 10% 8%;
-
-    --foreground: 0 0% 98%;
-
-    --card: 240 10% 12%;
-
-    --card-foreground: 0 0% 98%;
-
-    --popover: 240 10% 10%;
-
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 24 95% 58%;
-
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 240 8% 20%;
-
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 240 9% 16%;
-
-    --muted-foreground: 240 5% 65%;
-
-    --accent: 200 85% 55%;
-
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 72% 51%;
-
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 240 8% 23%;
-
-    --input: 240 8% 23%;
-
-    --ring: 24 95% 58%;
-
-
-    --app-bg: hsl(var(--background));
-
-  }
-
-
-  * { @apply border-border; }
-
-  html, body, #root { height: 100%; }
-
-  body { @apply bg-background text-foreground antialiased; }
-
+:root {
+  --bg: #0c1020;
+  --panel: #151b33;
+  --panel-soft: #20294b;
+  --line: #303d68;
+  --text: #e8edff;
+  --muted: #9ba8d6;
+  --accent: #ff8a2a;
+  --accent-2: #5d93ff;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
 }
 
-
-/* ===============================
-
-   Decorative background
-
-   =============================== */
+* {
+  box-sizing: border-box;
+}
 
 body {
-
-  background-image:
-
-    radial-gradient(1200px 600px at 100% -10%, color-mix(in oklab, var(--ow2-orange), transparent 85%), transparent),
-
-    radial-gradient(800px 400px at -10% 100%, color-mix(in oklab, var(--ow2-blue), transparent 70%), transparent);
-
-  background-color: var(--app-bg);
-
-  background-attachment: fixed;
-
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background: radial-gradient(circle at 10% 5%, #27366c 0, transparent 35%),
+    radial-gradient(circle at 90% 95%, #3a2658 0, transparent 33%),
+    var(--bg);
 }
 
-
-/* ===============================
-
-   Scrollbars
-
-   =============================== */
-
-* { scrollbar-width: thin; scrollbar-color: rgba(120,120,120,.35) transparent; }
-
-*::-webkit-scrollbar { height: 8px; width: 8px; }
-
-*::-webkit-scrollbar-thumb { background: rgba(120,120,120,.35); border-radius: 999px; }
-
-
-/* ===============================
-
-   Inputs legibility
-
-   =============================== */
-
-@layer base {
-
-  input, select, textarea { color: hsl(var(--foreground)); }
-
-  input::placeholder, textarea::placeholder { color: hsl(var(--muted-foreground)); }
-
+.app-shell {
+  width: min(1120px, 92%);
+  margin: 0 auto;
+  padding-bottom: 2rem;
 }
 
-
-/* ===============================
-
-   Components
-
-   =============================== */
-
-@layer components {
-
-  /* Panels (use on Cards) */
-
-  .panel {
-
-    @apply rounded-2xl border border-zinc-200 bg-white/90 backdrop-blur
-
-           shadow-[0_8px_30px_rgba(0,0,0,0.06)];
-
-  }
-
-
-  /* Soft toolbars / option strips */
-
-  .toolbar {
-
-    @apply rounded-xl border border-zinc-200 bg-zinc-100/70 px-3 py-2;
-
-  }
-
-
-  /* Chips for completed heroes (wrap nicely, no overlap) */
-
-  .chip {
-
-    @apply inline-flex items-center gap-2 max-w-full
-
-           rounded-full border border-zinc-300 bg-white px-3 py-1.5
-
-           text-sm shadow-sm;
-
-  }
-
-  .chip__name { @apply truncate max-w-[22ch] font-medium; }
-
-  .chip__undo {
-
-    @apply shrink-0 rounded-full border border-amber-400 px-2 py-0.5
-
-           text-[12px] font-semibold text-zinc-800 hover:bg-amber-50
-
-           focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500;
-
-  }
-
-
-  /* Role badge (Tank / Damage / Support) – single, consistent set */
-
-  .role-badge {
-
-    @apply inline-flex items-center rounded-full border px-2 py-0.5
-
-           text-[11px] font-medium;
-
-  }
-
-  .role-badge[data-role="Tank"]    { @apply bg-emerald-100 text-emerald-700 border-emerald-200; }
-
-  .role-badge[data-role="Damage"]  { @apply bg-rose-100    text-rose-700    border-rose-200; }
-
-  .role-badge[data-role="Support"] { @apply bg-sky-100     text-sky-700     border-sky-200; }
-
-
-  /* Default pick-block to ensure space even with short/long names */
-
-  .pick-block { @apply min-h-[128px]; }
-
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--line);
+  background: rgba(12, 16, 32, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-
-/* ---- Pick card tightening & anti-gap helpers ---- */
-
-@layer components {
-
-  .pick-card { @apply relative; }                 /* needed for absolute badge */
-
-  .pick-block { @apply min-h-[96px] flex items-center; }
-
-  @screen sm { .pick-block { @apply min-h-[104px]; } }
-
-  @screen lg { .pick-block { @apply min-h-[112px]; } }
-
-
-  /* IMPORTANT: normal wrapping so names don't break character-by-character */
-
-  .pick-title { @apply text-xl sm:text-2xl font-bold leading-tight whitespace-normal break-normal; }
-
-
-  .status-badge { @apply absolute top-3 right-3 text-xs; }
-
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
-
-@layer components {
-
-  /* Recent Picks list container: tight, gridy feel */
-
-  .rp-list { @apply grid grid-cols-2 gap-2; }
-
-
-  /* Each recent pick pill */
-
-  .rp-item {
-
-    @apply flex items-center gap-2 rounded-lg border px-3 py-1.5 bg-white/60;
-
-  }
-
-
-  /* Name stays on one line with ellipsis; doesn't collide with badge */
-
-  .rp-name {
-
-    @apply min-w-0 flex-1 truncate text-sm font-medium;
-
-  }
-
-
-  /* Role badge never wraps and doesn't shrink */
-
-  .rp-badge { @apply shrink-0; }
-
+.brand h1 {
+  margin: 0;
+  font-size: 1rem;
 }
 
-
-/* Optional: make the card background adapt in dark mode */
-
-.dark .rp-item { @apply bg-zinc-900/40; }
-
-
-
-
-@layer components {
-
-  /* grid of items inside each player's Recent Picks card */
-
-  .rp-list { @apply grid grid-cols-2 gap-2; }
-
-
-  /* each item = two columns: name (fills) + badge (no shrink) */
-
-  .rp-item {
-
-    display: grid;
-
-    grid-template-columns: minmax(0, 1fr) auto;
-
-    align-items: center;
-
-    gap: 0.5rem;
-
-    /* visual styling */
-
-    @apply rounded-lg border px-3 py-1.5 bg-white/60;
-
-  }
-
-  .dark .rp-item { @apply bg-zinc-900/40; }
-
-
-  /* name stays on ONE line with ellipsis */
-
-  .rp-name {
-
-    min-width: 0;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
-
-    @apply text-sm font-medium;
-
-  }
-
-
-  /* role badge never shrinks or wraps */
-
-  .rp-badge { @apply shrink-0; }
-
+.brand p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
 }
 
+.brand-badge {
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 0.6rem;
+  background: linear-gradient(145deg, var(--accent), #ffb24a);
+}
+
+.topbar-link {
+  color: var(--text);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+}
+
+.main-layout {
+  margin-top: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.hero-card,
+.picker-host,
+.panel {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(32, 41, 75, 0.9), rgba(21, 27, 51, 0.95));
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.hero-card h2 {
+  margin: 0.5rem 0;
+  font-size: clamp(1.5rem, 4vw, 2.4rem);
+}
+
+.hero-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.hero-points {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.hero-points span {
+  background: rgba(93, 147, 255, 0.12);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.75rem;
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 1rem;
+}
+
+.panel h3 {
+  margin-top: 0;
+}
+
+.faq-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.faq-item {
+  border: 1px solid var(--line);
+  border-radius: 0.7rem;
+  padding: 0.6rem;
+  background: rgba(12, 16, 32, 0.35);
+}
+
+.faq-item button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.faq-item p {
+  color: var(--muted);
+  margin: 0.4rem 0 0;
+  font-size: 0.92rem;
+}
+
+.clean-list {
+  padding-left: 1.1rem;
+  margin: 0;
+  color: var(--muted);
+  display: grid;
+  gap: 0.45rem;
+}
+
+.draft-root {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.draft-toolbar,
+.players-grid,
+.actions,
+.ban-panel,
+.history-panel {
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  padding: 0.9rem;
+  background: rgba(11, 15, 29, 0.55);
+}
+
+.draft-root.light {
+  --bg: #eff3ff;
+  --panel: #ffffff;
+  --panel-soft: #f4f7ff;
+  --line: #d5ddf2;
+  --text: #101939;
+  --muted: #566082;
+  background: #f7f9ff;
+  color: #101939;
+}
+
+.toolbar-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.toolbar-group label,
+.toggle {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+select,
+input,
+button {
+  font: inherit;
+}
+
+select,
+.name-input,
+.ban-head input {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 0.6rem;
+  padding: 0.5rem 0.6rem;
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.7rem;
+}
+
+.player-card {
+  border: 1px solid var(--line);
+  background: var(--panel-soft);
+  border-radius: 0.75rem;
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.picked-hero {
+  border-radius: 0.6rem;
+  border: 1px dashed var(--line);
+  padding: 0.55rem;
+  font-weight: 600;
+  min-height: 2.3rem;
+}
+
+.player-card button,
+.actions button,
+.hero-chip {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  border-radius: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  cursor: pointer;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.actions .primary {
+  background: linear-gradient(145deg, var(--accent), #ffb14a);
+  color: #111;
+  border: 0;
+  font-weight: 700;
+}
+
+.ban-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ban-head h3,
+.history-panel h3 {
+  margin: 0;
+}
+
+.hero-list {
+  margin-top: 0.7rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.45rem;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.hero-chip {
+  text-align: left;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.hero-chip small {
+  color: var(--muted);
+}
+
+.hero-chip.banned {
+  opacity: 0.65;
+  text-decoration: line-through;
+  border-color: #a04c4c;
+}
+
+.history-panel {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.history-item {
+  display: grid;
+  gap: 0.2rem;
+  border: 1px solid var(--line);
+  border-radius: 0.65rem;
+  padding: 0.55rem;
+  font-size: 0.84rem;
+}
+
+.error {
+  margin: 0;
+  color: #ff8c8c;
+}
+
+@media (max-width: 860px) {
+  .faq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    gap: 0.7rem;
+    flex-direction: column;
+  }
+}
