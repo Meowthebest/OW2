@@ -1,5 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 const ROLE_ORDER = ["All", "Tank", "Damage", "Support"] as const;
 type RoleFilter = (typeof ROLE_ORDER)[number];
@@ -42,6 +41,7 @@ const HERO_IMAGE_MAP: Record<string, string> = {
   "Soldier: 76": "icons/150px-Soldier_OW2_mini_portrait.png",
   Sombra: "icons/150px-Sombra_OW2_mini_portrait.png",
   Symmetra: "icons/150px-Symmetra_OW2_mini_portrait.png",
+  Torbjorn: "icons/150px-Torbjorn_OW2_mini_portrait.png",
   Tracer: "icons/150px-Tracer_OW2_mini_portrait.png",
   Venture: "icons/150px-Venture_mini_portrait.png",
   Widowmaker: "icons/150px-Widowmaker_OW2_mini_portrait.png",
@@ -65,20 +65,16 @@ const HERO_IMAGE_MAP: Record<string, string> = {
   "Jetpack Cat": "icons/JetpackCat.png",
 };
 
-const PLAYER_IDS: PlayerId[] = [1, 2, 3, 4, 5];
-
 type ProgressInfo = { completed: number; target: number; notes: string };
-type ProgressByPlayer = Record<PlayerId, ProgressInfo>;
-
-const initialProgress: ProgressByPlayer = {
+const PLAYER_IDS: PlayerId[] = [1, 2, 3, 4, 5];
+const DEFAULT_NAMES: Record<PlayerId, string> = { 1: "Player 1", 2: "Player 2", 3: "Player 3", 4: "Player 4", 5: "Player 5" };
+const DEFAULT_PROGRESS: Record<PlayerId, ProgressInfo> = {
   1: { completed: 0, target: 10, notes: "" },
   2: { completed: 0, target: 10, notes: "" },
   3: { completed: 0, target: 10, notes: "" },
   4: { completed: 0, target: 10, notes: "" },
   5: { completed: 0, target: 10, notes: "" },
 };
-
-const defaultNames: Record<PlayerId, string> = { 1: "Player 1", 2: "Player 2", 3: "Player 3", 4: "Player 4", 5: "Player 5" };
 
 function allHeroes() {
   return (Object.entries(HERO_BY_ROLE) as [Role, string[]][])
@@ -89,184 +85,197 @@ function randomItem<T>(items: T[]) {
   return items[Math.floor(Math.random() * items.length)];
 }
 
-function clampInt(value: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, Math.floor(value)));
+function completionPercent(info: ProgressInfo) {
+  if (info.target <= 0) return 0;
+  return Math.round((info.completed / info.target) * 100);
 }
 
-function completionPercent(p: ProgressInfo) {
-  if (p.target <= 0) return 0;
-  return Math.round((p.completed / p.target) * 100);
-}
-
-function heroFallback(name: string) {
-  const parts = name.split(" ");
+function heroInitials(name: string) {
+  const parts = name.replace(/[.:]/g, "").split(" ");
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
+function useStoredState<T>(key: string, initial: T) {
+  const [value, setValue] = useState<T>(() => {
+    try {
+      const raw = window.localStorage.getItem(key);
+      return raw ? (JSON.parse(raw) as T) : initial;
+    } catch {
+      return initial;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      /* ignore */
+    }
+  }, [key, value]);
+  return [value, setValue] as const;
+}
+
+function HeroImage({ name, size = 48 }: { name: string | null; size?: number }) {
+  const [failed, setFailed] = useState(false);
+  const src = name ? HERO_IMAGE_MAP[name] : undefined;
+  return (
+    <div className="hero-thumb" style={{ width: size, height: size }}>
+      {name && src && !failed ? (
+        <img src={src} alt={name} onError={() => setFailed(true)} />
+      ) : (
+        <span>{name ? heroInitials(name) : "?"}</span>
+      )}
+    </div>
+  );
+}
+
 export default function Overwatch2RandomHeroPickerMultiRoleLock() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [playerCount, setPlayerCount] = useState(3);
-  const [playerNames, setPlayerNames] = useState<Record<PlayerId, string>>(defaultNames);
-  const [playerRoles, setPlayerRoles] = useState<Record<PlayerId, RoleFilter>>({ 1: "All", 2: "All", 3: "All", 4: "All", 5: "All" });
-  const [lineup, setLineup] = useState<Record<PlayerId, string | null>>({ 1: null, 2: null, 3: null, 4: null, 5: null });
-  const [banSet, setBanSet] = useState<Record<string, boolean>>({});
-  const [uniqueAcrossTeam, setUniqueAcrossTeam] = useState(true);
-  const [heroSearch, setHeroSearch] = useState("");
+  const [theme, setTheme] = useStoredState<"dark" | "light">("ow2_theme", "dark");
+  const [playerCount, setPlayerCount] = useStoredState<number>("ow2_player_count", 3);
+  const [playerNames, setPlayerNames] = useStoredState<Record<PlayerId, string>>("ow2_names", DEFAULT_NAMES);
+  const [playerRoles, setPlayerRoles] = useStoredState<Record<PlayerId, RoleFilter>>("ow2_roles", {
+    1: "All",
+    2: "All",
+    3: "All",
+    4: "All",
+    5: "All",
+  });
+  const [lineup, setLineup] = useStoredState<Record<PlayerId, string | null>>("ow2_lineup", {
+    1: null,
+    2: null,
+    3: null,
+    4: null,
+    5: null,
+  });
+  const [banSet, setBanSet] = useStoredState<Record<string, boolean>>("ow2_bans", {});
+  const [uniqueTeam, setUniqueTeam] = useStoredState<boolean>("ow2_unique", true);
+  const [progress, setProgress] = useStoredState<Record<PlayerId, ProgressInfo>>("ow2_progress", DEFAULT_PROGRESS);
+
   const [heroFilter, setHeroFilter] = useState<RoleFilter>("All");
-  const [isRolling, setIsRolling] = useState(false);
-  const [error, setError] = useState("");
-  const [history, setHistory] = useState<string[]>([]);
-
-  const [progress, setProgress] = useState<ProgressByPlayer>(initialProgress);
+  const [heroSearch, setHeroSearch] = useState("");
   const [playerSearch, setPlayerSearch] = useState("");
-  const [playerFilterStatus, setPlayerFilterStatus] = useState<"all" | "in-progress" | "completed" | "not-started">("all");
+  const [playerStatus, setPlayerStatus] = useState<"all" | "in-progress" | "completed" | "not-started">("all");
   const [sortMode, setSortMode] = useState<SortMode>("name");
-  const [editingPlayer, setEditingPlayer] = useState<PlayerId | null>(null);
-  const [missingImages, setMissingImages] = useState<Record<string, boolean>>({});
+  const [error, setError] = useState("");
+  const [rolling, setRolling] = useState(false);
+  const [editing, setEditing] = useState<PlayerId | null>(null);
 
-  const activePlayers = PLAYER_IDS.slice(0, playerCount);
-  const allHeroList = useMemo(() => allHeroes(), []);
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
 
-  const heroPool = useMemo(() => {
-    return allHeroList.filter((hero) => {
-      if (heroFilter !== "All" && hero.role !== heroFilter) return false;
-      if (!hero.name.toLowerCase().includes(heroSearch.toLowerCase())) return false;
-      return true;
-    });
-  }, [allHeroList, heroFilter, heroSearch]);
+  const flatHeroes = useMemo(() => allHeroes(), []);
+  const activePlayers = useMemo(() => PLAYER_IDS.slice(0, playerCount), [playerCount]);
+
+  const heroPool = useMemo(
+    () =>
+      flatHeroes.filter((h) => {
+        if (heroFilter !== "All" && h.role !== heroFilter) return false;
+        return h.name.toLowerCase().includes(heroSearch.toLowerCase());
+      }),
+    [flatHeroes, heroFilter, heroSearch],
+  );
 
   const visiblePlayers = useMemo(() => {
     const rows = activePlayers
-      .map((id) => ({
-        id,
-        name: playerNames[id],
-        progress: progress[id],
-        hero: lineup[id],
-        status:
-          completionPercent(progress[id]) >= 100
-            ? "completed"
-            : progress[id].completed > 0
-              ? "in-progress"
-              : "not-started",
-      }))
-      .filter((row) => row.name.toLowerCase().includes(playerSearch.toLowerCase()))
-      .filter((row) => playerFilterStatus === "all" || row.status === playerFilterStatus);
-
+      .map((id) => {
+        const info = progress[id];
+        const pct = completionPercent(info);
+        const status = pct >= 100 ? "completed" : info.completed > 0 ? "in-progress" : "not-started";
+        return { id, name: playerNames[id], progress: info, hero: lineup[id], status, pct };
+      })
+      .filter((r) => r.name.toLowerCase().includes(playerSearch.toLowerCase()))
+      .filter((r) => playerStatus === "all" || r.status === playerStatus);
     rows.sort((a, b) => {
       if (sortMode === "name") return a.name.localeCompare(b.name);
-      if (sortMode === "progress") return completionPercent(b.progress) - completionPercent(a.progress);
+      if (sortMode === "progress") return b.pct - a.pct;
       if (sortMode === "completion") return b.progress.completed - a.progress.completed;
       return a.status.localeCompare(b.status);
     });
     return rows;
-  }, [activePlayers, lineup, playerFilterStatus, playerNames, playerSearch, progress, sortMode]);
+  }, [activePlayers, lineup, playerNames, playerSearch, playerStatus, progress, sortMode]);
 
-  const toggleBan = (name: string) => setBanSet((current) => ({ ...current, [name]: !current[name] }));
+  const toggleBan = useCallback((name: string) => {
+    setBanSet((cur) => ({ ...cur, [name]: !cur[name] }));
+  }, [setBanSet]);
+
+  const pickHeroFor = useCallback(
+    (playerId: PlayerId, taken: Set<string>) => {
+      const role = playerRoles[playerId];
+      const source = role === "All" ? flatHeroes : HERO_BY_ROLE[role].map((name) => ({ name, role }));
+      const pool = source
+        .map((h) => h.name)
+        .filter((n) => !banSet[n] && (!uniqueTeam || !taken.has(n)));
+      if (pool.length === 0) return null;
+      return randomItem(pool);
+    },
+    [banSet, flatHeroes, playerRoles, uniqueTeam],
+  );
 
   const runDraft = () => {
-    setIsRolling(true);
     setError("");
+    setRolling(true);
     window.setTimeout(() => {
-      const next: Record<PlayerId, string | null> = { ...lineup };
       const taken = new Set<string>();
-      let found = false;
-
-      for (const playerId of activePlayers) {
-        const role = playerRoles[playerId];
-        const pool = (role === "All" ? allHeroList : HERO_BY_ROLE[role].map((name) => ({ name, role })))
-          .map((h) => h.name)
-          .filter((name) => !banSet[name] && (!uniqueAcrossTeam || !taken.has(name)));
-        if (pool.length === 0) {
-          next[playerId] = null;
-          continue;
+      const next: Record<PlayerId, string | null> = { ...lineup };
+      let any = false;
+      for (const id of activePlayers) {
+        const pick = pickHeroFor(id, taken);
+        next[id] = pick;
+        if (pick) {
+          taken.add(pick);
+          any = true;
         }
-        const picked = randomItem(pool);
-        found = true;
-        next[playerId] = picked;
-        taken.add(picked);
       }
-
-      if (!found) {
-        setError("No valid heroes available. Remove bans or change role filters.");
-        setIsRolling(false);
-        return;
-      }
-
+      if (!any) setError("No heroes available. Adjust bans or roles.");
       setLineup(next);
-      setHistory((prev) => [JSON.stringify(next), ...prev].slice(0, 10));
-      setIsRolling(false);
-    }, 600);
+      setRolling(false);
+    }, 220);
   };
 
-  const rerollPlayer = (playerId: PlayerId) => {
-    const role = playerRoles[playerId];
-    const takenByOthers = new Set(
+  const rerollPlayer = (id: PlayerId) => {
+    const taken = new Set(
       Object.entries(lineup)
-        .filter(([id, hero]) => Number(id) !== playerId && hero)
+        .filter(([pid, hero]) => Number(pid) !== id && hero)
         .map(([, hero]) => hero as string),
     );
-    const pool = (role === "All" ? allHeroList : HERO_BY_ROLE[role].map((name) => ({ name, role })))
-      .map((h) => h.name)
-      .filter((name) => !banSet[name] && (!uniqueAcrossTeam || !takenByOthers.has(name)));
-    if (pool.length === 0) {
-      setError(`No reroll options left for ${playerNames[playerId]}.`);
+    const pick = pickHeroFor(id, taken);
+    if (!pick) {
+      setError(`No reroll options for ${playerNames[id]}.`);
       return;
     }
     setError("");
-    setLineup((prev) => ({ ...prev, [playerId]: randomItem(pool) }));
+    setLineup((cur) => ({ ...cur, [id]: pick }));
   };
 
-  const updateProgress = (playerId: PlayerId, completed: number, target: number, notes: string) => {
-    setProgress((prev) => ({
-      ...prev,
-      [playerId]: {
-        completed: clampInt(completed, 0, 999),
-        target: clampInt(target, 1, 999),
-        notes: notes.trim(),
-      },
-    }));
-  };
-
-  const resetPlayerProgress = (playerId: PlayerId) => {
-    if (!window.confirm(`Reset completion for ${playerNames[playerId]}?`)) return;
-    setProgress((prev) => ({ ...prev, [playerId]: { completed: 0, target: prev[playerId].target, notes: "" } }));
-  };
-
-  const resetAllProgress = () => {
-    if (!window.confirm("Reset progress for all visible players?")) return;
-    setProgress((prev) => {
-      const next = { ...prev };
-      for (const p of activePlayers) next[p] = { ...next[p], completed: 0, notes: "" };
-      return next;
-    });
-  };
-
-  const clearAll = () => {
-    if (!window.confirm("Clear lineup and bans?")) return;
+  const clearLineup = () => {
+    if (!window.confirm("Clear current lineup?")) return;
     setLineup({ 1: null, 2: null, 3: null, 4: null, 5: null });
+  };
+
+  const clearBans = () => {
+    if (!window.confirm("Remove all bans?")) return;
     setBanSet({});
-    setError("");
+  };
+
+  const resetPlayerProgress = (id: PlayerId) => {
+    if (!window.confirm(`Reset progress for ${playerNames[id]}?`)) return;
+    setProgress((cur) => ({ ...cur, [id]: { ...cur[id], completed: 0, notes: "" } }));
   };
 
   const copyLineup = async () => {
-    const text = activePlayers.map((p) => `${playerNames[p]}: ${lineup[p] ?? "No pick"}`).join("\n");
+    const text = activePlayers.map((id) => `${playerNames[id]}: ${lineup[id] ?? "No pick"}`).join("\n");
     try {
       await navigator.clipboard.writeText(text);
     } catch {
-      setError("Unable to copy lineup in this browser.");
+      setError("Clipboard copy not supported in this browser.");
     }
   };
 
   return (
-    <motion.div
-      className={`draft-root ${theme}`}
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35 }}
-    >
-      <section className="draft-toolbar glass">
-        <div className="toolbar-group">
+    <div className={`ow2-root ${theme}`}>
+      <div className="ow2-toolbar card">
+        <div className="toolbar-left">
           <label>
             Theme
             <select value={theme} onChange={(e) => setTheme(e.target.value as "dark" | "light")}>
@@ -285,7 +294,117 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </select>
           </label>
           <label>
-            Hero Filter
+            Sort
+            <select value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)}>
+              <option value="name">Name</option>
+              <option value="progress">Progress</option>
+              <option value="completion">Completion</option>
+              <option value="status">Status</option>
+            </select>
+          </label>
+        </div>
+        <div className="toolbar-right">
+          <label className="toggle">
+            <input type="checkbox" checked={uniqueTeam} onChange={(e) => setUniqueTeam(e.target.checked)} />
+            Unique per team
+          </label>
+          <button className="btn primary" type="button" onClick={runDraft} disabled={rolling}>
+            {rolling ? "Rolling..." : "Randomize"}
+          </button>
+          <button className="btn" type="button" onClick={copyLineup}>
+            Copy
+          </button>
+          <button className="btn ghost" type="button" onClick={clearLineup}>
+            Clear Picks
+          </button>
+        </div>
+      </div>
+
+      <div className="ow2-player-tools card">
+        <input
+          value={playerSearch}
+          onChange={(e) => setPlayerSearch(e.target.value)}
+          placeholder="Search players..."
+        />
+        <select value={playerStatus} onChange={(e) => setPlayerStatus(e.target.value as "all" | "in-progress" | "completed" | "not-started")}>
+          <option value="all">All statuses</option>
+          <option value="in-progress">In progress</option>
+          <option value="completed">Completed</option>
+          <option value="not-started">Not started</option>
+        </select>
+      </div>
+
+      {error && <div className="alert">{error}</div>}
+
+      <section className="player-grid">
+        {visiblePlayers.length === 0 && (
+          <div className="empty card">
+            <h4>No players match your filter.</h4>
+            <p>Clear the search or reset the status filter.</p>
+          </div>
+        )}
+        {visiblePlayers.map((row) => (
+          <article key={row.id} className={`player-card card ${row.hero ? "filled" : ""}`}>
+            <div className="player-head">
+              <input
+                className="name-input"
+                value={playerNames[row.id]}
+                onChange={(e) => setPlayerNames((p) => ({ ...p, [row.id]: e.target.value }))}
+              />
+              <select
+                value={playerRoles[row.id]}
+                onChange={(e) => setPlayerRoles((p) => ({ ...p, [row.id]: e.target.value as RoleFilter }))}
+              >
+                {ROLE_ORDER.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="hero-slot">
+              <HeroImage name={row.hero ?? null} size={64} />
+              <div>
+                <p className="hero-name">{row.hero ?? "Awaiting draft"}</p>
+                <p className="hero-role">
+                  {row.hero ? flatHeroes.find((h) => h.name === row.hero)?.role ?? "Unknown" : "No pick"}
+                </p>
+              </div>
+            </div>
+
+            <div className="progress-block">
+              <div className="progress-row">
+                <strong>{row.pct}%</strong>
+                <span>
+                  {row.progress.completed}/{row.progress.target}
+                </span>
+              </div>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: `${Math.min(100, row.pct)}%` }} />
+              </div>
+              {row.progress.notes && <p className="notes">{row.progress.notes}</p>}
+            </div>
+
+            <div className="player-actions">
+              <button className="btn" type="button" onClick={() => rerollPlayer(row.id)}>
+                Reroll
+              </button>
+              <button className="btn" type="button" onClick={() => setEditing(row.id)}>
+                Edit
+              </button>
+              <button className="btn ghost" type="button" onClick={() => resetPlayerProgress(row.id)}>
+                Reset
+              </button>
+            </div>
+          </article>
+        ))}
+      </section>
+
+      <section className="card bans">
+        <div className="section-head">
+          <h3>Hero Pool</h3>
+          <div className="section-controls">
             <select value={heroFilter} onChange={(e) => setHeroFilter(e.target.value as RoleFilter)}>
               {ROLE_ORDER.map((r) => (
                 <option key={r} value={r}>
@@ -293,215 +412,53 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                 </option>
               ))}
             </select>
-          </label>
-          <label>
-            Sort
-            <select value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)}>
-              <option value="name">Name</option>
-              <option value="progress">Progress %</option>
-              <option value="completion">Completed #</option>
-              <option value="status">Status</option>
-            </select>
-          </label>
-        </div>
-        <div className="toolbar-right">
-          <label className="toggle">
-            <input type="checkbox" checked={uniqueAcrossTeam} onChange={(e) => setUniqueAcrossTeam(e.target.checked)} />
-            Unique team picks
-          </label>
-          <motion.button whileTap={{ scale: 0.97 }} className="btn subtle" onClick={resetAllProgress} type="button">
-            Reset Progress
-          </motion.button>
-        </div>
-      </section>
-
-      <section className="player-tools glass">
-        <input
-          value={playerSearch}
-          onChange={(e) => setPlayerSearch(e.target.value)}
-          placeholder="Search players..."
-        />
-        <select value={playerFilterStatus} onChange={(e) => setPlayerFilterStatus(e.target.value as "all" | "in-progress" | "completed" | "not-started")}>
-          <option value="all">All statuses</option>
-          <option value="in-progress">In progress</option>
-          <option value="completed">Completed</option>
-          <option value="not-started">Not started</option>
-        </select>
-      </section>
-
-      <section className="players-grid">
-        <AnimatePresence mode="popLayout">
-          {visiblePlayers.length === 0 && (
-            <motion.div className="empty-state glass" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <h4>No players match your filter.</h4>
-              <p>Try clearing search or selecting a different status.</p>
-            </motion.div>
-          )}
-          {visiblePlayers.map((row) => {
-            const heroName = row.hero;
-            const pct = completionPercent(row.progress);
-            return (
-              <motion.article
-                key={row.id}
-                className="player-card glass"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                layout
-                transition={{ duration: 0.2 }}
-              >
-                <div className="player-head">
-                  <input
-                    className="name-input"
-                    value={playerNames[row.id]}
-                    onChange={(e) => setPlayerNames((prev) => ({ ...prev, [row.id]: e.target.value }))}
-                  />
-                  <select
-                    value={playerRoles[row.id]}
-                    onChange={(e) =>
-                      setPlayerRoles((prev) => ({ ...prev, [row.id]: e.target.value as RoleFilter }))
-                    }
-                  >
-                    {ROLE_ORDER.map((role) => (
-                      <option key={role} value={role}>
-                        {role}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="hero-slot">
-                  <div className="hero-thumb" aria-hidden="true">
-                    {heroName && HERO_IMAGE_MAP[heroName] && !missingImages[heroName] ? (
-                      <img
-                        src={HERO_IMAGE_MAP[heroName]}
-                        alt={heroName}
-                        onError={() => setMissingImages((prev) => ({ ...prev, [heroName]: true }))}
-                      />
-                    ) : (
-                      <span>{heroName ? heroFallback(heroName) : "?"}</span>
-                    )}
-                  </div>
-                  <div>
-                    <p className="hero-name">{heroName ?? "Awaiting draft..."}</p>
-                    <p className="hero-meta">{heroName ? `Role: ${allHeroList.find((h) => h.name === heroName)?.role ?? "Unknown"}` : "No hero picked yet"}</p>
-                  </div>
-                </div>
-
-                <div className="progress-wrap">
-                  <div className="progress-meta">
-                    <strong>{pct}%</strong>
-                    <span>{row.progress.completed}/{row.progress.target} complete</span>
-                  </div>
-                  <div className="progress-bar">
-                    <motion.div
-                      className="progress-fill"
-                      animate={{ width: `${Math.min(100, pct)}%` }}
-                      transition={{ duration: 0.35 }}
-                    />
-                  </div>
-                </div>
-
-                <div className="card-actions">
-                  <motion.button whileTap={{ scale: 0.96 }} className="btn primary" onClick={() => rerollPlayer(row.id)} type="button">
-                    Reroll
-                  </motion.button>
-                  <motion.button whileTap={{ scale: 0.96 }} className="btn" onClick={() => setEditingPlayer(row.id)} type="button">
-                    Edit Progress
-                  </motion.button>
-                  <motion.button whileTap={{ scale: 0.96 }} className="btn subtle" onClick={() => resetPlayerProgress(row.id)} type="button">
-                    Reset
-                  </motion.button>
-                </div>
-              </motion.article>
-            );
-          })}
-        </AnimatePresence>
-      </section>
-
-      <section className="actions glass">
-        <motion.button whileTap={{ scale: 0.97 }} className="btn primary big" type="button" onClick={runDraft} disabled={isRolling}>
-          {isRolling ? "Rolling..." : "Randomize Team"}
-        </motion.button>
-        <motion.button whileTap={{ scale: 0.97 }} className="btn" type="button" onClick={copyLineup}>
-          Copy Lineup
-        </motion.button>
-        <motion.button whileTap={{ scale: 0.97 }} className="btn subtle" type="button" onClick={clearAll}>
-          Clear Picks + Bans
-        </motion.button>
-      </section>
-
-      <section className="ban-panel glass">
-        <div className="ban-head">
-          <h3>Hero Ban List</h3>
-          <input value={heroSearch} onChange={(e) => setHeroSearch(e.target.value)} placeholder="Search heroes..." />
+            <input
+              value={heroSearch}
+              onChange={(e) => setHeroSearch(e.target.value)}
+              placeholder="Search heroes..."
+            />
+            <button className="btn ghost" type="button" onClick={clearBans}>
+              Clear Bans
+            </button>
+          </div>
         </div>
         {heroPool.length === 0 ? (
-          <div className="empty-state compact">
-            <p>No heroes found for this filter.</p>
+          <div className="empty compact">
+            <p>No heroes match this filter.</p>
           </div>
         ) : (
-          <div className="hero-list">
+          <div className="hero-grid">
             {heroPool.map((hero) => (
-              <motion.button
+              <button
                 key={hero.name}
-                whileHover={{ y: -1 }}
-                whileTap={{ scale: 0.98 }}
-                className={banSet[hero.name] ? "hero-chip banned" : "hero-chip"}
-                onClick={() => toggleBan(hero.name)}
+                className={`hero-chip ${banSet[hero.name] ? "banned" : ""}`}
                 type="button"
+                onClick={() => toggleBan(hero.name)}
+                title={banSet[hero.name] ? "Unban" : "Ban"}
               >
-                <span>{hero.name}</span>
-                <small>{hero.role}</small>
-              </motion.button>
+                <HeroImage name={hero.name} size={36} />
+                <div className="hero-meta">
+                  <span className="hero-chip-name">{hero.name}</span>
+                  <small>{hero.role}</small>
+                </div>
+              </button>
             ))}
           </div>
         )}
       </section>
 
-      <section className="history-panel glass">
-        <h3>Recent Drafts</h3>
-        {history.length === 0 && (
-          <div className="empty-state compact">
-            <p>No drafts yet. Randomize to create your first lineup.</p>
-          </div>
-        )}
-        {history.map((raw, index) => {
-          const parsed = JSON.parse(raw) as Record<string, string | null>;
-          return (
-            <div key={index} className="history-item">
-              {activePlayers.map((id) => (
-                <span key={id}>
-                  {playerNames[id]}: {parsed[id] ?? "No pick"}
-                </span>
-              ))}
-            </div>
-          );
-        })}
-      </section>
-
-      <AnimatePresence>
-        {editingPlayer !== null && (
-          <ProgressModal
-            playerName={playerNames[editingPlayer]}
-            value={progress[editingPlayer]}
-            onClose={() => setEditingPlayer(null)}
-            onSave={(next) => {
-              updateProgress(editingPlayer, next.completed, next.target, next.notes);
-              setEditingPlayer(null);
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {error && (
-          <motion.p className="error" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-            {error}
-          </motion.p>
-        )}
-      </AnimatePresence>
-    </motion.div>
+      {editing !== null && (
+        <ProgressModal
+          playerName={playerNames[editing]}
+          value={progress[editing]}
+          onClose={() => setEditing(null)}
+          onSave={(val) => {
+            setProgress((cur) => ({ ...cur, [editing]: val }));
+            setEditing(null);
+          }}
+        />
+      )}
+    </div>
   );
 }
 
@@ -514,39 +471,45 @@ function ProgressModal({
   playerName: string;
   value: ProgressInfo;
   onClose: () => void;
-  onSave: (value: ProgressInfo) => void;
+  onSave: (v: ProgressInfo) => void;
 }) {
   const [completed, setCompleted] = useState(value.completed);
   const [target, setTarget] = useState(value.target);
   const [notes, setNotes] = useState(value.notes);
 
+  const save = () => {
+    const safeTarget = Math.max(1, Math.floor(target));
+    const safeCompleted = Math.max(0, Math.min(999, Math.floor(completed)));
+    onSave({ completed: safeCompleted, target: safeTarget, notes: notes.trim() });
+  };
+
   return (
-    <motion.div className="modal-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.div className="modal" initial={{ opacity: 0, y: 20, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 10 }}>
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal card" onClick={(e) => e.stopPropagation()}>
         <h4>Edit Progress - {playerName}</h4>
         <div className="modal-grid">
           <label>
             Completed
-            <input type="number" value={completed} min={0} onChange={(e) => setCompleted(Number(e.target.value))} />
+            <input type="number" min={0} value={completed} onChange={(e) => setCompleted(Number(e.target.value))} />
           </label>
           <label>
             Target
-            <input type="number" value={target} min={1} onChange={(e) => setTarget(Number(e.target.value))} />
+            <input type="number" min={1} value={target} onChange={(e) => setTarget(Number(e.target.value))} />
           </label>
           <label className="wide">
             Notes
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} />
+            <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} />
           </label>
         </div>
         <div className="modal-actions">
-          <button className="btn subtle" onClick={onClose} type="button">
+          <button className="btn ghost" type="button" onClick={onClose}>
             Cancel
           </button>
-          <button className="btn primary" onClick={() => onSave({ completed, target, notes })} type="button">
+          <button className="btn primary" type="button" onClick={save}>
             Save
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
