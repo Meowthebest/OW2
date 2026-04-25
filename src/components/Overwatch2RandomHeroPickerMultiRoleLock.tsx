@@ -8,15 +8,6 @@ type SortMode = "name" | "progress" | "completion" | "status";
 type StatusFilter = "all" | "in-progress" | "completed" | "not-started";
 
 type ProgressInfo = { completed: number; target: number; notes: string };
-type PickEvent = {
-  id: string;
-  type: "roll" | "reroll" | "manual-set" | "complete" | "undo-complete" | "result";
-  player?: string;
-  hero?: string;
-  role?: Role;
-  result?: "W" | "L";
-  at: number;
-};
 
 const HERO_BY_ROLE: Record<Role, string[]> = {
   Tank: ["D.Va", "Domina", "Doomfist", "Hazard", "Junker Queen", "Mauga", "Orisa", "Ramattra", "Reinhardt", "Roadhog", "Sigma", "Winston", "Wrecking Ball", "Zarya"],
@@ -109,14 +100,6 @@ function heroInitials(name: string) {
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
-function formatRelative(at: number) {
-  const diff = Date.now() - at;
-  if (diff < 60_000) return "just now";
-  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
-  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
-  return `${Math.floor(diff / 86_400_000)}d ago`;
-}
-
 function useStoredState<T>(key: string, initial: T) {
   const [value, setValue] = useState<T>(() => {
     try {
@@ -147,7 +130,6 @@ const Ic = {
   Trash: () => <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>,
   Trophy: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 21h8" /><path d="M12 17v4" /><path d="M17 3H7v5a5 5 0 0 0 10 0V3Z" /><path d="M17 5h3v2a3 3 0 0 1-3 3" /><path d="M7 5H4v2a3 3 0 0 0 3 3" /></svg>,
   Star: ({ filled }: { filled?: boolean }) => <svg viewBox="0 0 24 24" width="14" height="14" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2"><polygon points="12 2 15 8.5 22 9.3 17 14.2 18.2 21 12 17.8 5.8 21 7 14.2 2 9.3 9 8.5 12 2" /></svg>,
-  History: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /><path d="M12 7v5l3 2" /></svg>,
   Win: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 4h14v6a7 7 0 1 1-14 0V4z" /><path d="M19 6h3v3a3 3 0 0 1-3 3" /><path d="M5 6H2v3a3 3 0 0 0 3 3" /><path d="M9 20h6" /><path d="M12 17v3" /></svg>,
   Gear: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.82-.33 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.4a1.7 1.7 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.82.33h.01A1.7 1.7 0 0 0 10 2.52V2.5a2 2 0 1 1 4 0v.02a1.7 1.7 0 0 0 1.07 1.57h.01a1.7 1.7 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.33 1.82v.01A1.7 1.7 0 0 0 21.5 10H21.5a2 2 0 1 1 0 4h-.02A1.7 1.7 0 0 0 19.4 15z" /></svg>,
 };
@@ -178,7 +160,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [manualOverride, setManualOverride] = useStoredState<boolean>("ow2_manual_override", false);
   const [progress, setProgress] = useStoredState<Record<PlayerId, ProgressInfo>>("ow2_progress", DEFAULT_PROGRESS);
   const [completedHeroes, setCompletedHeroes] = useStoredState<Record<PlayerId, string[]>>("ow2_completed_heroes", DEFAULT_COMPLETED);
-  const [pickHistory, setPickHistory] = useStoredState<PickEvent[]>("ow2_pick_history", []);
   const [wins, setWins] = useStoredState<number>("ow2_wins", 0);
   const [losses, setLosses] = useStoredState<number>("ow2_losses", 0);
   const [completionStreak, setCompletionStreak] = useStoredState<number>("ow2_completion_streak", 0);
@@ -197,8 +178,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [editingPlayer, setEditingPlayer] = useState<PlayerId | null>(null);
   const [confirmAction, setConfirmAction] = useState<null | { message: string; onConfirm: () => void }>(null);
   const [undoReroll, setUndoReroll] = useState<Record<PlayerId, string | null>>({ 1: null, 2: null, 3: null, 4: null, 5: null });
-  const [summaryOpen, setSummaryOpen] = useState(false);
-  const [historyOpen, setHistoryOpen] = useState(true);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -267,11 +246,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const favCount = useMemo(() => Object.values(favorites).filter(Boolean).length, [favorites]);
   const disabledCount = useMemo(() => Object.values(disabledHeroes).filter(Boolean).length, [disabledHeroes]);
 
-  const addEvent = (event: Omit<PickEvent, "id" | "at">) => {
-    const now = Date.now();
-    setPickHistory((cur) => [{ ...event, id: `${now}-${Math.random().toString(36).slice(2, 7)}`, at: now }, ...cur].slice(0, 80));
-  };
-
   const pickHeroFor = (playerId: PlayerId, taken: Set<string>) => {
     const role = playerRoles[playerId];
     const source = role === "All" ? flatHeroes : HERO_BY_ROLE[role].map((name) => ({ name, role }));
@@ -298,7 +272,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         if (picked) {
           taken.add(picked);
           any = true;
-          addEvent({ type: "roll", player: playerNames[id], hero: picked, role: roleByHero[picked] });
           if (oldHero && oldHero !== picked) {
             setUndoReroll((cur) => ({ ...cur, [id]: oldHero }));
           }
@@ -309,7 +282,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       if (!any) {
         setError("No eligible heroes available. Check role locks, disabled heroes, or unique mode.");
       } else if (activePlayers.every((id) => next[id])) {
-        setNotice("Draft complete. You can open End Result summary.");
+        setNotice("Draft complete.");
       }
     }, 360);
   };
@@ -330,7 +303,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     setNotice("");
     setLineup((cur) => ({ ...cur, [id]: pick }));
     setUndoReroll((cur) => ({ ...cur, [id]: oldHero }));
-    addEvent({ type: "reroll", player: playerNames[id], hero: pick, role: roleByHero[pick] });
   };
 
   const undoRerollForPlayer = (id: PlayerId) => {
@@ -339,7 +311,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     setLineup((cur) => ({ ...cur, [id]: prevHero }));
     setUndoReroll((cur) => ({ ...cur, [id]: null }));
     setNotice(`Restored ${prevHero} for ${playerNames[id]}.`);
-    addEvent({ type: "manual-set", player: playerNames[id], hero: prevHero, role: roleByHero[prevHero] });
   };
 
   const clearLineup = () =>
@@ -390,7 +361,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       return next;
     });
     setNotice(`${hero} marked complete for ${playerNames[id]}.`);
-    addEvent({ type: "complete", player: playerNames[id], hero, role: roleByHero[hero] });
   };
 
   const undoComplete = (id: PlayerId, hero: string) => {
@@ -404,7 +374,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       [id]: { ...cur[id], completed: Math.max(0, cur[id].completed - 1) },
     }));
     setCompletionStreak(0);
-    addEvent({ type: "undo-complete", player: playerNames[id], hero, role: roleByHero[hero] });
   };
 
   const finishAll = () => {
@@ -441,8 +410,33 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const registerResult = (result: "W" | "L") => {
     if (result === "W") setWins((v) => v + 1);
     if (result === "L") setLosses((v) => v + 1);
-    addEvent({ type: "result", result });
   };
+
+  const resetMatchRecord = () =>
+    setConfirmAction({
+      message: "Reset match results to 0-0? Win rate will clear until you log new games.",
+      onConfirm: () => {
+        setWins(0);
+        setLosses(0);
+        setNotice("Match results reset.");
+      },
+    });
+
+  const clearAllData = () =>
+    setConfirmAction({
+      message:
+        "Clear ALL saved data: draft lineup, per-player progress, completed heroes, favorites, disabled heroes, match record, streaks, and UI settings. The page will reload. This cannot be undone.",
+      onConfirm: () => {
+        try {
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith("ow2_"))
+            .forEach((k) => localStorage.removeItem(k));
+        } catch {
+          /* ignore */
+        }
+        window.location.reload();
+      },
+    });
 
   const copyLineup = async () => {
     const text = activePlayers.map((id) => `${playerNames[id]}: ${lineup[id] ?? "No pick"}`).join("\n");
@@ -461,7 +455,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     ? Math.round(activePlayers.reduce((acc, id) => acc + completionPercent(progress[id]), 0) / activePlayers.length)
     : 0;
 
-  const summaryData = useMemo(
+  const exportSnapshot = useMemo(
     () =>
       activePlayers.map((id) => ({
         name: playerNames[id],
@@ -473,9 +467,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     [activePlayers, completedHeroes, lineup, playerNames, playerRoles, progress],
   );
 
-  const exportSummaryPng = () => {
+  const exportSnapshotPng = () => {
     const w = 1120;
-    const h = 760;
+    const h = 640;
     const canvas = document.createElement("canvas");
     canvas.width = w;
     canvas.height = h;
@@ -490,7 +484,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
     ctx.fillStyle = "#f79a2e";
     ctx.font = "700 38px Inter, Segoe UI, sans-serif";
-    ctx.fillText("OW2 Match Summary", 42, 62);
+    ctx.fillText("OW2 Session Snapshot", 42, 62);
     ctx.fillStyle = "#9b9aa3";
     ctx.font = "600 15px Inter, Segoe UI, sans-serif";
     ctx.fillText(new Date().toLocaleString(), 44, 88);
@@ -508,12 +502,11 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       ctx.fillText(title, x + 16, y + 28);
     };
 
-    panel(36, 114, 612, 610, "Players");
-    panel(664, 114, 420, 290, "Totals");
-    panel(664, 424, 420, 300, "Recent Activity");
+    panel(36, 114, 612, 500, "Players");
+    panel(664, 114, 420, 500, "Totals");
 
     let py = 154;
-    summaryData.forEach((p) => {
+    exportSnapshot.forEach((p) => {
       const hero = p.hero ?? "No pick";
       const percent = completionPercent(p.progress);
       ctx.fillStyle = "#f3f1ec";
@@ -523,7 +516,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       ctx.font = "600 13px Inter, Segoe UI, sans-serif";
       ctx.fillText(`Hero: ${hero}`, 54, py + 40);
       ctx.fillText(`Completed: ${p.completed.length}   Progress: ${percent}%`, 54, py + 58);
-      py += 92;
+      py += 80;
     });
 
     const stats = [
@@ -540,31 +533,12 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       ctx.fillStyle = "#f3f1ec";
       ctx.font = "700 17px Inter, Segoe UI, sans-serif";
       ctx.fillText(s, 684, sy + 18);
-      sy += 34;
+      sy += 40;
     });
-
-    const recent = pickHistory.slice(0, 9);
-    if (recent.length === 0) {
-      ctx.fillStyle = "#9b9aa3";
-      ctx.font = "600 14px Inter, Segoe UI, sans-serif";
-      ctx.fillText("No events recorded yet.", 684, 466);
-    } else {
-      let ey = 460;
-      recent.forEach((e, idx) => {
-        const text =
-          e.type === "result"
-            ? `${e.result === "W" ? "Win" : "Loss"}`
-            : `${e.type.replace("-", " ")} • ${e.player ?? "Team"} • ${e.hero ?? ""}`;
-        ctx.fillStyle = idx % 2 === 0 ? "#f3f1ec" : "#bdbcc4";
-        ctx.font = "600 13px Inter, Segoe UI, sans-serif";
-        ctx.fillText(text, 684, ey);
-        ey += 26;
-      });
-    }
 
     const a = document.createElement("a");
     a.href = canvas.toDataURL("image/png");
-    a.download = `ow2-summary-${Date.now()}.png`;
+    a.download = `ow2-snapshot-${Date.now()}.png`;
     a.click();
   };
 
@@ -581,9 +555,14 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                 <strong>{wins}-{losses}</strong>
                 <small>{winRate}% WR</small>
               </div>
-              <div className="stat-actions">
-                <button className="btn sm" type="button" onClick={() => registerResult("W")}>Win</button>
-                <button className="btn sm ghost" type="button" onClick={() => registerResult("L")}>Loss</button>
+              <div className="stat-actions stat-actions--stack">
+                <div className="stat-actions-row2">
+                  <button className="btn sm" type="button" onClick={() => registerResult("W")}>Win</button>
+                  <button className="btn sm ghost" type="button" onClick={() => registerResult("L")}>Loss</button>
+                </div>
+                <button className="btn sm ghost" type="button" onClick={resetMatchRecord} title="Reset W/L to 0-0">
+                  <Ic.Reset /> Reset
+                </button>
               </div>
             </div>
             <div className="stat">
@@ -671,6 +650,22 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               <option value="not-started">Not started</option>
             </select>
           </section>
+
+          <section className="ow2-data card">
+            <div className="ow2-data-head">
+              <span className="section-eyebrow">Data & export</span>
+              <h3>Backup or wipe local save</h3>
+            </div>
+            <p className="ow2-data-hint">Everything is stored in this browser. Export a PNG to share, or clear all stored keys and reload.</p>
+            <div className="ow2-data-actions">
+              <button className="btn" type="button" onClick={exportSnapshotPng}>
+                <Ic.Copy /> Export snapshot PNG
+              </button>
+              <button className="btn danger" type="button" onClick={clearAllData}>
+                <Ic.Trash /> Clear all data
+              </button>
+            </div>
+          </section>
         </aside>
 
         <main className="content-column">
@@ -706,7 +701,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </header>
 
             <div className="pc-hero" key={row.hero ?? `empty-${row.id}`}>
-              <HeroImage name={row.hero} size={54} />
+              <div className="pc-hero-figure" aria-hidden>
+                <HeroImage name={row.hero} size={88} />
+              </div>
               <div className="pc-hero-info">
                 <span className="pc-hero-name">{row.hero ?? "Ready to roll"}</span>
                 <span className="pc-hero-role">{row.hero ? row.heroRole : "Awaiting draft"}</span>
@@ -754,87 +751,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           </article>
         ))}
           </section>
-
-          <section className="card summary">
-        <button className="summary-head" type="button" onClick={() => setSummaryOpen((v) => !v)}>
-          <div className="section-title-group">
-            <span className="section-eyebrow"><Ic.Trophy /> End result summary</span>
-            <h3>Final draft + progress + match stats</h3>
-          </div>
-          <span className={`chev ${summaryOpen ? "open" : ""}`}>▾</span>
-        </button>
-        {summaryOpen && (
-          <div className="summary-body">
-            <div className="summary-grid">
-              {summaryData.map((p) => (
-                <div key={p.name} className="summary-player">
-                  <strong>{p.name}</strong>
-                  <span>{p.hero ?? "No pick"} · {p.role}</span>
-                  <small>{p.completed.length} completed · {completionPercent(p.progress)}%</small>
-                </div>
-              ))}
-            </div>
-            <div className="summary-stats">
-              <span>Total matches <strong>{totalMatches}</strong></span>
-              <span>Wins <strong>{wins}</strong></span>
-              <span>Losses <strong>{losses}</strong></span>
-              <span>Win rate <strong>{winRate}%</strong></span>
-              <span>Total completed heroes <strong>{totalCompleted}</strong></span>
-              <span>Completion streak <strong>{completionStreak}</strong></span>
-              <span>Best streak <strong>{bestCompletionStreak}</strong></span>
-            </div>
-            <div className="summary-actions">
-              <button className="btn" type="button" onClick={exportSummaryPng}><Ic.Copy /> Export PNG</button>
-            </div>
-          </div>
-        )}
-          </section>
-
-          <section className="card history">
-        <button type="button" className="history-head" onClick={() => setHistoryOpen((v) => !v)} aria-expanded={historyOpen}>
-          <div className="section-title-group">
-            <span className="section-eyebrow"><Ic.History /> Match history</span>
-            <h3>Recent rolls, completions, and results</h3>
-          </div>
-          <span className={`chev ${historyOpen ? "open" : ""}`}>▾</span>
-        </button>
-        {historyOpen && (
-          <>
-            {pickHistory.length === 0 ? (
-              <div className="empty compact">
-                <h4>No history yet.</h4>
-                <p>Roll heroes, mark completion, or record win/loss to populate this feed.</p>
-              </div>
-            ) : (
-              <div className="history-list">
-                {pickHistory.map((e) => (
-                  <div key={e.id} className={`history-row ${e.role ? `role-${e.role}` : ""}`}>
-                    <div className="history-icon">
-                      {e.type === "result" ? (e.result === "W" ? "W" : "L") : <Ic.History />}
-                    </div>
-                    <div className="history-meta">
-                      <span className="history-hero">
-                        {e.type === "result"
-                          ? `${e.result === "W" ? "Win recorded" : "Loss recorded"}`
-                          : `${e.type.replace("-", " ")}${e.hero ? ` · ${e.hero}` : ""}`}
-                      </span>
-                      <small>{e.player ?? "Team"} {e.role ? `· ${e.role}` : ""}</small>
-                    </div>
-                    <span className="history-time">{formatRelative(e.at)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-            {pickHistory.length > 0 && (
-              <div className="history-foot">
-                <button className="btn sm ghost" type="button" onClick={() => setConfirmAction({ message: "Clear entire match history?", onConfirm: () => setPickHistory([]) })}>
-                  <Ic.Trash /> Clear History
-                </button>
-              </div>
-            )}
-          </>
-        )}
-          </section>
         </main>
       </div>
 
@@ -873,7 +789,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           onSaveProgress={(val) => setProgress((cur) => ({ ...cur, [editingPlayer]: val }))}
           onSetHero={(hero) => {
             setLineup((cur) => ({ ...cur, [editingPlayer]: hero }));
-            if (hero) addEvent({ type: "manual-set", player: playerNames[editingPlayer], hero, role: roleByHero[hero] });
           }}
           onMarkManualComplete={(hero) => {
             if (!hero) return;
@@ -883,7 +798,6 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               return { ...cur, [editingPlayer]: [...list, hero] };
             });
             setProgress((cur) => ({ ...cur, [editingPlayer]: { ...cur[editingPlayer], completed: Math.min(999, cur[editingPlayer].completed + 1) } }));
-            addEvent({ type: "complete", player: playerNames[editingPlayer], hero, role: roleByHero[hero] });
           }}
           onUndoManualComplete={(hero) => undoComplete(editingPlayer, hero)}
         />
