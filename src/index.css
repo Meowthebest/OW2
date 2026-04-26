@@ -389,6 +389,7 @@ select {
 
 .stat-actions-row2 {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   justify-content: flex-end;
 }
@@ -718,6 +719,13 @@ select {
   gap: 6px;
 }
 
+.pc-completed-chips--scroll {
+  max-height: 140px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-gutter: stable;
+}
+
 .chip {
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -774,6 +782,89 @@ select {
 
 .empty.compact {
   padding: var(--s5) var(--s4);
+}
+
+.match-history {
+  display: grid;
+  gap: var(--s2);
+}
+
+.match-history-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.match-history-body {
+  display: grid;
+  gap: var(--s3);
+}
+
+.match-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.match-history-row {
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
+  padding: 8px 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.match-history-row.is-win {
+  border-left: 3px solid var(--success, #58c088);
+}
+
+.match-history-row.is-loss {
+  border-left: 3px solid rgba(255, 140, 90, 0.9);
+}
+
+.match-history-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.match-history-rl {
+  font-weight: 900;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.match-history-time {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  color: var(--text-subtle);
+}
+
+.match-history-lineup {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  word-break: break-word;
+}
+
+.match-history-foot {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .modal-backdrop {

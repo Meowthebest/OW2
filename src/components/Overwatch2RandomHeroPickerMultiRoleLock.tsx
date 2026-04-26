@@ -9,6 +9,14 @@ type StatusFilter = "all" | "in-progress" | "completed" | "not-started";
 
 type ProgressInfo = { completed: number; target: number; notes: string };
 
+type MatchLogEntry = {
+  id: string;
+  at: number;
+  result: "W" | "L";
+  /** Snapshot of the active player slots when the result was recorded */
+  slots: { name: string; hero: string | null }[];
+};
+
 const HERO_BY_ROLE: Record<Role, string[]> = {
   Tank: ["D.Va", "Domina", "Doomfist", "Hazard", "Junker Queen", "Mauga", "Orisa", "Ramattra", "Reinhardt", "Roadhog", "Sigma", "Winston", "Wrecking Ball", "Zarya"],
   Damage: ["Anran", "Ashe", "Bastion", "Cassidy", "Echo", "Emre", "Freja", "Genji", "Hanzo", "Junkrat", "Mei", "Pharah", "Reaper", "Sojourn", "Soldier: 76", "Sombra", "Symmetra", "Torbjorn", "Tracer", "Vendetta", "Venture", "Widowmaker"],
@@ -100,6 +108,61 @@ function heroInitials(name: string) {
   return `${parts[0][0] ?? ""}${parts[1][0] ?? ""}`.toUpperCase();
 }
 
+const MATCH_LOG_KEY = "ow2_match_log";
+const LEGACY_WINS_KEY = "ow2_wins";
+const LEGACY_LOSSES_KEY = "ow2_losses";
+
+function readMatchLogFromStorage(): MatchLogEntry[] {
+  try {
+    const raw = window.localStorage.getItem(MATCH_LOG_KEY);
+    if (raw !== null) {
+      const arr = JSON.parse(raw) as MatchLogEntry[];
+      if (Array.isArray(arr)) return arr;
+    }
+  } catch {
+    /* fall through to migration / empty */
+  }
+  // First run or legacy: migrate W/L counts into a single log
+  let w = 0;
+  let l = 0;
+  try {
+    const wr = window.localStorage.getItem(LEGACY_WINS_KEY);
+    const lr = window.localStorage.getItem(LEGACY_LOSSES_KEY);
+    if (wr) w = Math.max(0, Math.floor(Number(JSON.parse(wr)) || 0));
+    if (lr) l = Math.max(0, Math.floor(Number(JSON.parse(lr)) || 0));
+  } catch {
+    /* ignore */
+  }
+  if (w === 0 && l === 0) return [];
+  const out: MatchLogEntry[] = [];
+  const t = Date.now();
+  const m = Math.max(w, l);
+  for (let i = 0; i < m; i++) {
+    if (i < w) {
+      out.push({ id: `migW-${i}-${t}`, at: t - (m - i) * 20, result: "W", slots: [] });
+    }
+    if (i < l) {
+      out.push({ id: `migL-${i}-${t}`, at: t - (m - i) * 20 + 1, result: "L", slots: [] });
+    }
+  }
+  try {
+    window.localStorage.setItem(MATCH_LOG_KEY, JSON.stringify(out));
+    window.localStorage.removeItem(LEGACY_WINS_KEY);
+    window.localStorage.removeItem(LEGACY_LOSSES_KEY);
+  } catch {
+    /* ignore */
+  }
+  return out;
+}
+
+function formatRelative(at: number) {
+  const diff = Date.now() - at;
+  if (diff < 60_000) return "just now";
+  if (diff < 3_600_000) return `${Math.floor(diff / 60_000)}m ago`;
+  if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)}h ago`;
+  return `${Math.floor(diff / 86_400_000)}d ago`;
+}
+
 function useStoredState<T>(key: string, initial: T) {
   const [value, setValue] = useState<T>(() => {
     try {
@@ -130,6 +193,7 @@ const Ic = {
   Trash: () => <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-2 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /></svg>,
   Trophy: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M8 21h8" /><path d="M12 17v4" /><path d="M17 3H7v5a5 5 0 0 0 10 0V3Z" /><path d="M17 5h3v2a3 3 0 0 1-3 3" /><path d="M7 5H4v2a3 3 0 0 0 3 3" /></svg>,
   Star: ({ filled }: { filled?: boolean }) => <svg viewBox="0 0 24 24" width="14" height="14" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2"><polygon points="12 2 15 8.5 22 9.3 17 14.2 18.2 21 12 17.8 5.8 21 7 14.2 2 9.3 9 8.5 12 2" /></svg>,
+  History: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 3-6.7" /><path d="M3 4v5h5" /><path d="M12 7v5l3 2" /></svg>,
   Win: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 4h14v6a7 7 0 1 1-14 0V4z" /><path d="M19 6h3v3a3 3 0 0 1-3 3" /><path d="M5 6H2v3a3 3 0 0 0 3 3" /><path d="M9 20h6" /><path d="M12 17v3" /></svg>,
   Gear: () => <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.7 1.7 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.82-.33 1.7 1.7 0 0 0-1.03 1.56V21a2 2 0 0 1-4 0v-.09a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.56-1.03H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.4a1.7 1.7 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.7 1.7 0 0 0 1.82.33h.01A1.7 1.7 0 0 0 10 2.52V2.5a2 2 0 1 1 4 0v.02a1.7 1.7 0 0 0 1.07 1.57h.01a1.7 1.7 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.7 1.7 0 0 0-.33 1.82v.01A1.7 1.7 0 0 0 21.5 10H21.5a2 2 0 1 1 0 4h-.02A1.7 1.7 0 0 0 19.4 15z" /></svg>,
 };
@@ -160,8 +224,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [manualOverride, setManualOverride] = useStoredState<boolean>("ow2_manual_override", false);
   const [progress, setProgress] = useStoredState<Record<PlayerId, ProgressInfo>>("ow2_progress", DEFAULT_PROGRESS);
   const [completedHeroes, setCompletedHeroes] = useStoredState<Record<PlayerId, string[]>>("ow2_completed_heroes", DEFAULT_COMPLETED);
-  const [wins, setWins] = useStoredState<number>("ow2_wins", 0);
-  const [losses, setLosses] = useStoredState<number>("ow2_losses", 0);
+  const [matchLog, setMatchLog] = useState<MatchLogEntry[]>(() => readMatchLogFromStorage());
   const [completionStreak, setCompletionStreak] = useStoredState<number>("ow2_completion_streak", 0);
   const [bestCompletionStreak, setBestCompletionStreak] = useStoredState<number>("ow2_completion_streak_best", 0);
 
@@ -178,6 +241,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [editingPlayer, setEditingPlayer] = useState<PlayerId | null>(null);
   const [confirmAction, setConfirmAction] = useState<null | { message: string; onConfirm: () => void }>(null);
   const [undoReroll, setUndoReroll] = useState<Record<PlayerId, string | null>>({ 1: null, 2: null, 3: null, 4: null, 5: null });
+  const [matchHistoryOpen, setMatchHistoryOpen] = useState(true);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -188,6 +252,14 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     const id = window.setTimeout(() => setNotice(""), 1800);
     return () => window.clearTimeout(id);
   }, [notice]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(MATCH_LOG_KEY, JSON.stringify(matchLog));
+    } catch {
+      /* ignore */
+    }
+  }, [matchLog]);
 
   const flatHeroes = useMemo(() => allHeroes(), []);
   const roleByHero = useMemo(() => {
@@ -246,12 +318,25 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const favCount = useMemo(() => Object.values(favorites).filter(Boolean).length, [favorites]);
   const disabledCount = useMemo(() => Object.values(disabledHeroes).filter(Boolean).length, [disabledHeroes]);
 
+  const wins = useMemo(() => matchLog.filter((e) => e.result === "W").length, [matchLog]);
+  const losses = useMemo(() => matchLog.filter((e) => e.result === "L").length, [matchLog]);
+
+  const lineupSnapshot = useMemo(
+    () =>
+      activePlayers.map((id) => ({
+        name: playerNames[id],
+        hero: lineup[id] ?? null,
+      })),
+    [activePlayers, playerNames, lineup],
+  );
+
   const pickHeroFor = (playerId: PlayerId, taken: Set<string>) => {
     const role = playerRoles[playerId];
     const source = role === "All" ? flatHeroes : HERO_BY_ROLE[role].map((name) => ({ name, role }));
+    const alreadyDone = new Set(completedHeroes[playerId] ?? []);
     const pool = source
       .map((h) => h.name)
-      .filter((n) => !disabledHeroes[n] && (!uniqueTeam || !taken.has(n)));
+      .filter((n) => !disabledHeroes[n] && !alreadyDone.has(n) && (!uniqueTeam || !taken.has(n)));
     if (pool.length === 0) return null;
     const weighted = pool.flatMap((n) => (favorites[n] ? [n, n, n] : [n]));
     return randomItem(weighted);
@@ -280,7 +365,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       setLineup(next);
       setRolling(false);
       if (!any) {
-        setError("No eligible heroes available. Check role locks, disabled heroes, or unique mode.");
+        setError("No eligible heroes. Check role lock, unique team, disabled list, or heroes already marked complete for each player.");
       } else if (activePlayers.every((id) => next[id])) {
         setNotice("Draft complete.");
       }
@@ -296,7 +381,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     const oldHero = lineup[id];
     const pick = pickHeroFor(id, taken);
     if (!pick) {
-      setError(`No reroll options for ${playerNames[id]}.`);
+      setError(`No reroll for ${playerNames[id]} — this role's pool may be empty (disabled, unique picks, or all heroes already completed for this player).`);
       return;
     }
     setError("");
@@ -408,16 +493,22 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   };
 
   const registerResult = (result: "W" | "L") => {
-    if (result === "W") setWins((v) => v + 1);
-    if (result === "L") setLosses((v) => v + 1);
+    const id = `ml-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    setMatchLog((cur) => [...cur, { id, at: Date.now(), result, slots: lineupSnapshot }]);
+    setNotice(result === "W" ? "Win recorded." : "Loss recorded.");
+  };
+
+  const undoLastResult = () => {
+    if (matchLog.length === 0) return;
+    setMatchLog((cur) => cur.slice(0, -1));
+    setNotice("Reverted last W/L record.");
   };
 
   const resetMatchRecord = () =>
     setConfirmAction({
-      message: "Reset match results to 0-0? Win rate will clear until you log new games.",
+      message: "Reset match results and the match log to 0-0? This clears win rate and the history list.",
       onConfirm: () => {
-        setWins(0);
-        setLosses(0);
+        setMatchLog([]);
         setNotice("Match results reset.");
       },
     });
@@ -559,8 +650,17 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                 <div className="stat-actions-row2">
                   <button className="btn sm" type="button" onClick={() => registerResult("W")}>Win</button>
                   <button className="btn sm ghost" type="button" onClick={() => registerResult("L")}>Loss</button>
+                  <button
+                    className="btn sm ghost"
+                    type="button"
+                    onClick={undoLastResult}
+                    disabled={matchLog.length === 0}
+                    title="Undo the last Win or Loss you logged"
+                  >
+                    <Ic.Undo /> Undo
+                  </button>
                 </div>
-                <button className="btn sm ghost" type="button" onClick={resetMatchRecord} title="Reset W/L to 0-0">
+                <button className="btn sm ghost" type="button" onClick={resetMatchRecord} title="Reset W/L and match log to 0-0">
                   <Ic.Reset /> Reset
                 </button>
               </div>
@@ -740,16 +840,59 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             {row.doneList.length > 0 && (
               <div className="pc-completed">
                 <span className="pc-completed-label"><Ic.Trophy /> Completed heroes</span>
-                <div className="pc-completed-chips">
-                  {row.doneList.slice(-6).map((h) => (
+                <div className="pc-completed-chips pc-completed-chips--scroll" title="Click a hero to un-complete (they can be rolled again)">
+                  {row.doneList.map((h) => (
                     <button key={h} className="chip" type="button" onClick={() => undoComplete(row.id, h)}>{h}</button>
                   ))}
-                  {row.doneList.length > 6 && <span className="chip more">+{row.doneList.length - 6}</span>}
                 </div>
               </div>
             )}
           </article>
         ))}
+          </section>
+
+          <section className="card match-history">
+            <button type="button" className="match-history-head" onClick={() => setMatchHistoryOpen((o) => !o)} aria-expanded={matchHistoryOpen}>
+              <div className="section-title-group">
+                <span className="section-eyebrow"><Ic.History /> Match log</span>
+                <h3>Wins, losses, and the lineup from each result</h3>
+              </div>
+              <span className={`chev ${matchHistoryOpen ? "open" : ""}`}>▾</span>
+            </button>
+            {matchHistoryOpen && (
+              <div className="match-history-body">
+                {matchLog.length === 0 ? (
+                  <div className="empty compact">
+                    <p>Log a Win or Loss to store a snapshot of your current draft (most recent on top). Use Undo in Match results to revert the last entry.</p>
+                  </div>
+                ) : (
+                  <div className="match-history-list">
+                    {[...matchLog]
+                      .reverse()
+                      .map((e) => (
+                        <div key={e.id} className={`match-history-row ${e.result === "W" ? "is-win" : "is-loss"}`}>
+                          <div className="match-history-badges">
+                            <span className="match-history-rl">{e.result}</span>
+                            <span className="match-history-time">{formatRelative(e.at)}</span>
+                          </div>
+                          <p className="match-history-lineup">
+                            {e.slots.length === 0
+                              ? "Lineup not recorded (imported or older log)."
+                              : e.slots.map((s) => `${s.name}: ${s.hero ?? "—"}`).join(" · ")}
+                          </p>
+                        </div>
+                      ))}
+                  </div>
+                )}
+                {matchLog.length > 0 && (
+                  <div className="match-history-foot">
+                    <button className="btn sm ghost" type="button" onClick={resetMatchRecord}>
+                      <Ic.Trash /> Clear W/L and log
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </section>
         </main>
       </div>
