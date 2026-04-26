@@ -19,7 +19,7 @@ type MatchLogEntry = {
 
 const HERO_BY_ROLE: Record<Role, string[]> = {
   Tank: ["D.Va", "Domina", "Doomfist", "Hazard", "Junker Queen", "Mauga", "Orisa", "Ramattra", "Reinhardt", "Roadhog", "Sigma", "Winston", "Wrecking Ball", "Zarya"],
-  Damage: ["Anran", "Ashe", "Bastion", "Cassidy", "Echo", "Emre", "Freja", "Genji", "Hanzo", "Junkrat", "Mei", "Pharah", "Reaper", "Sojourn", "Soldier: 76", "Sombra", "Symmetra", "Torbjorn", "Tracer", "Vendetta", "Venture", "Widowmaker"],
+  Damage: ["Anran", "Ashe", "Bastion", "Cassidy", "Echo", "Emre", "Freja", "Genji", "Hanzo", "Junkrat", "Mei", "Pharah", "Reaper", "Sierra", "Sojourn", "Soldier: 76", "Sombra", "Symmetra", "Torbjorn", "Tracer", "Vendetta", "Venture", "Widowmaker"],
   Support: ["Ana", "Baptiste", "Brigitte", "Illari", "Jetpack Cat", "Juno", "Kiriko", "Lifeweaver", "Lucio", "Mercy", "Mizuki", "Moira", "Wuyang", "Zenyatta"],
 };
 
@@ -48,6 +48,7 @@ const HERO_IMAGE_MAP: Record<string, string> = {
   Mei: "icons/150px-Mei_OW2_mini_portrait.png",
   Pharah: "icons/150px-Pharah_OW2_mini_portrait.png",
   Reaper: "icons/150px-Reaper_OW2_mini_portrait.png",
+  Sierra: "icons/Sierra.png",
   Sojourn: "icons/150px-Sojourn_mini_portrait.png",
   "Soldier: 76": "icons/150px-Soldier_OW2_mini_portrait.png",
   Sombra: "icons/150px-Sombra_OW2_mini_portrait.png",
