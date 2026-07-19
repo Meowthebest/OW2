@@ -5,11 +5,17 @@ export default function App() {
     <div className="app-shell">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-badge" />
+          <span className="brand-badge" aria-hidden="true">
+            <span />
+          </span>
           <div>
-            <h1>OW2 Random Hero Picker</h1>
-            <p>Multiplayer - Role Lock - Local Save</p>
+            <span className="brand-kicker">Overwatch utility</span>
+            <h1>Hero Selector</h1>
           </div>
+        </div>
+        <div className="topbar-status" aria-label="Save status">
+          <span className="status-dot" aria-hidden="true" />
+          Saved locally
         </div>
       </header>
       <main className="app-main">
