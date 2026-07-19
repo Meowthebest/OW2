@@ -640,6 +640,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     <div className={`ow2-root ${theme}`}>
       <div className="dashboard-layout">
         <aside className="settings-column">
+          <div className="sidebar-heading">
+            <span className="section-eyebrow">Session overview</span>
+            <h2>Control center</h2>
+          </div>
           <section className="stats-strip card">
             <div className="stat">
               <span className="stat-label"><Ic.Win /> Match results</span>
@@ -690,90 +694,131 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             </div>
           </section>
 
-          <section className="ow2-toolbar card">
-            <div className="toolbar-left">
-              <label>
-                Theme
-                <select value={theme} onChange={(e) => setTheme(e.target.value as "dark" | "light")}>
-                  <option value="dark">Dark</option>
-                  <option value="light">Light</option>
-                </select>
-              </label>
-              <label>
-                Players
-                <select value={playerCount} onChange={(e) => setPlayerCount(Number(e.target.value))}>
-                  {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
-                </select>
-              </label>
-              <label>
-                Sort
-                <select value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)}>
-                  <option value="name">Name</option>
-                  <option value="progress">Progress</option>
-                  <option value="completion">Completion</option>
-                  <option value="status">Status</option>
-                </select>
-              </label>
+          <details className="ow2-toolbar card" open>
+            <summary className="details-summary">
+              <span><Ic.Gear /> Session settings</span>
+              <span className="chev">▾</span>
+            </summary>
+            <div className="details-body">
+              <div className="toolbar-left">
+                <label>
+                  Theme
+                  <select value={theme} onChange={(e) => setTheme(e.target.value as "dark" | "light")}>
+                    <option value="dark">Dark</option>
+                    <option value="light">Light</option>
+                  </select>
+                </label>
+                <label>
+                  Players
+                  <select value={playerCount} onChange={(e) => setPlayerCount(Number(e.target.value))}>
+                    {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </label>
+                <label>
+                  Sort
+                  <select value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)}>
+                    <option value="name">Name</option>
+                    <option value="progress">Progress</option>
+                    <option value="completion">Completion</option>
+                    <option value="status">Status</option>
+                  </select>
+                </label>
+              </div>
+              <div className="toolbar-right">
+                <label className="toggle">
+                  <input type="checkbox" checked={uniqueTeam} onChange={(e) => setUniqueTeam(e.target.checked)} />
+                  Unique team
+                </label>
+                <label className="toggle">
+                  <input type="checkbox" checked={manualOverride} onChange={(e) => setManualOverride(e.target.checked)} />
+                  Manual override
+                </label>
+              </div>
             </div>
-            <div className="toolbar-right">
-              <label className="toggle">
-                <input type="checkbox" checked={uniqueTeam} onChange={(e) => setUniqueTeam(e.target.checked)} />
-                Unique team
-              </label>
-              <label className="toggle">
-                <input type="checkbox" checked={manualOverride} onChange={(e) => setManualOverride(e.target.checked)} />
-                Manual override
-              </label>
-              <button className={`btn primary glow ${rolling ? "rolling" : ""}`} type="button" onClick={runDraft} disabled={rolling}>
-                <Ic.Dice /> {rolling ? "Rolling..." : "Randomize"}
-              </button>
-              <button className="btn" type="button" onClick={runDraft} disabled={rolling}>
-                <Ic.Refresh /> Reroll All
-              </button>
-              <button className="btn" type="button" onClick={finishAll} disabled={!anyHeroPicked}>
-                <Ic.Trophy /> Complete All
-              </button>
-              <button className="btn ghost" type="button" onClick={copyLineup} disabled={!anyHeroPicked}>
-                <Ic.Copy /> Copy
-              </button>
-              <button className="btn ghost" type="button" onClick={clearLineup} disabled={!anyHeroPicked}>
-                <Ic.Trash /> Clear
-              </button>
-            </div>
-          </section>
+          </details>
 
-          <section className="ow2-player-tools card">
-            <input value={playerSearch} onChange={(e) => setPlayerSearch(e.target.value)} placeholder="Search players..." />
-            <select value={playerStatus} onChange={(e) => setPlayerStatus(e.target.value as StatusFilter)}>
-              <option value="all">All statuses</option>
-              <option value="in-progress">In progress</option>
-              <option value="completed">Completed</option>
-              <option value="not-started">Not started</option>
-            </select>
-          </section>
-
-          <section className="ow2-data card">
-            <div className="ow2-data-head">
-              <span className="section-eyebrow">Data & export</span>
-              <h3>Backup or wipe local save</h3>
+          <details className="ow2-data card">
+            <summary className="details-summary">
+              <span><Ic.Copy /> Data & export</span>
+              <span className="chev">▾</span>
+            </summary>
+            <div className="details-body data-details-body">
+              <p className="ow2-data-hint">Everything is stored in this browser. Export a PNG to share, or clear all stored keys and reload.</p>
+              <div className="ow2-data-actions">
+                <button className="btn" type="button" onClick={exportSnapshotPng}>
+                  <Ic.Copy /> Export snapshot PNG
+                </button>
+                <button className="btn danger" type="button" onClick={clearAllData}>
+                  <Ic.Trash /> Clear all data
+                </button>
+              </div>
             </div>
-            <p className="ow2-data-hint">Everything is stored in this browser. Export a PNG to share, or clear all stored keys and reload.</p>
-            <div className="ow2-data-actions">
-              <button className="btn" type="button" onClick={exportSnapshotPng}>
-                <Ic.Copy /> Export snapshot PNG
-              </button>
-              <button className="btn danger" type="button" onClick={clearAllData}>
-                <Ic.Trash /> Clear all data
-              </button>
-            </div>
-          </section>
+          </details>
         </aside>
 
         <main className="content-column">
+          <section className="draft-command card" aria-labelledby="lineup-title">
+            <div className="draft-command-copy">
+              <span className="section-eyebrow">Current session</span>
+              <h2 id="lineup-title">Build your lineup</h2>
+              <p>Choose role locks, then roll a fresh hero for every active player.</p>
+            </div>
+
+            <div className="draft-summary" aria-label="Session summary">
+              <span><strong>{playerCount}</strong> players</span>
+              <span><strong>{activePlayers.filter((id) => lineup[id]).length}</strong> selected</span>
+              <span><strong>{totalCompleted}</strong> completed</span>
+            </div>
+
+            <div className="draft-primary-actions">
+              <button className={`btn primary glow draft-button ${rolling ? "rolling" : ""}`} type="button" onClick={runDraft} disabled={rolling}>
+                <Ic.Dice /> {rolling ? "Selecting heroes..." : anyHeroPicked ? "Roll new lineup" : "Select heroes"}
+              </button>
+              <button className="btn hero-pool-button" type="button" onClick={() => setHeroManagerOpen(true)}>
+                <Ic.Gear /> Browse hero pool
+              </button>
+            </div>
+
+            <div className="draft-tools">
+              <div className="search-field">
+                <span aria-hidden="true">⌕</span>
+                <input
+                  value={playerSearch}
+                  onChange={(e) => setPlayerSearch(e.target.value)}
+                  placeholder="Find a player..."
+                  aria-label="Search players"
+                />
+              </div>
+              <select
+                value={playerStatus}
+                onChange={(e) => setPlayerStatus(e.target.value as StatusFilter)}
+                aria-label="Filter players by status"
+              >
+                <option value="all">All statuses</option>
+                <option value="in-progress">In progress</option>
+                <option value="completed">Completed</option>
+                <option value="not-started">Not started</option>
+              </select>
+              <div className="draft-secondary-actions">
+                <button className="btn sm" type="button" onClick={finishAll} disabled={!anyHeroPicked}><Ic.Trophy /> Complete all</button>
+                <button className="btn sm ghost" type="button" onClick={copyLineup} disabled={!anyHeroPicked}><Ic.Copy /> Copy</button>
+                <button className="btn sm ghost" type="button" onClick={clearLineup} disabled={!anyHeroPicked}><Ic.Trash /> Clear</button>
+              </div>
+            </div>
+          </section>
+
           {error && <div className="alert error">{error}</div>}
           {notice && <div className="alert success">{notice}</div>}
 
-          <section className="player-grid">
+          <section className="lineup-section" aria-labelledby="selected-heroes-title">
+            <div className="lineup-heading">
+              <div>
+                <span className="section-eyebrow">Selected heroes</span>
+                <h2 id="selected-heroes-title">Your squad</h2>
+              </div>
+              <span className="lineup-count">{visiblePlayers.length} active</span>
+            </div>
+            <div className="player-grid">
         {visiblePlayers.length === 0 && (
           <div className="empty card">
             <h4>No players match current filters.</h4>
@@ -850,6 +895,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
             )}
           </article>
         ))}
+            </div>
           </section>
 
           <section className="card match-history">
@@ -998,13 +1044,14 @@ function HeroManagerModal({
 }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal hero-manager card" onClick={(e) => e.stopPropagation()}>
+      <div className="modal hero-manager card" role="dialog" aria-modal="true" aria-labelledby="hero-pool-title" onClick={(e) => e.stopPropagation()}>
         <div className="hm-head">
           <div className="section-title-group">
             <span className="section-eyebrow"><Ic.Gear /> Hero pool settings</span>
-            <h3>Favorites and randomizer availability</h3>
+            <h3 id="hero-pool-title">Choose your hero pool</h3>
+            <p>Favorite heroes appear more often. Disabled heroes are excluded from every roll.</p>
           </div>
-          <button className="btn sm ghost" type="button" onClick={onClose}>Close</button>
+          <button className="btn sm ghost" type="button" onClick={onClose} aria-label="Close hero pool">Close</button>
         </div>
         <div className="hm-toolbar">
           <div className="hm-tabs">
@@ -1012,10 +1059,24 @@ function HeroManagerModal({
             <button type="button" className={`pool-tab ${tab === "favorites" ? "active" : ""}`} onClick={() => onTab("favorites")}><Ic.Star filled /> {favCount}</button>
             <button type="button" className={`pool-tab ${tab === "disabled" ? "active" : ""}`} onClick={() => onTab("disabled")}><Ic.Reset /> {disabledCount}</button>
           </div>
-          <select value={roleFilter} onChange={(e) => onRoleFilter(e.target.value as RoleFilter)}>
-            {ROLE_ORDER.map((r) => <option key={r} value={r}>{r}</option>)}
-          </select>
-          <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Search heroes..." />
+          <div className="role-tabs" role="tablist" aria-label="Filter heroes by role">
+            {ROLE_ORDER.map((role) => (
+              <button
+                key={role}
+                type="button"
+                role="tab"
+                aria-selected={roleFilter === role}
+                className={`role-tab role-${role} ${roleFilter === role ? "active" : ""}`}
+                onClick={() => onRoleFilter(role)}
+              >
+                {role}
+              </button>
+            ))}
+          </div>
+          <div className="search-field hero-search">
+            <span aria-hidden="true">⌕</span>
+            <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Search heroes..." aria-label="Search heroes" autoFocus />
+          </div>
           <button className="btn sm ghost" type="button" onClick={onClearFavorites} disabled={favCount === 0}>Clear Favorites</button>
           <button className="btn sm ghost" type="button" onClick={onClearDisabled} disabled={disabledCount === 0}>Enable All</button>
         </div>
@@ -1089,8 +1150,8 @@ function EditPlayerModal({
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal card" onClick={(e) => e.stopPropagation()}>
-        <h4>
+      <div className="modal card" role="dialog" aria-modal="true" aria-labelledby="edit-player-title" onClick={(e) => e.stopPropagation()}>
+        <h4 id="edit-player-title">
           <span className="section-eyebrow"><Ic.Edit /> Edit player</span>
           {playerName}
         </h4>
@@ -1160,8 +1221,8 @@ function EditPlayerModal({
 function ConfirmModal({ message, onCancel, onConfirm }: { message: string; onCancel: () => void; onConfirm: () => void }) {
   return (
     <div className="modal-backdrop" onClick={onCancel}>
-      <div className="modal card confirm-modal" onClick={(e) => e.stopPropagation()}>
-        <h4>Confirm action</h4>
+      <div className="modal card confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" onClick={(e) => e.stopPropagation()}>
+        <h4 id="confirm-title">Confirm action</h4>
         <p>{message}</p>
         <div className="modal-actions">
           <button className="btn ghost" type="button" onClick={onCancel}>Cancel</button>
