@@ -50,7 +50,7 @@ type MatchLogEntry = {
 
 const HERO_BY_ROLE: Record<Role, string[]> = {
   Tank: ["D.Va", "Domina", "Doomfist", "Hazard", "Junker Queen", "Mauga", "Orisa", "Ramattra", "Reinhardt", "Roadhog", "Sigma", "Winston", "Wrecking Ball", "Zarya"],
-  Damage: ["Anran", "Ashe", "Bastion", "Cassidy", "Echo", "Emre", "Freja", "Genji", "Hanzo", "Junkrat", "Mei", "Pharah", "Reaper", "Sierra", "Sojourn", "Soldier: 76", "Sombra", "Symmetra", "Torbjorn", "Tracer", "Vendetta", "Venture", "Widowmaker"],
+  Damage: ["Anran", "Ashe", "Bastion", "Cassidy", "Echo", "Emre", "Freja", "Genji", "Hanzo", "Junkrat", "Mei", "Pharah", "Reaper", "Shion", "Sierra", "Sojourn", "Soldier: 76", "Sombra", "Symmetra", "Torbjorn", "Tracer", "Vendetta", "Venture", "Widowmaker"],
   Support: ["Ana", "Baptiste", "Brigitte", "Illari", "Jetpack Cat", "Juno", "Kiriko", "Lifeweaver", "Lucio", "Mercy", "Mizuki", "Moira", "Wuyang", "Zenyatta"],
 };
 
@@ -101,6 +101,7 @@ const HERO_IMAGE_MAP: Record<string, string> = {
   Wuyang: "icons/150px-Wuyang_mini_portrait.png",
   Zenyatta: "icons/150px-Zenyatta_OW2_mini_portrait.png",
   Emre: "icons/Emre.png",
+  Shion: "icons/Shion.png",
   Anran: "icons/Anran.png",
   Vendetta: "icons/Vendetta_2D_portrait.png",
   Domina: "icons/Domina.png",
@@ -276,6 +277,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [rolling, setRolling] = useState(false);
+  const [rollingPlayers, setRollingPlayers] = useState<Partial<Record<PlayerId, boolean>>>({});
   const [editingPlayer, setEditingPlayer] = useState<PlayerId | null>(null);
   const [confirmAction, setConfirmAction] = useState<null | { message: string; onConfirm: () => void }>(null);
   const [undoReroll, setUndoReroll] = useState<Record<PlayerId, string | null>>({ 1: null, 2: null, 3: null, 4: null, 5: null });
@@ -428,8 +430,12 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     }
     setError("");
     setNotice("");
-    setLineup((cur) => ({ ...cur, [id]: pick }));
-    setUndoReroll((cur) => ({ ...cur, [id]: oldHero }));
+    setRollingPlayers((current) => ({ ...current, [id]: true }));
+    window.setTimeout(() => {
+      setLineup((cur) => ({ ...cur, [id]: pick }));
+      setUndoReroll((cur) => ({ ...cur, [id]: oldHero }));
+      setRollingPlayers((current) => ({ ...current, [id]: false }));
+    }, 240);
   };
 
   const undoRerollForPlayer = (id: PlayerId) => {
@@ -743,7 +749,12 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
         selectedCount={selectedCount}
         playerCount={playerCount}
         onThemeChange={setTheme}
-        onOpenSettings={() => document.getElementById("session-settings")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        onOpenSettings={() => {
+          const settings = document.getElementById("session-settings") as HTMLDetailsElement | null;
+          if (!settings) return;
+          settings.open = true;
+          settings.scrollIntoView({ behavior: "smooth", block: "start" });
+        }}
         onResetSession={clearAllData}
       />
       <main className="app-shell">
@@ -775,31 +786,26 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
                 <button type="button" className="result-button result-button--win" onClick={() => registerResult("W")}><Check size={18} /> Record win</button>
                 <button type="button" className="result-button result-button--loss" onClick={() => registerResult("L")}><X size={18} /> Record loss</button>
               </div>
-            </section>
-
-            <section className="side-panel completion-panel">
-              <header className="side-panel__header">
-                <span className="side-panel__icon"><Target size={17} /></span>
-                <div><h2>Completion</h2><p>Squad progress</p></div>
+              <div className="session-quick-stats" aria-label="Completion summary">
+                <span><Target size={15} /><strong>{totalCompleted}</strong> completed</span>
+                <span><Flame size={15} /><strong>{completionStreak}</strong> streak</span>
                 <details className="menu">
-                  <summary className="icon-button icon-button--small" aria-label="Completion actions"><Ellipsis size={17} /></summary>
+                  <summary className="icon-button icon-button--small" aria-label="Completion actions"><Ellipsis size={16} /></summary>
                   <div className="menu-popover menu-popover--right">
+                    <span className="menu-note">Average progress {avgProgress}% · Best streak {bestCompletionStreak}</span>
                     <button type="button" className="menu-item" onClick={() => setCompletionStreak(0)}><RotateCcw size={16} /> Reset streak</button>
                   </div>
                 </details>
-              </header>
-              <div className="completion-metrics">
-                <div><strong>{totalCompleted}</strong><span>heroes completed</span></div>
-                <div><strong>{avgProgress}%</strong><span>average progress</span></div>
               </div>
-              <div className="streak-banner"><Flame size={18} /><span><strong>{completionStreak}</strong> current streak</span><small>Best {bestCompletionStreak}</small></div>
             </section>
 
-            <section className="side-panel settings-panel" id="session-settings">
-              <header className="side-panel__header">
+            <details className="side-panel utility-disclosure settings-panel" id="session-settings">
+              <summary className="side-panel__header">
                 <span className="side-panel__icon"><Settings2 size={17} /></span>
-                <div><h2>Session settings</h2><p>Draft preferences</p></div>
-              </header>
+                <div><h2>Session settings</h2><p>Players and draft rules</p></div>
+                <ChevronDown size={17} className="disclosure-chevron" />
+              </summary>
+              <div className="utility-disclosure__body">
               <div className="settings-grid">
                 <label><span>Players</span><select value={playerCount} onChange={(event) => setPlayerCount(Number(event.target.value))}>{[1,2,3,4,5].map((count) => <option key={count}>{count}</option>)}</select></label>
                 <label><span>Sort lineup</span><select value={sortMode} onChange={(event) => setSortMode(event.target.value as SortMode)}><option value="name">Name</option><option value="progress">Progress</option><option value="completion">Completion</option><option value="status">Status</option></select></label>
@@ -807,7 +813,8 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               </div>
               <label className="switch-row"><span><strong>Unique team</strong><small>Prevent duplicate heroes</small></span><input type="checkbox" checked={uniqueTeam} onChange={(event) => setUniqueTeam(event.target.checked)} /></label>
               <label className="switch-row"><span><strong>Manual override</strong><small>Ignore player role when editing</small></span><input type="checkbox" checked={manualOverride} onChange={(event) => setManualOverride(event.target.checked)} /></label>
-            </section>
+              </div>
+            </details>
 
             <DataExportPanel
               onExportPng={exportSnapshotPng}
@@ -860,7 +867,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           </div>
         )}
         {visiblePlayers.map((row) => (
-          <article key={row.id} className={`player-hero-card ${row.hero ? "is-selected" : "is-empty"} ${row.heroIsDone ? "is-completed" : ""} role-${row.heroRole ?? row.role}`}>
+          <article key={row.id} className={`player-hero-card ${row.hero ? "is-selected" : "is-empty"} ${row.heroIsDone ? "is-completed" : ""} ${rolling || rollingPlayers[row.id] ? "is-rolling" : ""} role-${row.heroRole ?? row.role}`}>
             <header className="player-card-header">
               <label className="player-name-field">
                 <span>Player {row.id}</span>
@@ -898,7 +905,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
               <div className="hero-empty-state">
                 <span className="empty-role-mark"><Shield size={28} /></span>
                 <div><h3>Ready to roll</h3><p>{row.role === "All" ? "Any role is available for this player." : `Only ${row.role} heroes will be selected.`}</p></div>
-                <button type="button" className="button button--primary" onClick={() => rerollPlayer(row.id)} disabled={rolling}><Swords size={18} /> Roll hero</button>
+                <button type="button" className="button button--primary" onClick={() => rerollPlayer(row.id)} disabled={rolling || rollingPlayers[row.id]}><Swords size={18} /> {rollingPlayers[row.id] ? "Rolling…" : "Roll hero"}</button>
               </div>
             )}
 
@@ -909,18 +916,20 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
 
             {row.progress.notes && <p className="player-note">{row.progress.notes}</p>}
 
-            <footer className="player-card-actions">
-              <button type="button" className="button button--quiet" onClick={() => rerollPlayer(row.id)} disabled={rolling}><RotateCcw size={17} /> Reroll</button>
-              <button type="button" className="button button--quiet" onClick={() => setEditingPlayer(row.id)}><Edit3 size={17} /> Change hero</button>
-              <button
-                type="button"
-                className={`button player-primary-action ${row.heroIsDone ? "is-completed" : ""}`}
-                onClick={() => row.heroIsDone && row.hero ? undoComplete(row.id, row.hero) : markComplete(row.id)}
-                disabled={!row.hero}
-              >
-                {row.heroIsDone ? <><CheckCircle2 size={18} /> Completed</> : <><Check size={18} /> Mark complete</>}
-              </button>
-            </footer>
+            {row.hero && (
+              <footer className="player-card-actions">
+                <button type="button" className="button button--quiet" onClick={() => rerollPlayer(row.id)} disabled={rolling || rollingPlayers[row.id]}><RotateCcw size={17} /> Reroll</button>
+                <button type="button" className="button button--quiet" onClick={() => setEditingPlayer(row.id)}><Edit3 size={17} /> Change</button>
+                <button
+                  type="button"
+                  className={`button player-primary-action ${row.heroIsDone ? "is-completed" : ""}`}
+                  onClick={() => row.heroIsDone ? undoComplete(row.id, row.hero) : markComplete(row.id)}
+                  title={row.heroIsDone ? "Undo completion" : "Mark hero complete"}
+                >
+                  {row.heroIsDone ? <><CheckCircle2 size={18} /> Completed</> : <><Check size={18} /> Complete</>}
+                </button>
+              </footer>
+            )}
 
             {row.doneList.length > 0 && (
               <details className="completed-heroes-disclosure">
@@ -997,6 +1006,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           onSelectHero={(hero) => {
             setLineup((current) => ({ ...current, [heroManagerTarget]: hero }));
             setNotice(`${hero} selected for ${playerNames[heroManagerTarget]}.`);
+            setHeroManagerOpen(false);
           }}
         />
       )}
@@ -1099,9 +1109,9 @@ function HeroManagerModal({
       <div className="modal hero-manager hero-pool-drawer" role="dialog" aria-modal="true" aria-labelledby="hero-pool-title" onClick={(e) => e.stopPropagation()}>
         <div className="hm-head">
           <div className="section-title-group">
-            <span className="section-kicker">Manual selection & pool settings</span>
+            <span className="section-kicker">Choose a hero</span>
             <h3 id="hero-pool-title">Hero pool</h3>
-            <p>Choose a hero directly, favorite frequent picks, or exclude heroes from rolls.</p>
+            <p>Search or filter, then select a hero for the active player.</p>
           </div>
           <button className="icon-button" type="button" onClick={onClose} aria-label="Close hero pool"><X size={20} /></button>
         </div>
@@ -1116,10 +1126,9 @@ function HeroManagerModal({
           <small>{selectedHeroes[targetPlayer] ? `Current: ${selectedHeroes[targetPlayer]}` : "No hero selected"}</small>
         </div>
         <div className="hm-toolbar">
-          <div className="hm-tabs">
-            <button type="button" className={`pool-tab ${tab === "all" ? "active" : ""}`} onClick={() => onTab("all")}>All</button>
-            <button type="button" className={`pool-tab ${tab === "favorites" ? "active" : ""}`} onClick={() => onTab("favorites")}><Ic.Star filled /> {favCount}</button>
-            <button type="button" className={`pool-tab ${tab === "disabled" ? "active" : ""}`} onClick={() => onTab("disabled")}><Ic.Reset /> {disabledCount}</button>
+          <div className="search-field hero-search">
+            <span aria-hidden="true">⌕</span>
+            <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Search all heroes…" aria-label="Search heroes" autoFocus />
           </div>
           <div className="role-tabs" role="tablist" aria-label="Filter heroes by role">
             {ROLE_ORDER.map((role) => (
@@ -1135,9 +1144,10 @@ function HeroManagerModal({
               </button>
             ))}
           </div>
-          <div className="search-field hero-search">
-            <span aria-hidden="true">⌕</span>
-            <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Search heroes..." aria-label="Search heroes" autoFocus />
+          <div className="hm-tabs">
+            <button type="button" className={`pool-tab ${tab === "all" ? "active" : ""}`} onClick={() => onTab("all")}>All</button>
+            <button type="button" className={`pool-tab ${tab === "favorites" ? "active" : ""}`} onClick={() => onTab("favorites")}><Ic.Star filled /> {favCount}</button>
+            <button type="button" className={`pool-tab ${tab === "disabled" ? "active" : ""}`} onClick={() => onTab("disabled")}><Ic.Reset /> {disabledCount}</button>
           </div>
           <details className="menu">
             <summary className="icon-button" aria-label="Hero pool reset actions"><Ellipsis size={19} /></summary>

@@ -11,12 +11,12 @@ import {
   Search,
   Settings2,
   ShieldCheck,
+  SlidersHorizontal,
   Sparkles,
   Sun,
   Swords,
   Trophy,
   Upload,
-  Users,
   X,
 } from "lucide-react";
 
@@ -97,11 +97,9 @@ type SessionSummaryProps = {
 
 export function SessionSummary({ players, selected, completed, wins, losses, winRate, streak }: SessionSummaryProps) {
   const items = [
-    { label: "Players", value: players, detail: "active", icon: Users },
-    { label: "Selected", value: selected, detail: "heroes", icon: Sparkles },
-    { label: "Completed", value: completed, detail: "total", icon: CheckCircle2 },
+    { label: "Lineup", value: `${selected}/${players}`, detail: selected === players ? "ready" : "selected", icon: Sparkles },
     { label: "Record", value: `${wins}-${losses}`, detail: `${winRate}% win rate`, icon: Trophy },
-    { label: "Streak", value: streak, detail: streak === 1 ? "completion" : "completions", icon: Flame },
+    { label: "Progress", value: completed, detail: streak > 0 ? `${streak} streak` : "completed", icon: Flame },
   ];
 
   return (
@@ -158,48 +156,53 @@ export function LineupToolbar({
         <div>
           <span className="section-kicker">Live selector</span>
           <h1 id="lineup-controls-title">Build your lineup</h1>
-          <p>Set each player’s role, then roll a balanced squad in one click.</p>
+          <p>Choose roles, roll a squad, and keep the session moving.</p>
         </div>
         <div className="toolbar-primary-actions">
           <button type="button" className={`button button--primary ${rolling ? "is-loading" : ""}`} onClick={onRoll} disabled={rolling}>
             <Swords size={19} /> {rolling ? "Rolling lineup…" : "Roll lineup"}
           </button>
           <button type="button" className="button button--secondary" onClick={onBrowse}>
-            <Sparkles size={18} /> Browse hero pool
+            <Sparkles size={18} /> Choose heroes
+          </button>
+          <button type="button" className="button button--quiet toolbar-complete" onClick={onCompleteAll} disabled={!anyHeroPicked}>
+            <CheckCircle2 size={17} /> Complete all
           </button>
         </div>
       </div>
 
-      <div className="toolbar-filters">
-        <label className="search-control">
-          <Search size={18} aria-hidden="true" />
-          <span className="sr-only">Search players</span>
-          <input value={search} onChange={(event) => onSearch(event.target.value)} placeholder="Search players…" />
-          {search && <button type="button" onClick={() => onSearch("")} aria-label="Clear player search"><X size={16} /></button>}
-        </label>
+      <div className="toolbar-secondary-row">
+        <details className="toolbar-filter-menu">
+          <summary className="button button--quiet"><SlidersHorizontal size={17} /> Find & filter <ChevronDown size={16} /></summary>
+          <div className="toolbar-filters">
+            <label className="search-control">
+              <Search size={18} aria-hidden="true" />
+              <span className="sr-only">Search players</span>
+              <input value={search} onChange={(event) => onSearch(event.target.value)} placeholder="Find a player…" />
+              {search && <button type="button" onClick={() => onSearch("")} aria-label="Clear player search"><X size={16} /></button>}
+            </label>
 
-        <div className="segmented-control" role="group" aria-label="Filter lineup by role">
-          {ROLES.map((item) => (
-            <button key={item} type="button" className={role === item ? "is-active" : ""} onClick={() => onRole(item)} aria-pressed={role === item}>
-              {item}
-            </button>
-          ))}
-        </div>
+            <div className="segmented-control" role="group" aria-label="Filter lineup by role">
+              {ROLES.map((item) => (
+                <button key={item} type="button" className={role === item ? "is-active" : ""} onClick={() => onRole(item)} aria-pressed={role === item}>
+                  {item}
+                </button>
+              ))}
+            </div>
 
-        <label className="select-control">
-          <span className="sr-only">Filter by completion status</span>
-          <select value={status} onChange={(event) => onStatus(event.target.value as StatusFilterValue)}>
-            <option value="all">All statuses</option>
-            <option value="in-progress">In progress</option>
-            <option value="completed">Completed</option>
-            <option value="not-started">Not started</option>
-          </select>
-          <ChevronDown size={16} aria-hidden="true" />
-        </label>
-
-        <button type="button" className="button button--quiet" onClick={onCompleteAll} disabled={!anyHeroPicked}>
-          <CheckCircle2 size={17} /> Complete all
-        </button>
+            <label className="select-control">
+              <span className="sr-only">Filter by completion status</span>
+              <select value={status} onChange={(event) => onStatus(event.target.value as StatusFilterValue)}>
+                <option value="all">All statuses</option>
+                <option value="in-progress">In progress</option>
+                <option value="completed">Completed</option>
+                <option value="not-started">Not started</option>
+              </select>
+              <ChevronDown size={16} aria-hidden="true" />
+            </label>
+          </div>
+        </details>
+        {(search || role !== "All" || status !== "all") && <span className="filter-active-indicator">Filters active</span>}
         <details className="menu toolbar-overflow">
           <summary className="icon-button" aria-label="More lineup actions"><MoreHorizontal size={19} /></summary>
           <div className="menu-popover menu-popover--right">
@@ -222,19 +225,22 @@ type DataPanelProps = {
 
 export function DataExportPanel({ onExportPng, onExportJson, onImportJson, onCopy, onReset }: DataPanelProps) {
   return (
-    <section className="side-panel data-panel">
-      <header className="side-panel__header">
+    <details className="side-panel utility-disclosure data-panel">
+      <summary className="side-panel__header">
         <span className="side-panel__icon"><Database size={17} /></span>
-        <div><h2>Data & export</h2><p>Portable session tools</p></div>
-      </header>
-      <div className="data-action-grid">
-        <button type="button" onClick={onExportPng}><Download size={17} /><span>Snapshot<small>PNG image</small></span></button>
-        <button type="button" onClick={onExportJson}><Download size={17} /><span>Export<small>JSON backup</small></span></button>
-        <button type="button" onClick={onImportJson}><Upload size={17} /><span>Import<small>Restore JSON</small></span></button>
-        <button type="button" onClick={onCopy}><Copy size={17} /><span>Copy<small>Lineup text</small></span></button>
+        <div><h2>Data & export</h2><p>Backups and sharing</p></div>
+        <ChevronDown size={17} className="disclosure-chevron" />
+      </summary>
+      <div className="utility-disclosure__body">
+        <div className="data-action-grid">
+          <button type="button" onClick={onExportPng}><Download size={17} /><span>Snapshot<small>PNG image</small></span></button>
+          <button type="button" onClick={onExportJson}><Download size={17} /><span>Export<small>JSON backup</small></span></button>
+          <button type="button" onClick={onImportJson}><Upload size={17} /><span>Import<small>Restore JSON</small></span></button>
+          <button type="button" onClick={onCopy}><Copy size={17} /><span>Copy<small>Lineup text</small></span></button>
+        </div>
+        <button type="button" className="text-danger-action" onClick={onReset}><RotateCcw size={15} /> Reset all saved data</button>
       </div>
-      <button type="button" className="text-danger-action" onClick={onReset}><RotateCcw size={15} /> Reset all saved data</button>
-    </section>
+    </details>
   );
 }
 
