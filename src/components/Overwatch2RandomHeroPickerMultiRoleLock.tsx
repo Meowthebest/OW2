@@ -246,6 +246,10 @@ function HeroImage({ name, size = 48 }: { name: string | null; size?: number }) 
 
 export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [theme, setTheme] = useStoredState<"dark" | "light">("ow2_theme", "dark");
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
   const [playerCount, setPlayerCount] = useStoredState<number>("ow2_player_count", 3);
   const [playerNames, setPlayerNames] = useStoredState<Record<PlayerId, string>>("ow2_names", DEFAULT_NAMES);
   const [playerRoles, setPlayerRoles] = useStoredState<Record<PlayerId, RoleFilter>>("ow2_roles", { 1: "All", 2: "All", 3: "All", 4: "All", 5: "All" });
