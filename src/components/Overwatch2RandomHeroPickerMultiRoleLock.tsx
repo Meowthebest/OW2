@@ -1,4 +1,35 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  CircleDot,
+  Clock3,
+  Download,
+  Edit3,
+  Ellipsis,
+  Flame,
+  History,
+  RotateCcw,
+  Settings2,
+  Shield,
+  Sparkles,
+  Swords,
+  Target,
+  Trophy,
+  Upload,
+  Users,
+  X,
+} from "lucide-react";
+import {
+  AppHeader,
+  DataExportPanel,
+  LineupToolbar,
+  MobileActionBar,
+  SessionSummary,
+  ToastStack,
+  type RoleFilterValue,
+} from "./HeroSelectorChrome";
 
 const ROLE_ORDER = ["All", "Tank", "Damage", "Support"] as const;
 type RoleFilter = (typeof ROLE_ORDER)[number];
@@ -14,7 +45,7 @@ type MatchLogEntry = {
   at: number;
   result: "W" | "L";
   /** Snapshot of the active player slots when the result was recorded */
-  slots: { name: string; hero: string | null }[];
+  slots: { name: string; hero: string | null; role?: RoleFilter; completed?: boolean }[];
 };
 
 const HERO_BY_ROLE: Record<Role, string[]> = {
@@ -233,7 +264,9 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [heroManagerRole, setHeroManagerRole] = useState<RoleFilter>("All");
   const [heroManagerSearch, setHeroManagerSearch] = useState("");
   const [heroManagerTab, setHeroManagerTab] = useState<"all" | "favorites" | "disabled">("all");
+  const [heroManagerTarget, setHeroManagerTarget] = useState<PlayerId>(1);
   const [playerSearch, setPlayerSearch] = useState("");
+  const [playerRoleFilter, setPlayerRoleFilter] = useState<RoleFilter>("All");
   const [playerStatus, setPlayerStatus] = useState<StatusFilter>("all");
   const [sortMode, setSortMode] = useState<SortMode>("name");
   const [error, setError] = useState("");
@@ -243,6 +276,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   const [confirmAction, setConfirmAction] = useState<null | { message: string; onConfirm: () => void }>(null);
   const [undoReroll, setUndoReroll] = useState<Record<PlayerId, string | null>>({ 1: null, 2: null, 3: null, 4: null, 5: null });
   const [matchHistoryOpen, setMatchHistoryOpen] = useState(true);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -305,6 +339,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       };
     })
       .filter((r) => r.name.toLowerCase().includes(playerSearch.toLowerCase()))
+      .filter((r) => playerRoleFilter === "All" || r.heroRole === playerRoleFilter || (!r.hero && r.role === playerRoleFilter))
       .filter((r) => playerStatus === "all" || r.status === playerStatus);
 
     rows.sort((a, b) => {
@@ -314,7 +349,7 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       return a.status.localeCompare(b.status);
     });
     return rows;
-  }, [activePlayers, completedHeroes, lineup, playerNames, playerRoles, playerSearch, playerStatus, progress, roleByHero, sortMode]);
+  }, [activePlayers, completedHeroes, lineup, playerNames, playerRoleFilter, playerRoles, playerSearch, playerStatus, progress, roleByHero, sortMode]);
 
   const favCount = useMemo(() => Object.values(favorites).filter(Boolean).length, [favorites]);
   const disabledCount = useMemo(() => Object.values(disabledHeroes).filter(Boolean).length, [disabledHeroes]);
@@ -327,8 +362,10 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
       activePlayers.map((id) => ({
         name: playerNames[id],
         hero: lineup[id] ?? null,
+        role: playerRoles[id],
+        completed: !!lineup[id] && (completedHeroes[id] ?? []).includes(lineup[id] as string),
       })),
-    [activePlayers, playerNames, lineup],
+    [activePlayers, completedHeroes, playerNames, playerRoles, lineup],
   );
 
   const pickHeroFor = (playerId: PlayerId, taken: Set<string>) => {
@@ -540,6 +577,64 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
     }
   };
 
+  const exportSessionJson = () => {
+    const snapshot = {
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      playerCount,
+      playerNames,
+      playerRoles,
+      lineup,
+      favorites,
+      disabledHeroes,
+      uniqueTeam,
+      manualOverride,
+      progress,
+      completedHeroes,
+      matchLog,
+      completionStreak,
+      bestCompletionStreak,
+      theme,
+    };
+    const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `ow2-hero-selector-${Date.now()}.json`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setNotice("Session backup exported.");
+  };
+
+  const importSessionJson = async (file: File) => {
+    try {
+      const imported = JSON.parse(await file.text()) as Record<string, unknown>;
+      if (!imported || typeof imported !== "object" || !imported.playerNames || !imported.lineup) {
+        throw new Error("Invalid Hero Selector backup");
+      }
+      if (typeof imported.playerCount === "number") setPlayerCount(Math.max(1, Math.min(5, imported.playerCount)));
+      if (imported.playerNames) setPlayerNames(imported.playerNames as Record<PlayerId, string>);
+      if (imported.playerRoles) setPlayerRoles(imported.playerRoles as Record<PlayerId, RoleFilter>);
+      if (imported.lineup) setLineup(imported.lineup as Record<PlayerId, string | null>);
+      if (imported.favorites) setFavorites(imported.favorites as Record<string, boolean>);
+      if (imported.disabledHeroes) setDisabledHeroes(imported.disabledHeroes as Record<string, boolean>);
+      if (typeof imported.uniqueTeam === "boolean") setUniqueTeam(imported.uniqueTeam);
+      if (typeof imported.manualOverride === "boolean") setManualOverride(imported.manualOverride);
+      if (imported.progress) setProgress(imported.progress as Record<PlayerId, ProgressInfo>);
+      if (imported.completedHeroes) setCompletedHeroes(imported.completedHeroes as Record<PlayerId, string[]>);
+      if (Array.isArray(imported.matchLog)) setMatchLog(imported.matchLog as MatchLogEntry[]);
+      if (typeof imported.completionStreak === "number") setCompletionStreak(imported.completionStreak);
+      if (typeof imported.bestCompletionStreak === "number") setBestCompletionStreak(imported.bestCompletionStreak);
+      if (imported.theme === "dark" || imported.theme === "light") setTheme(imported.theme);
+      setError("");
+      setNotice("Session backup restored.");
+    } catch {
+      setError("That file is not a valid Hero Selector backup.");
+    } finally {
+      if (importInputRef.current) importInputRef.current.value = "";
+    }
+  };
+
   const totalMatches = wins + losses;
   const winRate = totalMatches === 0 ? 0 : Math.round((wins / totalMatches) * 100);
   const totalCompleted = activePlayers.reduce((acc, id) => acc + (completedHeroes[id]?.length ?? 0), 0);
@@ -635,180 +730,115 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
   };
 
   const anyHeroPicked = activePlayers.some((id) => !!lineup[id]);
+  const selectedCount = activePlayers.filter((id) => !!lineup[id]).length;
 
   return (
-    <div className={`ow2-root ${theme}`}>
-      <div className="dashboard-layout">
-        <aside className="settings-column">
-          <div className="sidebar-heading">
-            <span className="section-eyebrow">Session overview</span>
-            <h2>Control center</h2>
-          </div>
-          <section className="stats-strip card">
-            <div className="stat">
-              <span className="stat-label"><Ic.Win /> Match results</span>
-              <div className="stat-value">
-                <strong>{wins}-{losses}</strong>
-                <small>{winRate}% WR</small>
+    <div className={`ow2-root ${theme}`} id="top">
+      <AppHeader
+        theme={theme}
+        selectedCount={selectedCount}
+        playerCount={playerCount}
+        onThemeChange={setTheme}
+        onOpenSettings={() => document.getElementById("session-settings")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+        onResetSession={clearAllData}
+      />
+      <main className="app-shell">
+        <SessionSummary
+          players={playerCount}
+          selected={selectedCount}
+          completed={totalCompleted}
+          wins={wins}
+          losses={losses}
+          winRate={winRate}
+          streak={completionStreak}
+        />
+        <div className="dashboard-layout">
+          <aside className="settings-column" aria-label="Session control panel">
+            <section className="side-panel match-results-panel">
+              <header className="side-panel__header">
+                <span className="side-panel__icon"><Trophy size={17} /></span>
+                <div><h2>Match results</h2><p>Track this session</p></div>
+                <button type="button" className="icon-button icon-button--small" onClick={undoLastResult} disabled={matchLog.length === 0} title="Undo last result" aria-label="Undo last match result"><RotateCcw size={16} /></button>
+              </header>
+              <div className="record-display">
+                <span><strong>{wins}</strong><small>Wins</small></span>
+                <em>–</em>
+                <span><strong>{losses}</strong><small>Losses</small></span>
+                <div className="record-rate"><strong>{winRate}%</strong><small>Win rate</small></div>
               </div>
-              <div className="stat-actions stat-actions--stack">
-                <div className="stat-actions-row2">
-                  <button className="btn sm" type="button" onClick={() => registerResult("W")}>Win</button>
-                  <button className="btn sm ghost" type="button" onClick={() => registerResult("L")}>Loss</button>
-                  <button
-                    className="btn sm ghost"
-                    type="button"
-                    onClick={undoLastResult}
-                    disabled={matchLog.length === 0}
-                    title="Undo the last Win or Loss you logged"
-                  >
-                    <Ic.Undo /> Undo
-                  </button>
-                </div>
-                <button className="btn sm ghost" type="button" onClick={resetMatchRecord} title="Reset W/L and match log to 0-0">
-                  <Ic.Reset /> Reset
-                </button>
+              <div className="win-rate-track" aria-label={`${winRate}% win rate`}><span style={{ width: `${winRate}%` }} /></div>
+              <div className="result-actions">
+                <button type="button" className="result-button result-button--win" onClick={() => registerResult("W")}><Check size={18} /> Record win</button>
+                <button type="button" className="result-button result-button--loss" onClick={() => registerResult("L")}><X size={18} /> Record loss</button>
               </div>
-            </div>
-            <div className="stat">
-              <span className="stat-label"><Ic.Check /> Completion</span>
-              <div className="stat-value">
-                <strong>{totalCompleted}</strong>
-                <small>{avgProgress}% avg</small>
-              </div>
-              <div className="stat-actions">
-                <button className="btn sm ghost" type="button" onClick={() => setCompletionStreak(0)}>Reset streak</button>
-              </div>
-            </div>
-            <div className="stat">
-              <span className="stat-label"><Ic.Star filled /> Hero settings</span>
-              <div className="stat-value">
-                <strong>{favCount}</strong>
-                <small>{disabledCount} disabled</small>
-              </div>
-              <div className="stat-actions">
-                <button className="btn sm" type="button" onClick={() => setHeroManagerOpen(true)}>
-                  <Ic.Gear /> Hero Pool
-                </button>
-              </div>
-            </div>
-          </section>
+            </section>
 
-          <details className="ow2-toolbar card" open>
-            <summary className="details-summary">
-              <span><Ic.Gear /> Session settings</span>
-              <span className="chev">▾</span>
-            </summary>
-            <div className="details-body">
-              <div className="toolbar-left">
-                <label>
-                  Theme
-                  <select value={theme} onChange={(e) => setTheme(e.target.value as "dark" | "light")}>
-                    <option value="dark">Dark</option>
-                    <option value="light">Light</option>
-                  </select>
-                </label>
-                <label>
-                  Players
-                  <select value={playerCount} onChange={(e) => setPlayerCount(Number(e.target.value))}>
-                    {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
-                  </select>
-                </label>
-                <label>
-                  Sort
-                  <select value={sortMode} onChange={(e) => setSortMode(e.target.value as SortMode)}>
-                    <option value="name">Name</option>
-                    <option value="progress">Progress</option>
-                    <option value="completion">Completion</option>
-                    <option value="status">Status</option>
-                  </select>
-                </label>
+            <section className="side-panel completion-panel">
+              <header className="side-panel__header">
+                <span className="side-panel__icon"><Target size={17} /></span>
+                <div><h2>Completion</h2><p>Squad progress</p></div>
+                <details className="menu">
+                  <summary className="icon-button icon-button--small" aria-label="Completion actions"><Ellipsis size={17} /></summary>
+                  <div className="menu-popover menu-popover--right">
+                    <button type="button" className="menu-item" onClick={() => setCompletionStreak(0)}><RotateCcw size={16} /> Reset streak</button>
+                  </div>
+                </details>
+              </header>
+              <div className="completion-metrics">
+                <div><strong>{totalCompleted}</strong><span>heroes completed</span></div>
+                <div><strong>{avgProgress}%</strong><span>average progress</span></div>
               </div>
-              <div className="toolbar-right">
-                <label className="toggle">
-                  <input type="checkbox" checked={uniqueTeam} onChange={(e) => setUniqueTeam(e.target.checked)} />
-                  Unique team
-                </label>
-                <label className="toggle">
-                  <input type="checkbox" checked={manualOverride} onChange={(e) => setManualOverride(e.target.checked)} />
-                  Manual override
-                </label>
-              </div>
-            </div>
-          </details>
+              <div className="streak-banner"><Flame size={18} /><span><strong>{completionStreak}</strong> current streak</span><small>Best {bestCompletionStreak}</small></div>
+            </section>
 
-          <details className="ow2-data card">
-            <summary className="details-summary">
-              <span><Ic.Copy /> Data & export</span>
-              <span className="chev">▾</span>
-            </summary>
-            <div className="details-body data-details-body">
-              <p className="ow2-data-hint">Everything is stored in this browser. Export a PNG to share, or clear all stored keys and reload.</p>
-              <div className="ow2-data-actions">
-                <button className="btn" type="button" onClick={exportSnapshotPng}>
-                  <Ic.Copy /> Export snapshot PNG
-                </button>
-                <button className="btn danger" type="button" onClick={clearAllData}>
-                  <Ic.Trash /> Clear all data
-                </button>
+            <section className="side-panel settings-panel" id="session-settings">
+              <header className="side-panel__header">
+                <span className="side-panel__icon"><Settings2 size={17} /></span>
+                <div><h2>Session settings</h2><p>Draft preferences</p></div>
+              </header>
+              <div className="settings-grid">
+                <label><span>Players</span><select value={playerCount} onChange={(event) => setPlayerCount(Number(event.target.value))}>{[1,2,3,4,5].map((count) => <option key={count}>{count}</option>)}</select></label>
+                <label><span>Sort lineup</span><select value={sortMode} onChange={(event) => setSortMode(event.target.value as SortMode)}><option value="name">Name</option><option value="progress">Progress</option><option value="completion">Completion</option><option value="status">Status</option></select></label>
+                <label><span>Theme</span><select value={theme} onChange={(event) => setTheme(event.target.value as "dark" | "light")}><option value="dark">Dark</option><option value="light">Light</option></select></label>
               </div>
-            </div>
-          </details>
-        </aside>
+              <label className="switch-row"><span><strong>Unique team</strong><small>Prevent duplicate heroes</small></span><input type="checkbox" checked={uniqueTeam} onChange={(event) => setUniqueTeam(event.target.checked)} /></label>
+              <label className="switch-row"><span><strong>Manual override</strong><small>Ignore player role when editing</small></span><input type="checkbox" checked={manualOverride} onChange={(event) => setManualOverride(event.target.checked)} /></label>
+            </section>
+
+            <DataExportPanel
+              onExportPng={exportSnapshotPng}
+              onExportJson={exportSessionJson}
+              onImportJson={() => importInputRef.current?.click()}
+              onCopy={copyLineup}
+              onReset={clearAllData}
+            />
+            <input
+              ref={importInputRef}
+              className="sr-only"
+              type="file"
+              accept="application/json,.json"
+              onChange={(event) => event.target.files?.[0] && importSessionJson(event.target.files[0])}
+              tabIndex={-1}
+              aria-hidden="true"
+            />
+          </aside>
 
         <main className="content-column">
-          <section className="draft-command card" aria-labelledby="lineup-title">
-            <div className="draft-command-copy">
-              <span className="section-eyebrow">Current session</span>
-              <h2 id="lineup-title">Build your lineup</h2>
-              <p>Choose role locks, then roll a fresh hero for every active player.</p>
-            </div>
-
-            <div className="draft-summary" aria-label="Session summary">
-              <span><strong>{playerCount}</strong> players</span>
-              <span><strong>{activePlayers.filter((id) => lineup[id]).length}</strong> selected</span>
-              <span><strong>{totalCompleted}</strong> completed</span>
-            </div>
-
-            <div className="draft-primary-actions">
-              <button className={`btn primary glow draft-button ${rolling ? "rolling" : ""}`} type="button" onClick={runDraft} disabled={rolling}>
-                <Ic.Dice /> {rolling ? "Selecting heroes..." : anyHeroPicked ? "Roll new lineup" : "Select heroes"}
-              </button>
-              <button className="btn hero-pool-button" type="button" onClick={() => setHeroManagerOpen(true)}>
-                <Ic.Gear /> Browse hero pool
-              </button>
-            </div>
-
-            <div className="draft-tools">
-              <div className="search-field">
-                <span aria-hidden="true">⌕</span>
-                <input
-                  value={playerSearch}
-                  onChange={(e) => setPlayerSearch(e.target.value)}
-                  placeholder="Find a player..."
-                  aria-label="Search players"
-                />
-              </div>
-              <select
-                value={playerStatus}
-                onChange={(e) => setPlayerStatus(e.target.value as StatusFilter)}
-                aria-label="Filter players by status"
-              >
-                <option value="all">All statuses</option>
-                <option value="in-progress">In progress</option>
-                <option value="completed">Completed</option>
-                <option value="not-started">Not started</option>
-              </select>
-              <div className="draft-secondary-actions">
-                <button className="btn sm" type="button" onClick={finishAll} disabled={!anyHeroPicked}><Ic.Trophy /> Complete all</button>
-                <button className="btn sm ghost" type="button" onClick={copyLineup} disabled={!anyHeroPicked}><Ic.Copy /> Copy</button>
-                <button className="btn sm ghost" type="button" onClick={clearLineup} disabled={!anyHeroPicked}><Ic.Trash /> Clear</button>
-              </div>
-            </div>
-          </section>
-
-          {error && <div className="alert error">{error}</div>}
-          {notice && <div className="alert success">{notice}</div>}
+          <LineupToolbar
+            rolling={rolling}
+            anyHeroPicked={anyHeroPicked}
+            search={playerSearch}
+            role={playerRoleFilter as RoleFilterValue}
+            status={playerStatus}
+            onRoll={runDraft}
+            onBrowse={() => setHeroManagerOpen(true)}
+            onSearch={setPlayerSearch}
+            onRole={(role) => setPlayerRoleFilter(role as RoleFilter)}
+            onStatus={setPlayerStatus}
+            onCompleteAll={finishAll}
+            onCopy={copyLineup}
+            onClear={clearLineup}
+          />
 
           <section className="lineup-section" aria-labelledby="selected-heroes-title">
             <div className="lineup-heading">
@@ -826,123 +856,115 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           </div>
         )}
         {visiblePlayers.map((row) => (
-          <article key={row.id} className={`player-card card ${row.hero ? "filled" : ""} role-${row.heroRole ?? "none"}`}>
-            <header className="pc-head">
-              <div className="pc-meta">
-                <span className="pc-label">Player {row.id}</span>
-                <input
-                  className="pc-name"
-                  value={playerNames[row.id]}
-                  onChange={(e) => setPlayerNames((cur) => ({ ...cur, [row.id]: e.target.value }))}
-                  placeholder={`Player ${row.id}`}
-                />
-              </div>
-              <select
-                className="pc-role"
-                value={playerRoles[row.id]}
-                onChange={(e) => setPlayerRoles((cur) => ({ ...cur, [row.id]: e.target.value as RoleFilter }))}
-              >
-                {ROLE_ORDER.map((r) => <option key={r} value={r}>{r}</option>)}
-              </select>
+          <article key={row.id} className={`player-hero-card ${row.hero ? "is-selected" : "is-empty"} ${row.heroIsDone ? "is-completed" : ""} role-${row.heroRole ?? row.role}`}>
+            <header className="player-card-header">
+              <label className="player-name-field">
+                <span>Player {row.id}</span>
+                <input value={playerNames[row.id]} onChange={(event) => setPlayerNames((current) => ({ ...current, [row.id]: event.target.value }))} aria-label={`Player ${row.id} name`} />
+              </label>
+              <label className="role-select">
+                <span className="sr-only">Role for {row.name}</span>
+                <Shield size={16} aria-hidden="true" />
+                <select value={playerRoles[row.id]} onChange={(event) => setPlayerRoles((current) => ({ ...current, [row.id]: event.target.value as RoleFilter }))}>
+                  {ROLE_ORDER.map((role) => <option key={role}>{role}</option>)}
+                </select>
+                <ChevronDown size={15} aria-hidden="true" />
+              </label>
+              <details className="menu player-menu">
+                <summary className="icon-button icon-button--small" aria-label={`More actions for ${row.name}`}><Ellipsis size={18} /></summary>
+                <div className="menu-popover menu-popover--right">
+                  {undoReroll[row.id] && <button type="button" className="menu-item" onClick={() => undoRerollForPlayer(row.id)}><RotateCcw size={16} /> Restore {undoReroll[row.id]}</button>}
+                  <button type="button" className="menu-item menu-item--danger" onClick={() => resetPlayerProgress(row.id)}><RotateCcw size={16} /> Reset player progress</button>
+                </div>
+              </details>
             </header>
 
-            <div className="pc-hero" key={row.hero ?? `empty-${row.id}`}>
-              <div className="pc-hero-figure" aria-hidden>
-                <HeroImage name={row.hero} size={88} />
+            {row.hero ? (
+              <div className="selected-hero-stage" key={row.hero}>
+                {HERO_IMAGE_MAP[row.hero] && <img className="hero-art-backdrop" src={HERO_IMAGE_MAP[row.hero]} alt="" aria-hidden="true" />}
+                <div className="hero-art-primary"><HeroImage name={row.hero} size={220} /></div>
+                <div className="selected-hero-copy">
+                  <span className={`hero-status ${row.heroIsDone ? "is-complete" : ""}`}><CircleDot size={13} /> {row.heroIsDone ? "Completed" : "Selected"}</span>
+                  <h3>{row.hero}</h3>
+                  <p><Shield size={16} /> {row.heroRole}</p>
+                </div>
+                {row.heroIsDone && <span className="completion-seal" aria-label="Hero completed"><CheckCircle2 size={23} /></span>}
               </div>
-              <div className="pc-hero-info">
-                <span className="pc-hero-name">{row.hero ?? "Ready to roll"}</span>
-                <span className="pc-hero-role">{row.hero ? row.heroRole : "Awaiting draft"}</span>
+            ) : (
+              <div className="hero-empty-state">
+                <span className="empty-role-mark"><Shield size={28} /></span>
+                <div><h3>Ready to roll</h3><p>{row.role === "All" ? "Any role is available for this player." : `Only ${row.role} heroes will be selected.`}</p></div>
+                <button type="button" className="button button--primary" onClick={() => rerollPlayer(row.id)} disabled={rolling}><Swords size={18} /> Roll hero</button>
               </div>
-              {row.heroIsDone && <span className="pc-done-pill"><Ic.Check /> Completed</span>}
+            )}
+
+            <div className="player-progress-block">
+              <div className="player-progress-copy"><span>Completion progress</span><strong>{row.progress.completed} / {row.progress.target}<em>{row.pct}%</em></strong></div>
+              <div className="progress-track"><span style={{ width: `${Math.min(100, row.pct)}%` }} /></div>
             </div>
 
-            <div className="pc-progress">
-              <div className="progress-bar"><div className="progress-fill" style={{ width: `${Math.min(100, row.pct)}%` }} /></div>
-              <div className="pc-progress-meta">
-                <strong>{row.pct}%</strong>
-                <span>{row.progress.completed}/{row.progress.target}</span>
-              </div>
-            </div>
+            {row.progress.notes && <p className="player-note">{row.progress.notes}</p>}
 
-            {row.progress.notes && <p className="notes">{row.progress.notes}</p>}
-
-            <div className="pc-actions">
-              <button className={`btn primary full ${row.heroIsDone ? "is-done" : ""}`} type="button" onClick={() => (row.heroIsDone && row.hero ? undoComplete(row.id, row.hero) : markComplete(row.id))} disabled={!row.hero}>
-                {row.heroIsDone ? <><Ic.Undo /> Undo Complete</> : <><Ic.Check /> Complete</>}
+            <footer className="player-card-actions">
+              <button type="button" className="button button--quiet" onClick={() => rerollPlayer(row.id)} disabled={rolling}><RotateCcw size={17} /> Reroll</button>
+              <button type="button" className="button button--quiet" onClick={() => setEditingPlayer(row.id)}><Edit3 size={17} /> Change hero</button>
+              <button
+                type="button"
+                className={`button player-primary-action ${row.heroIsDone ? "is-completed" : ""}`}
+                onClick={() => row.heroIsDone && row.hero ? undoComplete(row.id, row.hero) : markComplete(row.id)}
+                disabled={!row.hero}
+              >
+                {row.heroIsDone ? <><CheckCircle2 size={18} /> Completed</> : <><Check size={18} /> Mark complete</>}
               </button>
-              <div className="pc-actions-row">
-                <button className="btn sm" type="button" onClick={() => rerollPlayer(row.id)} disabled={rolling}><Ic.Refresh /> Reroll</button>
-                <button className="btn sm" type="button" onClick={() => setEditingPlayer(row.id)}><Ic.Edit /> Edit Hero</button>
-                <button className="btn sm ghost" type="button" onClick={() => resetPlayerProgress(row.id)}><Ic.Reset /> Reset</button>
-              </div>
-              {undoReroll[row.id] && (
-                <button className="btn sm ghost full" type="button" onClick={() => undoRerollForPlayer(row.id)}>
-                  <Ic.Undo /> Restore {undoReroll[row.id]}
-                </button>
-              )}
-            </div>
+            </footer>
 
             {row.doneList.length > 0 && (
-              <div className="pc-completed">
-                <span className="pc-completed-label"><Ic.Trophy /> Completed heroes</span>
-                <div className="pc-completed-chips pc-completed-chips--scroll" title="Click a hero to un-complete (they can be rolled again)">
-                  {row.doneList.map((h) => (
-                    <button key={h} className="chip" type="button" onClick={() => undoComplete(row.id, h)}>{h}</button>
-                  ))}
-                </div>
-              </div>
+              <details className="completed-heroes-disclosure">
+                <summary><Trophy size={15} /> {row.doneList.length} completed heroes <ChevronDown size={15} /></summary>
+                <div>{row.doneList.map((hero) => <button key={hero} type="button" onClick={() => undoComplete(row.id, hero)}>{hero}<X size={13} /></button>)}</div>
+              </details>
             )}
           </article>
         ))}
             </div>
           </section>
 
-          <section className="card match-history">
-            <button type="button" className="match-history-head" onClick={() => setMatchHistoryOpen((o) => !o)} aria-expanded={matchHistoryOpen}>
-              <div className="section-title-group">
-                <span className="section-eyebrow"><Ic.History /> Match log</span>
-                <h3>Wins, losses, and the lineup from each result</h3>
-              </div>
-              <span className={`chev ${matchHistoryOpen ? "open" : ""}`}>▾</span>
-            </button>
-            {matchHistoryOpen && (
-              <div className="match-history-body">
-                {matchLog.length === 0 ? (
-                  <div className="empty compact">
-                    <p>Log a Win or Loss to store a snapshot of your current draft (most recent on top). Use Undo in Match results to revert the last entry.</p>
-                  </div>
-                ) : (
-                  <div className="match-history-list">
-                    {[...matchLog]
-                      .reverse()
-                      .map((e) => (
-                        <div key={e.id} className={`match-history-row ${e.result === "W" ? "is-win" : "is-loss"}`}>
-                          <div className="match-history-badges">
-                            <span className="match-history-rl">{e.result}</span>
-                            <span className="match-history-time">{formatRelative(e.at)}</span>
-                          </div>
-                          <p className="match-history-lineup">
-                            {e.slots.length === 0
-                              ? "Lineup not recorded (imported or older log)."
-                              : e.slots.map((s) => `${s.name}: ${s.hero ?? "—"}`).join(" · ")}
-                          </p>
+          <section className="match-history-section" aria-labelledby="match-history-title">
+            <header className="section-heading">
+              <div><span className="section-kicker">Session timeline</span><h2 id="match-history-title">Match history</h2><p>Every recorded result keeps the lineup that played it.</p></div>
+              {matchLog.length > 0 && <button type="button" className="button button--quiet" onClick={resetMatchRecord}><RotateCcw size={16} /> Clear history</button>}
+            </header>
+            {matchLog.length === 0 ? (
+              <div className="history-empty-state"><span><History size={26} /></span><div><h3>No matches recorded yet</h3><p>Use Record win or Record loss in the control panel to start your session timeline.</p></div></div>
+            ) : (
+              <div className="history-list">
+                {[...matchLog].reverse().map((entry) => (
+                  <details key={entry.id} className={`history-entry ${entry.result === "W" ? "is-win" : "is-loss"}`}>
+                    <summary>
+                      <span className="result-badge">{entry.result === "W" ? "WIN" : "LOSS"}</span>
+                      <span className="history-time"><Clock3 size={15} /> {formatRelative(entry.at)}</span>
+                      <div className="history-portraits" aria-label="Heroes used">
+                        {entry.slots.slice(0, 5).map((slot, index) => <HeroImage key={`${entry.id}-${index}`} name={slot.hero} size={38} />)}
+                      </div>
+                      <span className="history-expand">Details <ChevronDown size={15} /></span>
+                    </summary>
+                    <div className="history-entry-details">
+                      {entry.slots.length === 0 ? <p>Lineup details were not available for this older entry.</p> : entry.slots.map((slot, index) => (
+                        <div key={`${entry.id}-detail-${index}`}>
+                          <HeroImage name={slot.hero} size={46} />
+                          <span><strong>{slot.name}</strong><small>{slot.hero ?? "No hero"} · {slot.role ?? "Any role"}</small></span>
+                          {slot.completed && <span className="mini-complete"><CheckCircle2 size={14} /> Complete</span>}
                         </div>
                       ))}
-                  </div>
-                )}
-                {matchLog.length > 0 && (
-                  <div className="match-history-foot">
-                    <button className="btn sm ghost" type="button" onClick={resetMatchRecord}>
-                      <Ic.Trash /> Clear W/L and log
-                    </button>
-                  </div>
-                )}
+                    </div>
+                  </details>
+                ))}
               </div>
             )}
           </section>
         </main>
       </div>
+      </main>
 
       {heroManagerOpen && (
         <HeroManagerModal
@@ -954,6 +976,11 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           disabledHeroes={disabledHeroes}
           favCount={favCount}
           disabledCount={disabledCount}
+          activePlayers={activePlayers}
+          playerNames={playerNames}
+          targetPlayer={heroManagerTarget}
+          selectedHeroes={lineup}
+          completedForTarget={completedHeroes[heroManagerTarget] ?? []}
           onClose={() => setHeroManagerOpen(false)}
           onRoleFilter={setHeroManagerRole}
           onSearch={setHeroManagerSearch}
@@ -962,6 +989,11 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           onToggleDisabled={(hero) => setDisabledHeroes((cur) => ({ ...cur, [hero]: !cur[hero] }))}
           onClearFavorites={clearFavorites}
           onClearDisabled={clearDisabled}
+          onTargetPlayer={setHeroManagerTarget}
+          onSelectHero={(hero) => {
+            setLineup((current) => ({ ...current, [heroManagerTarget]: hero }));
+            setNotice(`${hero} selected for ${playerNames[heroManagerTarget]}.`);
+          }}
         />
       )}
 
@@ -1003,6 +1035,8 @@ export default function Overwatch2RandomHeroPickerMultiRoleLock() {
           }}
         />
       )}
+      <ToastStack notice={notice} error={error} />
+      <MobileActionBar rolling={rolling} anyHeroPicked={anyHeroPicked} onRoll={runDraft} onReroll={runDraft} onCompleteAll={finishAll} />
     </div>
   );
 }
@@ -1016,6 +1050,11 @@ function HeroManagerModal({
   disabledHeroes,
   favCount,
   disabledCount,
+  activePlayers,
+  playerNames,
+  targetPlayer,
+  selectedHeroes,
+  completedForTarget,
   onClose,
   onRoleFilter,
   onSearch,
@@ -1024,6 +1063,8 @@ function HeroManagerModal({
   onToggleDisabled,
   onClearFavorites,
   onClearDisabled,
+  onTargetPlayer,
+  onSelectHero,
 }: {
   heroes: { name: string; role: Role }[];
   roleFilter: RoleFilter;
@@ -1033,6 +1074,11 @@ function HeroManagerModal({
   disabledHeroes: Record<string, boolean>;
   favCount: number;
   disabledCount: number;
+  activePlayers: PlayerId[];
+  playerNames: Record<PlayerId, string>;
+  targetPlayer: PlayerId;
+  selectedHeroes: Record<PlayerId, string | null>;
+  completedForTarget: string[];
   onClose: () => void;
   onRoleFilter: (v: RoleFilter) => void;
   onSearch: (v: string) => void;
@@ -1041,17 +1087,29 @@ function HeroManagerModal({
   onToggleDisabled: (hero: string) => void;
   onClearFavorites: () => void;
   onClearDisabled: () => void;
+  onTargetPlayer: (id: PlayerId) => void;
+  onSelectHero: (hero: string) => void;
 }) {
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal hero-manager card" role="dialog" aria-modal="true" aria-labelledby="hero-pool-title" onClick={(e) => e.stopPropagation()}>
+      <div className="modal hero-manager hero-pool-drawer" role="dialog" aria-modal="true" aria-labelledby="hero-pool-title" onClick={(e) => e.stopPropagation()}>
         <div className="hm-head">
           <div className="section-title-group">
-            <span className="section-eyebrow"><Ic.Gear /> Hero pool settings</span>
-            <h3 id="hero-pool-title">Choose your hero pool</h3>
-            <p>Favorite heroes appear more often. Disabled heroes are excluded from every roll.</p>
+            <span className="section-kicker">Manual selection & pool settings</span>
+            <h3 id="hero-pool-title">Hero pool</h3>
+            <p>Choose a hero directly, favorite frequent picks, or exclude heroes from rolls.</p>
           </div>
-          <button className="btn sm ghost" type="button" onClick={onClose} aria-label="Close hero pool">Close</button>
+          <button className="icon-button" type="button" onClick={onClose} aria-label="Close hero pool"><X size={20} /></button>
+        </div>
+        <div className="hero-pool-target">
+          <span>Selecting for</span>
+          <label className="select-control">
+            <select value={targetPlayer} onChange={(event) => onTargetPlayer(Number(event.target.value) as PlayerId)} aria-label="Player receiving manually selected hero">
+              {activePlayers.map((id) => <option key={id} value={id}>{playerNames[id]}</option>)}
+            </select>
+            <ChevronDown size={16} />
+          </label>
+          <small>{selectedHeroes[targetPlayer] ? `Current: ${selectedHeroes[targetPlayer]}` : "No hero selected"}</small>
         </div>
         <div className="hm-toolbar">
           <div className="hm-tabs">
@@ -1077,26 +1135,35 @@ function HeroManagerModal({
             <span aria-hidden="true">⌕</span>
             <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder="Search heroes..." aria-label="Search heroes" autoFocus />
           </div>
-          <button className="btn sm ghost" type="button" onClick={onClearFavorites} disabled={favCount === 0}>Clear Favorites</button>
-          <button className="btn sm ghost" type="button" onClick={onClearDisabled} disabled={disabledCount === 0}>Enable All</button>
+          <details className="menu">
+            <summary className="icon-button" aria-label="Hero pool reset actions"><Ellipsis size={19} /></summary>
+            <div className="menu-popover menu-popover--right">
+              <button className="menu-item" type="button" onClick={onClearFavorites} disabled={favCount === 0}><RotateCcw size={15} /> Clear favorites</button>
+              <button className="menu-item" type="button" onClick={onClearDisabled} disabled={disabledCount === 0}><RotateCcw size={15} /> Reset availability</button>
+            </div>
+          </details>
         </div>
         {heroes.length === 0 ? (
           <div className="empty compact"><p>No heroes match your current filters.</p></div>
         ) : (
           <div className="hero-grid-modal">
             {heroes.map((h) => (
-              <div key={h.name} className={`hero-tile role-${h.role} ${disabledHeroes[h.name] ? "disabled" : ""}`}>
-                <HeroImage name={h.name} size={42} />
-                <div className="hero-tile-meta">
-                  <strong>{h.name}</strong>
-                  <small>{h.role}</small>
-                </div>
+              <div key={h.name} className={`hero-tile role-${h.role} ${disabledHeroes[h.name] ? "disabled" : ""} ${selectedHeroes[targetPlayer] === h.name ? "selected" : ""} ${completedForTarget.includes(h.name) ? "completed" : ""}`}>
+                <button className="hero-tile-select" type="button" onClick={() => onSelectHero(h.name)} disabled={disabledHeroes[h.name]} aria-label={`Select ${h.name} for ${playerNames[targetPlayer]}`}>
+                  <HeroImage name={h.name} size={92} />
+                  <span className="hero-tile-meta">
+                    <strong>{h.name}</strong>
+                    <small><Shield size={13} /> {h.role}</small>
+                  </span>
+                  {selectedHeroes[targetPlayer] === h.name && <span className="hero-card-state"><Check size={14} /> Selected</span>}
+                  {completedForTarget.includes(h.name) && selectedHeroes[targetPlayer] !== h.name && <span className="hero-card-state hero-card-state--complete"><CheckCircle2 size={14} /> Complete</span>}
+                </button>
                 <div className="hero-tile-actions">
-                  <button className={`icon-btn ${favorites[h.name] ? "active" : ""}`} type="button" onClick={() => onToggleFavorite(h.name)} title="Favorite">
+                  <button className={`icon-button icon-button--small ${favorites[h.name] ? "active" : ""}`} type="button" onClick={() => onToggleFavorite(h.name)} title="Favorite" aria-label={`${favorites[h.name] ? "Remove" : "Add"} ${h.name} ${favorites[h.name] ? "from" : "to"} favorites`}>
                     <Ic.Star filled={favorites[h.name]} />
                   </button>
-                  <button className={`icon-btn ${disabledHeroes[h.name] ? "danger" : ""}`} type="button" onClick={() => onToggleDisabled(h.name)} title="Enable/Disable">
-                    <Ic.Reset />
+                  <button className={`icon-button icon-button--small ${disabledHeroes[h.name] ? "danger" : ""}`} type="button" onClick={() => onToggleDisabled(h.name)} title="Enable/Disable" aria-label={`${disabledHeroes[h.name] ? "Enable" : "Disable"} ${h.name}`}>
+                    {disabledHeroes[h.name] ? <Upload size={15} /> : <X size={15} />}
                   </button>
                 </div>
               </div>
