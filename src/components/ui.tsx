@@ -1,4 +1,5 @@
 import { useEffect, useId, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Check,
   CheckCircle2,
@@ -173,7 +174,7 @@ export function Modal({ open, onClose, title, eyebrow, children, size = 'medium'
   }, [onClose, open]);
 
   if (!open) return null;
-  return (
+  return createPortal(
     <div className="modal-layer" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
       <section className={cn('modal', 'modal--' + size, className)} role="dialog" aria-modal="true" aria-label={title}>
         <header className="modal__header">
@@ -182,7 +183,8 @@ export function Modal({ open, onClose, title, eyebrow, children, size = 'medium'
         </header>
         <div className="modal__body">{children}</div>
       </section>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

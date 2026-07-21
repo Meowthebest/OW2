@@ -83,6 +83,8 @@ assert.ok(slotNames.every((name) => name !== 'No hero selected'), 'Normal roll s
 clickButton(app.document, 'Configure challenge');
 await wait();
 assert.equal(app.document.querySelector('.modal h2')?.textContent, 'Configure Rank Challenge');
+assert.equal(app.document.querySelector('.modal-layer')?.parentElement, app.document.body, 'Dialogs should portal to the viewport root');
+assert.ok(app.document.querySelector('.rank-challenge-modal .modal-actions button.button--primary'), 'Rank Challenge start action should remain inside the dialog');
 clickButton(app.document, 'Start Rank Challenge');
 await wait();
 assert.match(app.document.body.textContent, /Rank Challenge live/);
