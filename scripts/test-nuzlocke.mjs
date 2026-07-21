@@ -4,10 +4,12 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const engineBundle = '/tmp/ow2-nuzlocke-engine.cjs';
 const storageBundle = '/tmp/ow2-storage-engine.cjs';
+const rankBundle = '/tmp/ow2-rank-engine.cjs';
 
 await Promise.all([
   build({ entryPoints: ['src/lib/nuzlocke.ts'], bundle: true, platform: 'node', format: 'cjs', outfile: engineBundle, logLevel: 'silent' }),
   build({ entryPoints: ['src/lib/storage.ts'], bundle: true, platform: 'node', format: 'cjs', outfile: storageBundle, logLevel: 'silent' }),
+  build({ entryPoints: ['src/lib/rankChallenge.ts'], bundle: true, platform: 'node', format: 'cjs', outfile: rankBundle, logLevel: 'silent' }),
 ]);
 
 const {
@@ -17,7 +19,14 @@ const {
   recordNuzlockeResult,
   undoNuzlockeAction,
 } = require(engineBundle);
-const { DEFAULT_NUZLOCKE_RULES, migrateLegacyNormalBackup, normalizeNuzlockeStore } = require(storageBundle);
+const { DEFAULT_NUZLOCKE_RULES, migrateLegacyNormalBackup, normalizeNuzlockeStore, normalizeRankChallengeStore } = require(storageBundle);
+const {
+  DEFAULT_RANK_CHALLENGE_CONFIG,
+  createRankChallenge,
+  recordRankChallengeResult,
+  updateRankChallengePosition,
+  undoRankChallenge,
+} = require(rankBundle);
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -88,6 +97,32 @@ assert(legacy.matches.length === 1, 'Legacy match history should migrate.');
 const roundTrip = JSON.parse(JSON.stringify(completed));
 assert(roundTrip.wins === completed.wins && roundTrip.events.length === completed.events.length, 'Run state should survive JSON persistence.');
 
+const climb = createRankChallenge('normal', {
+  ...DEFAULT_RANK_CHALLENGE_CONFIG,
+  startingPosition: { rank: 'Bronze', division: 5 },
+  goalPosition: { rank: 'Silver', division: 5 },
+  matchLimit: 5,
+});
+const climbWin = recordRankChallengeResult(climb, 'W', 'Tracer');
+assert(climbWin.wins === 1 && climbWin.heroesUsed.includes('Tracer'), 'Rank Challenge should track results and unique heroes.');
+const climbUndo = undoRankChallenge(climbWin);
+assert(climbUndo.wins === 0 && climbUndo.heroesUsed.length === 0 && climbUndo.phase === 'active', 'Rank result undo should restore the exact challenge state.');
+const rankGoal = updateRankChallengePosition(climbWin, { rank: 'Silver', division: 5 });
+assert(rankGoal.phase === 'completed' && rankGoal.endReason === 'rank-goal', 'Updating to the goal rank should complete the challenge.');
+const rankGoalUndo = undoRankChallenge(rankGoal);
+assert(rankGoalUndo.phase === 'active' && rankGoalUndo.currentPosition.rank === 'Bronze', 'A completed rank goal should be undoable.');
+
+const winTarget = createRankChallenge('nuzlocke', { ...DEFAULT_RANK_CHALLENGE_CONFIG, requiredWins: 1, matchLimit: null });
+const winTargetDone = recordRankChallengeResult(winTarget, 'W', 'Ana');
+assert(winTargetDone.phase === 'completed' && winTargetDone.endReason === 'required-wins', 'Optional required wins should complete the challenge.');
+const matchLimit = createRankChallenge('normal', { ...DEFAULT_RANK_CHALLENGE_CONFIG, requiredWins: null, matchLimit: 1 });
+const matchLimitDone = recordRankChallengeResult(matchLimit, 'L', 'D.Va');
+assert(matchLimitDone.phase === 'completed' && matchLimitDone.endReason === 'match-limit', 'Optional match limits should conclude the challenge.');
+
+const restoredChallenges = normalizeRankChallengeStore({ version: 1, normal: rankGoal, nuzlocke: winTargetDone });
+assert(restoredChallenges.normal?.endReason === 'rank-goal' && restoredChallenges.nuzlocke?.endReason === 'required-wins', 'Normal and Nuzlocke Rank Challenges should persist independently.');
+assert(restoredChallenges.normal?.undoSnapshot?.phase === 'active', 'Rank Challenge undo state should survive refresh.');
+
 console.log('NUZLOCKE_ENGINE_TESTS_PASS', {
   goalAndUndo: true,
   finalHero: true,
@@ -96,4 +131,7 @@ console.log('NUZLOCKE_ENGINE_TESTS_PASS', {
   manualAdvance: true,
   legacyMigration: true,
   persistence: true,
+  rankGoalAndUndo: true,
+  rankLimits: true,
+  separateRankModes: true,
 });

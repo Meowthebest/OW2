@@ -25,6 +25,7 @@ export type NormalMatch = {
   at: number;
   result: 'W' | 'L';
   heroes: { player: string; hero: string | null; role: RoleFilter }[];
+  rankPlayerId?: PlayerId;
 };
 
 export type NormalSession = {
@@ -148,4 +149,72 @@ export type AppPreferences = {
   theme: ThemeMode;
   compactCards: boolean;
   reducedEffects: boolean;
+};
+
+export type RankName = 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Master' | 'Grandmaster';
+export type RankDivision = 5 | 4 | 3 | 2 | 1;
+export type RankQueue = 'All' | Role | 'Open Queue';
+
+export type RankPosition = {
+  rank: RankName;
+  division: RankDivision;
+};
+
+export type RankChallengeConfig = {
+  startingPosition: RankPosition;
+  goalPosition: RankPosition;
+  queue: RankQueue;
+  randomizeAfterMatch: boolean;
+  requiredWins: number | null;
+  matchLimit: number | null;
+};
+
+export type RankChallengeEventType = 'start' | 'result' | 'rank' | 'end';
+export type RankChallengeEndReason = 'rank-goal' | 'required-wins' | 'match-limit' | 'ended' | 'nuzlocke-ended' | null;
+
+export type RankChallengeEvent = {
+  id: string;
+  at: number;
+  type: RankChallengeEventType;
+  detail: string;
+  hero: string | null;
+  result: 'W' | 'L' | null;
+  position: RankPosition;
+  wins: number;
+  losses: number;
+};
+
+export type RankChallengeSnapshot = {
+  phase: 'active' | 'completed';
+  currentPosition: RankPosition;
+  wins: number;
+  losses: number;
+  heroesUsed: string[];
+  events: RankChallengeEvent[];
+  endedAt: number | null;
+  endReason: RankChallengeEndReason;
+};
+
+export type RankChallenge = {
+  id: string;
+  version: 1;
+  mode: AppMode;
+  phase: 'active' | 'completed';
+  config: RankChallengeConfig;
+  currentPosition: RankPosition;
+  wins: number;
+  losses: number;
+  heroesUsed: string[];
+  events: RankChallengeEvent[];
+  startedAt: number;
+  endedAt: number | null;
+  endReason: RankChallengeEndReason;
+  undoSnapshot: RankChallengeSnapshot | null;
+  undoAction: RankChallengeEventType | null;
+};
+
+export type RankChallengeStore = {
+  version: 1;
+  normal: RankChallenge | null;
+  nuzlocke: RankChallenge | null;
 };

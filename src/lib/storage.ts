@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { HEROES } from '../data/heroes';
+import { DEFAULT_RANK_CHALLENGE_CONFIG, DIVISIONS, RANKS } from './rankChallenge';
 import type {
   AppPreferences,
   NormalMatch,
@@ -9,12 +10,20 @@ import type {
   NuzlockeRun,
   NuzlockeStore,
   PlayerId,
+  RankChallenge,
+  RankChallengeConfig,
+  RankChallengeEndReason,
+  RankChallengeEvent,
+  RankChallengeSnapshot,
+  RankChallengeStore,
+  RankPosition,
   RoleFilter,
 } from '../types';
 
 export const NORMAL_STORAGE_KEY = 'ow2_normal_v3';
 export const NUZLOCKE_STORAGE_KEY = 'ow2_nuzlocke_v1';
 export const PREFERENCES_STORAGE_KEY = 'ow2_preferences_v1';
+export const RANK_CHALLENGE_STORAGE_KEY = 'ow2_rank_challenges_v1';
 
 const playerIds: PlayerId[] = [1, 2, 3, 4, 5];
 
@@ -307,6 +316,100 @@ export function normalizePreferences(input: Partial<AppPreferences> | null | und
     compactCards: typeof input?.compactCards === 'boolean' ? input.compactCards : DEFAULT_PREFERENCES.compactCards,
     reducedEffects: typeof input?.reducedEffects === 'boolean' ? input.reducedEffects : DEFAULT_PREFERENCES.reducedEffects,
   };
+}
+
+function normalizeRankPosition(input: Partial<RankPosition> | null | undefined, fallback: RankPosition): RankPosition {
+  const rank = RANKS.includes(input?.rank as RankPosition['rank']) ? input?.rank as RankPosition['rank'] : fallback.rank;
+  const division = DIVISIONS.includes(Number(input?.division) as RankPosition['division']) ? Number(input?.division) as RankPosition['division'] : fallback.division;
+  return { rank, division };
+}
+
+function normalizeRankConfig(input: Partial<RankChallengeConfig> | null | undefined): RankChallengeConfig {
+  const queue = input?.queue;
+  return {
+    startingPosition: normalizeRankPosition(input?.startingPosition, DEFAULT_RANK_CHALLENGE_CONFIG.startingPosition),
+    goalPosition: normalizeRankPosition(input?.goalPosition, DEFAULT_RANK_CHALLENGE_CONFIG.goalPosition),
+    queue: queue === 'Tank' || queue === 'Damage' || queue === 'Support' || queue === 'Open Queue' || queue === 'All' ? queue : 'All',
+    randomizeAfterMatch: typeof input?.randomizeAfterMatch === 'boolean' ? input.randomizeAfterMatch : true,
+    requiredWins: input?.requiredWins == null ? null : clampedNumber(input.requiredWins, 1, 1, 999),
+    matchLimit: input?.matchLimit == null ? null : clampedNumber(input.matchLimit, 1, 1, 999),
+  };
+}
+
+function validRankEndReason(value: unknown): RankChallengeEndReason {
+  return value === 'rank-goal' || value === 'required-wins' || value === 'match-limit' || value === 'ended' || value === 'nuzlocke-ended' ? value : null;
+}
+
+function normalizeRankEvents(input: unknown, fallback: RankPosition): RankChallengeEvent[] {
+  if (!Array.isArray(input)) return [];
+  return input.filter((item): item is RankChallengeEvent => !!item && typeof item === 'object' && typeof item.id === 'string')
+    .map((item) => ({
+      ...item,
+      at: Number(item.at) || Date.now(),
+      type: item.type === 'result' || item.type === 'rank' || item.type === 'end' ? item.type : 'start',
+      detail: typeof item.detail === 'string' ? item.detail : '',
+      hero: typeof item.hero === 'string' ? item.hero : null,
+      result: item.result === 'W' || item.result === 'L' ? item.result : null,
+      position: normalizeRankPosition(item.position, fallback),
+      wins: Math.max(0, Number(item.wins) || 0),
+      losses: Math.max(0, Number(item.losses) || 0),
+    }));
+}
+
+function normalizeRankSnapshot(input: Partial<RankChallengeSnapshot> | null | undefined, fallback: RankPosition): RankChallengeSnapshot | null {
+  if (!input || typeof input !== 'object') return null;
+  return {
+    phase: input.phase === 'completed' ? 'completed' : 'active',
+    currentPosition: normalizeRankPosition(input.currentPosition, fallback),
+    wins: Math.max(0, Number(input.wins) || 0),
+    losses: Math.max(0, Number(input.losses) || 0),
+    heroesUsed: Array.isArray(input.heroesUsed) ? input.heroesUsed.filter((hero): hero is string => typeof hero === 'string' && !!HEROES.find((item) => item.name === hero)) : [],
+    events: normalizeRankEvents(input.events, fallback),
+    endedAt: typeof input.endedAt === 'number' ? input.endedAt : null,
+    endReason: validRankEndReason(input.endReason),
+  };
+}
+
+function normalizeRankChallenge(input: Partial<RankChallenge> | null | undefined, mode: 'normal' | 'nuzlocke'): RankChallenge | null {
+  if (!input || input.version !== 1 || typeof input.id !== 'string') return null;
+  const config = normalizeRankConfig(input.config);
+  const currentPosition = normalizeRankPosition(input.currentPosition, config.startingPosition);
+  const phase = input.phase === 'completed' ? 'completed' : 'active';
+  const endReason = phase === 'completed' ? validRankEndReason(input.endReason) ?? 'ended' : null;
+  return {
+    id: input.id,
+    version: 1,
+    mode,
+    phase,
+    config,
+    currentPosition,
+    wins: Math.max(0, Number(input.wins) || 0),
+    losses: Math.max(0, Number(input.losses) || 0),
+    heroesUsed: Array.isArray(input.heroesUsed) ? input.heroesUsed.filter((hero): hero is string => typeof hero === 'string' && !!HEROES.find((item) => item.name === hero)) : [],
+    events: normalizeRankEvents(input.events, currentPosition),
+    startedAt: Number(input.startedAt) || Date.now(),
+    endedAt: phase === 'completed' ? Number(input.endedAt) || Date.now() : null,
+    endReason,
+    undoSnapshot: normalizeRankSnapshot(input.undoSnapshot, currentPosition),
+    undoAction: input.undoAction === 'result' || input.undoAction === 'rank' || input.undoAction === 'end' ? input.undoAction : null,
+  };
+}
+
+export function createDefaultRankChallengeStore(): RankChallengeStore {
+  return { version: 1, normal: null, nuzlocke: null };
+}
+
+export function normalizeRankChallengeStore(input: Partial<RankChallengeStore> | null | undefined): RankChallengeStore {
+  if (!input || typeof input !== 'object') return createDefaultRankChallengeStore();
+  return {
+    version: 1,
+    normal: normalizeRankChallenge(input.normal, 'normal'),
+    nuzlocke: normalizeRankChallenge(input.nuzlocke, 'nuzlocke'),
+  };
+}
+
+export function readRankChallengeStore(): RankChallengeStore {
+  return normalizeRankChallengeStore(safeRead<Partial<RankChallengeStore>>(RANK_CHALLENGE_STORAGE_KEY));
 }
 
 export function usePersistentState<T>(key: string, initial: () => T) {

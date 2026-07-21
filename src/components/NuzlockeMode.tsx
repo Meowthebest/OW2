@@ -34,13 +34,17 @@ import {
   summarizeRun,
   undoNuzlockeAction,
 } from '../lib/nuzlocke';
-import type { NuzlockeRun, NuzlockeStore, RoleFilter } from '../types';
+import { createRankChallenge, endRankChallenge, recordRankChallengeResult, undoRankChallenge } from '../lib/rankChallenge';
+import type { NuzlockeRun, NuzlockeStore, RankChallenge, RankChallengeConfig, RoleFilter } from '../types';
 import NuzlockeSetup from './NuzlockeSetup';
+import RankChallengePanel from './RankChallengePanel';
 import { ConfirmDialog, EmptyState, HeroCard, HeroPortrait, Metric, Modal, ProgressBar, RoleIcon, SearchField, Toggle, cn, type HeroCardStatus } from './ui';
 
 type Props = {
   store: NuzlockeStore;
   setStore: Dispatch<SetStateAction<NuzlockeStore>>;
+  rankChallenge: RankChallenge | null;
+  setRankChallenge: Dispatch<SetStateAction<RankChallenge | null>>;
   settingsOpen: boolean;
   onSettingsClose: () => void;
   compactCards: boolean;
@@ -54,7 +58,7 @@ function eventTime(at: number) {
   return new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-export default function NuzlockeMode({ store, setStore, settingsOpen, onSettingsClose, compactCards, notify, fail }: Props) {
+export default function NuzlockeMode({ store, setStore, rankChallenge, setRankChallenge, settingsOpen, onSettingsClose, compactCards, notify, fail }: Props) {
   const run = store.currentRun;
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('All');
@@ -83,12 +87,34 @@ export default function NuzlockeMode({ store, setStore, settingsOpen, onSettings
     notify('Nuzlocke run started.');
   };
 
+  const startRankChallenge = (config: RankChallengeConfig) => {
+    const sourceRules = run?.rules ?? store.draftRules;
+    const roles = config.queue === 'Tank' || config.queue === 'Damage' || config.queue === 'Support' ? [config.queue] : sourceRules.roles;
+    const challengeRules = { ...sourceRules, roles, autoAdvance: config.randomizeAfterMatch };
+    const baseRun = run?.phase === 'active' ? run : createNuzlockeRun(challengeRules);
+    let nextRun: NuzlockeRun = { ...baseRun, rules: { ...baseRun.rules, roles, autoAdvance: config.randomizeAfterMatch } };
+    const current = HERO_BY_NAME[nextRun.currentHero ?? ''];
+    if (current && !roles.includes(current.role)) nextRun = rerollNuzlockeHero(nextRun, 'reroll');
+    if (nextRun.phase === 'completed' || !nextRun.currentHero) {
+      fail('No eligible Nuzlocke hero is available for that Rank Challenge queue.');
+      return;
+    }
+    setStore((currentStore) => ({ ...currentStore, draftRules: nextRun.rules, currentRun: nextRun }));
+    setRankChallenge(createRankChallenge('nuzlocke', config));
+    notify('Nuzlocke Rank Challenge started.');
+  };
+
   if (!run) {
-    return <NuzlockeSetup rules={store.draftRules} history={store.runHistory} compactCards={compactCards} onRulesChange={(draftRules) => setStore((current) => ({ ...current, draftRules }))} onStart={startRun} fail={fail} />;
+    return (
+      <div className="nuzlocke-preflight">
+        <RankChallengePanel mode="nuzlocke" challenge={rankChallenge} currentHero={null} onStart={startRankChallenge} onChange={setRankChallenge} notify={notify} fail={fail} />
+        <NuzlockeSetup rules={store.draftRules} history={store.runHistory} compactCards={compactCards} onRulesChange={(draftRules) => setStore((current) => ({ ...current, draftRules }))} onStart={startRun} fail={fail} />
+      </div>
+    );
   }
 
   if (run.phase === 'completed') {
-    return <NuzlockeResults run={run} compactCards={compactCards} onRetry={() => { const created = createNuzlockeRun(run.rules); setStore((current) => ({ ...current, draftRules: run.rules, currentRun: created })); notify('New attempt started with the same rules.'); }} onNewSetup={() => setStore((current) => ({ ...current, draftRules: run.rules, currentRun: null }))} notify={notify} />;
+    return <NuzlockeResults run={run} rankChallenge={rankChallenge} onRankStart={startRankChallenge} onRankChange={setRankChallenge} compactCards={compactCards} onRetry={() => { const created = createNuzlockeRun(run.rules); setStore((current) => ({ ...current, draftRules: run.rules, currentRun: created })); notify('New attempt started with the same rules.'); }} onNewSetup={() => setStore((current) => ({ ...current, draftRules: run.rules, currentRun: null }))} notify={notify} fail={fail} />;
   }
 
   const hero = HERO_BY_NAME[run.currentHero ?? ''];
@@ -127,7 +153,18 @@ export default function NuzlockeMode({ store, setStore, settingsOpen, onSettings
 
   const recordResult = (result: 'win' | 'loss') => {
     if (!run.currentHero) return;
-    applyRun((current) => recordNuzlockeResult(current, result), result === 'win' ? 'Win recorded.' : 'Loss recorded.');
+    const heroName = run.currentHero;
+    const nextRun = recordNuzlockeResult(run, result);
+    let nextChallenge = rankChallenge?.phase === 'active' ? recordRankChallengeResult(rankChallenge, result === 'win' ? 'W' : 'L', heroName) : rankChallenge;
+    if (nextRun.phase === 'completed' && nextChallenge?.phase === 'active') nextChallenge = endRankChallenge(nextChallenge, 'nuzlocke-ended');
+    if (nextChallenge) setRankChallenge(nextChallenge);
+    applyRun(() => nextRun, nextChallenge?.phase === 'completed' && nextChallenge.endReason !== 'nuzlocke-ended' ? 'Result recorded — Rank Challenge complete.' : result === 'win' ? 'Win recorded.' : 'Loss recorded.');
+  };
+
+  const undoLastRunAction = () => {
+    const resultWasIncluded = !!run.undoSnapshot && run.events.slice(run.undoSnapshot.events.length).some((event) => event.type === 'win' || event.type === 'loss');
+    applyRun(undoNuzlockeAction, 'Last action undone.');
+    if (resultWasIncluded && rankChallenge?.undoAction === 'result') setRankChallenge(undoRankChallenge(rankChallenge));
   };
 
   const requestLoss = () => {
@@ -170,6 +207,8 @@ export default function NuzlockeMode({ store, setStore, settingsOpen, onSettings
         <Metric label="Progress" value={Math.round((run.wins / run.rules.requiredWins) * 100) + '%'} detail={completedCount + ' completed'} icon={<Target size={18} />} />
       </section>
 
+      <RankChallengePanel mode="nuzlocke" challenge={rankChallenge} currentHero={run.currentHero} onStart={startRankChallenge} onChange={setRankChallenge} notify={notify} fail={fail} />
+
       <section className="nuzlocke-stage-layout">
         <div className={cn('nuzlocke-hero-stage', hero && 'has-hero', hero && 'role-' + hero.role.toLowerCase())}>
           {hero && record ? (
@@ -203,7 +242,7 @@ export default function NuzlockeMode({ store, setStore, settingsOpen, onSettings
           <div className="run-secondary-actions">
             <button type="button" onClick={() => applyRun((current) => rerollNuzlockeHero(current, 'reroll'), 'Hero rerolled.')} disabled={!hero} title="Return this pick and draw another eligible hero"><RotateCcw size={17} /><span><strong>Reroll</strong><small>Draw another</small></span></button>
             <button type="button" onClick={() => applyRun((current) => rerollNuzlockeHero(current, 'skip'), 'Hero skipped.')} disabled={!hero} title="Skip without recording a win or loss"><SkipForward size={17} /><span><strong>Skip</strong><small>No result</small></span></button>
-            <button type="button" onClick={() => applyRun(undoNuzlockeAction, 'Last action undone.')} disabled={!run.undoSnapshot} title="Restore the exact run state before the previous action"><Undo2 size={17} /><span><strong>Undo</strong><small>Last action</small></span></button>
+            <button type="button" onClick={undoLastRunAction} disabled={!run.undoSnapshot} title="Restore the exact run state before the previous action"><Undo2 size={17} /><span><strong>Undo</strong><small>Last action</small></span></button>
           </div>
           <ProgressBar value={winProgress} max={run.rules.requiredWins} label="Win goal" tone="green" />
           <ProgressBar value={run.remainingLives} max={run.rules.totalLives} label="Run lives" tone={run.remainingLives <= Math.max(2, run.rules.totalLives * 0.25) ? 'red' : 'orange'} />
@@ -274,12 +313,12 @@ export default function NuzlockeMode({ store, setStore, settingsOpen, onSettings
       </Modal>
 
       <ConfirmDialog open={lossConfirm} title="Confirm this loss" message={<p>This result will {record && record.lives <= 1 ? <strong>use {hero?.name}&apos;s final life</strong> : <strong>remove {hero?.name} from the run</strong>}. It will also reduce the shared run lives to {Math.max(0, run.remainingLives - 1)}.</p>} confirmLabel="Record loss" onCancel={() => setLossConfirm(false)} onConfirm={() => { setLossConfirm(false); recordResult('loss'); }} />
-      <ConfirmDialog open={endConfirm} title="End this Nuzlocke run?" message={<p>Your results will be archived, but the active run cannot continue unless you use Undo immediately from the results state.</p>} confirmLabel="End run" onCancel={() => setEndConfirm(false)} onConfirm={() => { setEndConfirm(false); onSettingsClose(); applyRun(endNuzlockeRun, 'Run ended and archived.'); }} />
+      <ConfirmDialog open={endConfirm} title="End this Nuzlocke run?" message={<p>Your results will be archived, but the active run cannot continue unless you use Undo immediately from the results state.</p>} confirmLabel="End run" onCancel={() => setEndConfirm(false)} onConfirm={() => { setEndConfirm(false); onSettingsClose(); if (rankChallenge?.phase === 'active') setRankChallenge(endRankChallenge(rankChallenge, 'nuzlocke-ended')); applyRun(endNuzlockeRun, 'Run ended and archived.'); }} />
     </div>
   );
 }
 
-function NuzlockeResults({ run, compactCards, onRetry, onNewSetup, notify }: { run: NuzlockeRun; compactCards: boolean; onRetry: () => void; onNewSetup: () => void; notify: (message: string) => void }) {
+function NuzlockeResults({ run, rankChallenge, onRankStart, onRankChange, compactCards, onRetry, onNewSetup, notify, fail }: { run: NuzlockeRun; rankChallenge: RankChallenge | null; onRankStart: (config: RankChallengeConfig) => void; onRankChange: Dispatch<SetStateAction<RankChallenge | null>>; compactCards: boolean; onRetry: () => void; onNewSetup: () => void; notify: (message: string) => void; fail: (message: string) => void }) {
   const summary = summarizeRun(run);
   const completed = HEROES.filter((hero) => run.heroRecords[hero.name].state === 'completed');
   const eliminated = HEROES.filter((hero) => run.heroRecords[hero.name].state === 'eliminated');
@@ -345,6 +384,8 @@ function NuzlockeResults({ run, compactCards, onRetry, onNewSetup, notify }: { r
         <p>{endReasonLabel(run.endReason ?? 'ended')}. You finished with {run.wins} wins, {run.losses} losses, and {run.remainingLives} shared lives remaining.</p>
         <div className="results-hero__actions"><button type="button" className="button button--primary button--large" onClick={onRetry}><RotateCcw size={18} />Retry same rules</button><button type="button" className="button button--secondary" onClick={onNewSetup}><Swords size={18} />New setup</button><button type="button" className="button button--glass" onClick={exportImage}><Download size={17} />Share image</button></div>
       </section>
+
+      <RankChallengePanel mode="nuzlocke" challenge={rankChallenge} currentHero={null} onStart={onRankStart} onChange={onRankChange} notify={notify} fail={fail} />
 
       <section className="metrics-row results-metrics">
         <Metric label="Final record" value={run.wins + '–' + run.losses} detail={Math.round((run.wins / Math.max(1, run.wins + run.losses)) * 100) + '% win rate'} icon={<Trophy size={18} />} />

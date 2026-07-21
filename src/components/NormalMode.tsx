@@ -17,13 +17,17 @@ import {
   X,
 } from 'lucide-react';
 import { HEROES, HERO_BY_NAME, ROLES } from '../data/heroes';
-import type { NormalSession, PlayerId, RoleFilter } from '../types';
+import { createRankChallenge, endRankChallenge, recordRankChallengeResult, undoRankChallenge } from '../lib/rankChallenge';
+import type { NormalSession, PlayerId, RankChallenge, RankChallengeConfig, RoleFilter } from '../types';
 import { createDefaultNormalSession } from '../lib/storage';
+import RankChallengePanel from './RankChallengePanel';
 import { ConfirmDialog, EmptyState, HeroCard, HeroPortrait, Metric, Modal, ProgressBar, RoleIcon, SearchField, Toggle, cn, type HeroCardStatus } from './ui';
 
 type Props = {
   session: NormalSession;
   setSession: Dispatch<SetStateAction<NormalSession>>;
+  rankChallenge: RankChallenge | null;
+  setRankChallenge: Dispatch<SetStateAction<RankChallenge | null>>;
   settingsOpen: boolean;
   onSettingsClose: () => void;
   compactCards: boolean;
@@ -45,7 +49,7 @@ function relativeTime(at: number) {
   return new Date(at).toLocaleDateString();
 }
 
-export default function NormalMode({ session, setSession, settingsOpen, onSettingsClose, compactCards, notify, fail }: Props) {
+export default function NormalMode({ session, setSession, rankChallenge, setRankChallenge, settingsOpen, onSettingsClose, compactCards, notify, fail }: Props) {
   const [activePlayerId, setActivePlayerId] = useState<PlayerId>(1);
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('All');
@@ -195,6 +199,10 @@ export default function NormalMode({ session, setSession, settingsOpen, onSettin
   };
 
   const recordMatch = (result: 'W' | 'L') => {
+    const challengeAfterResult = rankChallenge?.phase === 'active'
+      ? recordRankChallengeResult(rankChallenge, result, activePlayer.currentHero)
+      : rankChallenge;
+    if (challengeAfterResult) setRankChallenge(challengeAfterResult);
     setSession((current) => ({
       ...current,
       matches: [...current.matches, {
@@ -202,15 +210,63 @@ export default function NormalMode({ session, setSession, settingsOpen, onSettin
         at: Date.now(),
         result,
         heroes: current.players.slice(0, current.playerCount).map((player) => ({ player: player.name, hero: player.currentHero, role: player.role })),
+        rankPlayerId: rankChallenge?.phase === 'active' ? activePlayer.id : undefined,
       }],
+      players: challengeAfterResult?.phase === 'active' && challengeAfterResult.config.randomizeAfterMatch
+        ? current.players.map((player) => {
+            if (player.id !== activePlayer.id) return player;
+            const taken = new Set(current.players.slice(0, current.playerCount).filter((item) => item.id !== player.id).map((item) => item.currentHero).filter((hero): hero is string => !!hero));
+            let pool = HEROES.filter((hero) => {
+              if (player.role !== 'All' && hero.role !== player.role) return false;
+              if (current.excludedHeroes.includes(hero.name) || player.completedHeroes.includes(hero.name)) return false;
+              if (current.uniqueHeroes && taken.has(hero.name)) return false;
+              return true;
+            });
+            if (pool.length > 1) pool = pool.filter((hero) => hero.name !== player.currentHero);
+            const weighted = pool.flatMap((hero) => current.favoriteHeroes.includes(hero.name) ? [hero, hero, hero] : [hero]);
+            return { ...player, currentHero: weighted.length ? randomItem(weighted).name : player.currentHero };
+          })
+        : current.players,
     }));
-    notify(result === 'W' ? 'Win recorded.' : 'Loss recorded.');
+    notify(challengeAfterResult?.phase === 'completed' ? 'Result recorded — Rank Challenge complete.' : result === 'W' ? 'Win recorded.' : 'Loss recorded.');
   };
 
   const undoMatch = () => {
     if (!session.matches.length) return;
-    setSession((current) => ({ ...current, matches: current.matches.slice(0, -1) }));
+    const challengeResultUndo = rankChallenge?.undoAction === 'result';
+    setSession((current) => {
+      const lastMatch = current.matches[current.matches.length - 1];
+      const randomizedPlayerId = lastMatch?.rankPlayerId ?? activePlayer.id;
+      const previousHero = lastMatch?.heroes[current.players.slice(0, current.playerCount).findIndex((player) => player.id === randomizedPlayerId)]?.hero ?? null;
+      return {
+        ...current,
+        matches: current.matches.slice(0, -1),
+        players: challengeResultUndo && rankChallenge?.config.randomizeAfterMatch
+          ? current.players.map((player) => player.id === randomizedPlayerId ? { ...player, currentHero: previousHero } : player)
+          : current.players,
+      };
+    });
+    if (challengeResultUndo && rankChallenge) setRankChallenge(undoRankChallenge(rankChallenge));
     notify('Last result removed.');
+  };
+
+  const startRankChallenge = (config: RankChallengeConfig) => {
+    const role: RoleFilter = config.queue === 'Tank' || config.queue === 'Damage' || config.queue === 'Support' ? config.queue : 'All';
+    const taken = new Set(activePlayers.filter((player) => player.id !== activePlayer.id).map((player) => player.currentHero).filter((hero): hero is string => !!hero));
+    const pool = HEROES.filter((hero) => {
+      if (role !== 'All' && hero.role !== role) return false;
+      if (session.excludedHeroes.includes(hero.name) || activePlayer.completedHeroes.includes(hero.name)) return false;
+      if (session.uniqueHeroes && taken.has(hero.name)) return false;
+      return true;
+    });
+    const pick = weightedPick(pool);
+    if (!pick) {
+      fail('No eligible hero is available for that Rank Challenge queue.');
+      return;
+    }
+    updatePlayer(activePlayer.id, { role, currentHero: pick.name });
+    setRankChallenge(createRankChallenge('normal', config));
+    notify('Rank Challenge started with ' + pick.name + '.');
   };
 
   const copyLineup = async () => {
@@ -291,6 +347,8 @@ export default function NormalMode({ session, setSession, settingsOpen, onSettin
         <Metric label="Record" value={wins + '–' + losses} detail={winRate + '% win rate'} icon={<Trophy size={18} />} />
         <Metric label="Completed" value={completedTotal} detail={'best streak ' + session.bestCompletionStreak} icon={<Target size={18} />} />
       </section>
+
+      <RankChallengePanel mode="normal" challenge={rankChallenge} currentHero={activePlayer.currentHero} onStart={startRankChallenge} onChange={setRankChallenge} notify={notify} fail={fail} />
 
       <section className="normal-dashboard">
         <div className={cn('current-hero-panel', currentHero && 'has-hero', currentHero && 'role-' + currentHero.role.toLowerCase())}>
@@ -418,7 +476,7 @@ export default function NormalMode({ session, setSession, settingsOpen, onSettin
         </div>
       </Modal>
 
-      <ConfirmDialog open={resetOpen} title="Reset normal mode?" message={<p>This permanently clears the normal selector session. Your separate Nuzlocke run will stay untouched.</p>} confirmLabel="Reset normal mode" onCancel={() => setResetOpen(false)} onConfirm={() => { setSession(createDefaultNormalSession()); setResetOpen(false); onSettingsClose(); notify('Normal mode reset.'); }} />
+      <ConfirmDialog open={resetOpen} title="Reset normal mode?" message={<p>This permanently clears the normal selector session and concludes its active Rank Challenge. Your separate Nuzlocke run will stay untouched.</p>} confirmLabel="Reset normal mode" onCancel={() => setResetOpen(false)} onConfirm={() => { setSession(createDefaultNormalSession()); if (rankChallenge?.phase === 'active') setRankChallenge(endRankChallenge(rankChallenge)); setResetOpen(false); onSettingsClose(); notify('Normal mode reset.'); }} />
     </div>
   );
 }

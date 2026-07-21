@@ -1,29 +1,34 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { Download, Menu, Moon, RotateCcw, Settings2, ShieldCheck, Sparkles, Sun, Upload } from 'lucide-react';
 import NormalMode from './components/NormalMode';
 import NuzlockeMode from './components/NuzlockeMode';
 import { ConfirmDialog, ToastRegion, Toggle, cn } from './components/ui';
 import { endNuzlockeRun, summarizeRun } from './lib/nuzlocke';
+import { endRankChallenge } from './lib/rankChallenge';
 import {
   NORMAL_STORAGE_KEY,
   NUZLOCKE_STORAGE_KEY,
   PREFERENCES_STORAGE_KEY,
+  RANK_CHALLENGE_STORAGE_KEY,
   createDefaultNormalSession,
   migrateLegacyNormalBackup,
   normalizeNormalSession,
   normalizeNuzlockeStore,
   normalizePreferences,
+  normalizeRankChallengeStore,
   readNormalSession,
   readNuzlockeStore,
   readPreferences,
+  readRankChallengeStore,
   usePersistentState,
 } from './lib/storage';
-import type { AppMode, AppPreferences, NormalSession, NuzlockeStore } from './types';
+import type { AppMode, AppPreferences, NormalSession, NuzlockeStore, RankChallenge, RankChallengeStore } from './types';
 
 export default function App() {
   const [preferences, setPreferences] = usePersistentState<AppPreferences>(PREFERENCES_STORAGE_KEY, readPreferences);
   const [normalSession, setNormalSession] = usePersistentState<NormalSession>(NORMAL_STORAGE_KEY, readNormalSession);
   const [nuzlockeStore, setNuzlockeStore] = usePersistentState<NuzlockeStore>(NUZLOCKE_STORAGE_KEY, readNuzlockeStore);
+  const [rankChallenges, setRankChallenges] = usePersistentState<RankChallengeStore>(RANK_CHALLENGE_STORAGE_KEY, readRankChallengeStore);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [newRunConfirm, setNewRunConfirm] = useState(false);
   const [notice, setNotice] = useState('');
@@ -62,11 +67,12 @@ export default function App() {
 
   const exportBackup = () => {
     const data = {
-      version: 3,
+      version: 4,
       exportedAt: new Date().toISOString(),
       preferences,
       normalSession,
       nuzlockeStore,
+      rankChallenges,
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
@@ -82,12 +88,13 @@ export default function App() {
     try {
       const data = JSON.parse(await file.text()) as Record<string, unknown>;
       if (!data || typeof data !== 'object') throw new Error('Invalid backup');
-      if (data.version === 3 && data.normalSession && data.nuzlockeStore) {
+      if ((data.version === 3 || data.version === 4) && data.normalSession && data.nuzlockeStore) {
         const normal = data.normalSession as NormalSession;
         const nuzlocke = data.nuzlockeStore as NuzlockeStore;
         if (!Array.isArray(normal.players) || !Array.isArray(nuzlocke.runHistory)) throw new Error('Invalid state');
         setNormalSession(normalizeNormalSession(normal));
         setNuzlockeStore(normalizeNuzlockeStore(nuzlocke));
+        setRankChallenges(normalizeRankChallengeStore(data.rankChallenges as Partial<RankChallengeStore> | undefined));
         if (data.preferences) setPreferences(normalizePreferences(data.preferences as Partial<AppPreferences>));
         notify('Backup restored successfully.');
       } else if (data.playerNames && data.lineup) {
@@ -107,6 +114,7 @@ export default function App() {
   const confirmNewRun = () => {
     if (preferences.mode === 'normal') {
       setNormalSession(createDefaultNormalSession());
+      setRankChallenges((current) => ({ ...current, normal: current.normal?.phase === 'active' ? endRankChallenge(current.normal) : current.normal }));
       notify('New normal session started.');
     } else {
       setNuzlockeStore((current) => {
@@ -115,6 +123,7 @@ export default function App() {
         const history = [summarizeRun(ended), ...current.runHistory.filter((summary) => summary.id !== ended.id)].slice(0, 12);
         return { ...current, draftRules: ended.rules, currentRun: null, runHistory: history };
       });
+      setRankChallenges((current) => ({ ...current, nuzlocke: current.nuzlocke?.phase === 'active' ? endRankChallenge(current.nuzlocke, 'nuzlocke-ended') : current.nuzlocke }));
       notify('Ready for a new Nuzlocke setup.');
     }
     setNewRunConfirm(false);
@@ -123,6 +132,14 @@ export default function App() {
   const canStartNew = preferences.mode === 'normal'
     ? normalSession.players.slice(0, normalSession.playerCount).some((player) => player.currentHero || player.completedHeroes.length) || normalSession.matches.length > 0
     : !!nuzlockeStore.currentRun;
+
+  const setNormalRankChallenge: Dispatch<SetStateAction<RankChallenge | null>> = (value) => {
+    setRankChallenges((current) => ({ ...current, normal: typeof value === 'function' ? value(current.normal) : value }));
+  };
+
+  const setNuzlockeRankChallenge: Dispatch<SetStateAction<RankChallenge | null>> = (value) => {
+    setRankChallenges((current) => ({ ...current, nuzlocke: typeof value === 'function' ? value(current.nuzlocke) : value }));
+  };
 
   return (
     <div className={cn('app-root', 'theme-' + preferences.theme)}>
@@ -166,22 +183,22 @@ export default function App() {
       <main className="app-main" id="top">
         <div key={preferences.mode} className="mode-transition">
           {preferences.mode === 'normal' ? (
-            <NormalMode session={normalSession} setSession={setNormalSession} settingsOpen={settingsOpen} onSettingsClose={() => setSettingsOpen(false)} compactCards={preferences.compactCards} notify={notify} fail={fail} />
+            <NormalMode session={normalSession} setSession={setNormalSession} rankChallenge={rankChallenges.normal} setRankChallenge={setNormalRankChallenge} settingsOpen={settingsOpen} onSettingsClose={() => setSettingsOpen(false)} compactCards={preferences.compactCards} notify={notify} fail={fail} />
           ) : (
-            <NuzlockeMode store={nuzlockeStore} setStore={setNuzlockeStore} settingsOpen={settingsOpen} onSettingsClose={() => setSettingsOpen(false)} compactCards={preferences.compactCards} notify={notify} fail={fail} />
+            <NuzlockeMode store={nuzlockeStore} setStore={setNuzlockeStore} rankChallenge={rankChallenges.nuzlocke} setRankChallenge={setNuzlockeRankChallenge} settingsOpen={settingsOpen} onSettingsClose={() => setSettingsOpen(false)} compactCards={preferences.compactCards} notify={notify} fail={fail} />
           )}
         </div>
       </main>
 
-      <footer className="app-footer"><span><span className="brand-mark brand-mark--small" aria-hidden="true"><span /></span>Hero Selector</span><p>Normal and Nuzlocke progress are stored separately on this device.</p><button type="button" onClick={exportBackup}><Download size={14} />Backup data</button></footer>
+      <footer className="app-footer"><span><span className="brand-mark brand-mark--small" aria-hidden="true"><span /></span>Hero Selector</span><p>Normal, Nuzlocke, and Rank Challenge progress are stored separately on this device.</p><button type="button" onClick={exportBackup}><Download size={14} />Backup data</button></footer>
 
       <ToastRegion message={notice} error={error} />
       <ConfirmDialog
         open={newRunConfirm}
         title={preferences.mode === 'normal' ? 'Start a new normal session?' : 'Start a new Nuzlocke setup?'}
         message={preferences.mode === 'normal'
-          ? <p>This clears the normal lineup, results, exclusions, favorites, and completed heroes. Your Nuzlocke progress stays untouched.</p>
-          : <p>The active Nuzlocke will be ended and archived before opening a fresh setup. Normal mode is not affected.</p>}
+          ? <p>This clears the normal lineup, results, exclusions, favorites, and completed heroes. An active Normal Rank Challenge will move to its results state. Your Nuzlocke progress stays untouched.</p>
+          : <p>The active Nuzlocke will be ended and archived before opening a fresh setup. Its active Rank Challenge will also conclude. Normal mode is not affected.</p>}
         confirmLabel="Start new run"
         onCancel={() => setNewRunConfirm(false)}
         onConfirm={confirmNewRun}

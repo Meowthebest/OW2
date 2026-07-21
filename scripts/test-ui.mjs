@@ -80,12 +80,35 @@ const slotNames = [...app.document.querySelectorAll('.player-slot strong')].map(
 assert.equal(slotNames.length, 3);
 assert.ok(slotNames.every((name) => name !== 'No hero selected'), 'Normal roll should fill all active player slots');
 
+clickButton(app.document, 'Configure challenge');
+await wait();
+assert.equal(app.document.querySelector('.modal h2')?.textContent, 'Configure Rank Challenge');
+clickButton(app.document, 'Start Rank Challenge');
+await wait();
+assert.match(app.document.body.textContent, /Rank Challenge live/);
+const normalChallengeHero = app.document.querySelector('.current-hero-panel h2')?.textContent;
+assert.ok(normalChallengeHero);
+const rankedSlotNames = [...app.document.querySelectorAll('.player-slot strong')].map((element) => element.textContent);
+
 clickSelector(app.document, '.result-action--win', 'normal win button');
 await wait();
 assert.match(app.document.querySelector('.metric-card:nth-child(2) strong')?.textContent ?? '', /1–0/);
+assert.match(app.document.querySelector('.rank-live-stats .metric-card strong')?.textContent ?? '', /1–0/);
+assert.notEqual(app.document.querySelector('.current-hero-panel h2')?.textContent, normalChallengeHero, 'Normal Rank Challenge should randomize after a result');
 clickButton(app.document, 'Undo last result');
 await wait();
 assert.match(app.document.querySelector('.metric-card:nth-child(2) strong')?.textContent ?? '', /0–0/);
+assert.match(app.document.querySelector('.rank-live-stats .metric-card strong')?.textContent ?? '', /0–0/);
+assert.equal(app.document.querySelector('.current-hero-panel h2')?.textContent, normalChallengeHero, 'Undo should restore the pre-result hero');
+
+setInput(app.window, app.document.querySelector('select[aria-label="Updated current rank"]'), 'Gold');
+await wait();
+clickButton(app.document, 'Save rank');
+await wait();
+assert.match(app.document.body.textContent, /Challenge goal achieved/);
+clickButton(app.document, 'Undo last update');
+await wait();
+assert.match(app.document.body.textContent, /Rank Challenge live/);
 
 const search = app.document.querySelector('input[placeholder="Search heroes…"]');
 assert.ok(search);
@@ -98,19 +121,24 @@ await wait();
 clickSelector(app.document, '.mode-switcher button[aria-pressed="false"]', 'Nuzlocke mode tab');
 await wait();
 assert.match(app.document.body.textContent, /Every result changes the run/);
-clickButton(app.document, 'Start Nuzlocke');
+clickButton(app.document, 'Configure challenge');
+await wait();
+clickButton(app.document, 'Start Rank Challenge');
 await wait(60);
 assert.match(app.document.body.textContent, /How did the match go/);
 const startingHero = app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent;
 assert.ok(startingHero);
+assert.match(app.document.body.textContent, /Rank Challenge live/);
 
 clickSelector(app.document, '.run-result--win', 'Nuzlocke win button');
 await wait();
 assert.match(app.document.querySelector('.nuzlocke-metrics .metric-card strong')?.textContent ?? '', /1–0/);
-clickButton(app.document, 'Undo', 'contains');
+assert.match(app.document.querySelector('.rank-live-stats .metric-card strong')?.textContent ?? '', /1–0/);
+clickSelector(app.document, '.run-secondary-actions button:last-child', 'Nuzlocke undo button');
 await wait();
 assert.equal(app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent, startingHero);
 assert.match(app.document.querySelector('.nuzlocke-metrics .metric-card strong')?.textContent ?? '', /0–0/);
+assert.match(app.document.querySelector('.rank-live-stats .metric-card strong')?.textContent ?? '', /0–0/);
 
 const persisted = snapshotStorage(app.window);
 app.dom.window.close();
@@ -137,6 +165,7 @@ clickButton(app.document, 'End run');
 await wait();
 assert.match(app.document.body.textContent, /The run is over/);
 assert.match(app.document.body.textContent, /Run history/);
+assert.match(app.document.body.textContent, /Rank climb concluded/);
 clickButton(app.document, 'Retry same rules');
 await wait();
 assert.match(app.document.body.textContent, /Nuzlocke run in progress/);
@@ -144,7 +173,8 @@ assert.match(app.document.body.textContent, /Nuzlocke run in progress/);
 clickSelector(app.document, '.mode-switcher button[aria-pressed="false"]', 'Normal mode tab');
 await wait();
 const restoredSlots = [...app.document.querySelectorAll('.player-slot strong')].map((element) => element.textContent);
-assert.deepEqual(restoredSlots, slotNames, 'Switching modes must preserve the normal lineup');
+assert.deepEqual(restoredSlots, rankedSlotNames, 'Switching modes must preserve the normal Rank Challenge lineup');
+assert.match(app.document.body.textContent, /Rank Challenge live/, 'Normal Rank Challenge should remain separate and active');
 
 assert.deepEqual(app.errors, [], 'Runtime emitted browser errors: ' + app.errors.join('\n'));
 app.dom.window.close();
@@ -152,6 +182,7 @@ app.dom.window.close();
 const invalid = await boot({
   ow2_preferences_v1: JSON.stringify({ version: 1, mode: 'nuzlocke', theme: 'dark', compactCards: false, reducedEffects: false }),
   ow2_nuzlocke_v1: '{broken-json',
+  ow2_rank_challenges_v1: '{broken-json',
 });
 assert.match(invalid.document.body.textContent, /Every result changes the run/);
 assert.deepEqual(invalid.errors, [], 'Invalid-state recovery emitted browser errors: ' + invalid.errors.join('\n'));
@@ -161,5 +192,6 @@ console.log('UI_INTEGRATION_TESTS_PASS', {
   normalLineup: slotNames,
   nuzlockeHero: startingHero,
   persistence: true,
+  rankChallenges: true,
   invalidStateRecovery: true,
 });
