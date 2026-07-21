@@ -152,12 +152,13 @@ export type AppPreferences = {
 };
 
 export type RankName = 'Bronze' | 'Silver' | 'Gold' | 'Platinum' | 'Diamond' | 'Master' | 'Grandmaster';
+export type RankTier = 'Placements' | RankName;
 export type RankDivision = 5 | 4 | 3 | 2 | 1;
 export type RankQueue = 'All' | Role | 'Open Queue';
 
 export type RankPosition = {
-  rank: RankName;
-  division: RankDivision;
+  rank: RankTier;
+  division: RankDivision | null;
 };
 
 export type RankChallengeConfig = {

@@ -112,6 +112,21 @@ assert(rankGoal.phase === 'completed' && rankGoal.endReason === 'rank-goal', 'Up
 const rankGoalUndo = undoRankChallenge(rankGoal);
 assert(rankGoalUndo.phase === 'active' && rankGoalUndo.currentPosition.rank === 'Bronze', 'A completed rank goal should be undoable.');
 
+const placementClimb = createRankChallenge('normal', {
+  ...DEFAULT_RANK_CHALLENGE_CONFIG,
+  startingPosition: { rank: 'Placements', division: null },
+  goalPosition: { rank: 'Gold', division: 5 },
+});
+assert(placementClimb.currentPosition.rank === 'Placements' && placementClimb.currentPosition.division === null, 'A challenge should support an undecided placement rank.');
+const placementMatch = recordRankChallengeResult(placementClimb, 'W', 'Sojourn');
+assert(placementMatch.phase === 'active' && placementMatch.wins === 1, 'Placement matches should count without ending the challenge.');
+const firstRank = updateRankChallengePosition(placementMatch, { rank: 'Silver', division: 5 });
+assert(firstRank.phase === 'active' && firstRank.currentPosition.rank === 'Silver', 'A player should be able to enter their first assigned rank.');
+const placedAtGoal = updateRankChallengePosition(firstRank, { rank: 'Gold', division: 5 });
+assert(placedAtGoal.phase === 'completed' && placedAtGoal.endReason === 'rank-goal', 'Receiving a goal rank after placements should complete the challenge.');
+const placementUndo = undoRankChallenge(placedAtGoal);
+assert(placementUndo.phase === 'active' && placementUndo.currentPosition.rank === 'Silver', 'The first-rank update should remain undoable.');
+
 const winTarget = createRankChallenge('nuzlocke', { ...DEFAULT_RANK_CHALLENGE_CONFIG, requiredWins: 1, matchLimit: null });
 const winTargetDone = recordRankChallengeResult(winTarget, 'W', 'Ana');
 assert(winTargetDone.phase === 'completed' && winTargetDone.endReason === 'required-wins', 'Optional required wins should complete the challenge.');
@@ -122,6 +137,8 @@ assert(matchLimitDone.phase === 'completed' && matchLimitDone.endReason === 'mat
 const restoredChallenges = normalizeRankChallengeStore({ version: 1, normal: rankGoal, nuzlocke: winTargetDone });
 assert(restoredChallenges.normal?.endReason === 'rank-goal' && restoredChallenges.nuzlocke?.endReason === 'required-wins', 'Normal and Nuzlocke Rank Challenges should persist independently.');
 assert(restoredChallenges.normal?.undoSnapshot?.phase === 'active', 'Rank Challenge undo state should survive refresh.');
+const restoredPlacement = normalizeRankChallengeStore({ version: 1, normal: placementMatch, nuzlocke: null });
+assert(restoredPlacement.normal?.currentPosition.rank === 'Placements' && restoredPlacement.normal.currentPosition.division === null, 'Placements should survive refresh without a fake division.');
 
 console.log('NUZLOCKE_ENGINE_TESTS_PASS', {
   goalAndUndo: true,
@@ -133,5 +150,6 @@ console.log('NUZLOCKE_ENGINE_TESTS_PASS', {
   persistence: true,
   rankGoalAndUndo: true,
   rankLimits: true,
+  placements: true,
   separateRankModes: true,
 });

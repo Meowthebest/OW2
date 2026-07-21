@@ -42,7 +42,8 @@ function uid(prefix: string) {
 }
 
 export function rankScore(position: RankPosition) {
-  return RANKS.indexOf(position.rank) * 5 + (5 - position.division);
+  if (position.rank === 'Placements') return -1;
+  return RANKS.indexOf(position.rank) * 5 + (5 - (position.division ?? 5));
 }
 
 export function compareRankPositions(left: RankPosition, right: RankPosition) {
@@ -50,7 +51,7 @@ export function compareRankPositions(left: RankPosition, right: RankPosition) {
 }
 
 export function rankLabel(position: RankPosition) {
-  return position.rank + ' ' + position.division;
+  return position.rank === 'Placements' ? 'Placements' : position.rank + ' ' + position.division;
 }
 
 export function rankProgress(challenge: RankChallenge) {

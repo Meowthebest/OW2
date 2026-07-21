@@ -318,9 +318,12 @@ export function normalizePreferences(input: Partial<AppPreferences> | null | und
   };
 }
 
-function normalizeRankPosition(input: Partial<RankPosition> | null | undefined, fallback: RankPosition): RankPosition {
-  const rank = RANKS.includes(input?.rank as RankPosition['rank']) ? input?.rank as RankPosition['rank'] : fallback.rank;
-  const division = DIVISIONS.includes(Number(input?.division) as RankPosition['division']) ? Number(input?.division) as RankPosition['division'] : fallback.division;
+function normalizeRankPosition(input: Partial<RankPosition> | null | undefined, fallback: RankPosition, allowPlacements = true): RankPosition {
+  if (allowPlacements && input?.rank === 'Placements') return { rank: 'Placements', division: null };
+  const fallbackRank = fallback.rank === 'Placements' ? DEFAULT_RANK_CHALLENGE_CONFIG.startingPosition.rank : fallback.rank;
+  const fallbackDivision = fallback.division ?? DEFAULT_RANK_CHALLENGE_CONFIG.startingPosition.division;
+  const rank = RANKS.includes(input?.rank as typeof RANKS[number]) ? input?.rank as typeof RANKS[number] : fallbackRank;
+  const division = DIVISIONS.includes(Number(input?.division) as typeof DIVISIONS[number]) ? Number(input?.division) as typeof DIVISIONS[number] : fallbackDivision;
   return { rank, division };
 }
 
@@ -328,7 +331,7 @@ function normalizeRankConfig(input: Partial<RankChallengeConfig> | null | undefi
   const queue = input?.queue;
   return {
     startingPosition: normalizeRankPosition(input?.startingPosition, DEFAULT_RANK_CHALLENGE_CONFIG.startingPosition),
-    goalPosition: normalizeRankPosition(input?.goalPosition, DEFAULT_RANK_CHALLENGE_CONFIG.goalPosition),
+    goalPosition: normalizeRankPosition(input?.goalPosition, DEFAULT_RANK_CHALLENGE_CONFIG.goalPosition, false),
     queue: queue === 'Tank' || queue === 'Damage' || queue === 'Support' || queue === 'Open Queue' || queue === 'All' ? queue : 'All',
     randomizeAfterMatch: typeof input?.randomizeAfterMatch === 'boolean' ? input.randomizeAfterMatch : true,
     requiredWins: input?.requiredWins == null ? null : clampedNumber(input.requiredWins, 1, 1, 999),

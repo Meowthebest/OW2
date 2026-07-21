@@ -491,11 +491,15 @@ html[data-theme="light"] .setup-hero__summary > span { background: rgba(255,255,
 .rank-challenge-panel__header p, .rank-results__headline p { margin-top: 4px; color: var(--text-3); font-size: .67rem; }
 .rank-badge { min-width: 0; display: inline-flex; align-items: center; gap: 9px; }
 .rank-badge img { width: 48px; height: 48px; flex: 0 0 auto; object-fit: contain; filter: drop-shadow(0 7px 12px rgba(0,0,0,.28)); }
+.rank-badge > i { width: 48px; height: 48px; flex: 0 0 auto; display: grid; place-items: center; border: 1px dashed rgba(232,195,113,.38); border-radius: 15px; color: var(--gold); background: linear-gradient(145deg, rgba(232,195,113,.14), var(--surface-2)); box-shadow: inset 0 0 18px rgba(232,195,113,.06); }
+.rank-badge > i svg { width: 46%; height: 46%; }
 .rank-badge > span { min-width: 0; display: grid; }
 .rank-badge strong { overflow: hidden; color: var(--text-1); font-size: .72rem; white-space: nowrap; text-overflow: ellipsis; }
 .rank-badge small { color: var(--text-3); font-size: .56rem; }
 .rank-badge--small img { width: 34px; height: 34px; }
+.rank-badge--small > i { width: 34px; height: 34px; border-radius: 11px; }
 .rank-badge--large img { width: 72px; height: 72px; }
+.rank-badge--large > i { width: 72px; height: 72px; border-radius: 20px; }
 .rank-badge--large strong { font-size: .82rem; }
 .rank-route { min-height: 92px; padding: 10px 14px; display: grid; grid-template-columns: minmax(130px,auto) minmax(150px,1fr) minmax(130px,auto); align-items: center; gap: 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(5,10,18,.22); }
 html[data-theme="light"] .rank-route { background: rgba(255,255,255,.42); }
@@ -514,6 +518,7 @@ html[data-theme="light"] .rank-route { background: rgba(255,255,255,.42); }
 .rank-update-card > span strong { font-size: .74rem; }
 .rank-update-card > span small { margin-top: 2px; color: var(--text-3); font-size: .58rem; }
 .rank-update-controls { display: grid; grid-template-columns: 1fr 120px auto; gap: 7px; }
+.rank-update-controls--placement { grid-template-columns: 1fr auto; }
 .rank-update-controls .select-field { min-width: 0; }
 .rank-update-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: var(--text-3); font-size: .57rem; }
 .rank-update-foot .text-button { font-size: .57rem; }
@@ -542,6 +547,7 @@ html[data-theme="light"] .rank-route { background: rgba(255,255,255,.42); }
 .rank-setup__route > div > span { color: var(--text-3); font-size: .59rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .rank-setup__arrow { color: var(--gold); font-size: 1.5rem; }
 .rank-position-selects { display: grid; grid-template-columns: 1fr 130px; gap: 7px; }
+.rank-position-selects--single { grid-template-columns: 1fr; }
 .rank-setup__section { padding: 15px; display: grid; gap: 11px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-0); }
 .rank-setup__section h3 { font-size: .75rem; }
 .rank-setup__options { display: grid; grid-template-columns: minmax(260px,.7fr) minmax(420px,1.3fr); gap: 10px; align-items: stretch; }

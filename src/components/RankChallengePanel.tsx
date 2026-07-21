@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, ChevronDown, Flag, History, RotateCcw, Shuffle, Target, Trophy, Undo2, X } from 'lucide-react';
+import { Check, ChevronDown, CircleHelp, Flag, History, RotateCcw, Shuffle, Target, Trophy, Undo2, X } from 'lucide-react';
 import { HERO_BY_NAME } from '../data/heroes';
 import {
   DEFAULT_RANK_CHALLENGE_CONFIG,
@@ -15,7 +15,7 @@ import {
   undoRankChallenge,
   updateRankChallengePosition,
 } from '../lib/rankChallenge';
-import type { AppMode, RankChallenge, RankChallengeConfig, RankDivision, RankName, RankPosition, RankQueue } from '../types';
+import type { AppMode, RankChallenge, RankChallengeConfig, RankDivision, RankName, RankPosition, RankQueue, RankTier } from '../types';
 import { ConfirmDialog, HeroPortrait, Metric, Modal, ProgressBar, Toggle, cn } from './ui';
 
 type Props = {
@@ -36,10 +36,11 @@ function durationLabel(milliseconds: number) {
 }
 
 export function RankBadge({ position, size = 'medium' }: { position: RankPosition; size?: 'small' | 'medium' | 'large' }) {
+  const isPlacement = position.rank === 'Placements';
   return (
-    <span className={cn('rank-badge', 'rank-badge--' + size)}>
-      <img src={RANK_BADGES[position.rank]} alt="" />
-      <span><strong>{position.rank}</strong><small>Division {position.division}</small></span>
+    <span className={cn('rank-badge', 'rank-badge--' + size, isPlacement && 'rank-badge--placement')}>
+      {isPlacement ? <i aria-hidden="true"><CircleHelp /></i> : <img src={RANK_BADGES[position.rank]} alt="" />}
+      <span><strong>{position.rank}</strong><small>{isPlacement ? 'Rank pending' : 'Division ' + position.division}</small></span>
     </span>
   );
 }
@@ -136,14 +137,14 @@ export default function RankChallengePanel({ mode, challenge, currentHero, onSta
         <div className="rank-live-grid">
           <div className="rank-live-stats">
             <Metric label="Record" value={challenge.wins + '–' + challenge.losses} detail={winRate + '% win rate'} icon={<Trophy size={17} />} />
-            <Metric label="Matches" value={matches} detail={challenge.config.matchLimit ? (challenge.config.matchLimit - matches) + ' remaining' : 'unlimited'} icon={<History size={17} />} />
+            <Metric label={challenge.currentPosition.rank === 'Placements' ? 'Placement matches' : 'Matches'} value={matches} detail={challenge.config.matchLimit ? (challenge.config.matchLimit - matches) + ' remaining' : 'unlimited'} icon={<History size={17} />} />
             <Metric label="Heroes used" value={challenge.heroesUsed.length} detail={hero?.name ?? 'Awaiting hero'} icon={<Shuffle size={17} />} />
           </div>
           <div className="rank-update-card">
             <span><strong>Update current rank</strong><small>Adjust this after the competitive rank screen changes.</small></span>
-            <div className="rank-update-controls">
-              <label className="select-field"><select aria-label="Updated current rank" value={pendingPosition.rank} onChange={(event) => setPendingPosition((current) => ({ ...current, rank: event.target.value as RankName }))}>{RANKS.map((rank) => <option key={rank}>{rank}</option>)}</select><ChevronDown size={14} /></label>
-              <label className="select-field"><select aria-label="Updated current division" value={pendingPosition.division} onChange={(event) => setPendingPosition((current) => ({ ...current, division: Number(event.target.value) as RankDivision }))}>{DIVISIONS.map((division) => <option key={division} value={division}>Division {division}</option>)}</select><ChevronDown size={14} /></label>
+            <div className={cn('rank-update-controls', pendingPosition.rank === 'Placements' && 'rank-update-controls--placement')}>
+              <label className="select-field"><select aria-label="Updated current rank" value={pendingPosition.rank} onChange={(event) => { const rank = event.target.value as RankTier; setPendingPosition((current) => ({ rank, division: rank === 'Placements' ? null : current.division ?? 5 })); }}><option>Placements</option>{RANKS.map((rank) => <option key={rank}>{rank}</option>)}</select><ChevronDown size={14} /></label>
+              {pendingPosition.rank !== 'Placements' && <label className="select-field"><select aria-label="Updated current division" value={pendingPosition.division ?? 5} onChange={(event) => setPendingPosition((current) => ({ ...current, division: Number(event.target.value) as RankDivision }))}>{DIVISIONS.map((division) => <option key={division} value={division}>Division {division}</option>)}</select><ChevronDown size={14} /></label>}
               <button type="button" className="button button--secondary" disabled={compareRankPositions(pendingPosition, challenge.currentPosition) === 0} onClick={() => { const next = updateRankChallengePosition(challenge, pendingPosition); onChange(next); notify(next.phase === 'completed' ? 'Rank goal reached!' : 'Current rank updated.'); }}><Check size={16} />Save rank</button>
             </div>
             <div className="rank-update-foot">
@@ -173,7 +174,7 @@ function RankSetupModal({ mode, open, config, onClose, onConfig, onPosition, onS
     <Modal open={open} onClose={onClose} title="Configure Rank Challenge" eyebrow={mode === 'nuzlocke' ? 'Nuzlocke ranked climb' : 'Random hero ranked climb'} size="large" className="rank-challenge-modal">
       <div className="rank-setup">
         <div className="rank-setup__route">
-          <div><span>Current rank</span><RankBadge position={config.startingPosition} size="large" /><div className="rank-position-selects"><label className="select-field"><select aria-label="Starting rank" value={config.startingPosition.rank} onChange={(event) => onPosition('startingPosition', { rank: event.target.value as RankName })}>{RANKS.map((rank) => <option key={rank}>{rank}</option>)}</select><ChevronDown size={14} /></label><label className="select-field"><select aria-label="Starting division" value={config.startingPosition.division} onChange={(event) => onPosition('startingPosition', { division: Number(event.target.value) as RankDivision })}>{DIVISIONS.map((division) => <option key={division} value={division}>Division {division}</option>)}</select><ChevronDown size={14} /></label></div></div>
+          <div><span>Current rank</span><RankBadge position={config.startingPosition} size="large" /><div className={cn('rank-position-selects', config.startingPosition.rank === 'Placements' && 'rank-position-selects--single')}><label className="select-field"><select aria-label="Starting rank" value={config.startingPosition.rank} onChange={(event) => { const rank = event.target.value as RankTier; onPosition('startingPosition', { rank, division: rank === 'Placements' ? null : config.startingPosition.division ?? 5 }); }}><option>Placements</option>{RANKS.map((rank) => <option key={rank}>{rank}</option>)}</select><ChevronDown size={14} /></label>{config.startingPosition.rank !== 'Placements' && <label className="select-field"><select aria-label="Starting division" value={config.startingPosition.division ?? 5} onChange={(event) => onPosition('startingPosition', { division: Number(event.target.value) as RankDivision })}>{DIVISIONS.map((division) => <option key={division} value={division}>Division {division}</option>)}</select><ChevronDown size={14} /></label>}</div></div>
           <span className="rank-setup__arrow">→</span>
           <div><span>Goal rank</span><RankBadge position={config.goalPosition} size="large" /><div className="rank-position-selects"><label className="select-field"><select aria-label="Goal rank" value={config.goalPosition.rank} onChange={(event) => onPosition('goalPosition', { rank: event.target.value as RankName })}>{RANKS.map((rank) => <option key={rank}>{rank}</option>)}</select><ChevronDown size={14} /></label><label className="select-field"><select aria-label="Goal division" value={config.goalPosition.division} onChange={(event) => onPosition('goalPosition', { division: Number(event.target.value) as RankDivision })}>{DIVISIONS.map((division) => <option key={division} value={division}>Division {division}</option>)}</select><ChevronDown size={14} /></label></div></div>
         </div>
