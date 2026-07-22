@@ -29,6 +29,7 @@ import {
   endReasonLabel,
   formatDuration,
   getEligibleHeroes,
+  getSelectableHeroes,
   pickNextHero,
   recordNuzlockeResult,
   rerollNuzlockeHero,
@@ -132,7 +133,8 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
   const record = hero ? run.heroRecords[hero.name] : null;
   const currentHeroes = activePlayers.map((player) => player.currentHero).filter((name): name is string => !!name);
   const eligible = getEligibleHeroes(run, HEROES, activePlayer?.id);
-  const eligibleNames = new Set(eligible.map((item) => item.name));
+  const selectable = getSelectableHeroes(run, HEROES, activePlayer?.id);
+  const selectableNames = new Set(selectable.map((item) => item.name));
   const completedCount = Object.values(run.heroRecords).filter((item) => item.state === 'completed').length;
   const eliminatedCount = Object.values(run.heroRecords).filter((item) => item.state === 'eliminated').length;
   const usedCount = Object.values(run.heroRecords).filter((item) => item.selections > 0).length;
@@ -193,7 +195,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
 
   const pickHero = (name: string) => {
     if (!activePlayer || activePlayer.currentHero === name) return;
-    if (!eligibleNames.has(name)) {
+    if (!selectableNames.has(name)) {
       fail('That hero is not eligible under the current run rules.');
       return;
     }
@@ -278,11 +280,11 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
       </section>
 
       <section className="hero-pool-panel nuzlocke-pool">
-        <header className="section-heading"><div><span className="eyebrow">Run roster</span><h2>Hero states</h2><p>Available, completed, and eliminated heroes update as you play.</p></div><span className="selection-counter"><strong>{usedCount}</strong> heroes used</span></header>
+        <header className="section-heading"><div><span className="eyebrow">Run roster</span><h2>Hero states</h2><p>Available heroes, reusable winners, and eliminated heroes update as you play.</p></div><span className="selection-counter"><strong>{usedCount}</strong> heroes used</span></header>
         <div className="hero-pool-toolbar">
           <SearchField value={search} onChange={setSearch} />
           <div className="segmented" role="group" aria-label="Filter run roster by role">{(['All', ...ROLES] as RoleFilter[]).map((role) => <button type="button" key={role} className={roleFilter === role ? 'is-active' : ''} onClick={() => setRoleFilter(role)}>{role}</button>)}</div>
-          <label className="select-field"><span className="sr-only">Filter run hero status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as PoolStatus)}><option value="all">All states</option><option value="available">Available</option><option value="completed">Completed</option><option value="eliminated">Eliminated</option><option value="recent">Recently used</option></select><ChevronDown size={15} /></label>
+          <label className="select-field"><span className="sr-only">Filter run hero status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as PoolStatus)}><option value="all">All states</option><option value="available">Available</option><option value="completed">Winners</option><option value="eliminated">Eliminated</option><option value="recent">Recently used</option></select><ChevronDown size={15} /></label>
         </div>
         {filteredHeroes.length ? (
           <div className={cn('hero-grid', compactCards && 'is-compact')}>
@@ -290,9 +292,10 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
               const state = run.heroRecords[item.name];
               const status = cardStatus(item.name);
               const selectedPlayer = activePlayers.find((player) => player.currentHero === item.name);
-              const selectable = eligibleNames.has(item.name) && !selectedPlayer;
-              const detail = selectedPlayer ? selectedPlayer.name : status === 'completed' && run.rules.reuseCompletedHeroes ? 'Winner reserve · ' + state.lives + ' lives' : status === 'available' || status === 'recent' ? state.lives + ' life' + (state.lives === 1 ? '' : 's') + ' · ' + state.wins + 'W ' + state.losses + 'L' : undefined;
-              return <HeroCard key={item.name} hero={item} compact={compactCards} status={status} detail={detail} disabled={!selectable && status !== 'selected'} onSelect={() => pickHero(item.name)} />;
+              const canSelect = selectableNames.has(item.name) && !selectedPlayer;
+              const isReusableWinner = status === 'completed' && run.rules.reuseCompletedHeroes;
+              const detail = selectedPlayer ? selectedPlayer.name : isReusableWinner ? 'Selectable again · ' + state.lives + ' lives' : status === 'available' || status === 'recent' ? state.lives + ' life' + (state.lives === 1 ? '' : 's') + ' · ' + state.wins + 'W ' + state.losses + 'L' : undefined;
+              return <HeroCard key={item.name} hero={item} compact={compactCards} status={status} statusLabel={isReusableWinner ? 'Winner' : undefined} detail={detail} disabled={!canSelect && status !== 'selected'} onSelect={() => pickHero(item.name)} />;
             })}
           </div>
         ) : <EmptyState icon={<Eye size={26} />} title="No heroes match" description="Change a role or state filter to see more of the run roster." />}

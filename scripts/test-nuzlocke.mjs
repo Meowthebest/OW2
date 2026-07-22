@@ -17,6 +17,8 @@ await Promise.all([
 const {
   createNuzlockeRun,
   getEligibleHeroes,
+  getSelectableHeroes,
+  chooseNuzlockeHero,
   pickNextHero,
   recordNuzlockeResult,
   rerollNuzlockeHero,
@@ -135,6 +137,24 @@ const winnerReserveRun = createNuzlockeRun({
 const reserveWin = recordNuzlockeResult(winnerReserveRun, 'win');
 assert(reserveWin.phase === 'active' && reserveWin.players[0].currentHero === 'D.Va', 'A completed winner should return as a reserve when no fresh hero remains.');
 assert(reserveWin.heroRecords['D.Va'].state === 'completed', 'A reusable winner should keep its completed status.');
+
+const winnerChoiceRun = createNuzlockeRun({
+  ...DEFAULT_NUZLOCKE_RULES,
+  roles: ['Tank'],
+  excludedHeroes: Object.keys(goalRun.heroRecords).filter((hero) => hero !== 'D.Va' && hero !== 'Winston' && hero !== 'Orisa'),
+  removeRule: 'win',
+  duplicateSelections: false,
+  reuseCompletedHeroes: true,
+  requiredWins: 3,
+});
+const firstWinner = winnerChoiceRun.players[0].currentHero;
+const freshAfterWin = recordNuzlockeResult(winnerChoiceRun, 'win');
+assert(freshAfterWin.players[0].currentHero !== firstWinner, 'Automatic selection should still prioritize a fresh hero.');
+assert(!getEligibleHeroes(freshAfterWin).some((hero) => hero.name === firstWinner), 'The automatic pool should keep prioritizing fresh heroes.');
+assert(getSelectableHeroes(freshAfterWin).some((hero) => hero.name === firstWinner), 'A winner should remain immediately available for manual selection.');
+const manuallyReusedWinner = chooseNuzlockeHero(freshAfterWin, firstWinner);
+assert(manuallyReusedWinner.players[0].currentHero === firstWinner, 'A completed winner should be manually selectable while fresh heroes remain.');
+assert(manuallyReusedWinner.heroRecords[firstWinner].state === 'completed', 'Reusing a winner should preserve its winner status.');
 const legacySingleRun = JSON.parse(JSON.stringify(goalRun));
 legacySingleRun.currentHero = legacySingleRun.players[0].currentHero;
 legacySingleRun.lastHero = legacySingleRun.players[0].lastHero;

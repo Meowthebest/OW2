@@ -65,6 +65,7 @@ export function HeroCard({
   compact = false,
   favorite = false,
   detail,
+  statusLabel,
   disabled = false,
   onSelect,
   onFavorite,
@@ -74,6 +75,7 @@ export function HeroCard({
   compact?: boolean;
   favorite?: boolean;
   detail?: string;
+  statusLabel?: string;
   disabled?: boolean;
   onSelect?: () => void;
   onFavorite?: () => void;
@@ -85,7 +87,7 @@ export function HeroCard({
         className="hero-card__select"
         onClick={onSelect}
         disabled={disabled}
-        aria-label={statusCopy[status] + ': ' + hero.name + (detail ? '. ' + detail : '')}
+        aria-label={(statusLabel ?? statusCopy[status]) + ': ' + hero.name + (detail ? '. ' + detail : '')}
         aria-pressed={status === 'selected'}
       >
         <HeroPortrait hero={hero} decorative />
@@ -96,7 +98,7 @@ export function HeroCard({
           {detail && <small>{detail}</small>}
         </span>
         {status !== 'available' && status !== 'recent' && (
-          <span className="hero-card__status"><StatusIcon status={status} /> {statusCopy[status]}</span>
+          <span className="hero-card__status"><StatusIcon status={status} /> {statusLabel ?? statusCopy[status]}</span>
         )}
         {status === 'recent' && <span className="hero-card__recent">Recent</span>}
       </button>

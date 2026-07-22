@@ -79,21 +79,29 @@ function availableForRole(run: NuzlockeRun, heroes: Hero[], role?: Role, playerI
   });
 }
 
+function eligibleStatePool(run: NuzlockeRun, heroes: Hero[], playerId: number | undefined, completedReserve: boolean) {
+  const base = availableForRole(run, heroes, undefined, playerId, completedReserve);
+  if (!run.rules.roleQueue || run.rules.roles.length < 2 || base.length === 0) return base;
+  for (let offset = 0; offset < run.rules.roles.length; offset += 1) {
+    const role = run.rules.roles[(run.roleCursor + offset) % run.rules.roles.length];
+    const rolePool = availableForRole(run, heroes, role, playerId, completedReserve);
+    if (rolePool.length > 0) return rolePool;
+  }
+  return [];
+}
+
 export function getEligibleHeroes(run: NuzlockeRun, heroes: Hero[] = HEROES, playerId?: number) {
   if (playerId && (run.players.find((player) => player.id === playerId)?.remainingLives ?? 0) <= 0) return [];
-  const pool = (completedReserve: boolean) => {
-    const base = availableForRole(run, heroes, undefined, playerId, completedReserve);
-    if (!run.rules.roleQueue || run.rules.roles.length < 2 || base.length === 0) return base;
-    for (let offset = 0; offset < run.rules.roles.length; offset += 1) {
-      const role = run.rules.roles[(run.roleCursor + offset) % run.rules.roles.length];
-      const rolePool = availableForRole(run, heroes, role, playerId, completedReserve);
-      if (rolePool.length > 0) return rolePool;
-    }
-    return [];
-  };
-  const fresh = pool(false);
+  const fresh = eligibleStatePool(run, heroes, playerId, false);
   if (fresh.length > 0 || !run.rules.reuseCompletedHeroes) return fresh;
-  return pool(true);
+  return eligibleStatePool(run, heroes, playerId, true);
+}
+
+export function getSelectableHeroes(run: NuzlockeRun, heroes: Hero[] = HEROES, playerId?: number) {
+  if (playerId && (run.players.find((player) => player.id === playerId)?.remainingLives ?? 0) <= 0) return [];
+  const fresh = eligibleStatePool(run, heroes, playerId, false);
+  if (!run.rules.reuseCompletedHeroes) return fresh;
+  return [...fresh, ...eligibleStatePool(run, heroes, playerId, true)];
 }
 
 function randomFrom<T>(items: T[]) {
@@ -238,7 +246,7 @@ export function chooseNuzlockeHero(run: NuzlockeRun, heroName: string, playerId:
   if (!player || player.remainingLives <= 0) return run;
   const previous = player.currentHero;
   player.currentHero = null;
-  const eligible = getEligibleHeroes(next, HEROES, playerId);
+  const eligible = getSelectableHeroes(next, HEROES, playerId);
   if (!eligible.some((hero) => hero.name === heroName)) return run;
   const record = next.heroRecords[heroName];
   record.selections += 1;
