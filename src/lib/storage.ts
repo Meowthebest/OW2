@@ -30,6 +30,7 @@ const playerIds: PlayerId[] = [1, 2, 3, 4, 5];
 export const DEFAULT_NUZLOCKE_RULES: NuzlockeRules = {
   playerCount: 1,
   playerNames: ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5'],
+  playerRoles: Array.from({ length: 5 }, () => ['Tank', 'Damage', 'Support']),
   roles: ['Tank', 'Damage', 'Support'],
   excludedHeroes: [],
   duplicateSelections: false,
@@ -79,6 +80,10 @@ function normalizeNuzlockeRules(input: Partial<NuzlockeRules> | null | undefined
     ...DEFAULT_NUZLOCKE_RULES,
     playerCount: clampedNumber(input?.playerCount, DEFAULT_NUZLOCKE_RULES.playerCount, 1, 5),
     playerNames: Array.from({ length: 5 }, (_, index) => typeof input?.playerNames?.[index] === 'string' && input.playerNames[index].trim() ? input.playerNames[index].trim().slice(0, 24) : 'Player ' + (index + 1)),
+    playerRoles: Array.from({ length: 5 }, (_, index) => {
+      const selected = Array.isArray(input?.playerRoles?.[index]) ? input.playerRoles[index].filter((role) => roles.includes(role)) : [];
+      return selected.length ? selected : [...(roles.length ? roles : DEFAULT_NUZLOCKE_RULES.roles)];
+    }),
     roles: roles.length ? roles : [...DEFAULT_NUZLOCKE_RULES.roles],
     excludedHeroes: Array.isArray(input?.excludedHeroes)
       ? input.excludedHeroes.filter((hero): hero is string => typeof hero === 'string')

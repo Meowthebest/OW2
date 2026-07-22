@@ -45,6 +45,7 @@ export type RemoveRule = 'never' | 'win' | 'loss' | 'both';
 export type NuzlockeRules = {
   playerCount: number;
   playerNames: string[];
+  playerRoles: Role[][];
   roles: Role[];
   excludedHeroes: string[];
   duplicateSelections: boolean;

@@ -5,11 +5,13 @@ const require = createRequire(import.meta.url);
 const engineBundle = '/tmp/ow2-nuzlocke-engine.cjs';
 const storageBundle = '/tmp/ow2-storage-engine.cjs';
 const rankBundle = '/tmp/ow2-rank-engine.cjs';
+const heroBundle = '/tmp/ow2-hero-data.cjs';
 
 await Promise.all([
   build({ entryPoints: ['src/lib/nuzlocke.ts'], bundle: true, platform: 'node', format: 'cjs', outfile: engineBundle, logLevel: 'silent' }),
   build({ entryPoints: ['src/lib/storage.ts'], bundle: true, platform: 'node', format: 'cjs', outfile: storageBundle, logLevel: 'silent' }),
   build({ entryPoints: ['src/lib/rankChallenge.ts'], bundle: true, platform: 'node', format: 'cjs', outfile: rankBundle, logLevel: 'silent' }),
+  build({ entryPoints: ['src/data/heroes.ts'], bundle: true, platform: 'node', format: 'cjs', outfile: heroBundle, logLevel: 'silent' }),
 ]);
 
 const {
@@ -21,6 +23,7 @@ const {
   undoNuzlockeAction,
 } = require(engineBundle);
 const { DEFAULT_NUZLOCKE_RULES, migrateLegacyNormalBackup, normalizeNuzlockeStore, normalizeRankChallengeStore } = require(storageBundle);
+const { HERO_BY_NAME } = require(heroBundle);
 const {
   DEFAULT_RANK_CHALLENGE_CONFIG,
   createRankChallenge,
@@ -84,6 +87,7 @@ const partyRun = createNuzlockeRun({
   ...DEFAULT_NUZLOCKE_RULES,
   playerCount: 3,
   playerNames: ['Tank Cat', 'DPS Cat', 'Support Cat', 'Player 4', 'Player 5'],
+  playerRoles: [['Damage', 'Support'], ['Tank'], ['Support'], ['Tank', 'Damage', 'Support'], ['Tank', 'Damage', 'Support']],
   duplicateSelections: true,
   removeRule: 'never',
   livesPerHero: 2,
@@ -91,6 +95,9 @@ const partyRun = createNuzlockeRun({
 });
 const startingParty = partyRun.players.map((player) => player.currentHero);
 assert(startingParty.every(Boolean) && new Set(startingParty).size === 3, 'Every party member should receive a different eligible hero.');
+assert(['Damage', 'Support'].includes(HERO_BY_NAME[startingParty[0]].role), 'A flex player should draw from either selected role.');
+assert(HERO_BY_NAME[startingParty[1]].role === 'Tank', 'A role-locked player should only draw that role.');
+assert(HERO_BY_NAME[startingParty[2]].role === 'Support', 'Each player should keep an independent role pool.');
 const partyLoss = recordNuzlockeResult(partyRun, 'loss');
 assert(partyLoss.losses === 1 && partyLoss.remainingLives === partyRun.remainingLives - 1, 'A party loss should count as one match and one shared run life.');
 startingParty.forEach((hero) => assert(partyLoss.heroRecords[hero].lives === 1, 'Every active party hero should lose one hero life.'));
@@ -100,6 +107,7 @@ assert(JSON.stringify(partyUndo.players.map((player) => player.currentHero)) ===
 const teammateHeroes = partyRun.players.slice(1).map((player) => player.currentHero);
 const partyReroll = rerollNuzlockeHero(partyRun, 'reroll', partyRun.players[0].id);
 assert(partyReroll.players[0].currentHero !== startingParty[0], 'Reroll should change the selected player hero.');
+assert(['Damage', 'Support'].includes(HERO_BY_NAME[partyReroll.players[0].currentHero].role), 'Flex rerolls should remain inside the selected role combination.');
 assert(JSON.stringify(partyReroll.players.slice(1).map((player) => player.currentHero)) === JSON.stringify(teammateHeroes), 'Reroll should preserve teammate heroes.');
 const restoredParty = normalizeNuzlockeStore({ version: 1, draftRules: partyLoss.rules, currentRun: partyLoss, runHistory: [] });
 assert(restoredParty.currentRun.players.length === 3 && restoredParty.currentRun.players[1].name === 'DPS Cat', 'Party size, names, and lineup should survive refresh.');
@@ -109,8 +117,10 @@ legacySingleRun.lastHero = legacySingleRun.players[0].lastHero;
 delete legacySingleRun.players;
 delete legacySingleRun.rules.playerCount;
 delete legacySingleRun.rules.playerNames;
+delete legacySingleRun.rules.playerRoles;
 const migratedSingleRun = normalizeNuzlockeStore({ version: 1, draftRules: DEFAULT_NUZLOCKE_RULES, currentRun: legacySingleRun, runHistory: [] });
 assert(migratedSingleRun.currentRun.players.length === 1 && migratedSingleRun.currentRun.players[0].currentHero === goalHero, 'Existing single-player saves should migrate into the party model.');
+assert(migratedSingleRun.currentRun.rules.playerRoles[0].length === 3, 'Existing saves should migrate to a flexible all-role pool.');
 
 const legacy = migrateLegacyNormalBackup({
   version: 2,

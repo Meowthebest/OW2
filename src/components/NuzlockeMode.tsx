@@ -127,10 +127,11 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
 
   const activePlayers = run.players.slice(0, run.rules.playerCount);
   const activePlayer = activePlayers.find((player) => player.id === activePlayerId) ?? activePlayers[0];
+  const activeRolePool = activePlayer ? run.rules.playerRoles[activePlayer.id - 1] ?? run.rules.roles : run.rules.roles;
   const hero = HERO_BY_NAME[activePlayer?.currentHero ?? ''];
   const record = hero ? run.heroRecords[hero.name] : null;
   const currentHeroes = activePlayers.map((player) => player.currentHero).filter((name): name is string => !!name);
-  const eligible = getEligibleHeroes(run);
+  const eligible = getEligibleHeroes(run, HEROES, activePlayer?.id);
   const eligibleNames = new Set(eligible.map((item) => item.name));
   const completedCount = Object.values(run.heroRecords).filter((item) => item.state === 'completed').length;
   const eliminatedCount = Object.values(run.heroRecords).filter((item) => item.state === 'eliminated').length;
@@ -142,6 +143,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
     const state = run.heroRecords[heroName];
     if (currentHeroes.includes(heroName)) return 'selected';
     if (!run.rules.roles.includes(item.role)) return 'locked';
+    if (!activeRolePool.includes(item.role)) return 'locked';
     if (run.rules.excludedHeroes.includes(heroName)) return 'excluded';
     if (state.lives <= 0) return 'out';
     if (state.state === 'completed') return 'completed';
@@ -227,7 +229,8 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
           {activePlayers.map((player) => {
             const playerHero = HERO_BY_NAME[player.currentHero ?? ''];
             const playerRecord = playerHero ? run.heroRecords[playerHero.name] : null;
-            return <button type="button" key={player.id} className={cn(player.id === activePlayer?.id && 'is-active')} onClick={() => setActivePlayerId(player.id)} aria-pressed={player.id === activePlayer?.id}><HeroPortrait hero={playerHero} decorative /><span><strong>{player.name}</strong><small>{playerHero ? playerHero.name + ' · ' + playerRecord?.lives + ' lives' : 'Needs a hero'}</small></span></button>;
+            const rolePool = run.rules.playerRoles[player.id - 1] ?? run.rules.roles;
+            return <button type="button" key={player.id} className={cn(player.id === activePlayer?.id && 'is-active')} onClick={() => setActivePlayerId(player.id)} aria-pressed={player.id === activePlayer?.id} title={rolePool.join(' + ')}><HeroPortrait hero={playerHero} decorative /><span><strong>{player.name}</strong><small>{playerHero ? playerHero.name + ' · ' + playerRecord?.lives + ' lives' : rolePool.join(' + ')}</small></span></button>;
           })}
         </div>
       </section>
@@ -325,6 +328,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
               <span><small>Duplicates</small><strong>{run.rules.duplicateSelections ? 'Allowed' : 'Off'}</strong></span>
               <span><small>Role queue</small><strong>{run.rules.roleQueue ? 'On' : 'Off'}</strong></span>
             </div>
+            <div className="active-party-role-list">{activePlayers.map((player) => <span key={player.id}><small>{player.name}</small><strong>{(run.rules.playerRoles[player.id - 1] ?? run.rules.roles).join(' + ')}</strong></span>)}</div>
           </section>
           <section className="settings-section">
             <h3>Display</h3>

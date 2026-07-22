@@ -132,6 +132,11 @@ await wait();
 setInput(app.window, app.document.querySelector('input[aria-label="Nuzlocke player 1 name"]'), 'Alpha');
 setInput(app.window, app.document.querySelector('input[aria-label="Nuzlocke player 2 name"]'), 'Bravo');
 setInput(app.window, app.document.querySelector('input[aria-label="Nuzlocke player 3 name"]'), 'Charlie');
+await wait();
+clickSelector(app.document, 'button[aria-label="Toggle Tank for Alpha"]', 'Alpha Tank role toggle');
+await wait();
+assert.equal(app.document.querySelector('button[aria-label="Toggle Damage for Alpha"]')?.getAttribute('aria-pressed'), 'true');
+assert.equal(app.document.querySelector('button[aria-label="Toggle Support for Alpha"]')?.getAttribute('aria-pressed'), 'true');
 clickButton(app.document, 'Configure challenge');
 await wait();
 clickButton(app.document, 'Start Rank Challenge');
@@ -142,6 +147,7 @@ const partyHeroes = [...app.document.querySelectorAll('.nuzlocke-party-tabs butt
 assert.equal(new Set(partyHeroes).size, 3, 'Party members should receive different active heroes');
 const startingHero = app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent;
 assert.ok(startingHero);
+assert.notEqual(app.document.querySelector('.nuzlocke-hero-stage .hero-role-pill')?.textContent, 'Tank', 'Damage + Support flex should never draw Tank');
 assert.match(app.document.body.textContent, /Rank Challenge live/);
 
 clickSelector(app.document, '.run-result--win', 'Nuzlocke win button');
