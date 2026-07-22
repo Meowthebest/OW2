@@ -268,30 +268,34 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
 
   let currentRun: NuzlockeRun | null = null;
   const candidate = stored.currentRun;
-  if (candidate && candidate.version === 1 && (candidate.phase === 'active' || candidate.phase === 'completed') && candidate.rules && candidate.heroRecords) {
+  if (candidate && candidate.version === 1 && (candidate.phase === 'active' || candidate.phase === 'completed') && candidate.rules) {
     const runRules = normalizeNuzlockeRules({ ...draftRules, ...candidate.rules });
-    const heroRecords = { ...candidate.heroRecords };
-    HEROES.forEach((hero) => {
-      const record = heroRecords[hero.name];
-      const recordLives = Number(record?.lives);
-      heroRecords[hero.name] = {
-        lives: record?.state === 'eliminated'
-          ? 0
-          : Math.max(0, Number.isFinite(recordLives) ? Math.floor(recordLives) : runRules.livesPerHero),
-        wins: Math.max(0, Number(record?.wins) || 0),
-        losses: Math.max(0, Number(record?.losses) || 0),
-        selections: Math.max(0, Number(record?.selections) || 0),
-        state: record?.state === 'eliminated'
-          ? 'eliminated'
-          : record?.state === 'completed' && !(runRules.reuseCompletedHeroes && Number(record?.wins) > 0)
-            ? 'completed'
-            : 'available',
-        lastUsedAt: typeof record?.lastUsedAt === 'number' ? record.lastUsedAt : null,
-      };
-    });
-    const legacyCandidate = candidate as typeof candidate & { currentHero?: unknown; lastHero?: unknown };
-    const normalizePlayers = (players: unknown, legacyCurrent?: unknown, legacyLast?: unknown, legacyLives?: unknown) => Array.from({ length: runRules.playerCount }, (_, index) => {
-      const source = Array.isArray(players) ? players.find((player) => player && typeof player === 'object' && Number((player as { id?: unknown }).id) === index + 1) as { name?: unknown; currentHero?: unknown; lastHero?: unknown; remainingLives?: unknown } | undefined : undefined;
+    type RawHeroRecord = { lives?: unknown; wins?: unknown; losses?: unknown; selections?: unknown; state?: unknown };
+    type RawHeroRecords = Record<string, RawHeroRecord | undefined>;
+    const normalizeHeroRecords = (input: unknown) => {
+      const source = input && typeof input === 'object' ? input as RawHeroRecords : {};
+      return Object.fromEntries(HEROES.map((hero) => {
+        const record = source[hero.name];
+        const recordLives = Number(record?.lives);
+        return [hero.name, {
+          lives: record?.state === 'eliminated'
+            ? 0
+            : Math.max(0, Number.isFinite(recordLives) ? Math.floor(recordLives) : runRules.livesPerHero),
+          wins: Math.max(0, Number(record?.wins) || 0),
+          losses: Math.max(0, Number(record?.losses) || 0),
+          selections: Math.max(0, Number(record?.selections) || 0),
+          state: record?.state === 'eliminated'
+            ? 'eliminated' as const
+            : record?.state === 'completed' && !(runRules.reuseCompletedHeroes && Number(record?.wins) > 0)
+              ? 'completed' as const
+              : 'available' as const,
+        }];
+      }));
+    };
+    const legacyCandidate = candidate as typeof candidate & { currentHero?: unknown; lastHero?: unknown; heroRecords?: unknown };
+    const normalizePlayers = (players: unknown, legacyCurrent?: unknown, legacyLast?: unknown, legacyLives?: unknown, legacyHeroRecords?: unknown) => Array.from({ length: runRules.playerCount }, (_, index) => {
+      const source = Array.isArray(players) ? players.find((player) => player && typeof player === 'object' && Number((player as { id?: unknown }).id) === index + 1) as { name?: unknown; currentHero?: unknown; lastHero?: unknown; remainingLives?: unknown; heroRecords?: unknown } | undefined : undefined;
+      const heroRecords = normalizeHeroRecords(source?.heroRecords ?? (index === 0 ? legacyHeroRecords : undefined));
       const currentHero = source?.currentHero ?? (index === 0 ? legacyCurrent : null);
       const lastHero = source?.lastHero ?? (index === 0 ? legacyLast : null);
       return {
@@ -300,20 +304,20 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
         currentHero: typeof currentHero === 'string' && heroRecords[currentHero] ? currentHero : null,
         lastHero: typeof lastHero === 'string' && heroRecords[lastHero] ? lastHero : null,
         remainingLives: clampedNumber(source?.remainingLives, Number(legacyLives) || runRules.totalLives, 0, runRules.totalLives),
+        heroRecords,
       };
     });
-    const players = normalizePlayers(candidate.players, legacyCandidate.currentHero, legacyCandidate.lastHero, candidate.remainingLives);
-    const undoCandidate = candidate.undoSnapshot as (typeof candidate.undoSnapshot & { currentHero?: unknown; lastHero?: unknown }) | null;
+    const players = normalizePlayers(candidate.players, legacyCandidate.currentHero, legacyCandidate.lastHero, candidate.remainingLives, legacyCandidate.heroRecords);
+    const undoCandidate = candidate.undoSnapshot as (typeof candidate.undoSnapshot & { currentHero?: unknown; lastHero?: unknown; heroRecords?: unknown }) | null;
     const undoSnapshot = undoCandidate && typeof undoCandidate === 'object' ? {
       ...undoCandidate,
-      players: normalizePlayers(undoCandidate.players, undoCandidate.currentHero, undoCandidate.lastHero, undoCandidate.remainingLives),
+      players: normalizePlayers(undoCandidate.players, undoCandidate.currentHero, undoCandidate.lastHero, undoCandidate.remainingLives, undoCandidate.heroRecords),
       events: Array.isArray(undoCandidate.events) ? undoCandidate.events.map((event) => ({ ...event, heroes: Array.isArray(event.heroes) ? event.heroes : event.hero ? [event.hero] : [] })) : [],
     } : null;
     if (undoSnapshot) undoSnapshot.remainingLives = undoSnapshot.players.reduce((total, player) => total + player.remainingLives, 0);
     currentRun = {
       ...candidate,
       rules: runRules,
-      heroRecords,
       players,
       wins: Math.max(0, Number(candidate.wins) || 0),
       losses: Math.max(0, Number(candidate.losses) || 0),
@@ -324,6 +328,7 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
       events: Array.isArray(candidate.events) ? candidate.events.map((event) => ({ ...event, heroes: Array.isArray(event.heroes) ? event.heroes : event.hero ? [event.hero] : [] })) : [],
       undoSnapshot,
     };
+    delete (currentRun as NuzlockeRun & { heroRecords?: unknown }).heroRecords;
   }
 
   return {

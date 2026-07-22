@@ -36,7 +36,6 @@ function makeEvent(run: NuzlockeRun, type: NuzlockeEvent['type'], heroes: string
 export function snapshotRun(run: NuzlockeRun): NuzlockeSnapshot {
   return clone({
     players: run.players,
-    heroRecords: run.heroRecords,
     wins: run.wins,
     losses: run.losses,
     remainingLives: run.remainingLives,
@@ -62,7 +61,19 @@ function playerRolePool(run: NuzlockeRun, playerId?: number) {
   return selected.length ? selected : run.rules.roles;
 }
 
+function createHeroRecords(livesPerHero: number) {
+  return Object.fromEntries(HEROES.map((hero) => [hero.name, {
+    lives: livesPerHero,
+    wins: 0,
+    losses: 0,
+    selections: 0,
+    state: 'available' as const,
+  }])) as Record<string, NuzlockeHeroRecord>;
+}
+
 function availableForRole(run: NuzlockeRun, heroes: Hero[], role?: Role, playerId?: number, winnerPool = false) {
+  const targetPlayer = run.players.find((player) => player.id === (playerId ?? run.players[0]?.id));
+  if (!targetPlayer) return [];
   const selectedHeroes = new Set(run.players.map((player) => player.currentHero).filter((hero): hero is string => !!hero));
   const allowedRoles = playerRolePool(run, playerId);
   return heroes.filter((hero) => {
@@ -71,7 +82,7 @@ function availableForRole(run: NuzlockeRun, heroes: Hero[], role?: Role, playerI
     if (role && hero.role !== role) return false;
     if (run.rules.excludedHeroes.includes(hero.name)) return false;
     if (selectedHeroes.has(hero.name)) return false;
-    const record = run.heroRecords[hero.name];
+    const record = targetPlayer.heroRecords[hero.name];
     if (!record || record.lives <= 0) return false;
     const reusableWinner = run.rules.reuseCompletedHeroes && record.wins > 0 && record.state !== 'eliminated';
     if (winnerPool ? !reusableWinner : record.state !== 'available') return false;
@@ -154,9 +165,8 @@ function selectNextMutable(run: NuzlockeRun, type: 'pick' | 'reroll' | 'skip', p
     return;
   }
   const hero = randomFrom(pool);
-  const record = run.heroRecords[hero.name];
+  const record = player.heroRecords[hero.name];
   record.selections += 1;
-  record.lastUsedAt = Date.now();
   player.lastHero = previousHero;
   player.currentHero = hero.name;
   advanceRoleCursor(run, hero);
@@ -185,18 +195,6 @@ export function createNuzlockeRun(rules: NuzlockeRules): NuzlockeRun {
     totalLives: Math.max(1, Math.min(999, Math.floor(rules.totalLives) || 1)),
     requiredWins: Math.max(1, Math.min(999, Math.floor(rules.requiredWins) || 1)),
   };
-  const heroRecords: Record<string, NuzlockeHeroRecord> = {};
-  HEROES.forEach((hero) => {
-    heroRecords[hero.name] = {
-      lives: sanitizedRules.livesPerHero,
-      wins: 0,
-      losses: 0,
-      selections: 0,
-      state: 'available',
-      lastUsedAt: null,
-    };
-  });
-
   const run: NuzlockeRun = {
     id: uid('run'),
     version: 1,
@@ -211,8 +209,8 @@ export function createNuzlockeRun(rules: NuzlockeRules): NuzlockeRun {
       currentHero: null,
       lastHero: null,
       remainingLives: sanitizedRules.totalLives,
+      heroRecords: createHeroRecords(sanitizedRules.livesPerHero),
     })),
-    heroRecords,
     wins: 0,
     losses: 0,
     remainingLives: sanitizedRules.totalLives * sanitizedRules.playerCount,
@@ -250,9 +248,8 @@ export function chooseNuzlockeHero(run: NuzlockeRun, heroName: string, playerId:
   player.currentHero = null;
   const eligible = getSelectableHeroes(next, HEROES, playerId);
   if (!eligible.some((hero) => hero.name === heroName)) return run;
-  const record = next.heroRecords[heroName];
+  const record = player.heroRecords[heroName];
   record.selections += 1;
-  record.lastUsedAt = Date.now();
   player.lastHero = previous;
   player.currentHero = heroName;
   advanceRoleCursor(next, HEROES.find((hero) => hero.name === heroName));
@@ -272,8 +269,9 @@ export function recordNuzlockeResult(run: NuzlockeRun, result: 'win' | 'loss') {
     next.wins += 1;
     next.currentStreak += 1;
     next.longestStreak = Math.max(next.longestStreak, next.currentStreak);
-    heroNames.forEach((heroName) => {
-      const record = next.heroRecords[heroName];
+    lineup.forEach((player) => {
+      const heroName = player.currentHero as string;
+      const record = player.heroRecords[heroName];
       record.wins += 1;
       if (!next.rules.reuseCompletedHeroes && (next.rules.removeRule === 'win' || next.rules.removeRule === 'both' || !next.rules.duplicateSelections)) record.state = 'completed';
       else if (record.state !== 'eliminated') record.state = 'available';
@@ -285,8 +283,9 @@ export function recordNuzlockeResult(run: NuzlockeRun, result: 'win' | 'loss') {
     lineup.forEach((player) => { player.remainingLives = Math.max(0, player.remainingLives - 1); });
     next.remainingLives = next.players.reduce((total, player) => total + player.remainingLives, 0);
     const eliminated: string[] = [];
-    heroNames.forEach((heroName) => {
-      const record = next.heroRecords[heroName];
+    lineup.forEach((player) => {
+      const heroName = player.currentHero as string;
+      const record = player.heroRecords[heroName];
       record.losses += 1;
       record.lives = Math.max(0, record.lives - 1);
       if (record.lives === 0 || next.rules.removeRule === 'loss' || next.rules.removeRule === 'both') {
@@ -336,7 +335,9 @@ export function endNuzlockeRun(run: NuzlockeRun) {
 
 export function summarizeRun(run: NuzlockeRun): NuzlockeSummary {
   const endedAt = run.endedAt ?? Date.now();
-  const records = Object.values(run.heroRecords);
+  const heroNamesUsed = HEROES.filter((hero) => run.players.some((player) => player.heroRecords[hero.name].selections > 0));
+  const winningHeroNames = HEROES.filter((hero) => run.players.some((player) => player.heroRecords[hero.name].wins > 0));
+  const eliminatedProfiles = run.players.flatMap((player) => Object.values(player.heroRecords)).filter((record) => record.state === 'eliminated');
   return {
     id: run.id,
     startedAt: run.startedAt,
@@ -345,9 +346,9 @@ export function summarizeRun(run: NuzlockeRun): NuzlockeSummary {
     wins: run.wins,
     losses: run.losses,
     longestStreak: run.longestStreak,
-    heroesUsed: records.filter((record) => record.selections > 0).length,
-    heroesCompleted: records.filter((record) => record.wins > 0).length,
-    heroesEliminated: records.filter((record) => record.state === 'eliminated').length,
+    heroesUsed: heroNamesUsed.length,
+    heroesCompleted: winningHeroNames.length,
+    heroesEliminated: eliminatedProfiles.length,
     remainingLives: run.remainingLives,
     durationMs: Math.max(0, endedAt - run.startedAt),
     rules: clone(run.rules),

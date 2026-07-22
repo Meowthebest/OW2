@@ -38,7 +38,7 @@ export function HeroPortrait({ hero, className, decorative = false }: { hero: He
   );
 }
 
-export type HeroCardStatus = 'available' | 'selected' | 'winner' | 'completed' | 'eliminated' | 'locked' | 'excluded' | 'out' | 'recent';
+export type HeroCardStatus = 'available' | 'selected' | 'winner' | 'completed' | 'eliminated' | 'locked' | 'excluded' | 'out';
 
 const statusCopy: Record<HeroCardStatus, string> = {
   available: 'Available',
@@ -49,7 +49,6 @@ const statusCopy: Record<HeroCardStatus, string> = {
   locked: 'Locked',
   excluded: 'Excluded',
   out: 'Out of lives',
-  recent: 'Recently used',
 };
 
 function StatusIcon({ status }: { status: HeroCardStatus }) {
@@ -96,10 +95,9 @@ export function HeroCard({
           <strong>{hero.name}</strong>
           {detail && <small>{detail}</small>}
         </span>
-        {status !== 'available' && status !== 'recent' && (
+        {status !== 'available' && (
           <span className="hero-card__status"><StatusIcon status={status} /> {statusCopy[status]}</span>
         )}
-        {status === 'recent' && <span className="hero-card__recent">Recent</span>}
       </button>
       {onFavorite && (
         <button

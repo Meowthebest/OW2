@@ -180,6 +180,15 @@ clickButton(app.document, 'Record loss');
 await wait();
 assert.match(app.document.querySelector('.nuzlocke-metrics .metric-card strong')?.textContent ?? '', /0–1/);
 assert.ok([...app.document.querySelectorAll('.nuzlocke-party-tabs button small')].every((element) => element.textContent?.includes('11 run lives')), 'A loss should reduce each active player life independently');
+assert.match(app.document.querySelector('.nuzlocke-pool .eyebrow')?.textContent ?? '', /Alpha profile/, 'The hero grid should identify the active player profile.');
+const alphaLostHero = [...app.document.querySelectorAll('.nuzlocke-pool .hero-card__select')].find((button) => button.getAttribute('aria-label')?.includes(': ' + startingHero));
+assert.match(alphaLostHero?.getAttribute('aria-label') ?? '', /^(Out of lives|Eliminated):/, 'The lost hero should be unavailable in Player 1\'s profile.');
+clickSelector(app.document, '.nuzlocke-party-tabs button:nth-child(2)', 'Player 2 Nuzlocke tab');
+await wait();
+assert.match(app.document.querySelector('.nuzlocke-pool .eyebrow')?.textContent ?? '', /Bravo profile/, 'Switching players should switch the displayed hero profile.');
+const bravoCopyOfAlphaHero = [...app.document.querySelectorAll('.nuzlocke-pool .hero-card__select')].find((button) => button.getAttribute('aria-label')?.includes(': ' + startingHero));
+assert.doesNotMatch(bravoCopyOfAlphaHero?.getAttribute('aria-label') ?? '', /^(Out of lives|Eliminated):/, 'A Player 1 elimination must not eliminate the same hero for Player 2.');
+assert.doesNotMatch(app.document.querySelector('.nuzlocke-pool')?.textContent ?? '', /Recently used|Recent/, 'The Nuzlocke pool should not expose a recent state.');
 
 const settings = app.document.querySelector('button[aria-label="Open mode settings"]');
 assert.ok(settings);

@@ -275,7 +275,6 @@ html[data-theme="light"] .current-hero-panel::after, html[data-theme="light"] .n
 .hero-card__content strong { margin-top: 1px; overflow: hidden; color: #f7f9fc; font-size: .76rem; letter-spacing: -.01em; white-space: nowrap; text-overflow: ellipsis; }
 .hero-card__content small { margin-top: 2px; overflow: hidden; color: #98a5b8; font-size: .54rem; white-space: nowrap; text-overflow: ellipsis; }
 .hero-card__status { position: absolute; top: 9px; left: 9px; min-height: 27px; padding: 0 8px; display: inline-flex; align-items: center; gap: 5px; border: 1px solid rgba(255,255,255,.12); border-radius: 9px; color: #fff; background: rgba(8,13,21,.76); backdrop-filter: blur(10px); font-size: .54rem; font-weight: 780; }
-.hero-card__recent { position: absolute; top: 9px; left: 9px; min-height: 25px; padding: 0 8px; display: inline-flex; align-items: center; border-radius: 8px; color: #d7e6f7; background: rgba(44,73,105,.82); font-size: .52rem; font-weight: 760; }
 .hero-card__favorite { position: absolute; z-index: 3; top: 8px; right: 8px; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.12); border-radius: 9px; color: #dce4ef; background: rgba(8,13,21,.65); backdrop-filter: blur(10px); opacity: 0; transform: translateY(-4px); transition: var(--ease); }
 .hero-card:hover .hero-card__favorite, .hero-card:focus-within .hero-card__favorite, .hero-card__favorite.is-active { opacity: 1; transform: none; }
 .hero-card__favorite.is-active { color: var(--orange-2); }

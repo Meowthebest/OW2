@@ -68,7 +68,6 @@ export type NuzlockeHeroRecord = {
   losses: number;
   selections: number;
   state: NuzlockeHeroState;
-  lastUsedAt: number | null;
 };
 
 export type NuzlockeEventType = 'start' | 'win' | 'loss' | 'reroll' | 'skip' | 'pick' | 'end';
@@ -89,7 +88,6 @@ export type NuzlockeEndReason = 'goal' | 'no-lives' | 'no-heroes' | 'ended' | nu
 
 export type NuzlockeSnapshot = {
   players: NuzlockePlayer[];
-  heroRecords: Record<string, NuzlockeHeroRecord>;
   wins: number;
   losses: number;
   remainingLives: number;
@@ -108,6 +106,7 @@ export type NuzlockePlayer = {
   currentHero: string | null;
   lastHero: string | null;
   remainingLives: number;
+  heroRecords: Record<string, NuzlockeHeroRecord>;
 };
 
 export type NuzlockeRun = {
@@ -119,7 +118,6 @@ export type NuzlockeRun = {
   endedAt: number | null;
   endReason: NuzlockeEndReason;
   players: NuzlockePlayer[];
-  heroRecords: Record<string, NuzlockeHeroRecord>;
   wins: number;
   losses: number;
   remainingLives: number;

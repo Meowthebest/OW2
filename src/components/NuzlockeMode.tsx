@@ -54,7 +54,7 @@ type Props = {
   fail: (message: string) => void;
 };
 
-type PoolStatus = 'all' | 'available' | 'winner' | 'eliminated' | 'recent';
+type PoolStatus = 'all' | 'available' | 'winner' | 'eliminated';
 
 function eventTime(at: number) {
   return new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -130,20 +130,22 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
   const activePlayer = activePlayers.find((player) => player.id === activePlayerId) ?? activePlayers[0];
   const activeRolePool = activePlayer ? run.rules.playerRoles[activePlayer.id - 1] ?? run.rules.roles : run.rules.roles;
   const hero = HERO_BY_NAME[activePlayer?.currentHero ?? ''];
-  const record = hero ? run.heroRecords[hero.name] : null;
+  const activeHeroRecords = activePlayer?.heroRecords;
+  const record = hero && activeHeroRecords ? activeHeroRecords[hero.name] : null;
   const currentHeroes = activePlayers.map((player) => player.currentHero).filter((name): name is string => !!name);
   const eligible = getEligibleHeroes(run, HEROES, activePlayer?.id);
   const selectable = getSelectableHeroes(run, HEROES, activePlayer?.id);
   const selectableNames = new Set(selectable.map((item) => item.name));
-  const winnerCount = Object.values(run.heroRecords).filter((item) => item.wins > 0).length;
-  const eliminatedCount = Object.values(run.heroRecords).filter((item) => item.state === 'eliminated').length;
-  const usedCount = Object.values(run.heroRecords).filter((item) => item.selections > 0).length;
+  const winnerCount = Object.values(activeHeroRecords ?? {}).filter((item) => item.wins > 0).length;
+  const eliminatedCount = Object.values(activeHeroRecords ?? {}).filter((item) => item.state === 'eliminated').length;
+  const usedCount = Object.values(activeHeroRecords ?? {}).filter((item) => item.selections > 0).length;
   const winProgress = Math.min(run.wins, run.rules.requiredWins);
 
   const cardStatus = (heroName: string): HeroCardStatus => {
     const item = HERO_BY_NAME[heroName];
-    const state = run.heroRecords[heroName];
-    if (currentHeroes.includes(heroName)) return 'selected';
+    const state = activeHeroRecords?.[heroName];
+    if (!state) return 'locked';
+    if (activePlayer?.currentHero === heroName) return 'selected';
     if (!run.rules.roles.includes(item.role)) return 'locked';
     if (!activeRolePool.includes(item.role)) return 'locked';
     if (run.rules.excludedHeroes.includes(heroName)) return 'excluded';
@@ -151,19 +153,18 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
     if (state.wins > 0 && run.rules.reuseCompletedHeroes) return 'winner';
     if (state.state === 'completed') return 'completed';
     if (state.state === 'eliminated') return 'eliminated';
-    if (state.selections > 0) return 'recent';
+    if (currentHeroes.includes(heroName)) return 'selected';
     return 'available';
   };
 
   const filteredHeroes = HEROES.filter((item) => {
-    if (!run.rules.showEliminated && run.heroRecords[item.name].state === 'eliminated') return false;
+    if (!run.rules.showEliminated && activeHeroRecords?.[item.name].state === 'eliminated') return false;
     if (search && !item.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (roleFilter !== 'All' && item.role !== roleFilter) return false;
     const status = cardStatus(item.name);
     if (statusFilter === 'available' && status !== 'available' && status !== 'winner' && status !== 'selected') return false;
     if (statusFilter === 'winner' && status !== 'winner') return false;
     if (statusFilter === 'eliminated' && status !== 'eliminated' && status !== 'out') return false;
-    if (statusFilter === 'recent' && status !== 'recent') return false;
     return true;
   });
 
@@ -185,7 +186,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
 
   const requestLoss = () => {
     if (!currentHeroes.length) return;
-    const finalLifeInLineup = currentHeroes.some((name) => run.heroRecords[name].lives <= 1);
+    const finalLifeInLineup = activePlayers.some((player) => player.currentHero && player.heroRecords[player.currentHero].lives <= 1);
     const finalPlayerLife = activePlayers.some((player) => player.currentHero && player.remainingLives <= 1);
     if (finalLifeInLineup || finalPlayerLife || run.rules.removeRule === 'loss' || run.rules.removeRule === 'both') {
       setLossConfirm(true);
@@ -267,7 +268,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
           <header><span className="eyebrow">Record team result</span><h2>How did the match go?</h2><p>The result applies to all {currentHeroes.length} heroes in the active lineup.</p></header>
           <div className="run-result-actions">
             <button type="button" className="run-result run-result--win" onClick={() => recordResult('win')} disabled={!currentHeroes.length}><span><Check size={24} /></span><strong>Win</strong><small>{run.rules.removeRule === 'win' || run.rules.removeRule === 'both' || !run.rules.duplicateSelections ? 'Complete active lineup' : 'Keep heroes available'}</small></button>
-            <button type="button" className="run-result run-result--loss" onClick={requestLoss} disabled={!currentHeroes.length}><span><X size={24} /></span><strong>Loss</strong><small>{currentHeroes.some((name) => run.heroRecords[name].lives <= 1) || run.rules.removeRule === 'loss' || run.rules.removeRule === 'both' ? 'Eliminate affected lineup' : 'Each hero loses a life'}</small></button>
+            <button type="button" className="run-result run-result--loss" onClick={requestLoss} disabled={!currentHeroes.length}><span><X size={24} /></span><strong>Loss</strong><small>{activePlayers.some((player) => player.currentHero && player.heroRecords[player.currentHero].lives <= 1) || run.rules.removeRule === 'loss' || run.rules.removeRule === 'both' ? 'Eliminate affected lineup' : 'Each hero loses a life'}</small></button>
           </div>
           <div className="run-secondary-actions">
             <button type="button" onClick={() => activePlayer && applyRun((current) => rerollNuzlockeHero(current, 'reroll', activePlayer.id), activePlayer.name + ' rerolled.')} disabled={!hero} title="Reroll the selected player's hero"><RotateCcw size={17} /><span><strong>Reroll</strong><small>{activePlayer?.name}</small></span></button>
@@ -281,20 +282,22 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
       </section>
 
       <section className="hero-pool-panel nuzlocke-pool">
-        <header className="section-heading"><div><span className="eyebrow">Run roster</span><h2>Hero states</h2><p>Available heroes, reusable winners, and eliminated heroes update as you play.</p></div><span className="selection-counter"><strong>{usedCount}</strong> heroes used</span></header>
+        <header className="section-heading"><div><span className="eyebrow">{activePlayer?.name} profile</span><h2>Personal hero pool</h2><p>Lives, wins, and eliminations here belong only to {activePlayer?.name}. Other players keep separate copies.</p></div><span className="selection-counter"><strong>{usedCount}</strong> heroes used</span></header>
         <div className="hero-pool-toolbar">
           <SearchField value={search} onChange={setSearch} />
           <div className="segmented" role="group" aria-label="Filter run roster by role">{(['All', ...ROLES] as RoleFilter[]).map((role) => <button type="button" key={role} className={roleFilter === role ? 'is-active' : ''} onClick={() => setRoleFilter(role)}>{role}</button>)}</div>
-          <label className="select-field"><span className="sr-only">Filter run hero status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as PoolStatus)}><option value="all">All states</option><option value="available">Available</option><option value="winner">Winners</option><option value="eliminated">Eliminated</option><option value="recent">Recently used</option></select><ChevronDown size={15} /></label>
+          <label className="select-field"><span className="sr-only">Filter run hero status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as PoolStatus)}><option value="all">All states</option><option value="available">Available</option><option value="winner">Winners</option><option value="eliminated">Eliminated</option></select><ChevronDown size={15} /></label>
         </div>
         {filteredHeroes.length ? (
           <div className={cn('hero-grid', compactCards && 'is-compact')}>
             {filteredHeroes.map((item) => {
-              const state = run.heroRecords[item.name];
+              const state = activeHeroRecords?.[item.name];
+              if (!state) return null;
               const status = cardStatus(item.name);
-              const selectedPlayer = activePlayers.find((player) => player.currentHero === item.name);
-              const canSelect = selectableNames.has(item.name) && !selectedPlayer;
-              const detail = selectedPlayer ? selectedPlayer.name + ' · ' + state.wins + 'W' : status === 'winner' ? state.wins + ' win' + (state.wins === 1 ? '' : 's') + ' · ' + state.lives + ' ' + (state.lives === 1 ? 'life' : 'lives') : status === 'available' || status === 'recent' ? state.lives + ' life' + (state.lives === 1 ? '' : 's') + ' · ' + state.wins + 'W ' + state.losses + 'L' : undefined;
+              const occupyingPlayer = activePlayers.find((player) => player.currentHero === item.name);
+              const selectedPlayer = status === 'selected' ? occupyingPlayer : undefined;
+              const canSelect = selectableNames.has(item.name) && !occupyingPlayer;
+              const detail = selectedPlayer ? selectedPlayer.name + ' · ' + state.wins + 'W' : status === 'winner' ? state.wins + ' win' + (state.wins === 1 ? '' : 's') + ' · ' + state.lives + ' ' + (state.lives === 1 ? 'life' : 'lives') : status === 'available' ? state.lives + ' life' + (state.lives === 1 ? '' : 's') + ' · ' + state.wins + 'W ' + state.losses + 'L' : undefined;
               return <HeroCard key={item.name} hero={item} compact={compactCards} status={status} detail={detail} disabled={!canSelect && status !== 'selected'} onSelect={() => pickHero(item.name)} />;
             })}
           </div>
@@ -341,7 +344,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
             <Toggle checked={run.rules.showEliminated} onChange={updateDisplayRule} title="Show eliminated heroes" description="Keep eliminated cards visible in the roster." />
           </section>
           <section className="settings-section settings-section--danger">
-            <h3>End this run</h3><p>The current stats will be saved to your recent run history. This does not change normal mode.</p>
+            <h3>End this run</h3><p>The current stats will be saved to your run history. This does not change normal mode.</p>
             <button type="button" className="button button--danger" onClick={() => setEndConfirm(true)}><Skull size={16} />End Nuzlocke run</button>
           </section>
         </div>
@@ -355,9 +358,9 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
 
 function NuzlockeResults({ run, rankChallenge, onRankStart, onRankChange, compactCards, onRetry, onNewSetup, notify, fail }: { run: NuzlockeRun; rankChallenge: RankChallenge | null; onRankStart: (config: RankChallengeConfig) => void; onRankChange: Dispatch<SetStateAction<RankChallenge | null>>; compactCards: boolean; onRetry: () => void; onNewSetup: () => void; notify: (message: string) => void; fail: (message: string) => void }) {
   const summary = summarizeRun(run);
-  const winners = HEROES.filter((hero) => run.heroRecords[hero.name].wins > 0);
-  const eliminated = HEROES.filter((hero) => run.heroRecords[hero.name].state === 'eliminated');
-  const remaining = HEROES.filter((hero) => run.rules.roles.includes(hero.role) && !run.rules.excludedHeroes.includes(hero.name) && run.heroRecords[hero.name].state === 'available' && run.heroRecords[hero.name].lives > 0);
+  const winners = HEROES.filter((hero) => run.players.some((player) => player.heroRecords[hero.name].wins > 0));
+  const eliminated = HEROES.filter((hero) => run.players.some((player) => player.heroRecords[hero.name].state === 'eliminated'));
+  const remaining = HEROES.filter((hero) => run.rules.roles.includes(hero.role) && !run.rules.excludedHeroes.includes(hero.name) && run.players.some((player) => player.heroRecords[hero.name].state === 'available' && player.heroRecords[hero.name].lives > 0));
   const victory = run.endReason === 'goal';
 
   const exportImage = () => {
@@ -430,8 +433,8 @@ function NuzlockeResults({ run, rankChallenge, onRankStart, onRankChange, compac
       </section>
 
       <section className="result-rosters">
-        <ResultRoster title="Winning heroes" heroes={winners} empty="No heroes recorded a win." status="winner" compact={compactCards} detailForHero={(hero) => { const wins = run.heroRecords[hero.name].wins; return wins + ' win' + (wins === 1 ? '' : 's'); }} />
-        <ResultRoster title="Eliminated heroes" heroes={eliminated} empty="No heroes were eliminated." status="eliminated" compact={compactCards} />
+        <ResultRoster title="Winning heroes" heroes={winners} empty="No heroes recorded a win." status="winner" compact={compactCards} detailForHero={(hero) => { const wins = run.players.reduce((total, player) => total + player.heroRecords[hero.name].wins, 0); return wins + ' win' + (wins === 1 ? '' : 's') + ' across player profiles'; }} />
+        <ResultRoster title="Eliminated heroes" heroes={eliminated} empty="No heroes were eliminated." status="eliminated" compact={compactCards} detailForHero={(hero) => run.players.filter((player) => player.heroRecords[hero.name].state === 'eliminated').map((player) => player.name).join(', ')} />
         <ResultRoster title="Remaining heroes" heroes={remaining} empty="No eligible heroes remained." status="available" compact={compactCards} />
       </section>
 
