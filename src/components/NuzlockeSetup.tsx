@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, ChevronDown, Flame, Heart, Info, RotateCcw, Shield, Sparkles, Swords, Target } from 'lucide-react';
+import { Check, ChevronDown, Flame, Heart, Info, RotateCcw, Shield, Sparkles, Swords, Target, Users } from 'lucide-react';
 import { HEROES, ROLES } from '../data/heroes';
 import { DEFAULT_NUZLOCKE_RULES } from '../lib/storage';
 import type { NuzlockeRules, NuzlockeSummary, RemoveRule, Role, RoleFilter } from '../types';
@@ -53,8 +53,8 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
   };
 
   const start = () => {
-    if (!includedHeroes.length) {
-      fail('Include at least one hero before starting.');
+    if (includedHeroes.length < rules.playerCount) {
+      fail('Include at least ' + rules.playerCount + ' heroes for this party.');
       return;
     }
     onStart();
@@ -69,6 +69,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
           <p>Build your rules, protect your remaining lives, and clear the win target before the hero pool runs dry.</p>
         </div>
         <div className="setup-hero__summary">
+          <span><strong>{rules.playerCount}</strong><small>{rules.playerCount === 1 ? 'Player' : 'Players'}</small></span>
           <span><strong>{includedHeroes.length}</strong><small>Heroes included</small></span>
           <span><strong>{rules.totalLives}</strong><small>Run lives</small></span>
           <span><strong>{rules.requiredWins}</strong><small>Wins required</small></span>
@@ -89,6 +90,17 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
       <section className="setup-section">
         <header className="section-heading"><div><span className="eyebrow">Run rules</span><h2>Configure the challenge</h2><p>Defaults are ready to play; only change what matters to you.</p></div><button type="button" className="button button--ghost" onClick={() => onRulesChange({ ...DEFAULT_NUZLOCKE_RULES })}><RotateCcw size={15} />Restore defaults</button></header>
         <div className="rules-layout">
+          <div className="rule-card nuzlocke-party-setup">
+            <span className="rule-card__icon"><Users size={19} /></span>
+            <div className="rule-card__heading"><strong>Party size</strong><small>Add up to five players. Each player gets a separate active hero.</small></div>
+            <div className="party-size-picker" role="group" aria-label="Nuzlocke player count">
+              {[1, 2, 3, 4, 5].map((count) => <button type="button" key={count} className={rules.playerCount === count ? 'is-active' : ''} onClick={() => setRule('playerCount', count)} aria-pressed={rules.playerCount === count}>{count}</button>)}
+            </div>
+            <div className="party-name-grid">
+              {Array.from({ length: rules.playerCount }, (_, index) => <label className="field" key={index}><span>Player {index + 1}</span><input aria-label={'Nuzlocke player ' + (index + 1) + ' name'} value={rules.playerNames[index] ?? 'Player ' + (index + 1)} maxLength={24} onChange={(event) => setRule('playerNames', Array.from({ length: 5 }, (__, nameIndex) => nameIndex === index ? event.target.value : rules.playerNames[nameIndex] ?? 'Player ' + (nameIndex + 1)))} /></label>)}
+            </div>
+          </div>
+
           <div className="rule-card rule-card--roles">
             <span className="rule-card__icon"><Shield size={19} /></span>
             <div className="rule-card__heading"><strong>Included roles</strong><small>Choose one role or combine the full roster.</small></div>
@@ -135,7 +147,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
       </section>
 
       <section className="launch-panel">
-        <div><span className="launch-panel__icon"><Flame size={24} /></span><span><small>Ready when you are</small><h2>Start with {includedHeroes.length} heroes and {rules.totalLives} lives</h2><p>Your setup and progress save automatically. Starting another run later will require confirmation.</p></span></div>
+        <div><span className="launch-panel__icon"><Flame size={24} /></span><span><small>Ready when you are</small><h2>Start a {rules.playerCount}-player run with {includedHeroes.length} heroes</h2><p>{rules.totalLives} shared lives · progress saves automatically · new runs require confirmation.</p></span></div>
         <button type="button" className="button button--primary button--large" onClick={start}><Swords size={20} />Start Nuzlocke</button>
       </section>
 
@@ -150,7 +162,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
         </section>
       )}
 
-      <aside className="setup-note"><Info size={17} /><p><strong>How it works:</strong> Win and Loss update the current hero, run lives, and timeline. Undo restores the exact state before your most recent action.</p></aside>
+      <aside className="setup-note"><Info size={17} /><p><strong>How it works:</strong> Every player gets a different hero. Team results update the whole active lineup, while Reroll, Skip, and manual picks target one selected player. Undo restores the entire party.</p></aside>
     </div>
   );
 }

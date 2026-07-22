@@ -148,13 +148,14 @@ export function createRankChallenge(mode: AppMode, config: RankChallengeConfig):
   return challenge;
 }
 
-export function recordRankChallengeResult(challenge: RankChallenge, result: 'W' | 'L', hero: string | null) {
+export function recordRankChallengeResult(challenge: RankChallenge, result: 'W' | 'L', hero: string | string[] | null) {
   if (challenge.phase !== 'active') return challenge;
   const next = withUndo(challenge, 'result');
   if (result === 'W') next.wins += 1;
   else next.losses += 1;
-  if (hero && !next.heroesUsed.includes(hero)) next.heroesUsed.push(hero);
-  next.events.push(event(next, 'result', (result === 'W' ? 'Win' : 'Loss') + (hero ? ' with ' + hero : ''), hero, result));
+  const heroes = Array.isArray(hero) ? hero : hero ? [hero] : [];
+  heroes.forEach((name) => { if (!next.heroesUsed.includes(name)) next.heroesUsed.push(name); });
+  next.events.push(event(next, 'result', (result === 'W' ? 'Win' : 'Loss') + (heroes.length ? ' with ' + heroes.join(', ') : ''), heroes[0] ?? null, result));
   evaluate(next);
   return next;
 }

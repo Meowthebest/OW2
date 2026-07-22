@@ -17,6 +17,7 @@ const {
   getEligibleHeroes,
   pickNextHero,
   recordNuzlockeResult,
+  rerollNuzlockeHero,
   undoNuzlockeAction,
 } = require(engineBundle);
 const { DEFAULT_NUZLOCKE_RULES, migrateLegacyNormalBackup, normalizeNuzlockeStore, normalizeRankChallengeStore } = require(storageBundle);
@@ -33,14 +34,14 @@ function assert(condition, message) {
 }
 
 const goalRun = createNuzlockeRun({ ...DEFAULT_NUZLOCKE_RULES, requiredWins: 1 });
-const goalHero = goalRun.currentHero;
+const goalHero = goalRun.players[0].currentHero;
 const completed = recordNuzlockeResult(goalRun, 'win');
 assert(completed.phase === 'completed' && completed.endReason === 'goal', 'A goal win should complete the run.');
 assert(completed.wins === 1, 'A goal win should be counted.');
 
 const restored = undoNuzlockeAction(completed);
 assert(restored.phase === 'active', 'Undo should reopen a just-completed run.');
-assert(restored.currentHero === goalHero && restored.wins === 0, 'Undo should exactly restore the previous hero and score.');
+assert(restored.players[0].currentHero === goalHero && restored.wins === 0, 'Undo should exactly restore the previous hero and score.');
 
 const onlyDva = createNuzlockeRun({
   ...DEFAULT_NUZLOCKE_RULES,
@@ -49,7 +50,7 @@ const onlyDva = createNuzlockeRun({
   totalLives: 5,
   requiredWins: 5,
 });
-assert(onlyDva.currentHero === 'D.Va', 'A one-hero pool should select its only hero.');
+assert(onlyDva.players[0].currentHero === 'D.Va', 'A one-hero pool should select its only hero.');
 assert(getEligibleHeroes(onlyDva).length === 0, 'The selected hero should not be duplicated when duplicates are disabled.');
 const finalHeroLoss = recordNuzlockeResult(onlyDva, 'loss');
 assert(finalHeroLoss.phase === 'completed' && finalHeroLoss.endReason === 'no-heroes', 'Losing the final eligible hero should end the run.');
@@ -75,9 +76,41 @@ assert(noPool.phase === 'completed' && noPool.endReason === 'no-heroes', 'An emp
 
 const manualAdvance = createNuzlockeRun({ ...DEFAULT_NUZLOCKE_RULES, autoAdvance: false, requiredWins: 5 });
 const waiting = recordNuzlockeResult(manualAdvance, 'win');
-assert(waiting.phase === 'active' && waiting.currentHero === null, 'Auto-advance off should wait for the user.');
+assert(waiting.phase === 'active' && waiting.players[0].currentHero === null, 'Auto-advance off should wait for the user.');
 const advanced = pickNextHero(waiting);
-assert(advanced.currentHero, 'Next hero should be selectable after a manual advance.');
+assert(advanced.players[0].currentHero, 'Next hero should be selectable after a manual advance.');
+
+const partyRun = createNuzlockeRun({
+  ...DEFAULT_NUZLOCKE_RULES,
+  playerCount: 3,
+  playerNames: ['Tank Cat', 'DPS Cat', 'Support Cat', 'Player 4', 'Player 5'],
+  duplicateSelections: true,
+  removeRule: 'never',
+  livesPerHero: 2,
+  requiredWins: 5,
+});
+const startingParty = partyRun.players.map((player) => player.currentHero);
+assert(startingParty.every(Boolean) && new Set(startingParty).size === 3, 'Every party member should receive a different eligible hero.');
+const partyLoss = recordNuzlockeResult(partyRun, 'loss');
+assert(partyLoss.losses === 1 && partyLoss.remainingLives === partyRun.remainingLives - 1, 'A party loss should count as one match and one shared run life.');
+startingParty.forEach((hero) => assert(partyLoss.heroRecords[hero].lives === 1, 'Every active party hero should lose one hero life.'));
+assert(partyLoss.players.every((player) => player.currentHero), 'Auto-advance should refill the whole party.');
+const partyUndo = undoNuzlockeAction(partyLoss);
+assert(JSON.stringify(partyUndo.players.map((player) => player.currentHero)) === JSON.stringify(startingParty), 'Undo should restore the exact party lineup.');
+const teammateHeroes = partyRun.players.slice(1).map((player) => player.currentHero);
+const partyReroll = rerollNuzlockeHero(partyRun, 'reroll', partyRun.players[0].id);
+assert(partyReroll.players[0].currentHero !== startingParty[0], 'Reroll should change the selected player hero.');
+assert(JSON.stringify(partyReroll.players.slice(1).map((player) => player.currentHero)) === JSON.stringify(teammateHeroes), 'Reroll should preserve teammate heroes.');
+const restoredParty = normalizeNuzlockeStore({ version: 1, draftRules: partyLoss.rules, currentRun: partyLoss, runHistory: [] });
+assert(restoredParty.currentRun.players.length === 3 && restoredParty.currentRun.players[1].name === 'DPS Cat', 'Party size, names, and lineup should survive refresh.');
+const legacySingleRun = JSON.parse(JSON.stringify(goalRun));
+legacySingleRun.currentHero = legacySingleRun.players[0].currentHero;
+legacySingleRun.lastHero = legacySingleRun.players[0].lastHero;
+delete legacySingleRun.players;
+delete legacySingleRun.rules.playerCount;
+delete legacySingleRun.rules.playerNames;
+const migratedSingleRun = normalizeNuzlockeStore({ version: 1, draftRules: DEFAULT_NUZLOCKE_RULES, currentRun: legacySingleRun, runHistory: [] });
+assert(migratedSingleRun.currentRun.players.length === 1 && migratedSingleRun.currentRun.players[0].currentHero === goalHero, 'Existing single-player saves should migrate into the party model.');
 
 const legacy = migrateLegacyNormalBackup({
   version: 2,
@@ -146,6 +179,7 @@ console.log('NUZLOCKE_ENGINE_TESTS_PASS', {
   sharedLives: true,
   emptyPool: true,
   manualAdvance: true,
+  multiplayerParty: true,
   legacyMigration: true,
   persistence: true,
   rankGoalAndUndo: true,

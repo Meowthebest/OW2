@@ -43,6 +43,8 @@ export type NormalSession = {
 export type RemoveRule = 'never' | 'win' | 'loss' | 'both';
 
 export type NuzlockeRules = {
+  playerCount: number;
+  playerNames: string[];
   roles: Role[];
   excludedHeroes: string[];
   duplicateSelections: boolean;
@@ -74,6 +76,7 @@ export type NuzlockeEvent = {
   at: number;
   type: NuzlockeEventType;
   hero: string | null;
+  heroes: string[];
   detail: string;
   wins: number;
   losses: number;
@@ -83,8 +86,7 @@ export type NuzlockeEvent = {
 export type NuzlockeEndReason = 'goal' | 'no-lives' | 'no-heroes' | 'ended' | null;
 
 export type NuzlockeSnapshot = {
-  currentHero: string | null;
-  lastHero: string | null;
+  players: NuzlockePlayer[];
   heroRecords: Record<string, NuzlockeHeroRecord>;
   wins: number;
   losses: number;
@@ -98,6 +100,13 @@ export type NuzlockeSnapshot = {
   endReason: NuzlockeEndReason;
 };
 
+export type NuzlockePlayer = {
+  id: PlayerId;
+  name: string;
+  currentHero: string | null;
+  lastHero: string | null;
+};
+
 export type NuzlockeRun = {
   id: string;
   version: 1;
@@ -106,8 +115,7 @@ export type NuzlockeRun = {
   startedAt: number;
   endedAt: number | null;
   endReason: NuzlockeEndReason;
-  currentHero: string | null;
-  lastHero: string | null;
+  players: NuzlockePlayer[];
   heroRecords: Record<string, NuzlockeHeroRecord>;
   wins: number;
   losses: number;

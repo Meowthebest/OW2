@@ -28,6 +28,8 @@ export const RANK_CHALLENGE_STORAGE_KEY = 'ow2_rank_challenges_v1';
 const playerIds: PlayerId[] = [1, 2, 3, 4, 5];
 
 export const DEFAULT_NUZLOCKE_RULES: NuzlockeRules = {
+  playerCount: 1,
+  playerNames: ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5'],
   roles: ['Tank', 'Damage', 'Support'],
   excludedHeroes: [],
   duplicateSelections: false,
@@ -75,6 +77,8 @@ function normalizeNuzlockeRules(input: Partial<NuzlockeRules> | null | undefined
   const removeRule = input?.removeRule;
   return {
     ...DEFAULT_NUZLOCKE_RULES,
+    playerCount: clampedNumber(input?.playerCount, DEFAULT_NUZLOCKE_RULES.playerCount, 1, 5),
+    playerNames: Array.from({ length: 5 }, (_, index) => typeof input?.playerNames?.[index] === 'string' && input.playerNames[index].trim() ? input.playerNames[index].trim().slice(0, 24) : 'Player ' + (index + 1)),
     roles: roles.length ? roles : [...DEFAULT_NUZLOCKE_RULES.roles],
     excludedHeroes: Array.isArray(input?.excludedHeroes)
       ? input.excludedHeroes.filter((hero): hero is string => typeof hero === 'string')
@@ -274,20 +278,38 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
         lastUsedAt: typeof record?.lastUsedAt === 'number' ? record.lastUsedAt : null,
       };
     });
+    const legacyCandidate = candidate as typeof candidate & { currentHero?: unknown; lastHero?: unknown };
+    const normalizePlayers = (players: unknown, legacyCurrent?: unknown, legacyLast?: unknown) => Array.from({ length: runRules.playerCount }, (_, index) => {
+      const source = Array.isArray(players) ? players.find((player) => player && typeof player === 'object' && Number((player as { id?: unknown }).id) === index + 1) as { name?: unknown; currentHero?: unknown; lastHero?: unknown } | undefined : undefined;
+      const currentHero = source?.currentHero ?? (index === 0 ? legacyCurrent : null);
+      const lastHero = source?.lastHero ?? (index === 0 ? legacyLast : null);
+      return {
+        id: (index + 1) as PlayerId,
+        name: typeof source?.name === 'string' && source.name.trim() ? source.name.trim().slice(0, 24) : runRules.playerNames[index],
+        currentHero: typeof currentHero === 'string' && heroRecords[currentHero] ? currentHero : null,
+        lastHero: typeof lastHero === 'string' && heroRecords[lastHero] ? lastHero : null,
+      };
+    });
+    const players = normalizePlayers(candidate.players, legacyCandidate.currentHero, legacyCandidate.lastHero);
+    const undoCandidate = candidate.undoSnapshot as (typeof candidate.undoSnapshot & { currentHero?: unknown; lastHero?: unknown }) | null;
+    const undoSnapshot = undoCandidate && typeof undoCandidate === 'object' ? {
+      ...undoCandidate,
+      players: normalizePlayers(undoCandidate.players, undoCandidate.currentHero, undoCandidate.lastHero),
+      events: Array.isArray(undoCandidate.events) ? undoCandidate.events.map((event) => ({ ...event, heroes: Array.isArray(event.heroes) ? event.heroes : event.hero ? [event.hero] : [] })) : [],
+    } : null;
     currentRun = {
       ...candidate,
       rules: runRules,
       heroRecords,
-      currentHero: typeof candidate.currentHero === 'string' && heroRecords[candidate.currentHero] ? candidate.currentHero : null,
-      lastHero: typeof candidate.lastHero === 'string' && heroRecords[candidate.lastHero] ? candidate.lastHero : null,
+      players,
       wins: Math.max(0, Number(candidate.wins) || 0),
       losses: Math.max(0, Number(candidate.losses) || 0),
       remainingLives: Math.max(0, Number(candidate.remainingLives) || 0),
       currentStreak: Math.max(0, Number(candidate.currentStreak) || 0),
       longestStreak: Math.max(0, Number(candidate.longestStreak) || 0),
       roleCursor: Math.max(0, Number(candidate.roleCursor) || 0),
-      events: Array.isArray(candidate.events) ? candidate.events : [],
-      undoSnapshot: candidate.undoSnapshot && typeof candidate.undoSnapshot === 'object' ? candidate.undoSnapshot : null,
+      events: Array.isArray(candidate.events) ? candidate.events.map((event) => ({ ...event, heroes: Array.isArray(event.heroes) ? event.heroes : event.hero ? [event.hero] : [] })) : [],
+      undoSnapshot,
     };
   }
 

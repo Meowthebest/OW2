@@ -127,11 +127,19 @@ await wait();
 clickSelector(app.document, '.mode-switcher button[aria-pressed="false"]', 'Nuzlocke mode tab');
 await wait();
 assert.match(app.document.body.textContent, /Every result changes the run/);
+clickSelector(app.document, '.party-size-picker button:nth-child(3)', 'three-player Nuzlocke option');
+await wait();
+setInput(app.window, app.document.querySelector('input[aria-label="Nuzlocke player 1 name"]'), 'Alpha');
+setInput(app.window, app.document.querySelector('input[aria-label="Nuzlocke player 2 name"]'), 'Bravo');
+setInput(app.window, app.document.querySelector('input[aria-label="Nuzlocke player 3 name"]'), 'Charlie');
 clickButton(app.document, 'Configure challenge');
 await wait();
 clickButton(app.document, 'Start Rank Challenge');
 await wait(60);
 assert.match(app.document.body.textContent, /How did the match go/);
+assert.equal(app.document.querySelectorAll('.nuzlocke-party-tabs button').length, 3, 'Nuzlocke should render every configured party member');
+const partyHeroes = [...app.document.querySelectorAll('.nuzlocke-party-tabs button small')].map((element) => element.textContent?.split(' · ')[0]);
+assert.equal(new Set(partyHeroes).size, 3, 'Party members should receive different active heroes');
 const startingHero = app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent;
 assert.ok(startingHero);
 assert.match(app.document.body.textContent, /Rank Challenge live/);
@@ -143,6 +151,7 @@ assert.match(app.document.querySelector('.rank-live-stats .metric-card strong')?
 clickSelector(app.document, '.run-secondary-actions button:last-child', 'Nuzlocke undo button');
 await wait();
 assert.equal(app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent, startingHero);
+assert.equal(app.document.querySelectorAll('.nuzlocke-party-tabs button').length, 3, 'Party size should survive refresh');
 assert.match(app.document.querySelector('.nuzlocke-metrics .metric-card strong')?.textContent ?? '', /0–0/);
 assert.match(app.document.querySelector('.rank-live-stats .metric-card strong')?.textContent ?? '', /0–0/);
 
@@ -150,7 +159,7 @@ const persisted = snapshotStorage(app.window);
 app.dom.window.close();
 app = await boot(persisted);
 assert.equal(app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent, startingHero);
-assert.match(app.document.body.textContent, /Nuzlocke run in progress/);
+assert.match(app.document.body.textContent, /3-player party/);
 
 clickSelector(app.document, '.run-result--loss', 'Nuzlocke loss button');
 await wait();
@@ -174,7 +183,7 @@ assert.match(app.document.body.textContent, /Run history/);
 assert.match(app.document.body.textContent, /Rank climb concluded/);
 clickButton(app.document, 'Retry same rules');
 await wait();
-assert.match(app.document.body.textContent, /Nuzlocke run in progress/);
+assert.match(app.document.body.textContent, /3-player party/);
 
 clickSelector(app.document, '.mode-switcher button[aria-pressed="false"]', 'Normal mode tab');
 await wait();
