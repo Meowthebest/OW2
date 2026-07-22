@@ -69,7 +69,7 @@ const sharedLifeRun = createNuzlockeRun({
   requiredWins: 5,
 });
 const noLives = recordNuzlockeResult(sharedLifeRun, 'loss');
-assert(noLives.phase === 'completed' && noLives.endReason === 'no-lives', 'The run should end when its shared lives reach zero.');
+assert(noLives.phase === 'completed' && noLives.endReason === 'no-lives', 'A single-player run should end when its personal lives reach zero.');
 
 const noPool = createNuzlockeRun({
   ...DEFAULT_NUZLOCKE_RULES,
@@ -99,7 +99,8 @@ assert(['Damage', 'Support'].includes(HERO_BY_NAME[startingParty[0]].role), 'A f
 assert(HERO_BY_NAME[startingParty[1]].role === 'Tank', 'A role-locked player should only draw that role.');
 assert(HERO_BY_NAME[startingParty[2]].role === 'Support', 'Each player should keep an independent role pool.');
 const partyLoss = recordNuzlockeResult(partyRun, 'loss');
-assert(partyLoss.losses === 1 && partyLoss.remainingLives === partyRun.remainingLives - 1, 'A party loss should count as one match and one shared run life.');
+assert(partyLoss.losses === 1 && partyLoss.remainingLives === partyRun.remainingLives - 3, 'A party loss should count as one match and remove one personal life from each active player.');
+assert(partyLoss.players.every((player) => player.remainingLives === partyRun.rules.totalLives - 1), 'Every active player should have an independent run-life counter.');
 startingParty.forEach((hero) => assert(partyLoss.heroRecords[hero].lives === 1, 'Every active party hero should lose one hero life.'));
 assert(partyLoss.players.every((player) => player.currentHero), 'Auto-advance should refill the whole party.');
 const partyUndo = undoNuzlockeAction(partyLoss);
@@ -111,9 +112,33 @@ assert(['Damage', 'Support'].includes(HERO_BY_NAME[partyReroll.players[0].curren
 assert(JSON.stringify(partyReroll.players.slice(1).map((player) => player.currentHero)) === JSON.stringify(teammateHeroes), 'Reroll should preserve teammate heroes.');
 const restoredParty = normalizeNuzlockeStore({ version: 1, draftRules: partyLoss.rules, currentRun: partyLoss, runHistory: [] });
 assert(restoredParty.currentRun.players.length === 3 && restoredParty.currentRun.players[1].name === 'DPS Cat', 'Party size, names, and lineup should survive refresh.');
+assert(restoredParty.currentRun.players.every((player) => player.remainingLives === partyRun.rules.totalLives - 1), 'Individual player lives should survive refresh.');
+
+const mixedLivesRun = JSON.parse(JSON.stringify(partyRun));
+mixedLivesRun.players[0].remainingLives = 1;
+mixedLivesRun.players[1].remainingLives = 2;
+mixedLivesRun.players[2].remainingLives = 2;
+mixedLivesRun.remainingLives = 5;
+const onePlayerOut = recordNuzlockeResult(mixedLivesRun, 'loss');
+assert(onePlayerOut.phase === 'active' && onePlayerOut.players[0].remainingLives === 0 && !onePlayerOut.players[0].currentHero, 'A player at zero personal lives should be out of the active lineup.');
+assert(onePlayerOut.players.slice(1).every((player) => player.remainingLives === 1 && player.currentHero), 'Teammates with personal lives should continue the run.');
+
+const winnerReserveRun = createNuzlockeRun({
+  ...DEFAULT_NUZLOCKE_RULES,
+  roles: ['Tank'],
+  excludedHeroes: Object.keys(goalRun.heroRecords).filter((hero) => hero !== 'D.Va'),
+  removeRule: 'win',
+  duplicateSelections: false,
+  reuseCompletedHeroes: true,
+  requiredWins: 2,
+});
+const reserveWin = recordNuzlockeResult(winnerReserveRun, 'win');
+assert(reserveWin.phase === 'active' && reserveWin.players[0].currentHero === 'D.Va', 'A completed winner should return as a reserve when no fresh hero remains.');
+assert(reserveWin.heroRecords['D.Va'].state === 'completed', 'A reusable winner should keep its completed status.');
 const legacySingleRun = JSON.parse(JSON.stringify(goalRun));
 legacySingleRun.currentHero = legacySingleRun.players[0].currentHero;
 legacySingleRun.lastHero = legacySingleRun.players[0].lastHero;
+delete legacySingleRun.players[0].remainingLives;
 delete legacySingleRun.players;
 delete legacySingleRun.rules.playerCount;
 delete legacySingleRun.rules.playerNames;
@@ -186,10 +211,12 @@ assert(restoredPlacement.normal?.currentPosition.rank === 'Placements' && restor
 console.log('NUZLOCKE_ENGINE_TESTS_PASS', {
   goalAndUndo: true,
   finalHero: true,
-  sharedLives: true,
+  personalLifeEnd: true,
   emptyPool: true,
   manualAdvance: true,
   multiplayerParty: true,
+  individualPlayerLives: true,
+  winnerReserves: true,
   legacyMigration: true,
   persistence: true,
   rankGoalAndUndo: true,

@@ -145,6 +145,7 @@ assert.match(app.document.body.textContent, /How did the match go/);
 assert.equal(app.document.querySelectorAll('.nuzlocke-party-tabs button').length, 3, 'Nuzlocke should render every configured party member');
 const partyHeroes = [...app.document.querySelectorAll('.nuzlocke-party-tabs button small')].map((element) => element.textContent?.split(' · ')[0]);
 assert.equal(new Set(partyHeroes).size, 3, 'Party members should receive different active heroes');
+assert.ok([...app.document.querySelectorAll('.nuzlocke-party-tabs button small')].every((element) => element.textContent?.includes('12 run lives')), 'Every party member should start with an individual life counter');
 const startingHero = app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent;
 assert.ok(startingHero);
 assert.notEqual(app.document.querySelector('.nuzlocke-hero-stage .hero-role-pill')?.textContent, 'Tank', 'Damage + Support flex should never draw Tank');
@@ -173,6 +174,7 @@ assert.equal(app.document.querySelector('.confirm-dialog h2')?.textContent, 'Con
 clickButton(app.document, 'Record loss');
 await wait();
 assert.match(app.document.querySelector('.nuzlocke-metrics .metric-card strong')?.textContent ?? '', /0–1/);
+assert.ok([...app.document.querySelectorAll('.nuzlocke-party-tabs button small')].every((element) => element.textContent?.includes('11 run lives')), 'A loss should reduce each active player life independently');
 
 const settings = app.document.querySelector('button[aria-label="Open mode settings"]');
 assert.ok(settings);

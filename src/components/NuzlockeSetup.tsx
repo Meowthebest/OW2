@@ -92,7 +92,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
         <div className="setup-hero__summary">
           <span><strong>{rules.playerCount}</strong><small>{rules.playerCount === 1 ? 'Player' : 'Players'}</small></span>
           <span><strong>{includedHeroes.length}</strong><small>Heroes included</small></span>
-          <span><strong>{rules.totalLives}</strong><small>Run lives</small></span>
+          <span><strong>{rules.totalLives}</strong><small>Lives per player</small></span>
           <span><strong>{rules.requiredWins}</strong><small>Wins required</small></span>
         </div>
       </section>
@@ -143,7 +143,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
 
           <div className="number-rules-grid">
             <label className="number-rule"><span><Heart size={17} /><strong>Lives per hero</strong><small>Losses before a hero is out</small></span><input type="number" min={1} max={9} value={rules.livesPerHero} onChange={(event) => setRule('livesPerHero', Math.max(1, Math.min(9, Number(event.target.value) || 1)))} /></label>
-            <label className="number-rule"><span><Flame size={17} /><strong>Total run lives</strong><small>Shared loss limit</small></span><input type="number" min={1} max={999} value={rules.totalLives} onChange={(event) => setRule('totalLives', Math.max(1, Math.min(999, Number(event.target.value) || 1)))} /></label>
+            <label className="number-rule"><span><Flame size={17} /><strong>Lives per player</strong><small>Personal loss limit for each player</small></span><input type="number" min={1} max={999} value={rules.totalLives} onChange={(event) => setRule('totalLives', Math.max(1, Math.min(999, Number(event.target.value) || 1)))} /></label>
             <label className="number-rule"><span><Target size={17} /><strong>Required wins</strong><small>Run completion goal</small></span><input type="number" min={1} max={999} value={rules.requiredWins} onChange={(event) => setRule('requiredWins', Math.max(1, Math.min(999, Number(event.target.value) || 1)))} /></label>
           </div>
 
@@ -151,6 +151,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
 
           <div className="toggle-rules-grid">
             <Toggle checked={rules.duplicateSelections} onChange={(checked) => setRule('duplicateSelections', checked)} title="Allow duplicate selections" description="Heroes can return to the random pool while still available." />
+            <Toggle checked={rules.reuseCompletedHeroes} onChange={(checked) => setRule('reuseCompletedHeroes', checked)} title="Keep winners as reserves" description="Prioritize fresh heroes, then reuse completed winners when the pool gets tight." />
             <Toggle checked={rules.roleQueue} onChange={(checked) => setRule('roleQueue', checked)} title="Role queue rotation" description="Rotate random picks across the included roles." />
             <Toggle checked={rules.autoAdvance} onChange={(checked) => setRule('autoAdvance', checked)} title="Auto-select next hero" description="Immediately pick another hero after recording a result." />
             <Toggle checked={rules.showEliminated} onChange={(checked) => setRule('showEliminated', checked)} title="Show eliminated heroes" description="Keep eliminated cards visible with a readable overlay." />
@@ -179,7 +180,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
       </section>
 
       <section className="launch-panel">
-        <div><span className="launch-panel__icon"><Flame size={24} /></span><span><small>Ready when you are</small><h2>Start a {rules.playerCount}-player run with {includedHeroes.length} heroes</h2><p>{rules.totalLives} shared lives · progress saves automatically · new runs require confirmation.</p></span></div>
+        <div><span className="launch-panel__icon"><Flame size={24} /></span><span><small>Ready when you are</small><h2>Start a {rules.playerCount}-player run with {includedHeroes.length} heroes</h2><p>{rules.totalLives} lives for each player · progress saves automatically · new runs require confirmation.</p></span></div>
         <button type="button" className="button button--primary button--large" onClick={start}><Swords size={20} />Start Nuzlocke</button>
       </section>
 

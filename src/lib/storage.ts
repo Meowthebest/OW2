@@ -34,6 +34,7 @@ export const DEFAULT_NUZLOCKE_RULES: NuzlockeRules = {
   roles: ['Tank', 'Damage', 'Support'],
   excludedHeroes: [],
   duplicateSelections: false,
+  reuseCompletedHeroes: true,
   removeRule: 'both',
   livesPerHero: 1,
   totalLives: 12,
@@ -89,6 +90,7 @@ function normalizeNuzlockeRules(input: Partial<NuzlockeRules> | null | undefined
       ? input.excludedHeroes.filter((hero): hero is string => typeof hero === 'string')
       : [],
     duplicateSelections: typeof input?.duplicateSelections === 'boolean' ? input.duplicateSelections : DEFAULT_NUZLOCKE_RULES.duplicateSelections,
+    reuseCompletedHeroes: typeof input?.reuseCompletedHeroes === 'boolean' ? input.reuseCompletedHeroes : DEFAULT_NUZLOCKE_RULES.reuseCompletedHeroes,
     removeRule: removeRule === 'never' || removeRule === 'win' || removeRule === 'loss' || removeRule === 'both'
       ? removeRule
       : DEFAULT_NUZLOCKE_RULES.removeRule,
@@ -284,8 +286,8 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
       };
     });
     const legacyCandidate = candidate as typeof candidate & { currentHero?: unknown; lastHero?: unknown };
-    const normalizePlayers = (players: unknown, legacyCurrent?: unknown, legacyLast?: unknown) => Array.from({ length: runRules.playerCount }, (_, index) => {
-      const source = Array.isArray(players) ? players.find((player) => player && typeof player === 'object' && Number((player as { id?: unknown }).id) === index + 1) as { name?: unknown; currentHero?: unknown; lastHero?: unknown } | undefined : undefined;
+    const normalizePlayers = (players: unknown, legacyCurrent?: unknown, legacyLast?: unknown, legacyLives?: unknown) => Array.from({ length: runRules.playerCount }, (_, index) => {
+      const source = Array.isArray(players) ? players.find((player) => player && typeof player === 'object' && Number((player as { id?: unknown }).id) === index + 1) as { name?: unknown; currentHero?: unknown; lastHero?: unknown; remainingLives?: unknown } | undefined : undefined;
       const currentHero = source?.currentHero ?? (index === 0 ? legacyCurrent : null);
       const lastHero = source?.lastHero ?? (index === 0 ? legacyLast : null);
       return {
@@ -293,15 +295,17 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
         name: typeof source?.name === 'string' && source.name.trim() ? source.name.trim().slice(0, 24) : runRules.playerNames[index],
         currentHero: typeof currentHero === 'string' && heroRecords[currentHero] ? currentHero : null,
         lastHero: typeof lastHero === 'string' && heroRecords[lastHero] ? lastHero : null,
+        remainingLives: clampedNumber(source?.remainingLives, Number(legacyLives) || runRules.totalLives, 0, runRules.totalLives),
       };
     });
-    const players = normalizePlayers(candidate.players, legacyCandidate.currentHero, legacyCandidate.lastHero);
+    const players = normalizePlayers(candidate.players, legacyCandidate.currentHero, legacyCandidate.lastHero, candidate.remainingLives);
     const undoCandidate = candidate.undoSnapshot as (typeof candidate.undoSnapshot & { currentHero?: unknown; lastHero?: unknown }) | null;
     const undoSnapshot = undoCandidate && typeof undoCandidate === 'object' ? {
       ...undoCandidate,
-      players: normalizePlayers(undoCandidate.players, undoCandidate.currentHero, undoCandidate.lastHero),
+      players: normalizePlayers(undoCandidate.players, undoCandidate.currentHero, undoCandidate.lastHero, undoCandidate.remainingLives),
       events: Array.isArray(undoCandidate.events) ? undoCandidate.events.map((event) => ({ ...event, heroes: Array.isArray(event.heroes) ? event.heroes : event.hero ? [event.hero] : [] })) : [],
     } : null;
+    if (undoSnapshot) undoSnapshot.remainingLives = undoSnapshot.players.reduce((total, player) => total + player.remainingLives, 0);
     currentRun = {
       ...candidate,
       rules: runRules,
@@ -309,7 +313,7 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
       players,
       wins: Math.max(0, Number(candidate.wins) || 0),
       losses: Math.max(0, Number(candidate.losses) || 0),
-      remainingLives: Math.max(0, Number(candidate.remainingLives) || 0),
+      remainingLives: players.reduce((total, player) => total + player.remainingLives, 0),
       currentStreak: Math.max(0, Number(candidate.currentStreak) || 0),
       longestStreak: Math.max(0, Number(candidate.longestStreak) || 0),
       roleCursor: Math.max(0, Number(candidate.roleCursor) || 0),

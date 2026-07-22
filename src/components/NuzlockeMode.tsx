@@ -183,7 +183,8 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
   const requestLoss = () => {
     if (!currentHeroes.length) return;
     const finalLifeInLineup = currentHeroes.some((name) => run.heroRecords[name].lives <= 1);
-    if (finalLifeInLineup || run.remainingLives <= 1 || run.rules.removeRule === 'loss' || run.rules.removeRule === 'both') {
+    const finalPlayerLife = activePlayers.some((player) => player.currentHero && player.remainingLives <= 1);
+    if (finalLifeInLineup || finalPlayerLife || run.rules.removeRule === 'loss' || run.rules.removeRule === 'both') {
       setLossConfirm(true);
       return;
     }
@@ -216,7 +217,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
 
       <section className="metrics-row nuzlocke-metrics" aria-label="Run summary">
         <Metric label="Record" value={run.wins + '–' + run.losses} detail={'longest streak ' + run.longestStreak} icon={<Trophy size={18} />} />
-        <Metric label="Run lives" value={run.remainingLives} detail={'started with ' + run.rules.totalLives} icon={<Heart size={18} />} />
+        <Metric label="Party lives" value={run.remainingLives} detail={run.rules.totalLives + ' per player'} icon={<Heart size={18} />} />
         <Metric label="Eligible" value={eligible.length + currentHeroes.length} detail={eliminatedCount + ' eliminated'} icon={<Shield size={18} />} />
         <Metric label="Progress" value={Math.round((run.wins / run.rules.requiredWins) * 100) + '%'} detail={completedCount + ' completed'} icon={<Target size={18} />} />
       </section>
@@ -228,9 +229,8 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
         <div className="nuzlocke-party-tabs">
           {activePlayers.map((player) => {
             const playerHero = HERO_BY_NAME[player.currentHero ?? ''];
-            const playerRecord = playerHero ? run.heroRecords[playerHero.name] : null;
             const rolePool = run.rules.playerRoles[player.id - 1] ?? run.rules.roles;
-            return <button type="button" key={player.id} className={cn(player.id === activePlayer?.id && 'is-active')} onClick={() => setActivePlayerId(player.id)} aria-pressed={player.id === activePlayer?.id} title={rolePool.join(' + ')}><HeroPortrait hero={playerHero} decorative /><span><strong>{player.name}</strong><small>{playerHero ? playerHero.name + ' · ' + playerRecord?.lives + ' lives' : rolePool.join(' + ')}</small></span></button>;
+            return <button type="button" key={player.id} className={cn(player.id === activePlayer?.id && 'is-active', player.remainingLives <= 0 && 'is-out')} onClick={() => setActivePlayerId(player.id)} aria-pressed={player.id === activePlayer?.id} title={rolePool.join(' + ')}><HeroPortrait hero={playerHero} decorative /><span><strong>{player.name}</strong><small>{player.remainingLives <= 0 ? 'Out of run lives' : playerHero ? playerHero.name + ' · ' + player.remainingLives + ' run lives' : rolePool.join(' + ') + ' · ' + player.remainingLives + ' lives'}</small></span></button>;
           })}
         </div>
       </section>
@@ -249,12 +249,13 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
                   {Array.from({ length: run.rules.livesPerHero }, (_, index) => <Heart key={index} size={17} fill={index < record.lives ? 'currentColor' : 'none'} className={index < record.lives ? 'is-live' : 'is-lost'} />)}
                   <span>{record.lives} of {run.rules.livesPerHero} lives</span>
                 </div>
+                <span className="player-run-lives"><Flame size={15} />{activePlayer?.remainingLives} personal run lives</span>
                 <p>Record the match result. A loss {record.lives <= 1 || run.rules.removeRule === 'both' || run.rules.removeRule === 'loss' ? 'will eliminate this hero.' : 'will remove one hero life.'}</p>
               </div>
             </>
           ) : (
             <div className="current-hero-empty">
-              <span><Shuffle size={34} /></span><div><small>{activePlayer?.name}</small><h2>No hero selected</h2><p>Pick the next eligible hero for this player.</p></div><button type="button" className="button button--primary" onClick={() => activePlayer && applyRun((current) => pickNextHero(current, activePlayer.id), 'Hero selected for ' + activePlayer.name + '.')}><Shuffle size={18} />Select hero</button>
+              <span>{activePlayer && activePlayer.remainingLives <= 0 ? <Skull size={34} /> : <Shuffle size={34} />}</span><div><small>{activePlayer?.name}</small><h2>{activePlayer && activePlayer.remainingLives <= 0 ? 'Out of run lives' : 'No hero selected'}</h2><p>{activePlayer && activePlayer.remainingLives <= 0 ? 'This player is out, but teammates with personal lives can continue.' : 'Pick the next eligible hero for this player.'}</p></div>{activePlayer && activePlayer.remainingLives > 0 && <button type="button" className="button button--primary" onClick={() => applyRun((current) => pickNextHero(current, activePlayer.id), 'Hero selected for ' + activePlayer.name + '.')}><Shuffle size={18} />Select hero</button>}
             </div>
           )}
         </div>
@@ -271,7 +272,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
             <button type="button" onClick={undoLastRunAction} disabled={!run.undoSnapshot} title="Restore the exact run state before the previous action"><Undo2 size={17} /><span><strong>Undo</strong><small>Last action</small></span></button>
           </div>
           <ProgressBar value={winProgress} max={run.rules.requiredWins} label="Win goal" tone="green" />
-          <ProgressBar value={run.remainingLives} max={run.rules.totalLives} label="Run lives" tone={run.remainingLives <= Math.max(2, run.rules.totalLives * 0.25) ? 'red' : 'orange'} />
+          <ProgressBar value={run.remainingLives} max={run.rules.totalLives * run.rules.playerCount} label="Party lives" tone={run.remainingLives <= Math.max(2, run.rules.totalLives * run.rules.playerCount * 0.25) ? 'red' : 'orange'} />
           {run.rules.customRules && <div className="custom-rule-note"><Info size={16} /><span><strong>Custom rule</strong><p>{run.rules.customRules}</p></span></div>}
         </aside>
       </section>
@@ -290,7 +291,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
               const status = cardStatus(item.name);
               const selectedPlayer = activePlayers.find((player) => player.currentHero === item.name);
               const selectable = eligibleNames.has(item.name) && !selectedPlayer;
-              const detail = selectedPlayer ? selectedPlayer.name : status === 'available' || status === 'recent' ? state.lives + ' life' + (state.lives === 1 ? '' : 's') + ' · ' + state.wins + 'W ' + state.losses + 'L' : undefined;
+              const detail = selectedPlayer ? selectedPlayer.name : status === 'completed' && run.rules.reuseCompletedHeroes ? 'Winner reserve · ' + state.lives + ' lives' : status === 'available' || status === 'recent' ? state.lives + ' life' + (state.lives === 1 ? '' : 's') + ' · ' + state.wins + 'W ' + state.losses + 'L' : undefined;
               return <HeroCard key={item.name} hero={item} compact={compactCards} status={status} detail={detail} disabled={!selectable && status !== 'selected'} onSelect={() => pickHero(item.name)} />;
             })}
           </div>
@@ -324,11 +325,13 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
               <span><small>Party</small><strong>{run.rules.playerCount} player{run.rules.playerCount === 1 ? '' : 's'}</strong></span>
               <span><small>Removal</small><strong>{run.rules.removeRule === 'both' ? 'Win or loss' : run.rules.removeRule}</strong></span>
               <span><small>Hero lives</small><strong>{run.rules.livesPerHero}</strong></span>
+              <span><small>Lives per player</small><strong>{run.rules.totalLives}</strong></span>
               <span><small>Win goal</small><strong>{run.rules.requiredWins}</strong></span>
               <span><small>Duplicates</small><strong>{run.rules.duplicateSelections ? 'Allowed' : 'Off'}</strong></span>
+              <span><small>Winner reserves</small><strong>{run.rules.reuseCompletedHeroes ? 'On' : 'Off'}</strong></span>
               <span><small>Role queue</small><strong>{run.rules.roleQueue ? 'On' : 'Off'}</strong></span>
             </div>
-            <div className="active-party-role-list">{activePlayers.map((player) => <span key={player.id}><small>{player.name}</small><strong>{(run.rules.playerRoles[player.id - 1] ?? run.rules.roles).join(' + ')}</strong></span>)}</div>
+            <div className="active-party-role-list">{activePlayers.map((player) => <span key={player.id}><small>{player.name} · {player.remainingLives} lives</small><strong>{(run.rules.playerRoles[player.id - 1] ?? run.rules.roles).join(' + ')}</strong></span>)}</div>
           </section>
           <section className="settings-section">
             <h3>Display</h3>
@@ -341,7 +344,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
         </div>
       </Modal>
 
-      <ConfirmDialog open={lossConfirm} title="Confirm this loss" message={<p>This team result will update <strong>{currentHeroes.join(', ')}</strong>. Heroes on their final life will be eliminated, and shared run lives will fall to {Math.max(0, run.remainingLives - 1)}.</p>} confirmLabel="Record loss" onCancel={() => setLossConfirm(false)} onConfirm={() => { setLossConfirm(false); recordResult('loss'); }} />
+      <ConfirmDialog open={lossConfirm} title="Confirm this loss" message={<p>This team result will update <strong>{currentHeroes.join(', ')}</strong>. Each active player loses one personal run life: {activePlayers.filter((player) => player.currentHero).map((player) => player.name + ' ' + player.remainingLives + '→' + Math.max(0, player.remainingLives - 1)).join(', ')}.</p>} confirmLabel="Record loss" onCancel={() => setLossConfirm(false)} onConfirm={() => { setLossConfirm(false); recordResult('loss'); }} />
       <ConfirmDialog open={endConfirm} title="End this Nuzlocke run?" message={<p>Your results will be archived, but the active run cannot continue unless you use Undo immediately from the results state.</p>} confirmLabel="End run" onCancel={() => setEndConfirm(false)} onConfirm={() => { setEndConfirm(false); onSettingsClose(); if (rankChallenge?.phase === 'active') setRankChallenge(endRankChallenge(rankChallenge, 'nuzlocke-ended')); applyRun(endNuzlockeRun, 'Run ended and archived.'); }} />
     </div>
   );
@@ -380,7 +383,7 @@ function NuzlockeResults({ run, rankChallenge, onRankStart, onRankChange, compac
       ['COMPLETED', String(summary.heroesCompleted)],
       ['ELIMINATED', String(summary.heroesEliminated)],
       ['LONGEST STREAK', String(run.longestStreak)],
-      ['LIVES LEFT', String(run.remainingLives)],
+      ['PARTY LIVES LEFT', String(run.remainingLives)],
     ];
     stats.forEach(([label, value], index) => {
       const column = index % 3;
@@ -410,7 +413,7 @@ function NuzlockeResults({ run, rankChallenge, onRankStart, onRankChange, compac
         <span className="results-hero__icon">{victory ? <Trophy size={38} /> : <Skull size={38} />}</span>
         <span className="eyebrow">{victory ? 'Challenge cleared' : 'Run concluded'}</span>
         <h1>{victory ? 'Nuzlocke complete.' : 'The run is over.'}</h1>
-        <p>{endReasonLabel(run.endReason ?? 'ended')}. Your {run.rules.playerCount > 1 ? run.rules.playerCount + '-player party' : 'run'} finished with {run.wins} wins, {run.losses} losses, and {run.remainingLives} shared lives remaining.</p>
+        <p>{endReasonLabel(run.endReason ?? 'ended')}. Your {run.rules.playerCount > 1 ? run.rules.playerCount + '-player party' : 'run'} finished with {run.wins} wins, {run.losses} losses, and {run.remainingLives} total personal lives remaining.</p>
         <div className="results-hero__actions"><button type="button" className="button button--primary button--large" onClick={onRetry}><RotateCcw size={18} />Retry same rules</button><button type="button" className="button button--secondary" onClick={onNewSetup}><Swords size={18} />New setup</button><button type="button" className="button button--glass" onClick={exportImage}><Download size={17} />Share image</button></div>
       </section>
 

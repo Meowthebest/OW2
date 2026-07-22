@@ -49,6 +49,7 @@ export type NuzlockeRules = {
   roles: Role[];
   excludedHeroes: string[];
   duplicateSelections: boolean;
+  reuseCompletedHeroes: boolean;
   removeRule: RemoveRule;
   livesPerHero: number;
   totalLives: number;
@@ -106,6 +107,7 @@ export type NuzlockePlayer = {
   name: string;
   currentHero: string | null;
   lastHero: string | null;
+  remainingLives: number;
 };
 
 export type NuzlockeRun = {

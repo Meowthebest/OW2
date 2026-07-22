@@ -417,6 +417,8 @@ html[data-theme="light"] .setup-hero__summary > span { background: rgba(255,255,
 .nuzlocke-party-tabs button { min-width: 0; min-height: 68px; padding: 8px 10px; display: flex; align-items: center; gap: 10px; overflow: hidden; border: 1px solid var(--line); border-radius: 13px; color: var(--text-2); background: var(--surface-1); text-align: left; transition: var(--ease); }
 .nuzlocke-party-tabs button:hover { border-color: var(--line-strong); background: var(--surface-2); }
 .nuzlocke-party-tabs button.is-active { color: var(--text-1); border-color: rgba(255,159,67,.34); background: linear-gradient(135deg, var(--orange-soft), var(--surface-2)); box-shadow: inset 3px 0 var(--orange); }
+.nuzlocke-party-tabs button.is-out { opacity: .62; filter: saturate(.35); }
+.nuzlocke-party-tabs button.is-out.is-active { opacity: .82; }
 .nuzlocke-party-tabs .hero-portrait { width: 48px; height: 48px; flex: 0 0 48px; border-radius: 11px; }
 .nuzlocke-party-tabs button > span { min-width: 0; display: grid; }
 .nuzlocke-party-tabs strong, .nuzlocke-party-tabs small { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
@@ -428,6 +430,7 @@ html[data-theme="light"] .setup-hero__summary > span { background: rgba(255,255,
 .hero-life-row svg.is-live { color: var(--red); }
 .hero-life-row svg.is-lost { color: var(--text-3); opacity: .48; }
 .hero-life-row span { margin-left: 5px; color: var(--text-2); font-size: .65rem; }
+.player-run-lives { width: fit-content; min-height: 30px; margin-top: 9px; padding: 0 10px; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,159,67,.2); border-radius: 9px; color: var(--orange); background: var(--orange-soft); font-size: .59rem; font-weight: 750; }
 .run-control-panel { padding: 23px; }
 .run-control-panel header h2 { margin-top: 5px; font-size: 1.32rem; letter-spacing: -.04em; }
 .run-control-panel header p { margin-top: 5px; color: var(--text-3); font-size: .65rem; }
