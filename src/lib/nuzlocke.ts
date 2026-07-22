@@ -62,7 +62,7 @@ function playerRolePool(run: NuzlockeRun, playerId?: number) {
   return selected.length ? selected : run.rules.roles;
 }
 
-function availableForRole(run: NuzlockeRun, heroes: Hero[], role?: Role, playerId?: number, completedReserve = false) {
+function availableForRole(run: NuzlockeRun, heroes: Hero[], role?: Role, playerId?: number, winnerPool = false) {
   const selectedHeroes = new Set(run.players.map((player) => player.currentHero).filter((hero): hero is string => !!hero));
   const allowedRoles = playerRolePool(run, playerId);
   return heroes.filter((hero) => {
@@ -73,18 +73,19 @@ function availableForRole(run: NuzlockeRun, heroes: Hero[], role?: Role, playerI
     if (selectedHeroes.has(hero.name)) return false;
     const record = run.heroRecords[hero.name];
     if (!record || record.lives <= 0) return false;
-    if (completedReserve ? record.state !== 'completed' : record.state !== 'available') return false;
-    if (!completedReserve && !run.rules.duplicateSelections && record.selections > 0) return false;
+    const reusableWinner = run.rules.reuseCompletedHeroes && record.wins > 0 && record.state !== 'eliminated';
+    if (winnerPool ? !reusableWinner : record.state !== 'available') return false;
+    if (!winnerPool && !run.rules.duplicateSelections && record.selections > 0) return false;
     return true;
   });
 }
 
-function eligibleStatePool(run: NuzlockeRun, heroes: Hero[], playerId: number | undefined, completedReserve: boolean) {
-  const base = availableForRole(run, heroes, undefined, playerId, completedReserve);
+function eligibleStatePool(run: NuzlockeRun, heroes: Hero[], playerId: number | undefined, winnerPool: boolean) {
+  const base = availableForRole(run, heroes, undefined, playerId, winnerPool);
   if (!run.rules.roleQueue || run.rules.roles.length < 2 || base.length === 0) return base;
   for (let offset = 0; offset < run.rules.roles.length; offset += 1) {
     const role = run.rules.roles[(run.roleCursor + offset) % run.rules.roles.length];
-    const rolePool = availableForRole(run, heroes, role, playerId, completedReserve);
+    const rolePool = availableForRole(run, heroes, role, playerId, winnerPool);
     if (rolePool.length > 0) return rolePool;
   }
   return [];
@@ -101,7 +102,8 @@ export function getSelectableHeroes(run: NuzlockeRun, heroes: Hero[] = HEROES, p
   if (playerId && (run.players.find((player) => player.id === playerId)?.remainingLives ?? 0) <= 0) return [];
   const fresh = eligibleStatePool(run, heroes, playerId, false);
   if (!run.rules.reuseCompletedHeroes) return fresh;
-  return [...fresh, ...eligibleStatePool(run, heroes, playerId, true)];
+  const freshNames = new Set(fresh.map((hero) => hero.name));
+  return [...fresh, ...eligibleStatePool(run, heroes, playerId, true).filter((hero) => !freshNames.has(hero.name))];
 }
 
 function randomFrom<T>(items: T[]) {
@@ -273,7 +275,8 @@ export function recordNuzlockeResult(run: NuzlockeRun, result: 'win' | 'loss') {
     heroNames.forEach((heroName) => {
       const record = next.heroRecords[heroName];
       record.wins += 1;
-      if (next.rules.removeRule === 'win' || next.rules.removeRule === 'both' || !next.rules.duplicateSelections) record.state = 'completed';
+      if (!next.rules.reuseCompletedHeroes && (next.rules.removeRule === 'win' || next.rules.removeRule === 'both' || !next.rules.duplicateSelections)) record.state = 'completed';
+      else if (record.state !== 'eliminated') record.state = 'available';
     });
     next.events.push(makeEvent(next, 'win', heroNames, heroNames.length > 1 ? 'The party survived with ' + heroNames.join(', ') : heroNames[0] + ' survived the match'));
   } else {
@@ -343,7 +346,7 @@ export function summarizeRun(run: NuzlockeRun): NuzlockeSummary {
     losses: run.losses,
     longestStreak: run.longestStreak,
     heroesUsed: records.filter((record) => record.selections > 0).length,
-    heroesCompleted: records.filter((record) => record.state === 'completed').length,
+    heroesCompleted: records.filter((record) => record.wins > 0).length,
     heroesEliminated: records.filter((record) => record.state === 'eliminated').length,
     remainingLives: run.remainingLives,
     durationMs: Math.max(0, endedAt - run.startedAt),

@@ -135,8 +135,9 @@ const winnerReserveRun = createNuzlockeRun({
   requiredWins: 2,
 });
 const reserveWin = recordNuzlockeResult(winnerReserveRun, 'win');
-assert(reserveWin.phase === 'active' && reserveWin.players[0].currentHero === 'D.Va', 'A completed winner should return as a reserve when no fresh hero remains.');
-assert(reserveWin.heroRecords['D.Va'].state === 'completed', 'A reusable winner should keep its completed status.');
+assert(reserveWin.phase === 'active' && reserveWin.players[0].currentHero === 'D.Va', 'A winning hero should return when no fresh hero remains.');
+assert(reserveWin.heroRecords['D.Va'].state === 'available', 'A reusable winner should stay available instead of becoming completed.');
+assert(reserveWin.heroRecords['D.Va'].wins === 1, 'A reusable winner should track its hero win count.');
 
 const winnerChoiceRun = createNuzlockeRun({
   ...DEFAULT_NUZLOCKE_RULES,
@@ -153,8 +154,14 @@ assert(freshAfterWin.players[0].currentHero !== firstWinner, 'Automatic selectio
 assert(!getEligibleHeroes(freshAfterWin).some((hero) => hero.name === firstWinner), 'The automatic pool should keep prioritizing fresh heroes.');
 assert(getSelectableHeroes(freshAfterWin).some((hero) => hero.name === firstWinner), 'A winner should remain immediately available for manual selection.');
 const manuallyReusedWinner = chooseNuzlockeHero(freshAfterWin, firstWinner);
-assert(manuallyReusedWinner.players[0].currentHero === firstWinner, 'A completed winner should be manually selectable while fresh heroes remain.');
-assert(manuallyReusedWinner.heroRecords[firstWinner].state === 'completed', 'Reusing a winner should preserve its winner status.');
+assert(manuallyReusedWinner.players[0].currentHero === firstWinner, 'A winning hero should be manually selectable while fresh heroes remain.');
+assert(manuallyReusedWinner.heroRecords[firstWinner].state === 'available', 'Reusing a winner should preserve its available status.');
+const repeatedWinner = recordNuzlockeResult(manuallyReusedWinner, 'win');
+assert(repeatedWinner.heroRecords[firstWinner].wins === 2, 'Every additional win should increment that hero\'s win count.');
+const legacyCompletedWinner = JSON.parse(JSON.stringify(freshAfterWin));
+legacyCompletedWinner.heroRecords[firstWinner].state = 'completed';
+const migratedWinner = normalizeNuzlockeStore({ version: 1, draftRules: legacyCompletedWinner.rules, currentRun: legacyCompletedWinner, runHistory: [] });
+assert(migratedWinner.currentRun.heroRecords[firstWinner].state === 'available', 'Existing completed winners should migrate back into the selectable pool.');
 const legacySingleRun = JSON.parse(JSON.stringify(goalRun));
 legacySingleRun.currentHero = legacySingleRun.players[0].currentHero;
 legacySingleRun.lastHero = legacySingleRun.players[0].lastHero;

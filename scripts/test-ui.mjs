@@ -159,6 +159,7 @@ const reusableWinner = [...app.document.querySelectorAll('.nuzlocke-pool .hero-c
   .find((button) => button.getAttribute('aria-label')?.startsWith('Winner: ' + startingHero));
 assert.ok(reusableWinner, 'The winning hero should be labeled as a reusable winner.');
 assert.equal(reusableWinner.disabled, false, 'The winning hero should remain immediately selectable.');
+assert.match(reusableWinner.getAttribute('aria-label') ?? '', /\. 1 win/, 'The winner card should show its per-hero win count.');
 clickSelector(app.document, '.run-secondary-actions button:last-child', 'Nuzlocke undo button');
 await wait();
 assert.equal(app.document.querySelector('.nuzlocke-hero-stage h1')?.textContent, startingHero);

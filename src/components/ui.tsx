@@ -38,11 +38,12 @@ export function HeroPortrait({ hero, className, decorative = false }: { hero: He
   );
 }
 
-export type HeroCardStatus = 'available' | 'selected' | 'completed' | 'eliminated' | 'locked' | 'excluded' | 'out' | 'recent';
+export type HeroCardStatus = 'available' | 'selected' | 'winner' | 'completed' | 'eliminated' | 'locked' | 'excluded' | 'out' | 'recent';
 
 const statusCopy: Record<HeroCardStatus, string> = {
   available: 'Available',
   selected: 'Selected',
+  winner: 'Winner',
   completed: 'Completed',
   eliminated: 'Eliminated',
   locked: 'Locked',
@@ -52,7 +53,7 @@ const statusCopy: Record<HeroCardStatus, string> = {
 };
 
 function StatusIcon({ status }: { status: HeroCardStatus }) {
-  if (status === 'completed') return <CheckCircle2 size={13} />;
+  if (status === 'winner' || status === 'completed') return <CheckCircle2 size={13} />;
   if (status === 'eliminated' || status === 'out') return <Skull size={13} />;
   if (status === 'locked' || status === 'excluded') return <LockKeyhole size={13} />;
   if (status === 'selected') return <Check size={13} />;
@@ -65,7 +66,6 @@ export function HeroCard({
   compact = false,
   favorite = false,
   detail,
-  statusLabel,
   disabled = false,
   onSelect,
   onFavorite,
@@ -75,7 +75,6 @@ export function HeroCard({
   compact?: boolean;
   favorite?: boolean;
   detail?: string;
-  statusLabel?: string;
   disabled?: boolean;
   onSelect?: () => void;
   onFavorite?: () => void;
@@ -87,7 +86,7 @@ export function HeroCard({
         className="hero-card__select"
         onClick={onSelect}
         disabled={disabled}
-        aria-label={(statusLabel ?? statusCopy[status]) + ': ' + hero.name + (detail ? '. ' + detail : '')}
+        aria-label={statusCopy[status] + ': ' + hero.name + (detail ? '. ' + detail : '')}
         aria-pressed={status === 'selected'}
       >
         <HeroPortrait hero={hero} decorative />
@@ -98,7 +97,7 @@ export function HeroCard({
           {detail && <small>{detail}</small>}
         </span>
         {status !== 'available' && status !== 'recent' && (
-          <span className="hero-card__status"><StatusIcon status={status} /> {statusLabel ?? statusCopy[status]}</span>
+          <span className="hero-card__status"><StatusIcon status={status} /> {statusCopy[status]}</span>
         )}
         {status === 'recent' && <span className="hero-card__recent">Recent</span>}
       </button>

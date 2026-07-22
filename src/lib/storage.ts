@@ -281,7 +281,11 @@ export function normalizeNuzlockeStore(stored: Partial<NuzlockeStore> | null | u
         wins: Math.max(0, Number(record?.wins) || 0),
         losses: Math.max(0, Number(record?.losses) || 0),
         selections: Math.max(0, Number(record?.selections) || 0),
-        state: record?.state === 'completed' || record?.state === 'eliminated' ? record.state : 'available',
+        state: record?.state === 'eliminated'
+          ? 'eliminated'
+          : record?.state === 'completed' && !(runRules.reuseCompletedHeroes && Number(record?.wins) > 0)
+            ? 'completed'
+            : 'available',
         lastUsedAt: typeof record?.lastUsedAt === 'number' ? record.lastUsedAt : null,
       };
     });
