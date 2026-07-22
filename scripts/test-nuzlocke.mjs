@@ -85,6 +85,14 @@ assert(waiting.phase === 'active' && waiting.players[0].currentHero === null, 'A
 const advanced = pickNextHero(waiting);
 assert(advanced.players[0].currentHero, 'Next hero should be selectable after a manual advance.');
 
+const manuallyReusableRun = createNuzlockeRun({ ...DEFAULT_NUZLOCKE_RULES, duplicateSelections: false, requiredWins: 5 });
+const previouslyUsedHero = manuallyReusableRun.players[0].currentHero;
+const afterReroll = rerollNuzlockeHero(manuallyReusableRun, 'reroll');
+assert(afterReroll.players[0].heroRecords[previouslyUsedHero].wins === 0 && afterReroll.players[0].heroRecords[previouslyUsedHero].selections === 1, 'The manual reuse test should start with a used non-winner.');
+assert(getSelectableHeroes(afterReroll).some((hero) => hero.name === previouslyUsedHero), 'A previously used hero with lives remaining should stay manually selectable.');
+const manuallyReselected = chooseNuzlockeHero(afterReroll, previouslyUsedHero);
+assert(manuallyReselected.players[0].currentHero === previouslyUsedHero, 'Manual selection should allow any previously used non-eliminated hero.');
+
 const partyRun = createNuzlockeRun({
   ...DEFAULT_NUZLOCKE_RULES,
   playerCount: 3,
@@ -273,6 +281,7 @@ console.log('NUZLOCKE_ENGINE_TESTS_PASS', {
   individualPlayerLives: true,
   independentHeroProfiles: true,
   reusableWinnerCounts: true,
+  usedHeroesSelectable: true,
   recentStateRemoved: true,
   legacyMigration: true,
   persistence: true,
