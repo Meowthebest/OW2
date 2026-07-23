@@ -161,6 +161,9 @@ const startingHero = app.document.querySelector('.nuzlocke-hero-stage h1')?.text
 assert.ok(startingHero);
 assert.notEqual(app.document.querySelector('.nuzlocke-hero-stage .hero-role-pill')?.textContent, 'Tank', 'Damage + Support flex should never draw Tank');
 assert.match(app.document.body.textContent, /Rank Challenge live/);
+clickButton(app.document, '+ All roles');
+await wait();
+assert.ok([...app.document.querySelectorAll('.nuzlocke-pool .hero-card.role-tank .hero-card__select')].some((button) => !/^(Locked|Excluded):/.test(button.getAttribute('aria-label') ?? '')), 'Enabling all roles from the pool toolbar should unlock Tank heroes for the active player.');
 
 clickSelector(app.document, '.run-result--win', 'Nuzlocke win button');
 await wait();
@@ -208,7 +211,7 @@ await wait();
 assert.equal(app.document.querySelector('.modal h2')?.textContent, 'Active run settings');
 clickButton(app.document, 'Enable all roles for Bravo');
 await wait();
-assert.match(app.document.querySelector('.active-party-role-list span:nth-child(2) strong')?.textContent ?? '', /Tank.*Damage.*Support/, 'An active player should be able to enable every role without restarting the run.');
+assert.ok(['Tank', 'Damage', 'Support'].every((role) => app.document.querySelector('.active-party-role-list span:nth-child(2) strong')?.textContent?.includes(role)), 'An active player should be able to enable every role without restarting the run.');
 clickButton(app.document, 'End Nuzlocke run');
 await wait();
 assert.equal(app.document.querySelector('.confirm-dialog h2')?.textContent, 'End this Nuzlocke run?');

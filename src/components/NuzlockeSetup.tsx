@@ -130,8 +130,8 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
                 return <article className="party-player-config" key={index}>
                   <label className="field"><span>Player {index + 1}</span><input aria-label={'Nuzlocke player ' + (index + 1) + ' name'} value={playerName} maxLength={24} onChange={(event) => setRule('playerNames', Array.from({ length: 5 }, (__, nameIndex) => nameIndex === index ? event.target.value : rules.playerNames[nameIndex] ?? 'Player ' + (nameIndex + 1)))} /></label>
                   <div className="player-role-picker" role="group" aria-label={playerName + ' role pool'}>
-                    <button type="button" className={cn('player-role-flex', flex && 'is-active')} onClick={() => setPlayerFlex(index)} aria-pressed={flex}>Flex</button>
-                    {ROLES.map((role) => <button type="button" key={role} className={cn('role-' + role.toLowerCase(), selectedRoles.includes(role) && 'is-active')} onClick={() => togglePlayerRole(index, role)} aria-pressed={selectedRoles.includes(role)} aria-label={'Toggle ' + role + ' for ' + playerName}>{role}</button>)}
+                    <button type="button" className={cn('player-role-flex', flex && 'is-active')} onClick={() => setPlayerFlex(index)} aria-pressed={flex}>All roles</button>
+                    {ROLES.map((role) => <button type="button" key={role} className={cn('role-' + role.toLowerCase(), selectedRoles.includes(role) && 'is-active')} onClick={() => togglePlayerRole(index, role)} aria-pressed={selectedRoles.includes(role)} aria-label={'Toggle ' + role + ' for ' + playerName}>{selectedRoles.includes(role) ? role : '+ ' + role}</button>)}
                   </div>
                 </article>;
               })}

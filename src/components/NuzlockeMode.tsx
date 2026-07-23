@@ -37,7 +37,7 @@ import {
   undoNuzlockeAction,
 } from '../lib/nuzlocke';
 import { createRankChallenge, endRankChallenge, recordRankChallengeResult, undoRankChallenge } from '../lib/rankChallenge';
-import type { NuzlockeRun, NuzlockeStore, PlayerId, RankChallenge, RankChallengeConfig, RoleFilter } from '../types';
+import type { NuzlockeRun, NuzlockeStore, PlayerId, RankChallenge, RankChallengeConfig, Role, RoleFilter } from '../types';
 import NuzlockeSetup from './NuzlockeSetup';
 import RankChallengePanel from './RankChallengePanel';
 import { ConfirmDialog, EmptyState, HeroCard, HeroPortrait, Metric, Modal, ProgressBar, RoleIcon, SearchField, Toggle, cn, type HeroCardStatus } from './ui';
@@ -70,8 +70,14 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
   const [activePlayerId, setActivePlayerId] = useState<PlayerId>(1);
 
   useEffect(() => {
-    if (run && !run.players.some((player) => player.id === activePlayerId)) setActivePlayerId(run.players[0]?.id ?? 1);
-  }, [activePlayerId, run]);
+    if (!run) return;
+    if (!run.players.some((player) => player.id === activePlayerId)) {
+      setActivePlayerId(run.players[0]?.id ?? 1);
+      return;
+    }
+    const playerRoles = run.rules.playerRoles[activePlayerId - 1] ?? run.rules.roles;
+    setRoleFilter(playerRoles.length === 1 ? playerRoles[0] : 'All');
+  }, [activePlayerId, run?.id]);
 
   const applyRun = (transform: (current: NuzlockeRun) => NuzlockeRun, message?: string) => {
     setStore((current) => {
@@ -212,16 +218,27 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
     } : current);
   };
 
-  const enableAllRolesForActivePlayer = () => {
+  const enableRolesForActivePlayer = (requestedRoles: Role[]) => {
     if (!activePlayer) return;
+    const missingRoles = requestedRoles.filter((role) => !activeRolePool.includes(role));
+    if (!missingRoles.length) return;
     setStore((current) => {
       if (!current.currentRun) return current;
       const activeRun = current.currentRun;
-      const playerRoles = Array.from({ length: 5 }, (_, index) => index === activePlayer.id - 1 ? [...ROLES] : activeRun.rules.playerRoles[index] ?? [...activeRun.rules.roles]);
-      const rules = { ...activeRun.rules, roles: [...ROLES], playerRoles };
-      return { ...current, draftRules: { ...current.draftRules, roles: [...ROLES], playerRoles }, currentRun: { ...current.currentRun, rules } };
+      const roles = [...activeRun.rules.roles, ...requestedRoles.filter((role) => !activeRun.rules.roles.includes(role))];
+      const playerRoles = Array.from({ length: 5 }, (_, index) => index === activePlayer.id - 1 ? [...activeRolePool, ...missingRoles] : activeRun.rules.playerRoles[index] ?? [...activeRun.rules.roles]);
+      const rules = { ...activeRun.rules, roles, playerRoles };
+      return { ...current, draftRules: { ...current.draftRules, roles, playerRoles }, currentRun: { ...current.currentRun, rules } };
     });
-    notify('Tank, Damage, and Support enabled for ' + activePlayer.name + '.');
+    notify(missingRoles.join(' + ') + ' enabled for ' + activePlayer.name + '.');
+  };
+
+  const enableAllRolesForActivePlayer = () => enableRolesForActivePlayer([...ROLES]);
+
+  const selectRoleFilter = (role: RoleFilter) => {
+    setRoleFilter(role);
+    if (role === 'All') enableAllRolesForActivePlayer();
+    else enableRolesForActivePlayer([role]);
   };
 
   return (
@@ -297,7 +314,10 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
         <header className="section-heading"><div><span className="eyebrow">{activePlayer?.name} profile</span><h2>Personal hero pool</h2><p>Lives, wins, and eliminations here belong only to {activePlayer?.name}. Other players keep separate copies.</p></div><span className="selection-counter"><strong>{usedCount}</strong> heroes used</span></header>
         <div className="hero-pool-toolbar">
           <SearchField value={search} onChange={setSearch} />
-          <div className="segmented" role="group" aria-label="Filter run roster by role">{(['All', ...ROLES] as RoleFilter[]).map((role) => <button type="button" key={role} className={roleFilter === role ? 'is-active' : ''} onClick={() => setRoleFilter(role)}>{role}</button>)}</div>
+          <div className="segmented" role="group" aria-label="Filter and enable player roles">{(['All', ...ROLES] as RoleFilter[]).map((role) => {
+            const roleEnabled = role === 'All' ? ROLES.every((item) => activeRolePool.includes(item)) : activeRolePool.includes(role);
+            return <button type="button" key={role} className={cn(roleFilter === role && 'is-active', !roleEnabled && 'is-addable')} onClick={() => selectRoleFilter(role)} title={roleEnabled ? 'Show ' + role + ' heroes' : 'Enable ' + (role === 'All' ? 'all roles' : role) + ' for ' + activePlayer?.name}>{roleEnabled ? role === 'All' ? 'All roles' : role : role === 'All' ? '+ All roles' : '+ ' + role}</button>;
+          })}</div>
           <label className="select-field"><span className="sr-only">Filter run hero status</span><select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as PoolStatus)}><option value="all">All states</option><option value="available">Available</option><option value="winner">Winners</option><option value="eliminated">Eliminated</option></select><ChevronDown size={15} /></label>
         </div>
         {filteredHeroes.length ? (
