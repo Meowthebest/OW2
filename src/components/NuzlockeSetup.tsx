@@ -55,18 +55,23 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
   };
 
   const togglePlayerRole = (playerIndex: number, role: Role) => {
-    if (!rules.roles.includes(role)) return;
     const current = rules.playerRoles[playerIndex] ?? rules.roles;
     if (current.includes(role) && current.length === 1) {
       fail('Each player needs at least one role.');
       return;
     }
     const next = current.includes(role) ? current.filter((item) => item !== role) : [...current, role];
-    setRule('playerRoles', Array.from({ length: 5 }, (_, index) => index === playerIndex ? next : rules.playerRoles[index] ?? [...rules.roles]));
+    const roles = rules.roles.includes(role) ? rules.roles : [...rules.roles, role];
+    const playerRoles = Array.from({ length: 5 }, (_, index) => index === playerIndex ? next : rules.playerRoles[index] ?? [...rules.roles]);
+    onRulesChange({ ...rules, roles, playerRoles });
   };
 
   const setPlayerFlex = (playerIndex: number) => {
-    setRule('playerRoles', Array.from({ length: 5 }, (_, index) => index === playerIndex ? [...rules.roles] : rules.playerRoles[index] ?? [...rules.roles]));
+    onRulesChange({
+      ...rules,
+      roles: [...ROLES],
+      playerRoles: Array.from({ length: 5 }, (_, index) => index === playerIndex ? [...ROLES] : rules.playerRoles[index] ?? [...rules.roles]),
+    });
   };
 
   const toggleHero = (name: string) => {
@@ -121,12 +126,12 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
               {Array.from({ length: rules.playerCount }, (_, index) => {
                 const playerName = rules.playerNames[index] ?? 'Player ' + (index + 1);
                 const selectedRoles = rules.playerRoles[index] ?? rules.roles;
-                const flex = rules.roles.every((role) => selectedRoles.includes(role));
+                const flex = ROLES.every((role) => selectedRoles.includes(role));
                 return <article className="party-player-config" key={index}>
                   <label className="field"><span>Player {index + 1}</span><input aria-label={'Nuzlocke player ' + (index + 1) + ' name'} value={playerName} maxLength={24} onChange={(event) => setRule('playerNames', Array.from({ length: 5 }, (__, nameIndex) => nameIndex === index ? event.target.value : rules.playerNames[nameIndex] ?? 'Player ' + (nameIndex + 1)))} /></label>
                   <div className="player-role-picker" role="group" aria-label={playerName + ' role pool'}>
                     <button type="button" className={cn('player-role-flex', flex && 'is-active')} onClick={() => setPlayerFlex(index)} aria-pressed={flex}>Flex</button>
-                    {ROLES.map((role) => <button type="button" key={role} disabled={!rules.roles.includes(role)} className={cn('role-' + role.toLowerCase(), selectedRoles.includes(role) && 'is-active')} onClick={() => togglePlayerRole(index, role)} aria-pressed={selectedRoles.includes(role)} aria-label={'Toggle ' + role + ' for ' + playerName}>{role}</button>)}
+                    {ROLES.map((role) => <button type="button" key={role} className={cn('role-' + role.toLowerCase(), selectedRoles.includes(role) && 'is-active')} onClick={() => togglePlayerRole(index, role)} aria-pressed={selectedRoles.includes(role)} aria-label={'Toggle ' + role + ' for ' + playerName}>{role}</button>)}
                   </div>
                 </article>;
               })}
@@ -135,7 +140,7 @@ export default function NuzlockeSetup({ rules, history, compactCards, onRulesCha
 
           <div className="rule-card rule-card--roles">
             <span className="rule-card__icon"><Shield size={19} /></span>
-            <div className="rule-card__heading"><strong>Included roles</strong><small>Choose one role or combine the full roster.</small></div>
+            <div className="rule-card__heading"><strong>Included roles</strong><small>Choose here, or select a player role above to include it automatically.</small></div>
             <div className="role-choice-grid">
               {ROLES.map((role) => <button type="button" key={role} className={cn('role-choice', 'role-' + role.toLowerCase(), rules.roles.includes(role) && 'is-active')} onClick={() => toggleRole(role)} aria-pressed={rules.roles.includes(role)}>{role}{rules.roles.includes(role) && <Check size={15} />}</button>)}
             </div>

@@ -212,6 +212,18 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
     } : current);
   };
 
+  const enableAllRolesForActivePlayer = () => {
+    if (!activePlayer) return;
+    setStore((current) => {
+      if (!current.currentRun) return current;
+      const activeRun = current.currentRun;
+      const playerRoles = Array.from({ length: 5 }, (_, index) => index === activePlayer.id - 1 ? [...ROLES] : activeRun.rules.playerRoles[index] ?? [...activeRun.rules.roles]);
+      const rules = { ...activeRun.rules, roles: [...ROLES], playerRoles };
+      return { ...current, draftRules: { ...current.draftRules, roles: [...ROLES], playerRoles }, currentRun: { ...current.currentRun, rules } };
+    });
+    notify('Tank, Damage, and Support enabled for ' + activePlayer.name + '.');
+  };
+
   return (
     <div className="mode-page nuzlocke-active">
       <section className="run-banner">
@@ -337,6 +349,7 @@ export default function NuzlockeMode({ store, setStore, rankChallenge, setRankCh
               <span><small>Winners stay selectable</small><strong>{run.rules.reuseCompletedHeroes ? 'On' : 'Off'}</strong></span>
               <span><small>Role queue</small><strong>{run.rules.roleQueue ? 'On' : 'Off'}</strong></span>
             </div>
+            {!ROLES.every((role) => activeRolePool.includes(role)) && <button type="button" className="button button--secondary" onClick={enableAllRolesForActivePlayer}><Shield size={16} />Enable all roles for {activePlayer?.name}</button>}
             <div className="active-party-role-list">{activePlayers.map((player) => <span key={player.id}><small>{player.name} · {player.remainingLives} lives</small><strong>{(run.rules.playerRoles[player.id - 1] ?? run.rules.roles).join(' + ')}</strong></span>)}</div>
           </section>
           <section className="settings-section">
