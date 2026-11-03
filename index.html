@@ -3,16 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="dark light" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <meta name="theme-color" content="#060a11" />
-    <meta name="description" content="A modern Overwatch hero selector with normal and Nuzlocke modes." />
-    <title>OW2 Hero Selector — Normal & Nuzlocke</title>
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#090c12" />
+    <meta name="description" content="A fan-made Overwatch companion: a fair random hero selector with filters, exclusions and no-repeat cycles, plus public career profile statistics." />
+    <meta property="og:title" content="OW2 Hero Selector" />
+    <meta property="og:description" content="Random hero selector and career statistics for Overwatch." />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
+    <link rel="preload" href="%BASE_URL%fonts/sofia-sans-extra-condensed-italic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="%BASE_URL%fonts/sofia-sans-condensed.woff2" as="font" type="font/woff2" crossorigin />
+    <title>OW2 Hero Selector: Random Hero Picker &amp; Career Stats</title>
+    <style>html { background: #090c12; }</style>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>OW2 Hero Selector needs JavaScript to pick heroes and load career data.</noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

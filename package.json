@@ -1,25 +1,30 @@
 {
-  "name": "ow2",
+  "name": "ow2-hero-selector",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test:engine": "node scripts/test-nuzlocke.mjs",
-    "test:ui": "node scripts/test-ui.mjs"
+    "test": "node scripts/test-logic.mjs && node --test worker/test/worker.test.mjs && npm run build && node scripts/test-ui.mjs",
+    "test:logic": "node scripts/test-logic.mjs",
+    "test:worker": "node --test worker/test/worker.test.mjs",
+    "test:ui": "node scripts/test-ui.mjs",
+    "check:roster": "node scripts/check-roster.mjs"
   },
   "dependencies": {
+    "lucide-react": "^0.441.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "lucide-react": "^0.441.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
+    "esbuild": "^0.21.5",
     "jsdom": "^26.1.0",
     "postcss": "^8.4.38",
     "typescript": "^5.5.3",

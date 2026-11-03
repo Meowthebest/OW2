@@ -1,0 +1,13 @@
+name = "ow2-career-cache"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+# Only these sites may read the worker from a browser. Comma separated, no trailing slash.
+ALLOWED_ORIGINS = "https://meowthebest.github.io,http://localhost:4173,http://localhost:5173"
+
+# Create the namespace with: npx wrangler kv namespace create CAREER_CACHE
+# Then paste the id it prints below.
+[[kv_namespaces]]
+binding = "CAREER_CACHE"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"

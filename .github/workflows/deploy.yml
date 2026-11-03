@@ -20,9 +20,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'   # 18/20/22 all fine; 20 is stable
-      - run: npm install --no-fund --no-audit
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+      - run: npm run test:logic
+      - run: npm run test:worker
+      - run: npm run test:ui
       - run: npm run build
+        env:
+          # Optional. Set this repository variable to your Cloudflare Worker URL to route
+          # career data through it. When empty, the site calls OverFast API directly.
+          VITE_CAREER_API_URL: ${{ vars.CAREER_API_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
