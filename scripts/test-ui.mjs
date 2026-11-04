@@ -379,6 +379,182 @@ await test('navigation keeps randomizer state across routes', async () => {
   app.close();
 });
 
+// Teams
+const teamStorage = (extra = {}) => ({ 'ow2.randomizer.v1': { motion: 'off', ...extra } });
+const slotNames = (document) => [...document.querySelectorAll('.slot__name')].map((node) => node.textContent);
+const slotRoles = (document) => [...document.querySelectorAll('.slot .role-badge')].map((node) => node.dataset.role);
+
+await test('the party picker offers 1 to 5 players and shows a card per player', async () => {
+  const app = boot({ storage: MOTION_OFF });
+  await wait();
+  for (const size of [2, 3, 4, 5]) {
+    click(buttonByName(app.document, size + ' players'));
+    await until(() => app.document.querySelectorAll('.slot').length === size, size + ' cards');
+    assert.equal(buttonByName(app.document, size + ' players').getAttribute('aria-pressed'), 'true');
+  }
+  click(buttonByName(app.document, '1 player'));
+  await until(() => app.document.querySelector('.stage__summary'), 'solo stage');
+  assert.equal(app.document.querySelectorAll('.slot').length, 0);
+  assert.ok(buttonByName(app.document, 'Randomize hero'));
+  app.close();
+});
+
+await test('a team rolls one different hero per player and logs all of them', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 5 }) });
+  await wait();
+  for (let round = 0; round < 20; round += 1) {
+    click(buttonByName(app.document, 'Randomize team'));
+    await until(() => slotNames(app.document).length === 5, 'five heroes');
+    await wait(2);
+    assert.equal(new Set(slotNames(app.document)).size, 5, 'no duplicates: ' + slotNames(app.document));
+  }
+  assert.equal(app.document.querySelector('.team-head__title').textContent, 'Team locked in');
+  assert.equal(app.document.querySelectorAll('.recent-card.is-latest').length, 5);
+  assert.match(app.document.querySelector('.recent-card').textContent, /Player 1/);
+  assert.match(app.document.querySelector('.sr-only[role="status"]').textContent, /Player 5:/);
+  app.close();
+});
+
+await test('assign team roles gives 1 tank, 2 damage, 2 support, and rolls respect it', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 5 }) });
+  await wait();
+  click(buttonByName(app.document, 'Assign team roles'));
+  await until(() => [...app.document.querySelectorAll('.slot select')].map((node) => node.value).join() === 'tank,damage,damage,support,support', 'team roles');
+  for (let round = 0; round < 10; round += 1) {
+    click(buttonByName(app.document, 'Randomize team'));
+    await wait(4);
+    assert.deepEqual(slotRoles(app.document), ['tank', 'damage', 'damage', 'support', 'support']);
+  }
+  click(buttonByName(app.document, 'Any role'));
+  await until(() => [...app.document.querySelectorAll('.slot select')].every((node) => node.value === 'any'), 'roles cleared');
+  app.close();
+});
+
+await test('each player can lock their own role', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 2 }) });
+  await wait();
+  setInput(app.window, app.document.querySelectorAll('.slot select')[1], 'support');
+  await until(() => app.document.querySelectorAll('.slot')[1].dataset.role === 'support', 'locked role');
+  for (let round = 0; round < 10; round += 1) {
+    click(buttonByName(app.document, 'Randomize team'));
+    await wait(4);
+    assert.equal(slotRoles(app.document)[1], 'support');
+  }
+  app.close();
+});
+
+await test('rerolling one player leaves the rest of the team alone', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 3 }) });
+  await wait();
+  click(buttonByName(app.document, 'Randomize team'));
+  await until(() => slotNames(app.document).length === 3, 'a team');
+  for (let round = 0; round < 15; round += 1) {
+    const before = slotNames(app.document);
+    click(buttonByName(app.document, 'Reroll Player 2'));
+    await until(() => slotNames(app.document)[1] !== before[1], 'a new hero for player 2');
+    const after = slotNames(app.document);
+    assert.equal(after[0], before[0]);
+    assert.equal(after[2], before[2]);
+    assert.equal(new Set(after).size, 3);
+  }
+  assert.ok(app.document.querySelector('.recent-card [aria-label="from a reroll"]'));
+  app.close();
+});
+
+await test('player names are saved and used across the page', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 2 }) });
+  await wait();
+  const input = app.document.querySelector('.slot__input');
+  setInput(app.window, input, 'A very long player name indeed');
+  await until(() => app.document.querySelector('.slot__input').value === 'A very long play', 'name capped at 16');
+  click(buttonByName(app.document, 'Randomize team'));
+  await until(() => slotNames(app.document).length === 2, 'a team');
+  assert.match(app.document.querySelector('.recent-card').textContent, /A very long play/);
+  assert.ok(buttonByName(app.document, 'Reroll A very long play'));
+  const heroTile = [...app.document.querySelectorAll('.hero-tile')].find((node) => node.classList.contains('is-pick'));
+  assert.match(heroTile.getAttribute('aria-label'), /Current pick for/);
+  assert.match(heroTile.textContent, /P[12]/);
+  await until(() => JSON.parse(app.window.localStorage.getItem('ow2.randomizer.v1')).players[0].name === 'A very long play', 'saved name');
+  app.close();
+});
+
+await test('hero details follow the selected card', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 2 }) });
+  await wait();
+  click(buttonByName(app.document, 'Randomize team'));
+  await until(() => app.document.querySelector('.hero-focus'), 'details');
+  const names = slotNames(app.document);
+  assert.match(app.document.querySelector('.hero-focus').textContent, new RegExp(names[0].replace(/[.:]/g, '.')));
+  click(app.document.querySelectorAll('.slot__hero')[1]);
+  await until(() => app.document.querySelector('.hero-focus__title').textContent.includes(names[1]), 'second hero details');
+  assert.match(app.document.querySelector('.hero-focus__title').textContent, /Player 2/);
+  app.close();
+});
+
+await test('a shortage warns and never duplicates a hero', async () => {
+  const onlyTwo = ['ana', 'mercy'];
+  const app = boot({ storage: teamStorage({ partySize: 4, roles: ['support'] }) });
+  await wait();
+  const others = [...app.document.querySelectorAll('.hero-tile')]
+    .filter((node) => node.dataset.role === 'support' && !onlyTwo.some((id) => node.getAttribute('aria-label').toLowerCase().startsWith(id)));
+  others.forEach(click);
+  await until(() => /Only 2 eligible heroes for 4 players/.test(app.document.querySelector('.stage__odds').textContent), 'shortage notice');
+  click(buttonByName(app.document, 'Randomize team'));
+  await until(() => /Not enough eligible heroes for 2 players/.test(app.document.querySelector('.toast-region').textContent), 'shortage toast');
+  assert.equal(new Set(slotNames(app.document)).size, 2);
+  app.close();
+});
+
+await test('a role with no heroes says so on the card', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 2, roles: ['tank'], players: [{ role: 'any' }, { role: 'support' }] }) });
+  await wait();
+  assert.match(app.document.querySelectorAll('.slot')[1].textContent, /No support heroes in the pool/);
+  app.close();
+});
+
+await test('no repeats works across the whole team', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 5, noRepeats: true }) });
+  await wait();
+  const seen = new Set();
+  for (let round = 0; round < 10; round += 1) {
+    click(buttonByName(app.document, 'Randomize team'));
+    await wait(4);
+    for (const name of slotNames(app.document)) {
+      assert.ok(!seen.has(name), name + ' repeated');
+      seen.add(name);
+    }
+  }
+  assert.equal(seen.size, 50);
+  app.close();
+});
+
+await test('team setup survives a reload, and reset keeps size and names', async () => {
+  const saved = { motion: 'off', partySize: 3, players: [{ name: 'Mina', role: 'tank', heroId: 'winston' }, { name: '', role: 'any', heroId: 'winston' }, { role: 'bogus', heroId: 'not-a-hero' }] };
+  const app = boot({ storage: { 'ow2.randomizer.v1': saved } });
+  await wait();
+  assert.equal(app.document.querySelectorAll('.slot').length, 3);
+  assert.equal(app.document.querySelector('.slot__input').value, 'Mina');
+  assert.deepEqual(slotNames(app.document), ['Winston'], 'duplicate and unknown saved heroes are dropped');
+  assert.equal(app.document.querySelectorAll('.slot select')[2].value, 'any');
+  click(buttonByName(app.document, /Reset filters/));
+  await until(() => slotNames(app.document).length === 0, 'heroes cleared');
+  assert.equal(app.document.querySelectorAll('.slot').length, 3);
+  assert.equal(app.document.querySelector('.slot__input').value, 'Mina');
+  assert.equal(app.document.querySelector('.slot select').value, 'any');
+  click(buttonByName(app.document, 'Undo'));
+  await until(() => slotNames(app.document).length === 1, 'undo');
+  assert.equal(app.document.querySelector('.slot select').value, 'tank');
+  app.close();
+});
+
+await test('an invalid saved party size falls back to solo', async () => {
+  const app = boot({ storage: teamStorage({ partySize: 9 }) });
+  await wait();
+  assert.equal(app.document.querySelectorAll('.slot').length, 0);
+  assert.ok(buttonByName(app.document, 'Randomize hero'));
+  app.close();
+});
+
 // Career
 await test('BattleTag search resolves the player and opens the dashboard', async () => {
   const app = boot({ hash: '#/career', api: careerApi() });
@@ -432,14 +608,15 @@ await test('overview shows real values, ranks, unranked roles and most played he
   const app = boot({ hash: PROFILE, api: careerApi() });
   await profileReady(app);
   const text = app.document.querySelector('.overview').textContent;
-  assert.match(text, /10h/, 'time played');
+  assert.match(text, /10 HRS/, 'time played');
   assert.match(text, /60\.?0?%/, 'win rate');
   const ranks = [...app.document.querySelectorAll('.rank-row')].map((row) => row.textContent);
   assert.match(ranks[0], /Tank.*Unranked/);
   assert.match(ranks[1], /Damage.*Diamond 2/);
   assert.match(ranks[2], /Support.*Champion 1/);
   assert.match(ranks[3], /Open Queue.*Unranked/);
-  assert.match(app.document.querySelector('.ranks__season').textContent, /Season 25/);
+  assert.equal(app.document.querySelector('.ranks__season').textContent, '2026: Season 5');
+  assert.equal(app.document.querySelector('.ranks .dash__label').textContent, 'Competitive · PC');
   const top = [...app.document.querySelectorAll('.played-card__name')].map((node) => node.textContent);
   assert.deepEqual(top, ['Genji', 'Ana', 'Winston']);
   assert.match(app.document.querySelector('.endorsement').textContent, /3/);
@@ -519,15 +696,42 @@ await test('hero table sorts and sets aria-sort', async () => {
   app.close();
 });
 
+await test('the game mode dropdown switches the whole overview', async () => {
+  const competitive = { general: block(600, 1, 1), roles: { tank: block(600, 1, 1) }, heroes: { winston: block(600, 1, 1) } };
+  const api = careerApi({
+    '/players/abc%7Cdef/stats/summary': (url) => jsonResponse(url.searchParams.get('gamemode') === 'competitive' ? competitive : STATS),
+  });
+  const app = boot({ hash: PROFILE, api });
+  await profileReady(app);
+  assert.match(app.document.querySelector('.summary__time').textContent, /^10 HRS$/);
+  setInput(app.window, app.document.querySelectorAll('.career-bar select')[0], 'competitive');
+  await until(() => /^10 MINS$/.test(app.document.querySelector('.summary__time').textContent), 'competitive time');
+  assert.deepEqual([...app.document.querySelectorAll('.played-card__name')].map((node) => node.textContent), ['Winston']);
+  assert.match(app.document.querySelector('.mode-split__row[data-mode="competitive"]').textContent, /10 MINS/);
+  app.close();
+});
+
+await test('footnotes state the source and limits, and never claim live data', async () => {
+  const app = boot({ hash: PROFILE, api: careerApi() });
+  await profileReady(app);
+  const notes = app.document.querySelector('.career-notes').textContent;
+  assert.match(notes, /never live/);
+  assert.match(notes, /last season played/);
+  assert.match(notes, /must be set to public/);
+  assert.ok(!/pulled live/i.test(app.document.body.textContent));
+  assert.ok(app.document.querySelector('.career-notes a[href*="overwatch.blizzard.com/en-us/career/abc%7Cdef"]'));
+  app.close();
+});
+
 await test('game mode and platform become separate requests and cache entries', async () => {
   const app = boot({ hash: PROFILE, api: careerApi() });
   await profileReady(app);
   assert.ok(app.calls.some((call) => call.path === '/players/abc%7Cdef/stats/summary?gamemode=competitive'));
-  setInput(app.window, app.document.querySelector('.career-bar select'), 'console');
+  setInput(app.window, app.document.querySelectorAll('.career-bar select')[1], 'console');
   await until(() => app.calls.some((call) => call.path === '/players/abc%7Cdef/stats/summary?platform=console'), 'console request');
   await until(() => /No all modes stats/.test(app.document.querySelector('.overview').textContent), 'empty console state');
   assert.equal(app.document.querySelector('.profile__name').textContent, 'TestPlayer');
-  setInput(app.window, app.document.querySelector('.career-bar select'), 'all');
+  setInput(app.window, app.document.querySelectorAll('.career-bar select')[1], 'all');
   await profileReady(app);
   app.close();
 });
@@ -644,12 +848,13 @@ await test('expired cache shows immediately, then updates in the background', as
     },
   });
   await profileReady(app);
-  assert.match(app.document.querySelector('.summary__time').textContent, /^10h$/, 'old copy on screen first');
+  assert.match(app.document.querySelector('.summary__time').textContent, /^10 HRS$/, 'old copy on screen first');
   assert.match(app.document.querySelector('.data-status').textContent, /2 hr ago/);
-  assert.match(app.document.querySelector('.data-status').textContent, /Checking for newer data/);
+  await until(() => /Checking for newer data/.test(app.document.querySelector('.data-status').textContent), 'the checking state');
   release();
-  await until(() => /^20h$/.test(app.document.querySelector('.summary__time').textContent), 'updated value');
-  assert.match(app.document.querySelector('.data-status').textContent, /just now/);
+  await until(() => /^20 HRS$/.test(app.document.querySelector('.summary__time').textContent), 'updated value');
+  // The timestamp shows the oldest copy on screen, so it changes once every response has arrived.
+  await until(() => /just now/.test(app.document.querySelector('.data-status').textContent), 'the new timestamp');
   app.close();
 });
 
@@ -658,7 +863,7 @@ await test('a failed background update keeps the old copy and its old timestamp'
   await profileReady(app);
   await until(() => /Update failed, showing cached copy/.test(app.document.querySelector('.data-status').textContent), 'failure label');
   assert.match(app.document.querySelector('.data-status').textContent, /2 hr ago/, 'never presented as new');
-  assert.match(app.document.querySelector('.summary__time').textContent, /^10h$/);
+  assert.match(app.document.querySelector('.summary__time').textContent, /^10 HRS$/);
   app.close();
 });
 
@@ -683,7 +888,7 @@ await test('rate limiting keeps cached data and pauses refresh', async () => {
   await profileReady(app);
   click(buttonByName(app.document, 'Refresh'));
   await until(() => /Too many requests/.test(app.document.querySelector('.toast-region').textContent), 'rate limit toast');
-  assert.match(app.document.querySelector('.summary__time').textContent, /^10h$/);
+  assert.match(app.document.querySelector('.summary__time').textContent, /^10 HRS$/);
   await until(() => /Refresh in \d+s/.test(app.document.querySelector('.data-status button').textContent), 'cooldown');
   app.close();
 });

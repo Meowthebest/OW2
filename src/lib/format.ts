@@ -40,6 +40,16 @@ export function formatDuration(seconds: Maybe) {
   return minutes === 0 ? integer.format(hours) + 'h' : integer.format(hours) + 'h ' + minutes + 'm';
 }
 
+/** The game's own style: "117 HRS", "10 MINS". */
+export function formatPlaytime(seconds: Maybe) {
+  if (missing(seconds)) return NO_VALUE;
+  const hours = Math.round(seconds / 3600);
+  if (hours >= 1) return integer.format(hours) + (hours === 1 ? ' HR' : ' HRS');
+  const minutes = Math.round(seconds / 60);
+  if (minutes >= 1) return minutes + (minutes === 1 ? ' MIN' : ' MINS');
+  return Math.round(seconds) + ' SECS';
+}
+
 /** Drops the minutes past 100 hours, for tight columns. */
 export function formatDurationShort(seconds: Maybe) {
   if (missing(seconds)) return NO_VALUE;

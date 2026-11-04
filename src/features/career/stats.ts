@@ -95,6 +95,17 @@ export function formatStat(key: string, value: number | null | undefined) {
   return formatInt(value);
 }
 
+/**
+ * Profiles report a running season number. 2026 restarted the public numbering, so 21 to 25 are
+ * 2026 Seasons 1 to 5. Add later seasons here once their official name is known; until then the
+ * raw number is shown rather than a guess.
+ */
+export function seasonLabel(season: number | null | undefined) {
+  if (!season) return null;
+  if (season >= 21 && season <= 25) return `2026: Season ${season - 20}`;
+  return `Season ${season}`;
+}
+
 export const DIVISION_LABEL: Record<string, string> = {
   bronze: 'Bronze',
   silver: 'Silver',

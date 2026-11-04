@@ -2,13 +2,13 @@ import { useLayoutEffect, useRef } from 'react';
 import { ROLE_LABEL } from '../../data/heroes';
 import { heroPortrait } from '../../lib/assets';
 import { HeroPortrait } from '../../components/media';
-import type { Spin } from './useRandomizer';
+import type { SlotSpin } from './useRandomizer';
 
 /**
  * Purely visual: the winner is drawn before this mounts. The strip decelerates onto the
  * winner's tile while the tile under the marker drives the stage tint and ghost portrait.
  */
-export function SpinReel({ spin, stageRef }: { spin: Spin; stageRef: React.RefObject<HTMLElement> }) {
+export function SpinReel({ spin, stageRef }: { spin: SlotSpin; stageRef: React.RefObject<HTMLElement> }) {
   const viewport = useRef<HTMLDivElement>(null);
   const track = useRef<HTMLDivElement>(null);
   const ghost = useRef<HTMLImageElement>(null);

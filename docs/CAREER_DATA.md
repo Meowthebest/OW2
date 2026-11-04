@@ -82,10 +82,10 @@ This would suit a site showing a single fixed player, by committing static JSON 
 
 - **Refresh cannot force a new Blizzard read.** It asks for a new copy, but OverFast may answer from its own cache. The site then reports that there is no newer data yet.
 - **Private profiles were not tested against a real example.** Search hides them, so none could be found to test with. The handling follows OverFast's schema and source code (`{}` for stats, `null` for ranks), and the tests use simulated responses. The API does not separate "private" from "no stats", so the page says it could be either.
-- **No player level.** The source only provides the endorsement level, so that is what the banner shows. Its frame image is a sprite that cannot be used across origins, so the badge is drawn by this site.
+- **No player level.** The source only provides the endorsement level and its badge, so that is what the banner shows.
 - **No match history or trends.** Blizzard's pages only publish current totals, so there are no charts over time.
 - **Competitive stats cover the last season played**, not all time.
-- **Season numbers come straight from the source** and do not always match in-game naming. A profile can report "Season 25" while the game calls the current season "Season 5".
+- **Season names are mapped by hand.** Profiles report a running number, and 21 to 25 are shown as "2026: Season 1" to "2026: Season 5". Other numbers show as reported, such as "Season 26", until their official name is added to `seasonLabel` in `src/features/career/stats.ts`.
 - **Mixed platforms:** `/stats/career` with no platform uses a single platform, preferring PC, while `/stats/summary` merges them. Choose a platform in the filter to see each one separately.
 - **Third-party dependency:** avatars, namecards and rank icons load from Blizzard's image hosts. Failures fall back to initials or text. If OverFast is down, previously viewed profiles still show from cache, and new lookups show an error.
 - **Service terms:** OverFast is a free community service with no uptime guarantee. If traffic grows, self-host it and point the Worker at your instance. Behind a proxy, all visitors share one rate-limit bucket, which is another reason to keep the Worker's cache in front of it.

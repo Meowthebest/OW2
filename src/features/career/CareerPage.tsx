@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Panel, Segmented, SelectField } from '../../components/controls';
-import { formatRelative } from '../../lib/format';
+import { ExternalLink } from 'lucide-react';
+import { LogoMark } from '../../components/icons';
+import { Panel, SelectField } from '../../components/controls';
+import { formatDate, formatRelative } from '../../lib/format';
 import { careerHref, navigate, type CareerTab, type Route } from '../../lib/router';
 import { careerStore } from './api';
 import type { CareerRequest } from './api/requests';
-import type { GameMode, ModeFilter, PlatformFilter } from './api/types';
+import type { GameMode, ModeFilter, PlatformFilter, PlayerSummary } from './api/types';
 import { OverviewTab } from './components/OverviewTab';
 import { PlayerAvatar, PlayerSearch } from './components/PlayerSearch';
 import { DataStatus, ProfileHeader } from './components/ProfileHeader';
@@ -80,6 +82,30 @@ function CareerLanding() {
   );
 }
 
+function CareerNotes({ playerId, summary }: { playerId: string; summary?: PlayerSummary }) {
+  return (
+    <footer className="career-notes">
+      <p>Public profiles only cover Quick Play and Competitive. Competitive covers the last season played, as published by Blizzard.</p>
+      <p>
+        {summary?.last_updated_at && <>Blizzard profile changed {formatDate(summary.last_updated_at * 1000)} · </>}
+        {playerId.includes('|') && (
+          <>
+            <a className="text-link" href={`https://overwatch.blizzard.com/en-us/career/${encodeURIComponent(playerId)}/`} target="_blank" rel="noreferrer">
+              Official profile <ExternalLink size={11} aria-hidden="true" />
+            </a>
+            {' · '}
+          </>
+        )}
+        Career Profile must be set to public in-game
+      </p>
+      <p>
+        Data comes from {careerStore.provider.label}, unofficial and cached, never live.
+        {!careerStore.provider.viaWorker && ' OverFast keeps its own cache, so data can be older than the time shown.'}
+      </p>
+    </footer>
+  );
+}
+
 function PlayerProfile({ playerId, tab, hero }: { playerId: string; tab: CareerTab; hero?: string }) {
   const [mode, setMode] = useState<ModeFilter>('all');
   const [platform, setPlatform] = useState<PlatformFilter>('all');
@@ -124,22 +150,24 @@ function PlayerProfile({ playerId, tab, hero }: { playerId: string; tab: CareerT
     );
   }
 
+  const status = <DataStatus profile={profile} playerId={playerId} requests={refreshRequests} />;
+
   return (
     <div className="career-profile">
-      <ProfileHeader playerId={playerId} summary={summary.data}>
-        <DataStatus profile={profile} playerId={playerId} requests={refreshRequests} />
-      </ProfileHeader>
+      <ProfileHeader playerId={playerId} summary={summary.data} />
 
       {summaryFailed && summary.error ? (
         <ErrorBlock error={summary.error} onRetry={() => refreshRequests.forEach((request) => void careerStore.retry(request))} />
       ) : profile.initialLoad ? (
         <Skeleton lines={8} className="skeleton--page" />
       ) : hasNoStats ? (
-        <PrivateProfileBlock name={summary.data?.username} />
+        <>
+          <div className="career-bar career-bar--status">{status}</div>
+          <PrivateProfileBlock name={summary.data?.username} />
+        </>
       ) : (
         <>
-          <div className="career-bar">
-            <div className="tabs" role="tablist" aria-label="Career sections" onKeyDown={onTabKey}>
+          <div className="tabs" role="tablist" aria-label="Career sections" onKeyDown={onTabKey}>
               {TABS.map((item) => (
                 <button
                   key={item.id}
@@ -155,27 +183,25 @@ function PlayerProfile({ playerId, tab, hero }: { playerId: string; tab: CareerT
                   className="tabs__tab"
                   onClick={() => navigate(careerHref(playerId, item.id, item.id === 'statistics' ? hero : undefined))}
                 >
-                  <span>{item.label}</span>
+                  {item.label}
                 </button>
               ))}
-            </div>
+          </div>
+
+          <div className="career-bar">
             <div className="career-bar__filters">
-              <Segmented<ModeFilter>
-                label="Game mode"
-                value={mode}
-                onChange={setMode}
-                options={[
-                  { value: 'all', label: 'All modes' },
-                  { value: 'quickplay', label: 'Quick Play' },
-                  { value: 'competitive', label: 'Competitive' },
-                ]}
-              />
+              <SelectField label="Game mode" hideLabel value={mode} onChange={(value) => setMode(value as ModeFilter)}>
+                <option value="all">All Modes</option>
+                <option value="quickplay">Quick Play</option>
+                <option value="competitive">Competitive</option>
+              </SelectField>
               <SelectField label="Platform" hideLabel value={platform} onChange={(value) => setPlatform(value as PlatformFilter)}>
-                <option value="all">All platforms</option>
+                <option value="all">All Platforms</option>
                 <option value="pc">PC</option>
                 <option value="console">Console</option>
               </SelectField>
             </div>
+            {status}
           </div>
 
           <div id="career-panel" role="tabpanel" aria-labelledby={`career-tab-${tab}`}>
@@ -194,6 +220,8 @@ function PlayerProfile({ playerId, tab, hero }: { playerId: string; tab: CareerT
               />
             )}
           </div>
+
+          <CareerNotes playerId={playerId} summary={summary.data} />
         </>
       )}
     </div>
@@ -208,10 +236,17 @@ export function CareerPage({ route }: { route: Extract<Route, { view: 'career' }
   return (
     <div className="career page">
       {route.playerId ? (
-        <>
-          <PlayerSearch compact />
+        <section className="career-card">
+          <header className="career-card__head">
+            <LogoMark size={32} />
+            <div className="career-card__title">
+              <strong>Overwatch Career</strong>
+              <span>Public profiles, cached</span>
+            </div>
+            <PlayerSearch compact />
+          </header>
           <PlayerProfile key={route.playerId} playerId={route.playerId} tab={route.tab} hero={route.hero} />
-        </>
+        </section>
       ) : (
         <CareerLanding />
       )}

@@ -26,17 +26,6 @@ export function filterPool(heroes: Hero[], { roles, excluded }: PoolFilters): He
   return heroes.filter((hero) => roles.includes(hero.role) && !excludedIds.has(hero.id));
 }
 
-export interface DrawInput extends PoolFilters {
-  noRepeats: boolean;
-  used: string[];
-  currentId: string | null;
-  reroll?: boolean;
-}
-
-export type Draw =
-  | { kind: 'empty' }
-  | { kind: 'hero'; hero: Hero; candidates: Hero[]; used: string[]; cycleRestarted: boolean };
-
 /** Heroes the next roll can land on, not counting a no-repeats cycle restart. */
 export function remainingPool(heroes: Hero[], input: PoolFilters & { noRepeats: boolean; used: string[] }): Hero[] {
   const pool = filterPool(heroes, input);
@@ -45,34 +34,92 @@ export function remainingPool(heroes: Hero[], input: PoolFilters & { noRepeats: 
   return pool.filter((hero) => !usedIds.has(hero.id));
 }
 
-export function drawHero(heroes: Hero[], input: DrawInput, rng: Rng = secureRandomInt): Draw {
+export type PlayerRole = Role | 'any';
+
+export interface LineupSlot {
+  slot: number;
+  role: PlayerRole;
+  previousId: string | null;
+  /** A reroll: land on someone else when any other hero is available. */
+  avoidPrevious?: boolean;
+}
+
+export interface LineupInput extends PoolFilters {
+  noRepeats: boolean;
+  used: string[];
+  slots: LineupSlot[];
+  /** Heroes held by teammates who are not being rolled. */
+  locked?: string[];
+}
+
+export interface LineupPick {
+  slot: number;
+  /** Null when no eligible hero is left for this player. */
+  hero: Hero | null;
+  candidates: Hero[];
+}
+
+export interface LineupDraw {
+  picks: LineupPick[];
+  used: string[];
+  cycleRestarted: boolean;
+}
+
+function shuffled<T>(items: T[], rng: Rng): T[] {
+  const result = [...items];
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swap = rng(index + 1);
+    [result[index], result[swap]] = [result[swap], result[index]];
+  }
+  return result;
+}
+
+/**
+ * Draws a different hero for each slot, uniformly from what that slot may play.
+ * Role-locked players draw before "any role" players, so an open slot can never take the last
+ * hero a locked teammate needed. Ties draw in random order, so no seat has an advantage.
+ */
+export function drawLineup(heroes: Hero[], input: LineupInput, rng: Rng = secureRandomInt): LineupDraw {
   const pool = filterPool(heroes, input);
-  if (pool.length === 0) return { kind: 'empty' };
+  const poolFor = (slot: LineupSlot) => (slot.role === 'any' ? pool : pool.filter((hero) => hero.role === slot.role));
+  const order = shuffled(input.slots, rng).sort((a, b) => poolFor(a).length - poolFor(b).length);
 
+  const taken = new Set(input.locked ?? []);
   let used = input.used;
-  let candidates = remainingPool(heroes, input);
   let cycleRestarted = false;
+  const picks: LineupPick[] = [];
 
-  if (candidates.length === 0) {
-    // Only the current pool starts over, so heroes used under other filters stay used.
-    const poolIds = new Set(pool.map((hero) => hero.id));
-    used = used.filter((id) => !poolIds.has(id));
-    candidates = pool;
-    cycleRestarted = true;
+  for (const slot of order) {
+    const open = poolFor(slot).filter((hero) => !taken.has(hero.id));
+    if (open.length === 0) {
+      picks.push({ slot: slot.slot, hero: null, candidates: [] });
+      continue;
+    }
+
+    const usedIds = new Set(used);
+    let candidates = input.noRepeats ? open.filter((hero) => !usedIds.has(hero.id)) : open;
+    let restarted = false;
+    if (candidates.length === 0) {
+      // Only this slot's pool starts over, so heroes used under other filters stay used.
+      const poolIds = new Set(poolFor(slot).map((hero) => hero.id));
+      used = used.filter((id) => !poolIds.has(id));
+      candidates = open;
+      restarted = true;
+      cycleRestarted = true;
+    }
+
+    if ((slot.avoidPrevious || restarted) && candidates.length > 1) {
+      candidates = candidates.filter((hero) => hero.id !== slot.previousId);
+    }
+
+    const hero = candidates[rng(candidates.length)];
+    taken.add(hero.id);
+    if (!used.includes(hero.id)) used = [...used, hero.id];
+    picks.push({ slot: slot.slot, hero, candidates });
   }
 
-  if ((input.reroll || cycleRestarted) && candidates.length > 1) {
-    candidates = candidates.filter((hero) => hero.id !== input.currentId);
-  }
-
-  const hero = candidates[rng(candidates.length)];
-  return {
-    kind: 'hero',
-    hero,
-    candidates,
-    used: used.includes(hero.id) ? used : [...used, hero.id],
-    cycleRestarted,
-  };
+  picks.sort((a, b) => a.slot - b.slot);
+  return { picks, used, cycleRestarted };
 }
 
 /** Decoy strip for the spin animation. It never influences the result: the winner is already drawn. */

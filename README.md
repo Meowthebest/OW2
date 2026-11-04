@@ -2,7 +2,7 @@
 
 A fan-made Overwatch companion with two features:
 
-- **Random hero selector:** filter by role, exclude heroes, run no-repeat cycles, and watch the reel land on your pick.
+- **Random hero selector:** roll for 1 to 5 players with no duplicates on a team. Filter by role, lock each player's role, exclude heroes, run no-repeat cycles, and watch the reels land on your picks.
 - **Career dashboard:** search public player profiles and browse heroes, roles, ranks and win rates.
 
 Live site: https://meowthebest.github.io/OW2/

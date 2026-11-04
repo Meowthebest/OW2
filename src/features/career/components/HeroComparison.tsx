@@ -1,12 +1,13 @@
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownWideNarrow, ArrowUpNarrowWide } from 'lucide-react';
 import { RoleIcon } from '../../../components/icons';
-import { Panel, SelectField } from '../../../components/controls';
+import { SelectField } from '../../../components/controls';
 import { HeroPortrait } from '../../../components/media';
 import { useMediaQuery } from '../../../hooks/useMediaQuery';
+import { formatPlaytime } from '../../../lib/format';
 import type { StatsSummary } from '../api/types';
 import { METRICS, METRIC_BY_ID, heroRows } from '../stats';
-import { NoDataBlock } from './states';
+import { Dash, NoDataBlock } from './states';
 
 const COLLAPSED_ROWS = 10;
 
@@ -37,6 +38,7 @@ export function HeroComparison({ stats, onOpenHero }: { stats?: StatsSummary; on
   const isNarrow = useMediaQuery('(max-width: 760px)');
   const list = useRef<HTMLOListElement>(null);
   const metric = METRIC_BY_ID[metricId];
+  const format = metric.id === 'time' ? formatPlaytime : metric.format;
 
   const rows = useMemo(() => {
     const withValues = heroRows(stats)
@@ -50,9 +52,9 @@ export function HeroComparison({ stats, onOpenHero }: { stats?: StatsSummary; on
   useRowGlide(list, `${metricId}-${ascending}-${shown.length}`);
 
   return (
-    <Panel
+    <Dash
       className="comparison"
-      title="Hero comparison"
+      label="Hero comparison"
       actions={
         <div className="comparison__controls">
           <SelectField label="Compare heroes by" hideLabel value={metricId} onChange={setMetricId}>
@@ -64,7 +66,7 @@ export function HeroComparison({ stats, onOpenHero }: { stats?: StatsSummary; on
             onClick={() => setAscending((value) => !value)}
             aria-label={ascending ? 'Sorted lowest first. Sort highest first.' : 'Sorted highest first. Sort lowest first.'}
           >
-            {ascending ? <ArrowUpNarrowWide size={16} aria-hidden="true" /> : <ArrowDownWideNarrow size={16} aria-hidden="true" />}
+            {ascending ? <ArrowUpNarrowWide size={15} aria-hidden="true" /> : <ArrowDownWideNarrow size={15} aria-hidden="true" />}
           </button>
         </div>
       }
@@ -75,20 +77,14 @@ export function HeroComparison({ stats, onOpenHero }: { stats?: StatsSummary; on
         <ol className="comparison__list" ref={list}>
           {shown.map((row) => (
             <li key={row.key} data-row={row.key}>
-              <button type="button" className="comparison-row" data-role={row.role} onClick={() => onOpenHero(row.key)} aria-label={`${row.name}: ${metric.format(row.value)}. Open hero statistics.`}>
+              <button type="button" className="comparison-row" data-role={row.role} onClick={() => onOpenHero(row.key)} aria-label={`${row.name}: ${format(row.value)}. Open hero statistics.`}>
+                <span className="comparison-row__bar" style={{ width: `${max > 0 ? (row.value / max) * 100 : 0}%` }} />
                 <HeroPortrait id={row.key} name={row.name} role={row.role} />
-                <span className="comparison-row__body">
-                  <span className="comparison-row__top">
-                    <span className="comparison-row__name">
-                      {row.role && <RoleIcon role={row.role} size={11} />}
-                      {row.name}
-                    </span>
-                    <span className="comparison-row__value">{metric.format(row.value)}</span>
-                  </span>
-                  <span className="comparison-row__track">
-                    <span className="comparison-row__bar" style={{ width: `${max > 0 ? (row.value / max) * 100 : 0}%` }} />
-                  </span>
+                <span className="comparison-row__name">
+                  {row.name}
+                  {row.role && <RoleIcon role={row.role} size={11} />}
                 </span>
+                <span className="comparison-row__value">{format(row.value)}</span>
               </button>
             </li>
           ))}
@@ -99,6 +95,6 @@ export function HeroComparison({ stats, onOpenHero }: { stats?: StatsSummary; on
           {expanded ? 'Show top 10' : `Show all ${rows.length} heroes`}
         </button>
       )}
-    </Panel>
+    </Dash>
   );
 }

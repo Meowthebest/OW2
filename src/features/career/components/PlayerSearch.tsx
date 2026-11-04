@@ -97,7 +97,7 @@ export function PlayerSearch({ compact = false, autoFocus = false }: { compact?:
             ref={inputRef}
             value={input}
             onChange={(event) => setInput(event.target.value)}
-            placeholder="BattleTag (Name#1234), exact name, or profile link"
+            placeholder={compact ? 'BattleTag, name or profile link' : 'BattleTag (Name#1234), exact name, or profile link'}
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}

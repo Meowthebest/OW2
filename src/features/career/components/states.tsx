@@ -6,6 +6,19 @@ import { describeError, type CareerError } from '../api/errors';
 import type { CareerRequest } from '../api/requests';
 import type { Entry } from '../api/store';
 
+/** A dashboard section with a small label heading. */
+export function Dash({ label, actions, className, children }: { label: ReactNode; actions?: ReactNode; className?: string; children: ReactNode }) {
+  return (
+    <section className={'dash' + (className ? ' ' + className : '')}>
+      <header className="dash__head">
+        <h2 className="dash__label">{label}</h2>
+        {actions}
+      </header>
+      {children}
+    </section>
+  );
+}
+
 export function Skeleton({ lines = 3, className }: { lines?: number; className?: string }) {
   return (
     <div className={'skeleton ' + (className ?? '')} aria-hidden="true">

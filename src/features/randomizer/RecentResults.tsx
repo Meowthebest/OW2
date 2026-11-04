@@ -19,17 +19,17 @@ export function RecentResults({ api }: { api: RandomizerApi }) {
         <p className="recent__empty">Your last 30 rolls will line up here.</p>
       ) : (
         <ol className="recent__list">
-          {history.map((entry, index) => {
+          {history.map((entry) => {
             const hero = HERO_BY_ID[entry.id];
             return (
-              <li key={entry.id + entry.at} className={cn('recent-card', index === 0 && 'is-latest')} data-role={hero.role}>
+              <li key={entry.id + entry.at} className={cn('recent-card', entry.at === history[0].at && 'is-latest')} data-role={hero.role}>
                 <HeroPortrait id={hero.id} name={hero.name} role={hero.role} />
                 <span className="recent-card__text">
                   <span className="recent-card__name">{hero.name}</span>
                   <span className="recent-card__meta">
                     <RoleIcon role={hero.role} size={11} />
                     <span className="sr-only">{ROLE_LABEL[hero.role]}, </span>
-                    {formatRelative(entry.at)}
+                    {entry.who ? <span className="recent-card__who">{entry.who}</span> : formatRelative(entry.at)}
                     {entry.reroll && <RefreshCw size={10} aria-label="from a reroll" />}
                   </span>
                 </span>

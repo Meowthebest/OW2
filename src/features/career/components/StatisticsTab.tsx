@@ -21,6 +21,11 @@ const TABLE_GROUPS: ColumnGroup[] = [
   { id: 'totals', label: 'Totals', columns: ['elims', 'deaths', 'assists', 'damage', 'healing'] },
 ];
 
+const WIDE_GROUPS: ColumnGroup[] = [
+  { id: 'core', label: 'Results and per 10 minutes', columns: ['time', 'games', 'wins', 'losses', 'winrate', 'kda', 'elims10', 'deaths10', 'assists10', 'damage10', 'healing10'] },
+  { id: 'totals', label: 'Totals', columns: ['time', 'games', 'elims', 'deaths', 'assists', 'damage', 'healing'] },
+];
+
 const PHONE_GROUPS: ColumnGroup[] = [
   { id: 'overview', label: 'Time, games, win rate, KDA', columns: ['time', 'games', 'winrate', 'kda'] },
   { id: 'record', label: 'Games won and lost', columns: ['games', 'wins', 'losses'] },
@@ -95,6 +100,7 @@ function HeroTable({ rows, activeHero, onOpenHero }: { rows: HeroRow[]; activeHe
       rowKey={(row) => row.key}
       rowRole={(row) => row.role}
       activeKey={activeHero}
+      wideGroups={WIDE_GROUPS}
       groups={TABLE_GROUPS}
       phoneGroups={PHONE_GROUPS}
       defaultSort="time"
@@ -123,7 +129,7 @@ function RoleStatsTable({ stats }: { stats?: StatsSummary }) {
     ...(STAT_COLUMNS as Column<RoleRow>[]),
   ];
   if (rows.length === 0) return <NoDataBlock title="No role statistics">Nothing recorded for this filter.</NoDataBlock>;
-  return <SortableTable caption="Role statistics" columns={columns} rows={rows} rowKey={(row) => row.key} rowRole={(row) => row.role} groups={TABLE_GROUPS} phoneGroups={PHONE_GROUPS} defaultSort="time" />;
+  return <SortableTable caption="Role statistics" columns={columns} rows={rows} rowKey={(row) => row.key} rowRole={(row) => row.role} wideGroups={WIDE_GROUPS} groups={TABLE_GROUPS} phoneGroups={PHONE_GROUPS} defaultSort="time" />;
 }
 
 function CareerTables({ data, heroKey }: { data: CareerStats; heroKey: string }) {
@@ -299,9 +305,6 @@ export function StatisticsTab({
         </ResourceGate>
       </Panel>
 
-      {(mode === 'competitive' || (mode === 'all' && detailMode === 'competitive')) && (
-        <p className="career-note">Competitive figures cover the last season this player played, as published by Blizzard.</p>
-      )}
     </div>
   );
 }

@@ -39,12 +39,13 @@ const {
   HERO_BY_ID,
   ROLES,
   buildReel,
-  drawHero,
+  drawLineup,
   filterPool,
   secureRandomInt,
   formatCompact,
   formatDuration,
   formatPercent,
+  formatPlaytime,
   careerHref,
   parseHash,
   CareerStore,
@@ -71,6 +72,16 @@ async function test(name, run) {
 }
 
 const base = { roles: [...ROLES], excluded: [], noRepeats: false, used: [], currentId: null };
+
+// One player is a lineup of one.
+function drawHero(heroes, { currentId, reroll, ...input }) {
+  const draw = drawLineup(heroes, { ...input, slots: [{ slot: 0, role: 'any', previousId: currentId ?? null, avoidPrevious: reroll }] });
+  const [pick] = draw.picks;
+  return pick.hero ? { kind: 'hero', hero: pick.hero, used: draw.used, cycleRestarted: draw.cycleRestarted } : { kind: 'empty' };
+}
+
+const seats = (...roles) => roles.map((role, slot) => ({ slot, role, previousId: null }));
+const lineupBase = { roles: [...ROLES], excluded: [], noRepeats: false, used: [] };
 
 // Roster
 await test('roster matches the official Season 5 counts', () => {
@@ -149,6 +160,81 @@ await test('reroll never returns the current hero when another exists', () => {
   assert.equal(drawHero(HEROES, { ...base, excluded: lastOne, currentId: 'ana', reroll: true }).hero.id, 'ana');
 });
 
+await test('a team of five never gets the same hero twice', () => {
+  for (let i = 0; i < 2000; i += 1) {
+    const { picks } = drawLineup(HEROES, { ...lineupBase, slots: seats('any', 'any', 'any', 'any', 'any') });
+    assert.equal(new Set(picks.map((pick) => pick.hero.id)).size, 5);
+    assert.deepEqual(picks.map((pick) => pick.slot), [0, 1, 2, 3, 4]);
+  }
+});
+
+await test('each seat gets its role, and every seat has even odds', () => {
+  const counts = [{}, {}];
+  const draws = 16000;
+  for (let i = 0; i < draws; i += 1) {
+    const { picks } = drawLineup(HEROES, { ...lineupBase, slots: seats('tank', 'tank') });
+    picks.forEach((pick, seat) => {
+      assert.equal(pick.hero.role, 'tank');
+      counts[seat][pick.hero.id] = (counts[seat][pick.hero.id] ?? 0) + 1;
+    });
+  }
+  // Neither seat is favored: both draw the same 15 tanks at 1 in 15 each.
+  for (const seat of counts) {
+    const values = Object.values(seat);
+    assert.equal(values.length, 15);
+    const expected = draws / 15;
+    const chi = values.reduce((sum, count) => sum + (count - expected) ** 2 / expected, 0);
+    // p = 0.001 critical value for 14 degrees of freedom.
+    assert.ok(chi < 36.1, `chi-square ${chi.toFixed(1)}`);
+  }
+});
+
+await test('role-locked players are served before open slots can take their hero', () => {
+  // Only one tank is available. The open seat must not take it, whichever seat rolls first.
+  const excluded = HEROES.filter((hero) => hero.role === 'tank' && hero.id !== 'dva').map((hero) => hero.id);
+  for (let i = 0; i < 500; i += 1) {
+    const { picks } = drawLineup(HEROES, { ...lineupBase, excluded, slots: seats('any', 'tank') });
+    assert.equal(picks[1].hero.id, 'dva');
+    assert.notEqual(picks[0].hero.id, 'dva');
+  }
+});
+
+await test('a shortage leaves the extra player empty instead of doubling up', () => {
+  const excluded = HEROES.filter((hero) => hero.role === 'tank' && hero.id !== 'dva').map((hero) => hero.id);
+  const { picks } = drawLineup(HEROES, { ...lineupBase, excluded, slots: seats('tank', 'tank') });
+  assert.equal(picks.filter((pick) => pick.hero?.id === 'dva').length, 1);
+  assert.equal(picks.filter((pick) => pick.hero === null).length, 1);
+});
+
+await test('rerolling one player avoids teammates and their own last hero', () => {
+  const locked = ['ana', 'mercy', 'kiriko'];
+  for (let i = 0; i < 1000; i += 1) {
+    const { picks } = drawLineup(HEROES, { ...lineupBase, roles: ['support'], locked, slots: [{ slot: 3, role: 'any', previousId: 'moira', avoidPrevious: true }] });
+    assert.ok(![...locked, 'moira'].includes(picks[0].hero.id));
+    assert.equal(picks[0].slot, 3);
+  }
+});
+
+await test('no repeats is shared across the whole team', () => {
+  let used = [];
+  const seen = new Set();
+  const rounds = Math.floor(HEROES.length / 5);
+  for (let round = 0; round < rounds; round += 1) {
+    const draw = drawLineup(HEROES, { ...lineupBase, noRepeats: true, used, slots: seats('any', 'any', 'any', 'any', 'any') });
+    assert.equal(draw.cycleRestarted, false);
+    for (const pick of draw.picks) {
+      assert.ok(!seen.has(pick.hero.id), pick.hero.id + ' repeated');
+      seen.add(pick.hero.id);
+    }
+    used = draw.used;
+  }
+  assert.equal(seen.size, rounds * 5);
+  // 4 heroes remain for 5 players: the last player's draw restarts the cycle, still with no duplicates.
+  const last = drawLineup(HEROES, { ...lineupBase, noRepeats: true, used, slots: seats('any', 'any', 'any', 'any', 'any') });
+  assert.equal(last.cycleRestarted, true);
+  assert.equal(new Set(last.picks.map((pick) => pick.hero.id)).size, 5);
+});
+
 await test('the reel lands on the winner and shows only eligible heroes', () => {
   const pool = filterPool(HEROES, { roles: ['support'], excluded: ['ana'] });
   for (let i = 0; i < 200; i += 1) {
@@ -169,6 +255,12 @@ await test('formatting handles missing values and durations', () => {
   assert.equal(formatPercent(51.45), '51.5%');
   assert.equal(formatCompact(77157033), '77.2M');
   assert.equal(formatCompact(undefined), '—');
+  assert.equal(formatPlaytime(419760), '117 HRS');
+  assert.equal(formatPlaytime(3600), '1 HR');
+  assert.equal(formatPlaytime(600), '10 MINS');
+  assert.equal(formatPlaytime(60), '1 MIN');
+  assert.equal(formatPlaytime(12), '12 SECS');
+  assert.equal(formatPlaytime(null), '—');
 });
 
 await test('routes round-trip, including ids with a pipe', () => {

@@ -22,14 +22,14 @@ function normalize(text: string) {
   return text.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
 }
 
-const HeroTile = memo(function HeroTile({ hero, status, isPick, disabled, onToggle }: { hero: Hero; status: TileStatus; isPick: boolean; disabled: boolean; onToggle: (id: string) => void }) {
+const HeroTile = memo(function HeroTile({ hero, status, pickTag, pickedBy, disabled, onToggle }: { hero: Hero; status: TileStatus; pickTag?: string; pickedBy?: string; disabled: boolean; onToggle: (id: string) => void }) {
   const excluded = status === 'excluded';
-  const label = `${hero.name}, ${ROLE_LABEL[hero.role]}, ${SUB_ROLES[hero.subRole].label}. ${isPick ? 'Current pick. ' : ''}${STATUS_TEXT[status]}. ${excluded ? 'Press to include.' : 'Press to exclude.'}`;
+  const label = `${hero.name}, ${ROLE_LABEL[hero.role]}, ${SUB_ROLES[hero.subRole].label}. ${pickedBy ? `Current pick for ${pickedBy}. ` : ''}${STATUS_TEXT[status]}. ${excluded ? 'Press to include.' : 'Press to exclude.'}`;
   return (
     <li>
       <button
         type="button"
-        className={cn('hero-tile', 'is-' + status, isPick && 'is-pick')}
+        className={cn('hero-tile', 'is-' + status, pickTag && 'is-pick')}
         data-role={hero.role}
         aria-pressed={!excluded}
         aria-label={label}
@@ -44,8 +44,8 @@ const HeroTile = memo(function HeroTile({ hero, status, isPick, disabled, onTogg
             {status === 'used' && 'Used'}
             {status === 'role-off' && 'Off'}
           </span>
-          {isPick && <span className="hero-tile__pick" aria-hidden="true">Pick</span>}
-          {hero.isNew && !isPick && <span className="hero-tile__new" aria-hidden="true">New</span>}
+          {pickTag && <span className="hero-tile__pick" aria-hidden="true">{pickTag}</span>}
+          {hero.isNew && !pickTag && <span className="hero-tile__new" aria-hidden="true">New</span>}
         </span>
         <span className="hero-tile__foot">
           <RoleIcon role={hero.role} size={11} />
@@ -60,10 +60,11 @@ export function Roster({ api }: { api: RandomizerApi }) {
   const [query, setQuery] = useState('');
   const [roleView, setRoleView] = useState<RoleView>('all');
   const [statusView, setStatusView] = useState<StatusView>('all');
-  const { state, spinning, current, toggleHero, setExcluded } = api;
+  const { state, spinning, team, toggleHero, setExcluded } = api;
 
   const excludedSet = useMemo(() => new Set(state.excluded), [state.excluded]);
   const usedSet = useMemo(() => new Set(state.used), [state.used]);
+  const picks = useMemo(() => new Map(team.flatMap((member) => (member.hero ? [[member.hero.id, member] as const] : []))), [team]);
 
   const statusOf = (hero: Hero): TileStatus => {
     if (excludedSet.has(hero.id)) return 'excluded';
@@ -167,7 +168,7 @@ export function Roster({ api }: { api: RandomizerApi }) {
               </div>
               <ul className="hero-grid">
                 {heroes.map((hero) => (
-                  <HeroTile key={hero.id} hero={hero} status={statusOf(hero)} isPick={current?.id === hero.id} disabled={spinning} onToggle={toggleHero} />
+                  <HeroTile key={hero.id} hero={hero} status={statusOf(hero)} pickTag={picks.has(hero.id) ? (team.length > 1 ? `P${(picks.get(hero.id)?.index ?? 0) + 1}` : 'Pick') : undefined} pickedBy={picks.get(hero.id)?.displayName} disabled={spinning} onToggle={toggleHero} />
                 ))}
               </ul>
             </div>

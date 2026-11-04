@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { HeroStage, RollButtons } from './HeroStage';
+import { HeroStage } from './HeroStage';
 import { RecentResults } from './RecentResults';
 import { Roster } from './Roster';
 import { SettingsPanel } from './SettingsPanel';
+import { RollButtons } from './stageParts';
 import type { RandomizerApi } from './useRandomizer';
 
 export function RandomizerPage({ api, focusRoster }: { api: RandomizerApi; focusRoster: boolean }) {

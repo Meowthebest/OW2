@@ -24,8 +24,8 @@ export interface ColumnGroup {
 }
 
 /**
- * Sortable data table. Below desktop width it shows one set of columns at a time, chosen
- * from a menu, so every value stays readable and the page never scrolls sideways.
+ * Sortable data table. It shows one set of columns at a time, chosen from a menu, so every
+ * value stays readable and the page never scrolls sideways.
  */
 export function SortableTable<Row>({
   caption,
@@ -34,6 +34,7 @@ export function SortableTable<Row>({
   rowKey,
   rowRole,
   activeKey,
+  wideGroups,
   groups,
   phoneGroups,
   defaultSort,
@@ -44,15 +45,16 @@ export function SortableTable<Row>({
   rowKey: (row: Row) => string;
   rowRole?: (row: Row) => string | undefined;
   activeKey?: string;
+  wideGroups?: ColumnGroup[];
   groups?: ColumnGroup[];
   phoneGroups?: ColumnGroup[];
   defaultSort: string;
 }) {
   const [sort, setSort] = useState({ id: defaultSort, descending: true });
   const [groupId, setGroupId] = useState('');
-  const isCompact = useMediaQuery('(max-width: 1399px)');
+  const isCompact = useMediaQuery('(max-width: 1099px)');
   const isPhone = useMediaQuery('(max-width: 560px)');
-  const activeGroups = isPhone ? phoneGroups ?? groups : isCompact ? groups : undefined;
+  const activeGroups = isPhone ? phoneGroups ?? groups : isCompact ? groups : wideGroups ?? groups;
   const activeGroup = activeGroups?.find((group) => group.id === groupId) ?? activeGroups?.[0];
 
   const visible = activeGroup ? columns.filter((column) => column.pinned || activeGroup.columns.includes(column.id)) : columns;

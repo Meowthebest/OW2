@@ -1,42 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
-import { ExternalLink, MapPin, RefreshCw, Shuffle } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { ExternalLink, MapPin } from 'lucide-react';
 import { RoleIcon } from '../../components/icons';
 import { Segmented } from '../../components/controls';
 import { HeroPortrait } from '../../components/media';
 import { ROLES, ROLE_LABEL, SUB_ROLES, type Hero, type Role } from '../../data/heroes';
-import { heroArt, heroArtSmall } from '../../lib/assets';
 import { cn } from '../../lib/format';
+import { LineupStage } from './LineupStage';
 import { SpinReel } from './SpinReel';
+import { HeroArt, PartyPicker, RollButtons, preloadArt } from './stageParts';
 import type { RandomizerApi } from './useRandomizer';
 
 const ART_SIZES = '(max-width: 760px) 100vw, 75vw';
-
-function preloadArt(id: string) {
-  const image = new Image();
-  image.sizes = ART_SIZES;
-  image.srcset = `${heroArtSmall(id)} 900w, ${heroArt(id)} 1600w`;
-}
-
-function HeroArt({ hero, animate }: { hero: Hero; animate: boolean }) {
-  const [state, setState] = useState<'loading' | 'ready' | 'failed'>('loading');
-  useEffect(() => setState('loading'), [hero.id]);
-  if (state === 'failed') {
-    return <HeroPortrait id={hero.id} name={hero.name} role={hero.role} className="stage__art-fallback" eager />;
-  }
-  return (
-    <img
-      className={cn('stage__art', state === 'ready' && 'is-ready', animate && 'stage__art--reveal')}
-      src={heroArt(hero.id)}
-      srcSet={`${heroArtSmall(hero.id)} 900w, ${heroArt(hero.id)} 1600w`}
-      sizes={ART_SIZES}
-      alt=""
-      width={1600}
-      height={760}
-      onLoad={() => setState('ready')}
-      onError={() => setState('failed')}
-    />
-  );
-}
 
 function PortraitWall({ pool }: { pool: Hero[] }) {
   return (
@@ -120,31 +94,17 @@ export function RoleFilter({ api }: { api: RandomizerApi }) {
   );
 }
 
-export function RollButtons({ api, compact = false }: { api: RandomizerApi; compact?: boolean }) {
-  const hasPick = api.current !== null;
-  const canReroll = hasPick && api.pool.some((hero) => hero.id !== api.current?.id);
-  return (
-    <div className={cn('roll-actions', compact && 'roll-actions--dock')}>
-      <button type="button" className="btn btn--ghost btn--reroll" onClick={() => api.roll(true)} disabled={api.spinning || !canReroll} aria-label="Reroll hero">
-        <span><RefreshCw size={17} aria-hidden="true" /><span className="btn__text">Reroll</span></span>
-      </button>
-      <button type="button" className="btn btn--primary" onClick={() => api.roll(false)} disabled={api.spinning || api.pool.length === 0}>
-        <span><Shuffle size={compact ? 20 : 24} aria-hidden="true" />{api.spinning ? 'Rolling…' : 'Randomize hero'}</span>
-      </button>
-    </div>
-  );
-}
-
-export function HeroStage({ api }: { api: RandomizerApi }) {
+function SoloStage({ api }: { api: RandomizerApi }) {
   const stage = useRef<HTMLElement>(null);
   const { current, spin, spinning, revealKey, pool, remaining } = api;
+  const reel = spin?.reels[0];
   // Only a roll made while this page is open gets the reveal, not coming back from another page.
   const mountedKey = useRef(revealKey);
   const animate = revealKey !== mountedKey.current && api.motion !== 'off';
 
   useEffect(() => {
-    if (spin) preloadArt(spin.winner.id);
-  }, [spin]);
+    if (reel) preloadArt(reel.winner.id, ART_SIZES);
+  }, [reel]);
 
   // The reel writes the tile role straight to the DOM while spinning; restore it afterwards.
   useEffect(() => {
@@ -156,13 +116,15 @@ export function HeroStage({ api }: { api: RandomizerApi }) {
   return (
     <section className="stage" ref={stage} data-role={current?.role ?? 'none'} data-spinning={spinning} aria-labelledby="stage-title" aria-busy={spinning}>
       <div className="stage__backdrop" aria-hidden="true">
-        {current ? <HeroArt key={`${current.id}-${revealKey}`} hero={current} animate={animate} /> : <PortraitWall pool={pool} />}
+        {current ? <HeroArt key={`${current.id}-${revealKey}`} hero={current} animate={animate} sizes={ART_SIZES} /> : <PortraitWall pool={pool} />}
         <div className="stage__shade" />
         <div className="stage__glow" />
         <div className="stage__hex" />
       </div>
 
-      {spin && <SpinReel spin={spin} stageRef={stage} />}
+      <PartyPicker api={api} className="stage__party" />
+
+      {reel && <SpinReel spin={reel} stageRef={stage} />}
       {animate && current && !spinning && <div key={revealKey} className="stage__flash" aria-hidden="true"><i /><i /></div>}
 
       <div className="stage__body">
@@ -182,4 +144,8 @@ export function HeroStage({ api }: { api: RandomizerApi }) {
       </div>
     </section>
   );
+}
+
+export function HeroStage({ api }: { api: RandomizerApi }) {
+  return api.state.partySize > 1 ? <LineupStage api={api} /> : <SoloStage api={api} />;
 }
