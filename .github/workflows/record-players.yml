@@ -5,12 +5,11 @@ name: Record Steam players
 # history and keep rejecting other pushes. The site reads these files directly, so a new
 # reading never needs a deploy.
 #
-# Steam caches this count for about 15 minutes, so most runs find nothing new and commit nothing.
-# Running every five minutes picks up each new count soon after it appears.
+# Each run stores a reading, about 288 a day. Steam's servers can keep a copy of the count for up to
+# 15 minutes, so the same count can appear more than once and a reading can be that far behind.
 #
 # GitHub's schedule has been unreliable, so the Worker in timer/ starts this job every five minutes
-# and the schedule below is only a backstop. Each reading stores the time Steam produced it, and
-# the site shows that time.
+# and the schedule below is only a backstop. The site shows the time each reading was taken.
 
 on:
   schedule:

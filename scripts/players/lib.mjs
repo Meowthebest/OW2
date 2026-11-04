@@ -45,9 +45,9 @@ export function parseSteamBody(body) {
 }
 
 /**
- * When Steam produced this count. Steam serves it from a cache for up to 15 minutes, so the time of the request
- * can be well after the count was taken. The cache headers give the real time, and every request inside one cache
- * window returns the same time, which is how a repeat of the same observation is recognized.
+ * The time on a reading, from the response's cache headers: when the copy Steam sent was made. A copy served from a
+ * shared cache keeps its time, so reading it again inside one cache window is recognized as a repeat. GitHub's machines
+ * have received fresh headers on every read so far, so there this is the time of the read, and the count can be older.
  */
 export function observationTime(headers, clockSeconds) {
   const expires = Date.parse(headers?.get?.('expires') ?? '');

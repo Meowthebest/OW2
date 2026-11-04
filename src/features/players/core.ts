@@ -27,7 +27,7 @@ const DAY = 86400;
 /** Chart colors, checked with the dataviz palette validator against the panel surface. Canvas can't read CSS variables. */
 export const SERIES_COLORS = { players: '#cf7c0c', average: '#3f8ce8', previous: '#c9609f' };
 
-/** Steam publishes a new count about every 15 minutes and the collector can run late, so "stale" allows for both. */
+/** Readings arrive about every five minutes, but runs can be late or missed, so "stale" allows for several in a row. */
 export const STALE_AFTER_MS = 45 * 60 * 1000;
 
 const isCount = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0;

@@ -139,7 +139,7 @@ await test('reports timeouts, network failures, bad JSON and bad results without
 
 const cached = (players, expiresAt, maxAge = 900) => steamReply(players, { headers: { expires: new Date(expiresAt * 1000).toUTCString(), 'cache-control': `public, max-age=${maxAge}` } });
 
-await test('the time of a reading comes from when Steam produced it', () => {
+await test("the time of a reading comes from the response's cache headers", () => {
   const headers = (expires, control = 'public, max-age=900') => new Headers({ expires: new Date(expires * 1000).toUTCString(), 'cache-control': control });
   assert.equal(observationTime(headers(NOW + 600), NOW), NOW - 300);
   assert.equal(observationTime(new Headers(), NOW), NOW, 'no headers falls back to the clock');
@@ -149,7 +149,7 @@ await test('the time of a reading comes from when Steam produced it', () => {
   assert.equal(observationTime(headers(NOW + 86400), NOW), NOW, 'future headers are not believed');
 });
 
-await test('repeated reads of one cached Steam count store one reading, at its real time', async () => {
+await test('repeated reads of one cached copy store one reading, at the time the copy was made', async () => {
   const dir = tempData();
   const produced = NOW - (NOW % 900) + 40;
   const expires = produced + 900;
@@ -163,7 +163,7 @@ await test('repeated reads of one cached Steam count store one reading, at its r
   assert.equal(third.status, 'duplicate');
   assert.equal(readJson(dir, 'latest.json').readings, 1);
   assert.equal(readFileSync(path.join(dir, 'samples', '2026-11.jsonl'), 'utf8'), `[${produced},33000]\n`);
-  // Steam publishes a new count.
+  // The cached copy expires and a new one arrives.
   const next = await collectOnce({ dir, now: at(expires + 30), fetchImpl: fetchOf(cached(34000, expires + 900)) });
   assert.equal(next.status, 'recorded');
   assert.equal(readJson(dir, 'latest.json').current.at, iso(expires));

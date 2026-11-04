@@ -20,9 +20,18 @@ The [Steam Web API terms](https://steamcommunity.com/dev/apiterms) allow up to 1
 
 ### How often a new count appears
 
-Steam caches this response for 15 minutes. Measured over 17 minutes of polling once a minute, the count only changed when the cache expired. Checking more often doesn't produce more data, and working around the cache wouldn't be fair use of Steam's service.
+The job reads the count every five minutes and stores a reading each time, which comes to about 288 readings a day.
 
-So the job runs every five minutes and stores a new reading only when Steam has published a new count. That comes to about 96 readings a day, not 288. Each reading is timestamped with when Steam produced it, worked out from the response's cache headers, rather than when it was fetched.
+Those readings aren't all new information. Steam's response allows caching for 15 minutes (`Cache-Control: public, max-age=900`), so a count can be up to about that far behind. The job doesn't try to get around this, because that wouldn't be fair use of Steam's service.
+
+How this looks depends on where the request comes from:
+
+- **From one home computer,** polling once a minute for 17 minutes, the count only changed when the cache expired.
+- **From GitHub's machines,** the first 34 readings, over 2 hours 45 minutes on November 4, 2026, gave 20 different counts. 8 readings matched the one before. 6 went back to the count from two readings earlier while the player count was climbing, and the largest of those moves was 0.56% of the count. That suggests Steam's servers hold copies of different ages, though Steam doesn't document this.
+
+So small zigzags in the line aren't necessarily real changes.
+
+Each reading's time comes from the response's cache headers (`Expires` minus `max-age`), or from the clock if those look wrong. From GitHub's machines, those headers have matched the time of the read, so the time shows when this site read the count. Steam's copy of the count can be older than that.
 
 ## How it runs
 
@@ -60,9 +69,9 @@ node scripts/players/collect.mjs <data-folder> --rebuild
 - **Steam fails, times out or rate limits:** the job retries briefly, honoring `Retry-After`, then notes the failure in `latest.json` and keeps all stored data. The run still counts as successful, so a Steam outage doesn't send a failure email every five minutes. Warnings show on the run's page.
 - **Steam sends something unbelievable:** a missing, non-numeric, zero or impossibly large count is rejected and never stored.
 - **A browser can't load the files:** it keeps showing what it has, marked Stale Data, and waits longer between retries.
-- **A reading gets old:** past 45 minutes, the count is marked Stale Data with its real time.
+- **A reading gets old:** past 45 minutes, the count is marked Stale Data with the time of the reading.
 
-Identical observations aren't stored twice. Repeat reads inside one Steam cache window share a timestamp, and at most one reading is kept per five-minute window.
+Identical observations aren't stored twice. At most one reading is kept per five-minute window, and a response no newer than the last reading is skipped. The same count read at a later time is stored, because Steam's response doesn't show whether the count stayed the same or the copy was old.
 
 ## What each statistic needs
 
@@ -85,7 +94,7 @@ Nothing is estimated. Until a statistic has enough data, it shows Collecting and
 - The 24-hour and 7-day ranges show every reading. 30 days shows hourly averages.
 - 90 days and longer show daily averages, with each day's low and high shaded, once at least 60 days exist. Days with fewer than 12 recorded hours are left out, because they would skew toward whatever time of day was recorded.
 - The line breaks across gaps in recording, and the chart starts at the first reading. Nothing is drawn or implied before then.
-- A moving average only starts after one full window, and restarts after a gap once half a window has readings.
+- A moving average only starts after one full window. After a gap, it restarts once it has enough readings: half a window for hourly and daily averages, and about a sixth of a window on the 24-hour and 7-day ranges.
 
 ## Patches
 
@@ -98,8 +107,8 @@ Comparisons leave out the release day, because only the date of a patch is store
 ## Known limitations
 
 - **History starts when recording starts.** The longer ranges fill in over time, and patches from before that have no readings around them.
-- **Resolution is about 15 minutes**, set by Steam's cache, not the requested five.
+- **Readings are about five minutes apart, but a count can lag by up to about 15.** Steam's servers can hold copies of different ages, so the line can repeat a number or zigzag slightly.
 - **Recording depends on the timer.** If the Worker stops or its GitHub token expires, no readings are taken until that is fixed. The gap appears as a break in the chart, and the page marks the count Stale Data. [`timer/README.md`](../timer/README.md) covers renewing the token, which lasts up to a year. GitHub's own schedule is only a backstop, and its runs can be hours late or missing.
 - **GitHub can pause a workflow.** It pauses scheduled workflows after 60 days with no repository activity. If that happens, turn the job back on from the Actions tab.
-- **Five-minute runs are a heavy use of Actions.** It is free for public repositories and uses very little compute, but GitHub's terms are aimed at building and shipping software, so GitHub could limit it. Starting the job every 15 minutes instead would cut its runs by two thirds, at the cost of slightly older counts. If GitHub does limit it, the collector can move elsewhere, such as into a Cloudflare Worker, by writing the same files there and setting `VITE_PLAYER_DATA_URL`.
-- **"Live" means the most recent reading.** With Steam's cache and the job's timing, the count shown is usually 5 to 25 minutes old. The page always shows its real time.
+- **Five-minute runs are a heavy use of Actions.** It is free for public repositories and uses very little compute, but GitHub's terms are aimed at building and shipping software, so GitHub could limit it. Starting the job every 15 minutes instead would cut its runs by two thirds, at the cost of fewer readings and older counts. If GitHub does limit it, the collector can move elsewhere, such as into a Cloudflare Worker, by writing the same files there and setting `VITE_PLAYER_DATA_URL`.
+- **"Live" means the most recent reading.** With Steam's cache, the job's timing and the file caching, the count shown can be up to about 30 minutes old. The page shows when the reading was taken, and Steam's copy of the count can be older than that.

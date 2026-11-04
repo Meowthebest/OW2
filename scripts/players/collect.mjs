@@ -32,7 +32,7 @@ if (result.status === 'failed') {
   console.log(`::warning::Steam read failed: ${result.error}`);
   summarize(`Steam read failed: ${result.error}. Stored data was kept.`);
 } else if (result.status === 'duplicate') {
-  summarize(`Steam has not published a new count yet (still ${result.players} players). Nothing written.`);
+  summarize(`Already have a reading for this time (Steam now says ${result.players} players). Nothing written.`);
 } else {
   summarize(`Recorded ${result.players} players.`);
 }

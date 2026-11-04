@@ -122,7 +122,7 @@ function StatCards({ latest, stale, now }: { latest: LatestFile; stale: boolean;
       <StatCard
         icon={<Clock size={17} />}
         label="Last Updated"
-        tip="When Steam produced the last valid count. Steam publishes a new count about every 15 minutes, and this site checks for one every five. The data is marked stale after 45 minutes or a failed read."
+        tip="When this site last read a valid count from Steam. It checks every five minutes, and Steam's copy of the count can be up to 15 minutes old. The data is marked stale after 45 minutes or a failed read."
         value={<span className="pstat-card__text">{formatRelative(updatedAt, now)}</span>}
         note={formatDateTime(updatedAt)}
       />
@@ -262,7 +262,8 @@ function ChartSection({ latest, options, update, patches, hours, hoursStatus }: 
 
   useEffect(() => setView(null), [options.range]);
 
-  // Steam publishes about every 15 minutes, so that is the spacing of raw readings.
+  // The spacing the moving average assumes when it counts readings. Raw readings are about five minutes apart,
+  // so after a gap the average returns once it has about a sixth of a window, not half.
   const stepSeconds = frame?.resolution === 'raw' ? 900 : frame?.resolution === 'daily' ? DAY : 3600;
   const series = useMemo<ChartSeries[]>(() => {
     if (!frame) return [];
@@ -474,7 +475,7 @@ export function PlayersPage({ route }: { route: PlayersRoute }) {
             <ul>
               <li>A scheduled job reads <a href="https://partner.steamgames.com/doc/webapi/ISteamUserStats" target="_blank" rel="noreferrer">Steam's GetNumberOfCurrentPlayers API</a> and stores each reading with its time. Visitors only read the stored files, so they never add requests to Steam.</li>
               <li>Recording began {formatDateTime(Date.parse(latest.trackingSince))}, and {formatInt(latest.readings)} readings have been stored so far. Nothing earlier is shown, because Steam's API has no history and no other source has given permission to use theirs.</li>
-              <li>This site checks every five minutes, but Steam only publishes a new count about every 15, so that is the spacing between readings. The scheduler can also run late or skip a run. The chart breaks its line across long gaps rather than guessing what happened in them.</li>
+              <li>This site checks every five minutes. Steam's servers can keep a copy of the count for up to 15 minutes, so a reading may be up to that far behind, the same count can repeat, and small zigzags in the line aren't necessarily real changes. The scheduler can also run late or skip a run. The chart breaks its line across long gaps rather than guessing what happened in them.</li>
               <li>For longer records, see <a href="https://steamdb.info/app/2357570/charts/" target="_blank" rel="noreferrer">SteamDB <ExternalLink size={12} aria-hidden="true" /></a> and <a href="https://steamcharts.com/app/2357570" target="_blank" rel="noreferrer">Steam Charts <ExternalLink size={12} aria-hidden="true" /></a>. Their figures can differ, because they sample at other times.</li>
               <li>Steam data is provided as is, with no warranty. This site is not affiliated with or endorsed by Valve or Steam.</li>
             </ul>
