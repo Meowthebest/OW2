@@ -72,7 +72,7 @@ The subdomain doesn't give this Worker a web address, because its configuration 
 
 Edit `crons` in `wrangler.toml` and the matching key of `JOBS` in `src/index.js`, then deploy again. The two must match exactly, and a test checks that they do. The free plan allows five schedules per account.
 
-Changing the recording job to `*/15 * * * *` would cut its runs by two thirds, at the cost of fewer readings and older counts.
+Changing the recording job to `*/15 * * * *` would cut its runs by two thirds, at the cost of fewer readings and older counts. That also means changing its schedule in `.github/workflows/record-players.yml` and `RAW_READING_SECONDS` in `src/features/players/core.ts`, or the chart's moving average stays blank on the 24-hour and 7-day ranges. A test checks that all three match.
 
 ## Test
 

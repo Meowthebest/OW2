@@ -19,6 +19,7 @@ import {
   previousPeriod,
   RANGES,
   rangeInfo,
+  RAW_READING_SECONDS,
   SERIES_COLORS,
   serializeOptions,
   tableRows,
@@ -262,9 +263,8 @@ function ChartSection({ latest, options, update, patches, hours, hoursStatus }: 
 
   useEffect(() => setView(null), [options.range]);
 
-  // The spacing the moving average assumes when it counts readings. Raw readings are about five minutes apart,
-  // so after a gap the average returns once it has about a sixth of a window, not half.
-  const stepSeconds = frame?.resolution === 'raw' ? 900 : frame?.resolution === 'daily' ? DAY : 3600;
+  // The moving average uses this spacing to work out how many readings make half a window.
+  const stepSeconds = frame?.resolution === 'raw' ? RAW_READING_SECONDS : frame?.resolution === 'daily' ? DAY : 3600;
   const series = useMemo<ChartSeries[]>(() => {
     if (!frame) return [];
     const name = frame.resolution === 'raw' ? 'Players' : frame.resolution === 'daily' ? 'Players, daily average' : 'Players, hourly average';

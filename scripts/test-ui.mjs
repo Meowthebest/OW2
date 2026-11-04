@@ -1323,7 +1323,7 @@ function playerHours(days, startOffset = 0) {
 
 function playerRecent() {
   const rows = [];
-  for (let time = NOW_SECONDS - 8 * 86400; time <= NOW_SECONDS - 300; time += 900) rows.push([time, 40000 + (time % 1000)]);
+  for (let time = NOW_SECONDS - 8 * 86400; time <= NOW_SECONDS - 300; time += 300) rows.push([time, 40000 + (time % 1000)]);
   return { schema: 1, samples: rows };
 }
 
@@ -1534,6 +1534,26 @@ await test('ranges and chart options update the URL, and a link restores them', 
   await playersReady(unknown);
   assert.equal(unknown.document.querySelector('.pstat-chip.is-active').getAttribute('aria-label'), 'Last 24 hours');
   unknown.close();
+});
+
+await test('on short ranges, the moving average needs half a window of readings five minutes apart', async () => {
+  const readingsEvery = (seconds) => {
+    const rows = [];
+    for (let time = NOW_SECONDS - 6 * 3600; time <= NOW_SECONDS - 300; time += seconds) rows.push([time, 44000]);
+    return { schema: 1, samples: rows };
+  };
+  const waitingNote = (app) => [...app.document.querySelectorAll('.pstat-note')].some((note) => /1-hour average starts/.test(note.textContent));
+  const legend = (app) => [...app.document.querySelectorAll('.pstat-legend li')].map((item) => item.textContent);
+
+  const regular = boot({ hash: '#/players?average=1', api: playerApi({ 'recent.json': readingsEvery(300) }) });
+  await until(() => legend(regular).includes('1-hour average'), 'the average in the legend');
+  assert.equal(waitingNote(regular), false);
+  regular.close();
+
+  // Readings 15 minutes apart never fill half of an hour's window.
+  const sparse = boot({ hash: '#/players?average=1', api: playerApi({ 'recent.json': readingsEvery(900) }) });
+  await until(() => waitingNote(sparse), 'the note that the average has not started');
+  sparse.close();
 });
 
 await test('a table gives the same values as the chart, with paging', async () => {

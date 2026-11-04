@@ -30,6 +30,9 @@ export const SERIES_COLORS = { players: '#cf7c0c', average: '#3f8ce8', previous:
 /** Readings arrive about every five minutes, but runs can be late or missed, so "stale" allows for several in a row. */
 export const STALE_AFTER_MS = 45 * 60 * 1000;
 
+/** Readings are stored this far apart, because of the recording job's schedule. A test checks that the two match. */
+export const RAW_READING_SECONDS = 5 * 60;
+
 const isCount = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value >= 0;
 
 /** Checks the file's shape. A damaged file returns null, so the last good data stays on screen. */

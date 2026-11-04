@@ -94,7 +94,7 @@ Nothing is estimated. Until a statistic has enough data, it shows Collecting and
 - The 24-hour and 7-day ranges show every reading. 30 days shows hourly averages.
 - 90 days and longer show daily averages, with each day's low and high shaded, once at least 60 days exist. Days with fewer than 12 recorded hours are left out, because they would skew toward whatever time of day was recorded.
 - The line breaks across gaps in recording, and the chart starts at the first reading. Nothing is drawn or implied before then.
-- A moving average only starts after one full window. After a gap, it restarts once it has enough readings: half a window for hourly and daily averages, and about a sixth of a window on the 24-hour and 7-day ranges.
+- A moving average only starts after one full window, and restarts after a gap once half a window has readings.
 
 ## Patches
 
@@ -110,5 +110,5 @@ Comparisons leave out the release day, because only the date of a patch is store
 - **Readings are about five minutes apart, but a count can lag by up to about 15.** Steam's servers can hold copies of different ages, so the line can repeat a number or zigzag slightly.
 - **Recording depends on the timer.** If the Worker stops or its GitHub token expires, no readings are taken until that is fixed. The gap appears as a break in the chart, and the page marks the count Stale Data. [`timer/README.md`](../timer/README.md) covers renewing the token, which lasts up to a year. GitHub's own schedule is only a backstop, and its runs can be hours late or missing.
 - **GitHub can pause a workflow.** It pauses scheduled workflows after 60 days with no repository activity. If that happens, turn the job back on from the Actions tab.
-- **Five-minute runs are a heavy use of Actions.** It is free for public repositories and uses very little compute, but GitHub's terms are aimed at building and shipping software, so GitHub could limit it. Starting the job every 15 minutes instead would cut its runs by two thirds, at the cost of fewer readings and older counts. If GitHub does limit it, the collector can move elsewhere, such as into a Cloudflare Worker, by writing the same files there and setting `VITE_PLAYER_DATA_URL`.
+- **Five-minute runs are a heavy use of Actions.** It is free for public repositories and uses very little compute, but GitHub's terms are aimed at building and shipping software, so GitHub could limit it. Starting the job every 15 minutes instead would cut its runs by two thirds, at the cost of fewer readings and older counts. That also means changing `RAW_READING_SECONDS` in `src/features/players/core.ts`, or the moving average stays blank on the 24-hour and 7-day ranges. A test checks that they match. If GitHub does limit it, the collector can move elsewhere, such as into a Cloudflare Worker, by writing the same files there and setting `VITE_PLAYER_DATA_URL`.
 - **"Live" means the most recent reading.** With Steam's cache, the job's timing and the file caching, the count shown can be up to about 30 minutes old. The page shows when the reading was taken, and Steam's copy of the count can be older than that.

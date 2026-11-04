@@ -8,6 +8,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { build } from 'esbuild';
+import { JOBS } from '../timer/src/index.js';
 import { aggregateHours, buildSparkline, collectOnce, computeStats, isDuplicate, MAX_PLAUSIBLE_PLAYERS, observationTime, parseSteamBody, readSamples, readSteam, rebuild } from './players/lib.mjs';
 
 const require = createRequire(import.meta.url);
@@ -30,6 +31,7 @@ const {
   parseSamples,
   patchWindow,
   previousPeriod,
+  RAW_READING_SECONDS,
   serializeOptions,
   STALE_AFTER_MS,
   summarizeWindow,
@@ -546,6 +548,32 @@ await test('a moving average starts only after a full window, and recovers slowl
   assert.equal(gapped[5], 50);
   assert.deepEqual(movingAverage([], [], 10, 10), []);
   assert.deepEqual(movingAverage([1], [null], 10, 10), [null]);
+});
+
+await test('at the real spacing of readings, a one-hour average needs six readings after a gap', () => {
+  const x = [];
+  const values = [];
+  for (let index = 0; index <= 12; index += 1) {
+    x.push(NOW + index * RAW_READING_SECONDS);
+    values.push(100);
+  }
+  const resume = NOW + 4 * HOUR;
+  x.push(resume - 1);
+  values.push(null);
+  for (let index = 0; index < 8; index += 1) {
+    x.push(resume + index * RAW_READING_SECONDS);
+    values.push(200);
+  }
+  const average = movingAverage(x, values, HOUR, RAW_READING_SECONDS);
+  assert.equal(average[11], null, 'not until a full hour has passed');
+  assert.equal(average[12], 100);
+  assert.deepEqual(average.slice(-8), [null, null, null, null, null, 200, 200, 200]);
+});
+
+await test('the spacing the chart assumes matches the recording schedule', () => {
+  const cron = `*/${RAW_READING_SECONDS / 60} * * * *`;
+  assert.ok(readFileSync('.github/workflows/record-players.yml', 'utf8').includes(`cron: '${cron}'`), `the workflow should run on ${cron}`);
+  assert.equal(Object.keys(JOBS).find((key) => JOBS[key].workflow === 'record-players.yml'), cron, 'the timer starts the job on this schedule');
 });
 
 await test('the previous-period line only uses real readings close to that moment', () => {
