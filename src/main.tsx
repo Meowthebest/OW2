@@ -6,6 +6,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/randomizer.css';
 import './styles/career.css';
+import './styles/patches.css';
 
 purgeRetiredData();
 

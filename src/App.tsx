@@ -6,6 +6,9 @@ import { useRandomizer } from './features/randomizer/useRandomizer';
 import { useRoute } from './lib/router';
 
 const CareerPage = lazy(() => import('./features/career/CareerPage').then((module) => ({ default: module.CareerPage })));
+const PatchNotesPage = lazy(() => import('./features/patches/PatchNotesPage').then((module) => ({ default: module.PatchNotesPage })));
+
+const pageFallback = <div className="page"><div className="skeleton skeleton--page" aria-hidden="true"><span /><span /><span /></div></div>;
 
 function Shell() {
   const route = useRoute();
@@ -24,8 +27,12 @@ function Shell() {
       <SiteHeader route={route} />
       <main ref={main} tabIndex={-1} className="site-main">
         {route.view === 'career' ? (
-          <Suspense fallback={<div className="page"><div className="skeleton skeleton--page" aria-hidden="true"><span /><span /><span /></div></div>}>
+          <Suspense fallback={pageFallback}>
             <CareerPage route={route} />
+          </Suspense>
+        ) : route.view === 'patches' ? (
+          <Suspense fallback={pageFallback}>
+            <PatchNotesPage route={route} />
           </Suspense>
         ) : (
           <RandomizerPage api={randomizer} focusRoster={route.view === 'heroes'} />

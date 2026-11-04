@@ -55,7 +55,7 @@ function boot({ hash = '#/', storage = {}, api = () => jsonResponse({}) } = {}) 
   window.Element.prototype.scrollIntoView = () => {};
   Object.entries(storage).forEach(([key, value]) => window.localStorage.setItem(key, typeof value === 'string' ? value : JSON.stringify(value)));
   window.fetch = async (url, init) => {
-    const target = new URL(url);
+    const target = new URL(url, 'http://localhost');
     calls.push({ path: target.pathname + target.search, init });
     return api(target, init, calls.length);
   };
@@ -901,6 +901,385 @@ await test('recent players are remembered and can be cleared', async () => {
   assert.match(link.textContent, /TestPlayer/);
   click(buttonByName(app.document, 'Clear'));
   await until(() => !app.document.querySelector('.recent-player'), 'cleared');
+  app.close();
+});
+
+// Patch notes. These use the real imported data, served by the mocked fetch.
+const PATCH_DIR = 'public/data/patches';
+function patchApi(overrides = {}) {
+  return (target, init, count) => {
+    const match = /\/OW2\/data\/patches\/(.+)$/.exec(target.pathname);
+    if (!match) return jsonResponse({}, { status: 404 });
+    if (overrides[match[1]]) return overrides[match[1]](count);
+    return jsonResponse(JSON.parse(readFileSync(path.join(PATCH_DIR, match[1]), 'utf8')));
+  };
+}
+const cardNames = (document, group) => [...document.querySelectorAll(group ? `.result-section[data-group="${group}"] .hero-card__name` : '.hero-card__name')].map((node) => node.textContent);
+const patchesReady = (app) => until(() => app.document.querySelector('.hero-card__name'), 'hero cards');
+const cardFor = (document, name, group = 'standard') => [...document.querySelectorAll(`.result-section[data-group="${group}"] .hero-card`)].find((card) => card.querySelector('.hero-card__name').textContent === name);
+const chip = (document, label) => [...document.querySelectorAll('.filter-chip')].find((button) => button.textContent.trim() === label);
+const selectNamed = (document, label) => [...document.querySelectorAll('.select-field')].find((field) => field.textContent.trim().startsWith(label)).querySelector('select');
+const novemberPristine = JSON.parse(readFileSync(path.join(PATCH_DIR, '2026-11-03.json'), 'utf8')).revisions.length === 0;
+
+await test('the patch page shows the latest patch with unique hero counts and sources', async () => {
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  assert.equal(app.document.querySelector('.site-nav__link.is-active').getAttribute('aria-label'), 'Patch Notes');
+  assert.match(app.document.title, /Patch Notes/);
+  if (novemberPristine) {
+    assert.match(app.document.querySelector('.patch-hero__title').textContent, /November 3, 2026/);
+    const tiles = [...app.document.querySelectorAll('.patch-tile')].map((tile) => tile.textContent);
+    assert.ok(tiles[0].includes('9') && /Heroes buffed/.test(tiles[0]));
+    assert.ok(tiles[1].includes('7') && /Heroes nerfed/.test(tiles[1]));
+    assert.ok(tiles[2].includes('3') && /Mixed/.test(tiles[2]));
+    assert.ok(tiles[3].includes('1') && /Neutral/.test(tiles[3]));
+    assert.ok(tiles[4].includes('42') && /19 buff lines, 22 nerf lines/.test(tiles[4]));
+    assert.match(app.document.querySelector('.patch-hero__extras').textContent, /Stadium is counted separately: 5 heroes, 7 lines/);
+    assert.match(app.document.querySelector('.patch-hero__meta').textContent, /Season 5/);
+  }
+  const links = [...app.document.querySelectorAll('.patch-hero__links a')].map((link) => link.href);
+  assert.ok(links.some((href) => href.startsWith('https://overwatch.blizzard.com/en-us/news/patch-notes/live/')));
+  assert.match(app.document.querySelector('.patch-hero__verify').textContent, /Last checked/);
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('hero cards show results, values, and Stadium stays in its own section', async () => {
+  if (!novemberPristine) return;
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  assert.equal(cardNames(app.document, 'standard').length, 22);
+  assert.deepEqual(cardNames(app.document, 'stadium').sort(), ['Cassidy', 'Genji', 'Sojourn', 'Vendetta', 'Winston']);
+
+  const ana = cardFor(app.document, 'Ana');
+  assert.match(ana.querySelector('.class-badge').textContent, /Nerfed/);
+  assert.equal(ana.querySelector('.class-badge').dataset.class, 'nerf');
+  assert.match(ana.querySelector('.change__values').textContent, /90\s*to\s*60\s*−33\.3%/);
+  assert.match(ana.querySelector('.change__result').textContent, /Result: Nerf/);
+  assert.ok(ana.querySelector('.portrait'));
+  assert.match(ana.querySelector('.hero-card__foot a').href, /patch-2026-11-03$/);
+
+  const sombra = cardFor(app.document, 'Sombra');
+  assert.match(sombra.querySelector('.class-badge').textContent, /Mixed/);
+  assert.match(sombra.querySelector('.hero-card__analysis').textContent, /Analysis.*leans toward nerfs/);
+
+  const queen = cardFor(app.document, 'Junker Queen');
+  assert.match(queen.querySelector('.change-tag--scope').textContent, /6v6/);
+  assert.equal(cardFor(app.document, 'Baptiste').querySelector('.class-badge').dataset.class, 'neutral');
+  assert.match(cardFor(app.document, 'Baptiste').querySelector('.change__result').textContent, /Quality of life/);
+  app.close();
+});
+
+await test('expanding a card reveals all its changes and the summarized reason', async () => {
+  if (!novemberPristine) return;
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  const doctrine = cardFor(app.document, 'Doctrine');
+  assert.equal(doctrine.querySelectorAll('.change').length - doctrine.querySelectorAll('.hero-card__more .change').length, 3);
+  const toggle = doctrine.querySelector('.hero-card__toggle');
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(doctrine.querySelector('.hero-card__more').hidden, true);
+  assert.match(toggle.textContent, /Show all 5 changes/);
+  click(toggle);
+  await until(() => toggle.getAttribute('aria-expanded') === 'true', 'expanded');
+  assert.equal(doctrine.querySelector('.hero-card__more').hidden, false);
+  assert.equal(doctrine.querySelectorAll('.change').length, 5);
+  assert.match(doctrine.querySelector('.hero-card__intent').textContent, /summarized/);
+  app.close();
+});
+
+await test('filters update the list and the URL, and a shared link restores them', async () => {
+  if (!novemberPristine) return;
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  click(chip(app.document, 'Nerfs Only'));
+  await until(() => cardNames(app.document, 'standard').length === 7, 'nerf cards');
+  assert.deepEqual(cardNames(app.document, 'stadium').sort(), ['Vendetta', 'Winston']);
+  await until(() => /balance=nerf/.test(app.window.location.hash), 'balance in the URL');
+
+  click(buttonByName(app.document, /More filters/));
+  click(chip(app.document, 'Support'));
+  await until(() => cardNames(app.document).length === 2, 'support nerfs');
+  assert.deepEqual(cardNames(app.document), ['Ana', 'Doctrine']);
+  await until(() => /role=support/.test(app.window.location.hash), 'role in the URL');
+  assert.equal(app.window.location.hash, '#/patches?balance=nerf&role=support');
+  app.close();
+
+  const shared = boot({ hash: '#/patches?balance=nerf&role=support', api: patchApi() });
+  await patchesReady(shared);
+  assert.deepEqual(cardNames(shared.document), ['Ana', 'Doctrine']);
+  assert.equal(chip(shared.document, 'Nerfs Only').getAttribute('aria-pressed'), 'true');
+  click(buttonByName(shared.document, /Reset filters/));
+  await until(() => cardNames(shared.document).length === 27, 'all cards back');
+  await until(() => shared.window.location.hash === '#/patches', 'clean URL');
+  shared.close();
+});
+
+await test('search, change type and stat filters combine, with an empty state to recover from', async () => {
+  if (!novemberPristine) return;
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  const hero = app.document.querySelector('input[placeholder="Hero name"]');
+  setInput(app.window, hero, 'jetpack');
+  await until(() => cardNames(app.document).join() === 'Jetpack Cat', 'hero search');
+  assert.equal(app.document.activeElement === app.document.body || app.document.contains(hero), true);
+  setInput(app.window, hero, '');
+
+  setInput(app.window, app.document.querySelector('input[placeholder="Ability, perk or stat"]'), 'deflect');
+  await until(() => cardNames(app.document).join() === 'Genji', 'ability search');
+  setInput(app.window, app.document.querySelector('input[placeholder="Ability, perk or stat"]'), '');
+
+  click(buttonByName(app.document, /More filters/));
+  setInput(app.window, selectNamed(app.document, 'Change type'), 'perk-major');
+  await until(() => cardNames(app.document).length === 3, 'major perks');
+  assert.deepEqual(cardNames(app.document).sort(), ['D.Mon', 'Hanzo', 'Winston']);
+  assert.match(cardFor(app.document, 'D.Mon').querySelector('.hero-card__narrowed').textContent, /Showing 1 of 5 changes/);
+  await until(() => /type=perk-major/.test(app.window.location.hash), 'type in the URL');
+
+  setInput(app.window, selectNamed(app.document, 'Change type'), 'all');
+  setInput(app.window, selectNamed(app.document, 'Format'), '6v6');
+  await until(() => cardNames(app.document).join() === 'Junker Queen', '6v6 only');
+  setInput(app.window, selectNamed(app.document, 'Format'), 'stadium');
+  await until(() => cardNames(app.document).length === 5, 'Stadium only');
+  assert.equal(app.document.querySelectorAll('.result-section[data-group="standard"]').length, 0);
+
+  setInput(app.window, selectNamed(app.document, 'Stat'), 'armor');
+  await until(() => app.document.querySelector('.patch-results .state-block'), 'empty state');
+  assert.match(app.document.querySelector('.patch-results .state-block').textContent, /No changes match/);
+  click([...app.document.querySelectorAll('.patch-results .state-block button')][0]);
+  await until(() => cardNames(app.document).length === 27, 'recovered');
+  app.close();
+});
+
+await test('sorting works, and the queue filter explains itself', async () => {
+  if (!novemberPristine) return;
+  const app = boot({ hash: '#/patches?sort=name&format=5v5', api: patchApi() });
+  await patchesReady(app);
+  assert.deepEqual(cardNames(app.document).slice(0, 3), ['Ana', 'Anran', 'Baptiste']);
+  setInput(app.window, selectNamed(app.document, 'Sort by'), 'nerfs');
+  await until(() => cardNames(app.document)[0] === 'Doctrine', 'most nerfs first');
+  setInput(app.window, selectNamed(app.document, 'Queue'), 'competitive');
+  await until(() => /listed for only one queue/.test(app.document.querySelector('.patch-results').textContent), 'queue note');
+  assert.ok(cardNames(app.document).length > 0);
+  app.close();
+});
+
+await test('choosing a season or an older patch loads that patch, keeping results paged', async () => {
+  const app = boot({ hash: '#/patches?patch=all', api: patchApi() });
+  await patchesReady(app);
+  await until(() => /patches selected/.test(app.document.querySelector('.patch-results__summary').textContent), 'range summary');
+  await until(() => app.document.querySelectorAll('.hero-card__name').length === 36, 'first page of results');
+  click(buttonByName(app.document, 'Show more'));
+  await until(() => app.document.querySelectorAll('.hero-card__name').length === 72, 'second page');
+  assert.ok(app.document.querySelectorAll('.result-section__date').length > 0);
+  setInput(app.window, selectNamed(app.document, 'Season'), '2026-s3');
+  await until(() => {
+    const dates = [...app.document.querySelectorAll('.result-section__date')].map((node) => node.textContent);
+    return dates.length > 0 && dates.every((date) => /Jun|Jul|Aug/.test(date));
+  }, 'season 3 patches');
+  assert.equal(selectNamed(app.document, 'Patch').value, 'latest');
+  assert.match(selectNamed(app.document, 'Patch').options[0].textContent, /All in Season 3/);
+  setInput(app.window, selectNamed(app.document, 'Patch'), '2026-06-16');
+  await until(() => /June 16, 2026/.test(app.document.querySelector('.patch-hero__title').textContent), 'older patch header');
+  assert.match(app.document.querySelector('.patch-hero .eyebrow').textContent, /Selected patch/);
+  assert.match(app.document.querySelector('.patch-hero__verify').textContent, /Classified by rules/);
+  app.close();
+});
+
+await test('the hero panel shows before, after, difference and result, then closes cleanly', async () => {
+  if (!novemberPristine) return;
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  const opener = buttonByName(app.document, /Open full details for Genji/);
+  opener.focus();
+  click(opener);
+  const dialog = await until(() => app.document.querySelector('[role="dialog"]'), 'dialog');
+  await until(() => dialog.querySelector('.change-detail'), 'details');
+  assert.match(app.window.location.hash, /open=genji&at=2026-11-03/);
+  assert.equal(dialog.getAttribute('aria-modal'), 'true');
+  assert.equal(app.document.getElementById(dialog.getAttribute('aria-labelledby')).textContent, 'Genji');
+  assert.ok(dialog.contains(app.document.activeElement));
+
+  const facts = dialog.querySelector('.change-detail').textContent;
+  assert.match(facts, /Duration/);
+  assert.match(facts, /Previous\s*2s/);
+  assert.match(facts, /New\s*1\.5s/);
+  assert.match(facts, /Change\s*−25%/);
+  assert.match(facts, /Classification\s*Nerf/);
+  assert.match(dialog.textContent, /Blizzard's reason, summarized/);
+  assert.ok([...dialog.querySelectorAll('a')].some((link) => /patch-2026-11-03$/.test(link.href)));
+  assert.ok([...dialog.querySelectorAll('a')].some((link) => link.href.startsWith('https://us.forums.blizzard.com/')));
+  assert.deepEqual([...dialog.querySelectorAll('.hero-drawer__group h3')].slice(0, 2).map((node) => node.textContent), ['Standard play', 'Stadium']);
+
+  // Its history and timeline load from the other patches.
+  await until(() => dialog.querySelectorAll('.hero-history__row').length > 1, 'patch history');
+  await until(() => dialog.querySelector('.step-chart svg'), 'timeline');
+  assert.match(dialog.querySelector('.timeline__title').textContent, /Deflect/);
+  assert.ok(dialog.querySelector('.timeline__table tbody tr'));
+
+  // Choosing an older patch keeps the panel open on that patch.
+  const older = [...dialog.querySelectorAll('.hero-history__row')].find((row) => !row.classList.contains('is-current'));
+  click(older);
+  await until(() => !/at=2026-11-03/.test(app.window.location.hash), 'older patch in the URL');
+  assert.ok(app.document.querySelector('[role="dialog"]'));
+
+  dialog.dispatchEvent(new app.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  await until(() => !app.document.querySelector('[role="dialog"]'), 'closed');
+  await until(() => !/open=/.test(app.window.location.hash), 'URL restored');
+  assert.equal(app.document.activeElement, opener);
+  app.close();
+});
+
+await test('a link can open the panel directly, and the back button closes it', async () => {
+  const direct = boot({ hash: '#/patches?open=ana&at=2026-11-03', api: patchApi() });
+  const dialog = await until(() => direct.document.querySelector('[role="dialog"]'), 'dialog from a link');
+  await until(() => dialog.querySelector('.change-detail'), 'details');
+  assert.match(dialog.textContent, /Biotic Grenade/);
+  direct.close();
+
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  click(buttonByName(app.document, /Open full details for/));
+  await until(() => app.document.querySelector('[role="dialog"]'), 'dialog');
+  app.window.history.back();
+  await until(() => !app.document.querySelector('[role="dialog"]'), 'closed by back');
+  app.close();
+
+  const missing = boot({ hash: '#/patches?open=not-a-hero', api: patchApi() });
+  const empty = await until(() => missing.document.querySelector('[role="dialog"]'), 'dialog');
+  await until(() => /No recorded changes/.test(empty.textContent), 'no record message');
+  missing.close();
+});
+
+await test('history browses patches, compares two and shows repeated changes', async () => {
+  const app = boot({ hash: '#/patches/history', api: patchApi() });
+  await until(() => app.document.querySelector('.patch-row'), 'patch list');
+  assert.equal(app.document.querySelectorAll('.patch-row').length, 15);
+  click(buttonByName(app.document, 'Show more'));
+  await until(() => app.document.querySelectorAll('.patch-row').length === 30, 'more patches');
+
+  setInput(app.window, selectNamed(app.document, 'Season'), '2026-s3');
+  await until(() => [...app.document.querySelectorAll('.patch-row__date')].every((node) => /Jun|Jul|Aug/.test(node.textContent)), 'season filter');
+  await until(() => /season=2026-s3/.test(app.window.location.hash), 'season in the URL');
+  const months = selectNamed(app.document, 'Month');
+  assert.ok([...months.options].some((option) => /July 2026/.test(option.textContent)));
+  setInput(app.window, months, '2026-07');
+  await until(() => [...app.document.querySelectorAll('.patch-row__date')].every((node) => /Jul/.test(node.textContent)), 'month filter');
+
+  // Compare two patches, defaulting to the latest pair with balance changes.
+  const compare = await until(() => app.document.querySelector('.compare'), 'comparison table');
+  assert.ok(compare.querySelectorAll('tbody tr').length > 0);
+  const patchA = selectNamed(app.document, 'Patch A');
+  setInput(app.window, patchA, '2026-08-11');
+  await until(() => /a=2026-08-11/.test(app.window.location.hash), 'compare in the URL');
+  await until(() => /Aug 11/.test(app.document.querySelector('.compare thead')?.textContent ?? ''), 'new column');
+
+  // Repeated buffs and nerfs.
+  const repeat = await until(() => app.document.querySelector('.repeat tbody tr'), 'repeat table');
+  assert.ok(repeat);
+  assert.match(app.document.querySelector('.patch-history__tools').textContent, /not how strong that hero is/);
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('the hero timeline charts published values and totals only connected ones', async () => {
+  const app = boot({ hash: '#/patches/history?hero=genji', api: patchApi() });
+  const chart = await until(() => app.document.querySelector('.step-chart svg'), 'chart');
+  assert.ok(chart.querySelector('.step-chart__line').getAttribute('d').startsWith('M'));
+  await until(() => app.document.querySelector('.timeline__table tbody tr'), 'values table');
+  const rows = app.document.querySelectorAll('.timeline__table tbody tr').length;
+  assert.equal(chart.querySelectorAll('.step-chart__point').length, rows);
+  assert.ok(chart.querySelector('.step-chart__point').getAttribute('aria-label').includes(':'));
+
+  setInput(app.window, selectNamed(app.document, 'Ability'), 'Deflect');
+  await until(() => /Deflect/.test(app.document.querySelector('.timeline__title').textContent), 'Deflect selected');
+  await until(() => /series=/.test(app.window.location.hash), 'series in the URL');
+  setInput(app.window, selectNamed(app.document, 'Stat'), 'standard/genji/deflect/duration');
+  await until(() => /Duration/.test(app.document.querySelector('.timeline__title').textContent), 'Duration selected');
+  await until(() => /2s/.test(app.document.querySelector('.timeline__table').textContent) && /1\.5s/.test(app.document.querySelector('.timeline__table').textContent), 'published values in the table');
+
+  setInput(app.window, selectNamed(app.document, 'Hero'), 'ana');
+  await until(() => /Ana/.test(app.document.querySelector('.timeline__title')?.textContent ?? ''), 'hero change');
+  await until(() => /hero=ana/.test(app.window.location.hash), 'hero in the URL');
+  app.close();
+});
+
+await test('a timeline gap never draws an invented connection or a total', async () => {
+  const base = JSON.parse(readFileSync(path.join(PATCH_DIR, '2026-11-03.json'), 'utf8'));
+  const makeLine = (id, previous, next) => ({ ...base.changes.find((change) => change.heroId === 'genji'), id, previous, next, series: 'standard/genji/deflect/duration', percentChange: null, ability: 'Deflect', stat: 'Duration', unit: 's', scope: 'standard', direction: 'nerf' });
+  const patches = {
+    'heroes.json': () => jsonResponse({ schema: 1, heroes: { genji: [{ patch: '2026-03-10', date: '2026-03-10', group: 'standard', classification: 'nerf', buffs: 0, nerfs: 1, other: 0, review: 0 }, { patch: '2026-08-11', date: '2026-08-11', group: 'standard', classification: 'nerf', buffs: 0, nerfs: 1, other: 0, review: 0 }] } }),
+    '2026-03-10.json': () => jsonResponse({ ...base, id: '2026-03-10', date: '2026-03-10', changes: [makeLine('2026-03-10/x', 3, 2.5)] }),
+    '2026-08-11.json': () => jsonResponse({ ...base, id: '2026-08-11', date: '2026-08-11', changes: [makeLine('2026-08-11/x', 2, 1.5)] }),
+  };
+  const app = boot({ hash: '#/patches/history?hero=genji', api: patchApi(patches) });
+  const chart = await until(() => app.document.querySelector('.step-chart svg'), 'chart');
+  await until(() => chart.querySelectorAll('.step-chart__point').length === 2, 'two points');
+  assert.equal(chart.querySelectorAll('.step-chart__gap').length, 1);
+  assert.equal((chart.querySelector('.step-chart__line').getAttribute('d').match(/M/g) ?? []).length, 2);
+  assert.match(app.document.querySelector('.timeline').textContent, /Gap before this/);
+  assert.match(app.document.querySelector('.timeline__total-text').textContent, /No total for this range/);
+  app.close();
+});
+
+await test('load failures show an error with retry, and retry recovers', async () => {
+  let indexFails = true;
+  const app = boot({ hash: '#/patches', api: patchApi({ 'index.json': () => (indexFails ? jsonResponse({}, { status: 500 }) : jsonResponse(JSON.parse(readFileSync(path.join(PATCH_DIR, 'index.json'), 'utf8')))) }) });
+  await until(() => /Could not load patch data/.test(app.document.querySelector('.patches')?.textContent ?? ''), 'index error');
+  assert.equal(app.document.querySelectorAll('.hero-card__name').length, 0);
+  indexFails = false;
+  click(buttonByName(app.document, 'Try again'));
+  await patchesReady(app);
+  app.close();
+
+  let patchFails = true;
+  const file = '2026-11-03.json';
+  const second = boot({ hash: '#/patches?patch=2026-11-03', api: patchApi({ [file]: () => (patchFails ? jsonResponse({}, { status: 503 }) : jsonResponse(JSON.parse(readFileSync(path.join(PATCH_DIR, file), 'utf8')))) }) });
+  await until(() => /Could not load these patches/.test(second.document.querySelector('.patch-results')?.textContent ?? ''), 'patch error');
+  assert.ok(second.document.querySelector('.patch-hero'), 'the header still shows');
+  patchFails = false;
+  click(buttonByName(second.document, 'Try again'));
+  await patchesReady(second);
+  second.close();
+});
+
+await test('old data is called out rather than presented as current', async () => {
+  const stale = { ...JSON.parse(readFileSync(path.join(PATCH_DIR, 'index.json'), 'utf8')), lastCheckedAt: '2020-01-01T00:00:00.000Z' };
+  const app = boot({ hash: '#/patches', api: patchApi({ 'index.json': () => jsonResponse(stale) }) });
+  await patchesReady(app);
+  assert.match(app.document.querySelector('.patch-hero__verify').textContent, /may be out of date/);
+  app.close();
+});
+
+await test('other updates and bug fixes stay available from the patch view', async () => {
+  if (!novemberPristine) return;
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  const toggle = await until(() => app.document.querySelector('.other-updates__toggle'), 'other updates');
+  click(toggle);
+  await until(() => app.document.querySelector('.other-updates__body'), 'expanded');
+  const text = app.document.querySelector('.other-updates__body').textContent;
+  assert.match(text, /Taking Reign/);
+  assert.match(text, /Gameplay Sabotage Detection/);
+  assert.match(text, /Other bug fixes/);
+  assert.match(text, /El'Saka Suppressor/);
+  app.close();
+});
+
+await test('the other pages are unaffected by the new section', async () => {
+  const app = boot({ hash: '#/patches', api: patchApi() });
+  await patchesReady(app);
+  app.window.location.hash = '#/heroes';
+  await until(() => app.document.querySelector('.site-nav__link.is-active').textContent === 'Heroes', 'heroes route');
+  await until(() => !app.document.querySelector('.patches'), 'patch page removed');
+  assert.ok(app.document.querySelector('.roster, .hero-tile, .stage, [class*="roster"]'));
+  app.window.location.hash = '#/career';
+  await until(() => app.document.querySelector('.site-nav__link.is-active').textContent === 'Career', 'career route');
+  await until(() => !/Patch Notes/.test(app.document.title), 'title restored');
+  app.window.location.hash = '#/patches/history';
+  await until(() => app.document.querySelector('.patch-history'), 'back on patch history');
+  assert.equal(app.document.querySelector('.patch-tabs__link.is-active').textContent.trim(), 'History and compare');
+  assert.deepEqual(app.errors, []);
   app.close();
 });
 

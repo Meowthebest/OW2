@@ -1,0 +1,51 @@
+{
+ "schema": 1,
+ "id": "2026-06-24",
+ "title": "Overwatch Retail Patch Notes – June 24, 2026",
+ "date": "2026-06-24",
+ "type": "hotfix",
+ "season": {
+  "id": "2026-s3",
+  "label": "Season 3",
+  "year": 2026,
+  "number": 3
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/06/#patch-2026-06-24",
+ "forumUrl": null,
+ "contentHash": "fec279aaab110c9a",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 0
+ },
+ "notes": [],
+ "changes": [],
+ "other": [
+  {
+   "id": "2026-06-24/event/anima-strike-event",
+   "section": "event",
+   "group": null,
+   "title": "Anima Strike Event",
+   "summary": null,
+   "sourceHash": null
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}

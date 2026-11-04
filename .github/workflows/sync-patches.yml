@@ -1,0 +1,71 @@
+name: Sync patch notes
+
+# Reads Blizzard's published patch notes on a schedule and commits structured data to this repository.
+# Anyone with write access can also run it by hand from the Actions tab, which is the admin refresh.
+# If anything fails, nothing is committed, so the site keeps serving the last verified data.
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'  # The current and previous month, every six hours
+    - cron: '41 6 * * 1'    # Every stored month, once a week, to catch late edits
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: Which months to read
+        type: choice
+        options: [recent, all]
+        default: recent
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: patch-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      - name: Read the published notes
+        env:
+          SCOPE: ${{ github.event.schedule == '41 6 * * 1' && 'all' || inputs.scope || 'recent' }}
+        run: |
+          if [ "$SCOPE" = "all" ]; then
+            node scripts/patches/cli.mjs sync --all
+          else
+            node scripts/patches/cli.mjs sync
+          fi
+
+      - name: Check the stored data
+        run: node scripts/patches/cli.mjs check
+
+      - name: Commit changes
+        id: commit
+        run: |
+          git add public/data/patches scripts/patches/seasons.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update patch data from Blizzard's published notes"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy the site
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref "$GITHUB_REF_NAME"

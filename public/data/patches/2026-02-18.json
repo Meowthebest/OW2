@@ -1,0 +1,99 @@
+{
+ "schema": 1,
+ "id": "2026-02-18",
+ "title": "Overwatch Retail Patch Notes - February 18, 2026",
+ "date": "2026-02-18",
+ "type": "update",
+ "season": {
+  "id": "2026-s1",
+  "label": "Season 1",
+  "year": 2026,
+  "number": 1
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/02/#patch-2026-02-18",
+ "forumUrl": null,
+ "contentHash": "1ffb4aa61baba1a7",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 7
+ },
+ "notes": [],
+ "changes": [],
+ "other": [
+  {
+   "id": "2026-02-18/bugfix/general/0",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "4189c1d0f79c9929"
+  },
+  {
+   "id": "2026-02-18/bugfix/general/1",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "e7cf3ebf1950e695"
+  },
+  {
+   "id": "2026-02-18/bugfix/general/2",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "605c5d6f40ed284c"
+  },
+  {
+   "id": "2026-02-18/bugfix/general/3",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "bba33b1762f7f233"
+  },
+  {
+   "id": "2026-02-18/bugfix/general/4",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "745a16abe6a56ab7"
+  },
+  {
+   "id": "2026-02-18/bugfix/general/5",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "4e8edd1a8b5b8eea"
+  },
+  {
+   "id": "2026-02-18/bugfix/general/6",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "fe8dc1f3ddc51786"
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}

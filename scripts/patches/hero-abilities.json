@@ -1,0 +1,987 @@
+{
+  "ana": {
+    "weapons": [
+      "Biotic Rifle"
+    ],
+    "ultimates": [
+      "Nano Boost"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Local Anesthetic",
+      "Speed Serum"
+    ],
+    "majorPerks": [
+      "Biotic Bounce",
+      "Headhunter"
+    ]
+  },
+  "anran": {
+    "weapons": [
+      "Zhuque Fans"
+    ],
+    "ultimates": [
+      "Vermillion Ascent",
+      "Vermillion Revival"
+    ],
+    "passives": [
+      "Ignition"
+    ],
+    "minorPerks": [
+      "Smoulder",
+      "Heat Shield"
+    ],
+    "majorPerks": [
+      "Short Fuse",
+      "Hungering Blaze"
+    ]
+  },
+  "ashe": {
+    "weapons": [
+      "The Viper"
+    ],
+    "ultimates": [
+      "B.O.B."
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Remote Detonator",
+      "Double-Barreled"
+    ],
+    "majorPerks": [
+      "Viper's Sting",
+      "Airburst"
+    ]
+  },
+  "baptiste": {
+    "weapons": [
+      "Biotic Launcher"
+    ],
+    "ultimates": [
+      "Amplification Matrix"
+    ],
+    "passives": [
+      "Exo Boots"
+    ],
+    "minorPerks": [
+      "Expanded Field",
+      "Assault Burst"
+    ],
+    "majorPerks": [
+      "Automated Healing",
+      "Rocket Boots"
+    ]
+  },
+  "bastion": {
+    "weapons": [
+      "Configuration: Assault",
+      "Configuration: Recon"
+    ],
+    "ultimates": [
+      "Configuration: Artillery"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Smart Bomb",
+      "Configuration Reload"
+    ],
+    "majorPerks": [
+      "Lindholm Explosives",
+      "Self-Repair"
+    ]
+  },
+  "brigitte": {
+    "weapons": [
+      "Rocket Flail"
+    ],
+    "ultimates": [
+      "Rally"
+    ],
+    "passives": [
+      "Inspire"
+    ],
+    "minorPerks": [
+      "Combat Medic",
+      "Morale Boost"
+    ],
+    "majorPerks": [
+      "Inspiring Strike",
+      "Whiplash"
+    ]
+  },
+  "cassidy": {
+    "weapons": [
+      "Peacekeeper"
+    ],
+    "ultimates": [
+      "Deadeye"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Bang Bang",
+      "Giddy Up"
+    ],
+    "majorPerks": [
+      "Rollin' Round-Up",
+      "Silver Bullet"
+    ]
+  },
+  "dmon": {
+    "weapons": [
+      "Plasma Saber",
+      "Portable Fusion Repeater",
+      "Fusion Repeater"
+    ],
+    "ultimates": [
+      "Limit Break",
+      "Call Mech"
+    ],
+    "passives": [
+      "Eject!"
+    ],
+    "minorPerks": [
+      "Beast Within",
+      "MEKA Mobility"
+    ],
+    "majorPerks": [
+      "Overstrike",
+      "Focused Fusion"
+    ]
+  },
+  "doctrine": {
+    "weapons": [
+      "Eternal Scepter"
+    ],
+    "ultimates": [
+      "Deliverance"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Saving Grace",
+      "Sanguine Siphon"
+    ],
+    "majorPerks": [
+      "Transfusion",
+      "Cost of Life"
+    ]
+  },
+  "domina": {
+    "weapons": [
+      "Photon Magnum"
+    ],
+    "ultimates": [
+      "Panopticon"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Efficient Design",
+      "Extended Power"
+    ],
+    "majorPerks": [
+      "Disruptive Detonation",
+      "Corporate Retreat"
+    ]
+  },
+  "doomfist": {
+    "weapons": [
+      "Hand Cannon"
+    ],
+    "ultimates": [
+      "Meteor Strike"
+    ],
+    "passives": [
+      "The Best Defense"
+    ],
+    "minorPerks": [
+      "One-Two",
+      "Survival of the Fittest"
+    ],
+    "majorPerks": [
+      "Aftershock",
+      "Power Matrix"
+    ]
+  },
+  "dva": {
+    "weapons": [
+      "Fusion Cannons",
+      "Light Gun"
+    ],
+    "ultimates": [
+      "Self-Destruct",
+      "Call Mech"
+    ],
+    "passives": [
+      "Eject!"
+    ],
+    "minorPerks": [
+      "Bunny Power",
+      "Extended Boosters"
+    ],
+    "majorPerks": [
+      "Shield System",
+      "Precision Fusion"
+    ]
+  },
+  "echo": {
+    "weapons": [
+      "Tri-Shot"
+    ],
+    "ultimates": [
+      "Duplicate"
+    ],
+    "passives": [
+      "Glide"
+    ],
+    "minorPerks": [
+      "Aerial Munitions",
+      "Partial Scan"
+    ],
+    "majorPerks": [
+      "Full Salvo",
+      "Focused Rush"
+    ]
+  },
+  "emre": {
+    "weapons": [
+      "Synthetic Burst Rifle"
+    ],
+    "ultimates": [
+      "Override Protocol"
+    ],
+    "passives": [
+      "Altered Vitals"
+    ],
+    "minorPerks": [
+      "Suppressive Security",
+      "Enhanced Agility"
+    ],
+    "majorPerks": [
+      "Heat Sink",
+      "Cyber Adhesion"
+    ]
+  },
+  "freja": {
+    "weapons": [
+      "Revdraw Crossbow",
+      "Take Aim"
+    ],
+    "ultimates": [
+      "Bola Shot"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Relentless Barrage",
+      "Momentum Boost"
+    ],
+    "majorPerks": [
+      "Aerial Recovery",
+      "Rising Winds"
+    ]
+  },
+  "genji": {
+    "weapons": [
+      "Shuriken"
+    ],
+    "ultimates": [
+      "Dragonblade"
+    ],
+    "passives": [
+      "Cyber-Agility"
+    ],
+    "minorPerks": [
+      "Swift Cuts",
+      "Dragon's Thirst"
+    ],
+    "majorPerks": [
+      "Blade Twisting",
+      "Meditation"
+    ]
+  },
+  "hanzo": {
+    "weapons": [
+      "Storm Bow"
+    ],
+    "ultimates": [
+      "Dragonstrike"
+    ],
+    "passives": [
+      "Wall Climb"
+    ],
+    "minorPerks": [
+      "Sonic Disruption",
+      "Dragon Fury"
+    ],
+    "majorPerks": [
+      "Frost Arrow",
+      "Scatter Arrows"
+    ]
+  },
+  "hazard": {
+    "weapons": [
+      "Bonespur"
+    ],
+    "ultimates": [
+      "Downpour"
+    ],
+    "passives": [
+      "Vault"
+    ],
+    "minorPerks": [
+      "Reconstitution",
+      "Anarchic Zeal"
+    ],
+    "majorPerks": [
+      "Deep Leap",
+      "Explosive Impalements"
+    ]
+  },
+  "illari": {
+    "weapons": [
+      "Solar Rifle"
+    ],
+    "ultimates": [
+      "Captive Sun"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Rapid Construction",
+      "Summer Solstice"
+    ],
+    "majorPerks": [
+      "Solar Flare",
+      "Sunburn"
+    ]
+  },
+  "jetpack-cat": {
+    "weapons": [
+      "Biotic Pawjectiles"
+    ],
+    "ultimates": [
+      "Catnapper"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Ulterior Motive",
+      "Transport Shielding"
+    ],
+    "majorPerks": [
+      "Purrfect Form",
+      "Claws Out"
+    ]
+  },
+  "junker-queen": {
+    "weapons": [
+      "Scattergun",
+      "Gracie"
+    ],
+    "ultimates": [
+      "Rampage"
+    ],
+    "passives": [
+      "Adrenaline Rush"
+    ],
+    "minorPerks": [
+      "Rampant Charge",
+      "Battle Shout"
+    ],
+    "majorPerks": [
+      "Willy-Willy",
+      "Savage Satiation"
+    ]
+  },
+  "junkrat": {
+    "weapons": [
+      "Frag Launcher"
+    ],
+    "ultimates": [
+      "RIP-Tire"
+    ],
+    "passives": [
+      "Total Mayhem"
+    ],
+    "minorPerks": [
+      "Nitro Boost",
+      "Bomb Voyage"
+    ],
+    "majorPerks": [
+      "Mine Recycling",
+      "Frag Cannon"
+    ]
+  },
+  "juno": {
+    "weapons": [
+      "Mediblaster"
+    ],
+    "ultimates": [
+      "Orbital Ray"
+    ],
+    "passives": [
+      "Martian Overboots"
+    ],
+    "minorPerks": [
+      "Familiar Vitals",
+      "Locked On"
+    ],
+    "majorPerks": [
+      "Lift Off",
+      "Faster Blaster"
+    ]
+  },
+  "kiriko": {
+    "weapons": [
+      "Healing Ofuda",
+      "Kunai"
+    ],
+    "ultimates": [
+      "Kitsune Rush"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Urgent Care",
+      "Fortune Teller"
+    ],
+    "majorPerks": [
+      "Ready Step",
+      "Foxtrot"
+    ]
+  },
+  "lifeweaver": {
+    "weapons": [
+      "Healing Blossom",
+      "Thorn Volley"
+    ],
+    "ultimates": [
+      "Tree of Life"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Petal Protection",
+      "Dashing Escape"
+    ],
+    "majorPerks": [
+      "Sow the Seed",
+      "Superbloom"
+    ]
+  },
+  "lucio": {
+    "weapons": [
+      "Sonic Amplifier"
+    ],
+    "ultimates": [
+      "Sound Barrier"
+    ],
+    "passives": [
+      "Wall Ride"
+    ],
+    "minorPerks": [
+      "Soundwave Rider",
+      "Beat Drop"
+    ],
+    "majorPerks": [
+      "Noise Violation",
+      "Accelerando"
+    ]
+  },
+  "mauga": {
+    "weapons": [
+      "Incendiary Chainguns",
+      "Volatile Chaingun",
+      "Incendiary Chaingun",
+      "Volatile Chainguns",
+      "Chainguns"
+    ],
+    "ultimates": [
+      "Cage Fight"
+    ],
+    "passives": [
+      "Berserker"
+    ],
+    "minorPerks": [
+      "Kinetic Bandolier",
+      "Pyromaniac"
+    ],
+    "majorPerks": [
+      "Firewalker",
+      "Combat Fuel"
+    ]
+  },
+  "mei": {
+    "weapons": [
+      "Endothermic Blaster"
+    ],
+    "ultimates": [
+      "Blizzard"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Skating Rink",
+      "Glacial Propulsion"
+    ],
+    "majorPerks": [
+      "Deep Freeze",
+      "Cryo-Storm"
+    ]
+  },
+  "mercy": {
+    "weapons": [
+      "Caduceus Staff",
+      "Caduceus Blaster"
+    ],
+    "ultimates": [
+      "Valkyrie"
+    ],
+    "passives": [
+      "Angelic Descent",
+      "Sympathetic Recovery"
+    ],
+    "minorPerks": [
+      "Angelic Resurrection",
+      "Winged Reach"
+    ],
+    "majorPerks": [
+      "Chain Boost",
+      "Double Dose"
+    ]
+  },
+  "mizuki": {
+    "weapons": [
+      "Spirit Glaive"
+    ],
+    "ultimates": [
+      "Kekkai Sanctuary"
+    ],
+    "passives": [
+      "Remedy Aura"
+    ],
+    "minorPerks": [
+      "Wellspring",
+      "Exposed Soul"
+    ],
+    "majorPerks": [
+      "Resonant Return",
+      "Quickstep"
+    ]
+  },
+  "moira": {
+    "weapons": [
+      "Biotic Grasp"
+    ],
+    "ultimates": [
+      "Coalescence"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Destruction's Divide",
+      "Ethical Nourishment"
+    ],
+    "majorPerks": [
+      "Reversal",
+      "Phantom Step"
+    ]
+  },
+  "orisa": {
+    "weapons": [
+      "Augmented Fusion Driver"
+    ],
+    "ultimates": [
+      "Terra Surge"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Defense Protocol",
+      "Mobile Fortification"
+    ],
+    "majorPerks": [
+      "Heavy Javelin",
+      "Protective Barrier"
+    ]
+  },
+  "pharah": {
+    "weapons": [
+      "Rocket Launcher"
+    ],
+    "ultimates": [
+      "Barrage"
+    ],
+    "passives": [
+      "Hover Jets"
+    ],
+    "minorPerks": [
+      "Concussive Force",
+      "Helix Shields"
+    ],
+    "majorPerks": [
+      "Fuel Stores",
+      "Rocket Salvo"
+    ]
+  },
+  "ramattra": {
+    "weapons": [
+      "Void Accelerator",
+      "Void Accelerator (Omnic Form)",
+      "Pummel",
+      "Pummel (Nemesis Form)"
+    ],
+    "ultimates": [
+      "Annihilation"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Relentless Form",
+      "Prolonged Barrier"
+    ],
+    "majorPerks": [
+      "Void Surge",
+      "Nanite Repair"
+    ]
+  },
+  "reaper": {
+    "weapons": [
+      "Hellfire Shotguns"
+    ],
+    "ultimates": [
+      "Death Blossom"
+    ],
+    "passives": [
+      "The Reaping"
+    ],
+    "minorPerks": [
+      "Soul Reaving",
+      "Lingering Wraith"
+    ],
+    "majorPerks": [
+      "Shadow Blink",
+      "Trigger Finger"
+    ]
+  },
+  "reinhardt": {
+    "weapons": [
+      "Rocket Hammer"
+    ],
+    "ultimates": [
+      "Earthshatter"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Crusader's Fire",
+      "Crusader's Resolve"
+    ],
+    "majorPerks": [
+      "Shield Slam",
+      "Ignited Fury"
+    ]
+  },
+  "roadhog": {
+    "weapons": [
+      "Scrap Gun"
+    ],
+    "ultimates": [
+      "Whole Hog"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Scrap Hook",
+      "Here, Piggy Piggy"
+    ],
+    "majorPerks": [
+      "Hogdrogen Exposure",
+      "Toxic Exhaust"
+    ]
+  },
+  "shion": {
+    "weapons": [
+      "Kira Pistols"
+    ],
+    "ultimates": [
+      "Satsuriku Spree"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Survival Instinct",
+      "X Machina"
+    ],
+    "majorPerks": [
+      "Refuel",
+      "Faces of Death"
+    ]
+  },
+  "sierra": {
+    "weapons": [
+      "Helix Rifle"
+    ],
+    "ultimates": [
+      "Trailblazer"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Full Flight",
+      "Tight Grip"
+    ],
+    "majorPerks": [
+      "Medi-Drone",
+      "Locked In"
+    ]
+  },
+  "sigma": {
+    "weapons": [
+      "Hyperspheres"
+    ],
+    "ultimates": [
+      "Gravitic Flux"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Kinetic Cycle",
+      "Hyper Regeneration"
+    ],
+    "majorPerks": [
+      "Hyper Strike",
+      "Levitation"
+    ]
+  },
+  "sojourn": {
+    "weapons": [
+      "Railgun"
+    ],
+    "ultimates": [
+      "Overclock"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Overcharged",
+      "Deceleration Field"
+    ],
+    "majorPerks": [
+      "Friction Generators",
+      "Dual Thrusters"
+    ]
+  },
+  "soldier-76": {
+    "weapons": [
+      "Heavy Pulse Rifle"
+    ],
+    "ultimates": [
+      "Tactical Visor"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Helix Propulsion",
+      "Tactical Salvo"
+    ],
+    "majorPerks": [
+      "Full Stride",
+      "Stim Pack"
+    ]
+  },
+  "sombra": {
+    "weapons": [
+      "Machine Pistol"
+    ],
+    "ultimates": [
+      "EMP"
+    ],
+    "passives": [
+      "Opportunist"
+    ],
+    "minorPerks": [
+      "Life Hack",
+      "CTRL ALT ESC"
+    ],
+    "majorPerks": [
+      "Data Packet",
+      "Cybersecurity"
+    ]
+  },
+  "symmetra": {
+    "weapons": [
+      "Photon Projector"
+    ],
+    "ultimates": [
+      "Photon Barrier"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Sentry Capacity",
+      "Perfect Alignment"
+    ],
+    "majorPerks": [
+      "Hovering Barrier",
+      "Shield Battery"
+    ]
+  },
+  "torbjorn": {
+    "weapons": [
+      "Rivet Gun",
+      "Forge Hammer"
+    ],
+    "ultimates": [
+      "Molten Core"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Hammer Time",
+      "Pre-Heated"
+    ],
+    "majorPerks": [
+      "Anchor Bolts",
+      "Overloaded Turret"
+    ]
+  },
+  "tracer": {
+    "weapons": [
+      "Pulse Pistols"
+    ],
+    "ultimates": [
+      "Pulse Bomb"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Temporal Regen",
+      "Kinetic Reload"
+    ],
+    "majorPerks": [
+      "Blink Packs",
+      "Quantum Entanglement"
+    ]
+  },
+  "vendetta": {
+    "weapons": [
+      "Palatine Fang"
+    ],
+    "ultimates": [
+      "Sundering Blade"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Extra Edge",
+      "Raging Storm"
+    ],
+    "majorPerks": [
+      "Siphoning Strike",
+      "Relentless"
+    ]
+  },
+  "venture": {
+    "weapons": [
+      "SMART Excavator"
+    ],
+    "ultimates": [
+      "Tectonic Shock"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Deep Burrow",
+      "Excavation Exhilaration"
+    ],
+    "majorPerks": [
+      "SMART Extender",
+      "Covered In Dirt"
+    ]
+  },
+  "widowmaker": {
+    "weapons": [
+      "Widow's Kiss"
+    ],
+    "ultimates": [
+      "Infra-Sight"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Scoped Efficiency",
+      "Sniper's Instinct"
+    ],
+    "majorPerks": [
+      "Seeker Mine",
+      "Widow's Bite"
+    ]
+  },
+  "winston": {
+    "weapons": [
+      "Tesla Cannon"
+    ],
+    "ultimates": [
+      "Primal Rage"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Electric Charge",
+      "Heavy Landing"
+    ],
+    "majorPerks": [
+      "Chain Lightning",
+      "Revitalizing Barrier"
+    ]
+  },
+  "wrecking-ball": {
+    "weapons": [
+      "Quad Cannons"
+    ],
+    "ultimates": [
+      "Minefield"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Steamroller",
+      "Multi-Ball"
+    ],
+    "majorPerks": [
+      "Hang Time",
+      "Adaptive Barrier"
+    ]
+  },
+  "wuyang": {
+    "weapons": [
+      "Xuanwu Staff"
+    ],
+    "ultimates": [
+      "Tidal Blast"
+    ],
+    "passives": [],
+    "minorPerks": [
+      "Overflow",
+      "Balance"
+    ],
+    "majorPerks": [
+      "Ebb and Flow",
+      "Falling Rain"
+    ]
+  },
+  "zarya": {
+    "weapons": [
+      "Particle Cannon"
+    ],
+    "ultimates": [
+      "Graviton Surge"
+    ],
+    "passives": [
+      "Energy"
+    ],
+    "minorPerks": [
+      "Jump-Ups",
+      "Spotter"
+    ],
+    "majorPerks": [
+      "Extra Oomph",
+      "Energy Lance"
+    ]
+  },
+  "zenyatta": {
+    "weapons": [
+      "Orb of Destruction"
+    ],
+    "ultimates": [
+      "Transcendence"
+    ],
+    "passives": [
+      "Snap Kick"
+    ],
+    "minorPerks": [
+      "Discordant Repair",
+      "Ascendance"
+    ],
+    "majorPerks": [
+      "Focused Destruction",
+      "Dual Harmony"
+    ]
+  }
+}

@@ -1,0 +1,177 @@
+{
+ "schema": 1,
+ "id": "2026-05-21",
+ "title": "Overwatch Retail Patch Notes – May 21, 2026",
+ "date": "2026-05-21",
+ "type": "hotfix",
+ "season": {
+  "id": "2026-s2",
+  "label": "Season 2",
+  "year": 2026,
+  "number": 2
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/05/#patch-2026-05-21",
+ "forumUrl": null,
+ "contentHash": "4f30f250f5c35b81",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 1,
+  "stadiumChanges": 4,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 2
+ },
+ "notes": [
+  {
+   "heroId": "jetpack-cat",
+   "group": "stadium",
+   "hasDeveloperComment": false,
+   "devIntent": null,
+   "summary": null
+  }
+ ],
+ "changes": [
+  {
+   "id": "2026-05-21/stadium/jetpack-cat/bouncing-biscuits/0",
+   "series": "stadium/jetpack-cat/bouncing-biscuits/bounce-healing",
+   "heroId": "jetpack-cat",
+   "heroName": "Jetpack Cat",
+   "role": "support",
+   "scope": "stadium",
+   "queue": "all",
+   "kind": "power",
+   "ability": "Bouncing Biscuits",
+   "stat": "Bounce healing",
+   "categories": [
+    "healing"
+   ],
+   "previous": 25,
+   "next": 35,
+   "changeBy": null,
+   "unit": "%",
+   "qualifier": null,
+   "note": null,
+   "percentChange": 40,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "6dc03455218615ca"
+  },
+  {
+   "id": "2026-05-21/stadium/jetpack-cat/ambidexfurous/0",
+   "series": "stadium/jetpack-cat/ambidexfurous/bonus-shot-damage",
+   "heroId": "jetpack-cat",
+   "heroName": "Jetpack Cat",
+   "role": "support",
+   "scope": "stadium",
+   "queue": "all",
+   "kind": "power",
+   "ability": "Ambidexfurous",
+   "stat": "Bonus Shot damage",
+   "categories": [
+    "damage"
+   ],
+   "previous": 25,
+   "next": 30,
+   "changeBy": null,
+   "unit": "%",
+   "qualifier": null,
+   "note": null,
+   "percentChange": 20,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "5653060986b4a98d"
+  },
+  {
+   "id": "2026-05-21/stadium/jetpack-cat/bell-bomb/0",
+   "series": "stadium/jetpack-cat/bell-bomb/explosion-damage",
+   "heroId": "jetpack-cat",
+   "heroName": "Jetpack Cat",
+   "role": "support",
+   "scope": "stadium",
+   "queue": "all",
+   "kind": "power",
+   "ability": "Bell Bomb",
+   "stat": "Explosion Damage",
+   "categories": [
+    "damage"
+   ],
+   "previous": 100,
+   "next": 120,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": 20,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "442724fa7f7c6c35"
+  },
+  {
+   "id": "2026-05-21/stadium/jetpack-cat/tow-beans/0",
+   "series": "stadium/jetpack-cat/tow-beans/ability-damage-per-1-fuel",
+   "heroId": "jetpack-cat",
+   "heroName": "Jetpack Cat",
+   "role": "support",
+   "scope": "stadium",
+   "queue": "all",
+   "kind": "power",
+   "ability": "Tow-Beans",
+   "stat": "Ability Damage per 1% Fuel",
+   "categories": [
+    "damage",
+    "mobility"
+   ],
+   "previous": 10,
+   "next": 7.5,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": -25,
+   "direction": "nerf",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "fa50e6a7ed5d01b9"
+  }
+ ],
+ "other": [
+  {
+   "id": "2026-05-21/bugfix/stadium/0",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "4f954b4be351b04c"
+  },
+  {
+   "id": "2026-05-21/bugfix/stadium/1",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "2f653a2619109eec"
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}

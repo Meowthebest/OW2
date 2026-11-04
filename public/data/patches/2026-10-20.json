@@ -1,0 +1,59 @@
+{
+ "schema": 1,
+ "id": "2026-10-20",
+ "title": "Overwatch Retail Patch Notes – October 20, 2026",
+ "date": "2026-10-20",
+ "type": "update",
+ "season": {
+  "id": "2026-s5",
+  "label": "Season 5",
+  "year": 2026,
+  "number": 5
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/10/#patch-2026-10-20",
+ "forumUrl": null,
+ "contentHash": "3dce6032f206d548",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 2
+ },
+ "notes": [],
+ "changes": [],
+ "other": [
+  {
+   "id": "2026-10-20/bugfix/general/0",
+   "section": "bugfix",
+   "group": "General",
+   "title": null,
+   "summary": null,
+   "sourceHash": "db557a06022b2071"
+  },
+  {
+   "id": "2026-10-20/bugfix/general/1",
+   "section": "bugfix",
+   "group": "General",
+   "title": null,
+   "summary": null,
+   "sourceHash": "77fc9af63d8a583b"
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}

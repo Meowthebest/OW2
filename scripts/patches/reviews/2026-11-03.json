@@ -1,0 +1,277 @@
+{
+  "patchId": "2026-11-03",
+  "reviewedAt": "2026-11-04",
+  "forumUrl": "https://us.forums.blizzard.com/en/overwatch/t/overwatch-retail-patch-notes-%E2%80%93-november-3-2026/1046033",
+  "heroes": {
+    "dmon|standard": {
+      "summary": "Power Barrier recovers more slowly and has a minimum deploy time, Propulsors lose impact damage, and Overstrike heals less.",
+      "devIntent": "The barrier should cost more to use and telegraph better, while her burst and the health she recovers through Overstrike both come down."
+    },
+    "junker-queen|standard": {
+      "summary": "More base health in 5v5 and 6v6, a shorter Carnage cooldown, and new tracking UI for Commanding Shout.",
+      "devIntent": "Aimed at moments when she cannot apply Wounds to heal herself. More health helps her engage, and Carnage is available more often."
+    },
+    "mauga|standard": {
+      "summary": "More base armor and stronger burn damage over time.",
+      "devIntent": "His win rate had dropped too far after earlier changes. Armor returns for survivability, and burn pays off without leaning harder on enemy tanks."
+    },
+    "ramattra|standard": {
+      "summary": "More Void Accelerator ammo.",
+      "devIntent": "Ranged pressure lasts longer outside Nemesis Form."
+    },
+    "winston|standard": {
+      "summary": "Revitalizing Barrier heals less per second.",
+      "devIntent": "A shorter Barrier Projector cooldown raised this perk's uptime, so its healing is trimmed to match."
+    },
+    "anran|standard": {
+      "summary": "Stronger fans and a quicker Vermillion Ascent, but Inferno Rush loses its knockback and repeat hits.",
+      "devIntent": "Inferno Rush now does less in a single use. Extra fan damage helps at range and with setting up ignites, and a faster cast makes the ultimate easier to use reactively."
+    },
+    "echo|standard": {
+      "summary": "Aerial Munitions now refills ammo too.",
+      "devIntent": "The perk becomes worth more, since Echo can skip a reload after using it."
+    },
+    "emre|standard": {
+      "summary": "Cyber Frag detonates sooner. Default reticle settings and previews also changed, with no change to the in-game reticle.",
+      "devIntent": "A faster detonation makes the grenade more dependable for finishing targets. The reticle items only concern customization of the default reticle."
+    },
+    "genji|standard": {
+      "summary": "Shorter Deflect.",
+      "devIntent": "His recent kill pressure prompted this. Deflect now protects him for less time and asks for better timing."
+    },
+    "hanzo|standard": {
+      "summary": "Sonic Disruption can no longer take over Sombra's hacked health packs.",
+      "devIntent": "A health pack held by Hanzo or Sombra now stays with that hero."
+    },
+    "reaper|standard": {
+      "summary": "More base health.",
+      "devIntent": "Offsets the effectiveness he lost to recent hitbox and projectile size changes."
+    },
+    "shion|standard": {
+      "summary": "Tighter starting spread on Execution and faster Satsuriku Spree volleys.",
+      "devIntent": "Execution should be reliable up close without a full charge, and the ultimate should allow quicker repositioning between volleys."
+    },
+    "vendetta|standard": {
+      "summary": "Slower Palatine Fang combos and leap, and less knockback from Whirlwind Dash with Raging Storm.",
+      "devIntent": "She had become too deadly, so her combos open more slowly, her leap is easier to follow, and Raging Storm pushes targets around less."
+    },
+    "ana|standard": {
+      "summary": "Biotic Grenade explosion hits for less.",
+      "devIntent": "An earlier self-healing increase had also raised the grenade's burst. Damage and healing are now separate, which keeps the self-healing."
+    },
+    "baptiste|standard": {
+      "summary": "New tracking UI for Regenerative Burst, with no balance values changed."
+    },
+    "brigitte|standard": {
+      "summary": "Inspire triggers more often and heals more instantly.",
+      "devIntent": "Instant healing had not done enough for her sustain in fights, so it now heals more, more often, during long engagements."
+    },
+    "doctrine|standard": {
+      "summary": "Five nerfs: slower primary fire, lower Infused damage and healing, and longer Shrouded Momentum and Infuse cooldowns.",
+      "devIntent": "His healing was high for the utility he also brings. Output and burst come down, and longer cooldowns ask for more deliberate use."
+    },
+    "illari|standard": {
+      "summary": "Faster Solar Rifle charge and more healing per Healing Pylon projectile.",
+      "devIntent": "Recent projectile size changes had reduced her damage. Faster charging raises output, and a stronger Pylon supports defensive setups."
+    },
+    "jetpack-cat|standard": {
+      "summary": "Less base health and slower fuel regeneration, against faster Frenetic Flight acceleration.",
+      "devIntent": "Survivability comes down while mobility stays her strength. She repositions faster but can use Frenetic Flight less often."
+    },
+    "sombra|standard": {
+      "summary": "Shorter Hotfix and weaker Cyberspace Weaken, plus a situational EMP gain on health packs.",
+      "devIntent": "A shorter Hotfix makes target choice matter more, and lower Weaken gives enemies room to respond. EMP keeps its value as an ultimate after the health pack changes with Hanzo."
+    },
+    "mizuki|standard": {
+      "summary": "Bug fix only, with no balance values changed."
+    },
+    "wrecking-ball|standard": {
+      "summary": "Bug fix only, with no balance values changed."
+    },
+    "winston|stadium": {
+      "summary": "Tesla Field deals less damage."
+    },
+    "cassidy|stadium": {
+      "summary": "Barrage Blastin' has a smaller damage penalty, and Silver Bullet hits harder."
+    },
+    "genji|stadium": {
+      "summary": "Wyrm's Maw gives more Swift Strike damage per stack."
+    },
+    "sojourn|stadium": {
+      "summary": "Hard Stuck has a smaller damage penalty."
+    },
+    "vendetta|stadium": {
+      "summary": "Apex Bloodlust has less lifesteal, and Rampant Onslaught needs more eliminations per stack."
+    }
+  },
+  "changes": {
+    "2026-11-03/standard/dmon/power-barrier/1": {
+      "sourceHash": "d95dd02ba0f2fa43",
+      "direction": "nerf",
+      "stat": "Minimum deploy duration",
+      "next": 0.25,
+      "unit": "s",
+      "note": "New minimum",
+      "categories": [
+        "cooldown"
+      ]
+    },
+    "2026-11-03/standard/junker-queen/commanding-shout/0": {
+      "sourceHash": "7de33c0108e96f39",
+      "direction": "qol",
+      "note": "New UI tracks allies in range and those affected"
+    },
+    "2026-11-03/standard/anran/inferno-rush/0": {
+      "sourceHash": "33dc35a66a0e23a4",
+      "direction": "nerf",
+      "note": "Knockback removed"
+    },
+    "2026-11-03/standard/anran/inferno-rush/1": {
+      "sourceHash": "4ca1e4a32d79ee4f",
+      "direction": "nerf",
+      "note": "Can't hit one target more than once per use"
+    },
+    "2026-11-03/standard/echo/aerial-munitions/0": {
+      "sourceHash": "7a488443db1bca0f",
+      "direction": "buff",
+      "note": "Also refills ammo when used",
+      "categories": [
+        "ammo"
+      ]
+    },
+    "2026-11-03/standard/emre/base/0": {
+      "sourceHash": "84a0034e4f628e6d",
+      "direction": "qol",
+      "note": "Rotation setting added for the default reticle"
+    },
+    "2026-11-03/standard/emre/base/1": {
+      "sourceHash": "58aafd65e080faf7",
+      "direction": "neutral",
+      "note": "Thickness setting removed for the default reticle"
+    },
+    "2026-11-03/standard/emre/base/2": {
+      "sourceHash": "42b241741c0fb7c0",
+      "direction": "bugfix",
+      "note": "Default reticle crosshairs now follow Outline Thickness"
+    },
+    "2026-11-03/standard/emre/base/3": {
+      "sourceHash": "58ca4a99b02ae95a",
+      "direction": "qol",
+      "note": "Reticle options preview updated"
+    },
+    "2026-11-03/standard/hanzo/sonic-disruption/0": {
+      "sourceHash": "62f21187615e35bc",
+      "direction": "nerf",
+      "situational": true,
+      "note": "No longer takes over Sombra's hacked health packs"
+    },
+    "2026-11-03/standard/vendetta/whirlwind-dash/0": {
+      "sourceHash": "57c46aeda46e59a1",
+      "direction": "nerf",
+      "stat": "Raging Storm horizontal knockback",
+      "categories": [
+        "mobility"
+      ]
+    },
+    "2026-11-03/standard/baptiste/regenerative-burst/0": {
+      "sourceHash": "265e4431617f3fba",
+      "direction": "qol",
+      "note": "New UI tracks allies in range and those affected"
+    },
+    "2026-11-03/standard/sombra/emp/0": {
+      "sourceHash": "eb70aca7d26ade15",
+      "direction": "buff",
+      "situational": true,
+      "note": "Now overrides enemy hacks on health packs"
+    },
+    "2026-11-03/stadium/cassidy/barrage-blastin/0": {
+      "sourceHash": "270db9899651ce49",
+      "direction": "buff",
+      "stat": "Damage penalty",
+      "qualifier": null,
+      "percentChange": null,
+      "categories": [
+        "damage"
+      ]
+    },
+    "2026-11-03/stadium/sojourn/hard-stuck/0": {
+      "sourceHash": "02eb5b6c14cf4975",
+      "direction": "buff",
+      "stat": "Damage penalty",
+      "qualifier": null,
+      "percentChange": null,
+      "categories": [
+        "damage"
+      ]
+    },
+    "2026-11-03/stadium/vendetta/rampant-onslaught/0": {
+      "sourceHash": "5c5f718245ca0f09",
+      "direction": "nerf",
+      "stat": "Eliminations needed per Onslaught stack"
+    },
+    "2026-11-03/standard/dmon/fix/0": {
+      "sourceHash": "29f69b4b3cd29dcb",
+      "summary": "Propulsors no longer launch her far faster in the air than on the ground."
+    },
+    "2026-11-03/standard/mizuki/fix/0": {
+      "sourceHash": "4145938c2692b01a",
+      "summary": "Mizuki can no longer get stuck in the payload on Circuit Royale."
+    },
+    "2026-11-03/standard/sombra/fix/0": {
+      "sourceHash": "abd40ee60e28297b",
+      "summary": "Fixed a bug with allied health bars set to Contextual."
+    },
+    "2026-11-03/standard/wrecking-ball/fix/0": {
+      "sourceHash": "f8d6d62012f47561",
+      "summary": "Grappling Claw retract controls no longer greatly raise rolling speed."
+    }
+  },
+  "other": {
+    "2026-11-03/event/taking-reign": {
+      "summary": "Event from Nov 3 to Dec 7, with challenge rewards and an optional premium pass."
+    },
+    "2026-11-03/event/owcs-world-finals-cheer-rally": {
+      "summary": "Earn Cheers from matches and broadcasts from Nov 24 to Dec 7, with rewards for taking part."
+    },
+    "2026-11-03/general/drive-signature-customization": {
+      "summary": "Reaching the fourth checkpoint of the latest Drive lets you equip Signatures from past seasons. Team Drive does the same for Player Card Frames."
+    },
+    "2026-11-03/event/junkrat-s-loot-hunt-double-xp-weekend": {
+      "summary": "Returns from Nov 19 to Nov 23 with Loot Box challenges and Double XP."
+    },
+    "2026-11-03/event/excavation-initiative": {
+      "summary": "Back from Nov 3 to Dec 7. Log in and win a game over several weeks to earn Loot Boxes."
+    },
+    "2026-11-03/general/gameplay-sabotage-detection": {
+      "summary": "Improved detection of deliberately disruptive play, with action already taken against detected players."
+    },
+    "2026-11-03/bugfix/general/0": {
+      "summary": "Fixed weapon audio on Sierra's Made My Night skin.",
+      "sourceHash": "8e54786778035401"
+    },
+    "2026-11-03/bugfix/general/1": {
+      "summary": "Fixed a bug on Juno's Pureflow and Fearless skins.",
+      "sourceHash": "06fb5fe07e710a34"
+    },
+    "2026-11-03/bugfix/maps-eichenwalde-hybrid/0": {
+      "summary": "Closed a long-running sightline problem.",
+      "sourceHash": "2995ff1b7e5a5406"
+    },
+    "2026-11-03/bugfix/maps-watchpoint-gibraltar-escort/0": {
+      "summary": "Fixed a spot where heroes could get stuck.",
+      "sourceHash": "bdc0de44b2cf8053"
+    },
+    "2026-11-03/bugfix/stadium/0": {
+      "summary": "Grouping restrictions for Stadium Ranked were removed again, in an earlier update, after coming back by mistake.",
+      "sourceHash": "de6094feb53f8736"
+    },
+    "2026-11-03/bugfix/stadium/1": {
+      "summary": "Vendetta's Scaled Steel no longer grants more Palatine Fang swing range than intended.",
+      "sourceHash": "11c180fbdd7bf042"
+    },
+    "2026-11-03/bugfix/stadium/2": {
+      "summary": "El'Saka Suppressor now works properly on D.Va.",
+      "sourceHash": "0c5b5f95e6dfc722"
+    }
+  }
+}

@@ -1,0 +1,219 @@
+{
+ "schema": 1,
+ "id": "2026-08-12",
+ "title": "Overwatch Retail Patch Notes – August 12, 2026",
+ "date": "2026-08-12",
+ "type": "hotfix",
+ "season": {
+  "id": "2026-s4",
+  "label": "Season 4",
+  "year": 2026,
+  "number": 4
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/08/#patch-2026-08-12",
+ "forumUrl": null,
+ "contentHash": "6daf1ebf013017e5",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 1,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 5,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 5,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 4
+ },
+ "notes": [
+  {
+   "heroId": "dmon",
+   "group": "standard",
+   "hasDeveloperComment": false,
+   "devIntent": null,
+   "summary": null
+  }
+ ],
+ "changes": [
+  {
+   "id": "2026-08-12/standard/dmon/plasma-saber/0",
+   "series": "standard/dmon/plasma-saber/damage",
+   "heroId": "dmon",
+   "heroName": "D.Mon",
+   "role": "tank",
+   "scope": "standard",
+   "queue": "all",
+   "kind": "weapon",
+   "ability": "Plasma Saber",
+   "stat": "Damage",
+   "categories": [
+    "damage"
+   ],
+   "previous": 60,
+   "next": 65,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": 8.3,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "5bb77049ebbce9a0"
+  },
+  {
+   "id": "2026-08-12/standard/dmon/propulsors/0",
+   "series": "standard/dmon/propulsors/fuel-drain-rate",
+   "heroId": "dmon",
+   "heroName": "D.Mon",
+   "role": "tank",
+   "scope": "standard",
+   "queue": "all",
+   "kind": "ability",
+   "ability": "Propulsors",
+   "stat": "Fuel drain rate",
+   "categories": [
+    "mobility"
+   ],
+   "previous": 40,
+   "next": 25,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": -37.5,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "b60d23e165ba79e6"
+  },
+  {
+   "id": "2026-08-12/standard/dmon/propulsors/1",
+   "series": "standard/dmon/propulsors/fuel-regen-rate",
+   "heroId": "dmon",
+   "heroName": "D.Mon",
+   "role": "tank",
+   "scope": "standard",
+   "queue": "all",
+   "kind": "ability",
+   "ability": "Propulsors",
+   "stat": "Fuel regen rate",
+   "categories": [
+    "mobility"
+   ],
+   "previous": 15,
+   "next": 22.5,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": 50,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "e0c84e5a1e196e0c"
+  },
+  {
+   "id": "2026-08-12/standard/dmon/fusion-repeater/0",
+   "series": "standard/dmon/fusion-repeater/damage",
+   "heroId": "dmon",
+   "heroName": "D.Mon",
+   "role": "tank",
+   "scope": "standard",
+   "queue": "all",
+   "kind": "weapon",
+   "ability": "Fusion Repeater",
+   "stat": "Damage",
+   "categories": [
+    "damage"
+   ],
+   "previous": 15,
+   "next": 16,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": 6.7,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "b5b3f3cf73ff84cc"
+  },
+  {
+   "id": "2026-08-12/standard/dmon/fusion-repeater/1",
+   "series": "standard/dmon/fusion-repeater/cooldown",
+   "heroId": "dmon",
+   "heroName": "D.Mon",
+   "role": "tank",
+   "scope": "standard",
+   "queue": "all",
+   "kind": "weapon",
+   "ability": "Fusion Repeater",
+   "stat": "Cooldown",
+   "categories": [
+    "cooldown"
+   ],
+   "previous": 6,
+   "next": 4,
+   "changeBy": null,
+   "unit": "s",
+   "qualifier": null,
+   "note": null,
+   "percentChange": -33.3,
+   "direction": "buff",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "3c7f078a42669db1"
+  }
+ ],
+ "other": [
+  {
+   "id": "2026-08-12/bugfix/general/0",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "d8ad4da95a45d3ab"
+  },
+  {
+   "id": "2026-08-12/bugfix/general/1",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "8ed6ca345df7669f"
+  },
+  {
+   "id": "2026-08-12/bugfix/general/2",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "d68ba26e4df011ba"
+  },
+  {
+   "id": "2026-08-12/bugfix/general/3",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "d0e4398416787156"
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}

@@ -3,6 +3,8 @@ name: Deploy Vite site to Pages
 on:
   push:
     branches: [ main ]
+  # The patch sync starts this after committing new data, because commits made by a workflow do not trigger push events.
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,6 +26,7 @@ jobs:
           cache: npm
       - run: npm ci --no-fund --no-audit
       - run: npm run test:logic
+      - run: npm run test:patches
       - run: npm run test:worker
       - run: npm run test:ui
       - run: npm run build

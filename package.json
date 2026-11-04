@@ -8,11 +8,15 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node scripts/test-logic.mjs && node --test worker/test/worker.test.mjs && npm run build && node scripts/test-ui.mjs",
+    "test": "node scripts/test-logic.mjs && node scripts/test-patches.mjs && node --test worker/test/worker.test.mjs && npm run build && node scripts/test-ui.mjs",
     "test:logic": "node scripts/test-logic.mjs",
+    "test:patches": "node scripts/test-patches.mjs",
     "test:worker": "node --test worker/test/worker.test.mjs",
     "test:ui": "node scripts/test-ui.mjs",
-    "check:roster": "node scripts/check-roster.mjs"
+    "check:roster": "node scripts/check-roster.mjs",
+    "sync:patches": "node scripts/patches/cli.mjs sync",
+    "verify:patches": "node scripts/patches/cli.mjs verify",
+    "check:patches": "node scripts/patches/cli.mjs check"
   },
   "dependencies": {
     "lucide-react": "^0.441.0",

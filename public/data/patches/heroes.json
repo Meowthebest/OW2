@@ -1,0 +1,5193 @@
+{
+ "schema": 1,
+ "heroes": {
+  "dva": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 5,
+    "nerfs": 5,
+    "other": 0,
+    "review": 10
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 27
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "mauga": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-30",
+    "date": "2026-07-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "orisa": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 3,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 6,
+    "other": 0,
+    "review": 18
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 2,
+    "other": 0,
+    "review": 4
+   }
+  ],
+  "reinhardt": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 1,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   }
+  ],
+  "roadhog": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 6,
+    "nerfs": 5,
+    "other": 1,
+    "review": 25
+   },
+   {
+    "patch": "2026-10-13",
+    "date": "2026-10-13",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 4,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "sigma": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 1,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "winston": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 10,
+    "nerfs": 7,
+    "other": 0,
+    "review": 9
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "wrecking-ball": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "zarya": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 5,
+    "nerfs": 1,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "anran": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-02-13",
+    "date": "2026-02-13",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-02-24",
+    "date": "2026-02-24",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 3
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "ashe": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 3,
+    "other": 0,
+    "review": 33
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 5,
+    "nerfs": 8,
+    "other": 0,
+    "review": 12
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "cassidy": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 5,
+    "nerfs": 4,
+    "other": 0,
+    "review": 13
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "echo": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "freja": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 5,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 3,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "hanzo": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 2,
+    "review": 1
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "pharah": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 9
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "reaper": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 3,
+    "other": 0,
+    "review": 13
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "soldier-76": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 6,
+    "nerfs": 4,
+    "other": 0,
+    "review": 15
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   }
+  ],
+  "sombra": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 1,
+    "other": 0,
+    "review": 10
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 8,
+    "other": 0,
+    "review": 39
+   },
+   {
+    "patch": "2026-10-13",
+    "date": "2026-10-13",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 3,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 2,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "torbjorn": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 1,
+    "other": 0,
+    "review": 9
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 2,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "tracer": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 3,
+    "other": 0,
+    "review": 16
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "vendetta": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 2,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 59
+   },
+   {
+    "patch": "2026-02-13",
+    "date": "2026-02-13",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-02-24",
+    "date": "2026-02-24",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 3,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 5,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 5,
+    "other": 0,
+    "review": 12
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 1,
+    "review": 5
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 3,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 3,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "widowmaker": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 1,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "baptiste": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 3,
+    "other": 0,
+    "review": 8
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "neutral",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "illari": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "kiriko": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 5,
+    "other": 0,
+    "review": 17
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 4,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-10-13",
+    "date": "2026-10-13",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "lifeweaver": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 4,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-07-28",
+    "date": "2026-07-28",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   }
+  ],
+  "mercy": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 3,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 5,
+    "nerfs": 4,
+    "other": 0,
+    "review": 21
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-28",
+    "date": "2026-07-28",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   }
+  ],
+  "moira": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 8,
+    "other": 0,
+    "review": 25
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   }
+  ],
+  "wuyang": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 4,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 10,
+    "nerfs": 5,
+    "other": 0,
+    "review": 42
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 2
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 7,
+    "nerfs": 2,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "zenyatta": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 5,
+    "nerfs": 5,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 11
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   }
+  ],
+  "doomfist": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 6,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 5,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 4,
+    "other": 1,
+    "review": 11
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-30",
+    "date": "2026-07-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   }
+  ],
+  "genji": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 9
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 5,
+    "other": 0,
+    "review": 12
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "sojourn": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 6,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 3,
+    "other": 0,
+    "review": 22
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "lucio": [
+   {
+    "patch": "2026-02-09",
+    "date": "2026-02-09",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 7,
+    "nerfs": 8,
+    "other": 1,
+    "review": 19
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "domina": [
+   {
+    "patch": "2026-02-13",
+    "date": "2026-02-13",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-02-24",
+    "date": "2026-02-24",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-07-30",
+    "date": "2026-07-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "emre": [
+   {
+    "patch": "2026-02-13",
+    "date": "2026-02-13",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-02-24",
+    "date": "2026-02-24",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 15
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 1,
+    "review": 2
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 4,
+    "review": 0
+   }
+  ],
+  "jetpack-cat": [
+   {
+    "patch": "2026-02-13",
+    "date": "2026-02-13",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-02-24",
+    "date": "2026-02-24",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 36
+   },
+   {
+    "patch": "2026-05-13",
+    "date": "2026-05-13",
+    "group": "stadium",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-21",
+    "date": "2026-05-21",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 3,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-08-14",
+    "date": "2026-08-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 1,
+    "review": 2
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "mizuki": [
+   {
+    "patch": "2026-02-13",
+    "date": "2026-02-13",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-02-24",
+    "date": "2026-02-24",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 5,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 8
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 3,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-20",
+    "date": "2026-08-20",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "hazard": [
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 4,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 6,
+    "nerfs": 1,
+    "other": 0,
+    "review": 13
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-07-30",
+    "date": "2026-07-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "ramattra": [
+   {
+    "patch": "2026-03-10",
+    "date": "2026-03-10",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 1,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 66
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 4,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "neutral",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-30",
+    "date": "2026-07-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "junker-queen": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 4,
+    "other": 0,
+    "review": 8
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 3,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "mei": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 6,
+    "nerfs": 6,
+    "other": 0,
+    "review": 12
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 6
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   }
+  ],
+  "bastion": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 3,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   }
+  ],
+  "junkrat": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 4,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 2,
+    "other": 0,
+    "review": 12
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 5,
+    "other": 0,
+    "review": 7
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 2
+   }
+  ],
+  "symmetra": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "venture": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "mixed",
+    "buffs": 3,
+    "nerfs": 3,
+    "other": 0,
+    "review": 5
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   }
+  ],
+  "ana": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 6,
+    "nerfs": 6,
+    "other": 0,
+    "review": 16
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "brigitte": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "neutral",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 2,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 3,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "juno": [
+   {
+    "patch": "2026-04-01",
+    "date": "2026-04-01",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-04-14",
+    "date": "2026-04-14",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 1,
+    "other": 0,
+    "review": 16
+   },
+   {
+    "patch": "2026-04-23",
+    "date": "2026-04-23",
+    "group": "stadium",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 6,
+    "other": 0,
+    "review": 18
+   },
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "stadium",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "stadium",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 3
+   }
+  ],
+  "sierra": [
+   {
+    "patch": "2026-04-17",
+    "date": "2026-04-17",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 5,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-05-12",
+    "date": "2026-05-12",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-16",
+    "date": "2026-06-16",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 4,
+    "nerfs": 1,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-06-30",
+    "date": "2026-06-30",
+    "group": "limited",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 4
+   }
+  ],
+  "shion": [
+   {
+    "patch": "2026-06-25",
+    "date": "2026-06-25",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-02",
+    "date": "2026-07-02",
+    "group": "standard",
+    "classification": "fix",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 1,
+    "review": 0
+   },
+   {
+    "patch": "2026-07-14",
+    "date": "2026-07-14",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-11",
+    "date": "2026-08-11",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 1,
+    "nerfs": 0,
+    "other": 1,
+    "review": 2
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 2,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   }
+  ],
+  "dmon": [
+   {
+    "patch": "2026-08-12",
+    "date": "2026-08-12",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 5,
+    "nerfs": 0,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-08-14",
+    "date": "2026-08-14",
+    "group": "standard",
+    "classification": "buff",
+    "buffs": 4,
+    "nerfs": 0,
+    "other": 5,
+    "review": 1
+   },
+   {
+    "patch": "2026-09-08",
+    "date": "2026-09-08",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 2,
+    "nerfs": 4,
+    "other": 1,
+    "review": 2
+   },
+   {
+    "patch": "2026-09-17",
+    "date": "2026-09-17",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 6,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-10-13",
+    "date": "2026-10-13",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 1,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 4,
+    "other": 1,
+    "review": 0
+   }
+  ],
+  "doctrine": [
+   {
+    "patch": "2026-10-06",
+    "date": "2026-10-06",
+    "group": "standard",
+    "classification": "mixed",
+    "buffs": 1,
+    "nerfs": 7,
+    "other": 0,
+    "review": 1
+   },
+   {
+    "patch": "2026-10-13",
+    "date": "2026-10-13",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 2,
+    "other": 0,
+    "review": 0
+   },
+   {
+    "patch": "2026-11-03",
+    "date": "2026-11-03",
+    "group": "standard",
+    "classification": "nerf",
+    "buffs": 0,
+    "nerfs": 5,
+    "other": 0,
+    "review": 0
+   }
+  ]
+ }
+}

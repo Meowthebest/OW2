@@ -1,0 +1,147 @@
+{
+ "schema": 1,
+ "id": "2026-06-18",
+ "title": "Overwatch Retail Patch Notes - June 18, 2026",
+ "date": "2026-06-18",
+ "type": "update",
+ "season": {
+  "id": "2026-s3",
+  "label": "Season 3",
+  "year": 2026,
+  "number": 3
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/06/#patch-2026-06-18",
+ "forumUrl": null,
+ "contentHash": "8a48cfc79b09debc",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 13
+ },
+ "notes": [],
+ "changes": [],
+ "other": [
+  {
+   "id": "2026-06-18/bugfix/general/0",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "8ae1e20633995934"
+  },
+  {
+   "id": "2026-06-18/bugfix/general/1",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "f901ab05ab24548c"
+  },
+  {
+   "id": "2026-06-18/bugfix/general/2",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "fbfd72b03c9ad1c0"
+  },
+  {
+   "id": "2026-06-18/bugfix/general/3",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "4ad84a2c9a3f0724"
+  },
+  {
+   "id": "2026-06-18/bugfix/general/4",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "cdcfa3972078c67c"
+  },
+  {
+   "id": "2026-06-18/bugfix/general/5",
+   "section": "bugfix",
+   "group": null,
+   "title": null,
+   "summary": null,
+   "sourceHash": "09d9c8fc4e7adc31"
+  },
+  {
+   "id": "2026-06-18/bugfix/stadium/0",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "06b75534182c8493"
+  },
+  {
+   "id": "2026-06-18/bugfix/stadium/1",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "0ca6ecb82dd14fc5"
+  },
+  {
+   "id": "2026-06-18/bugfix/stadium/2",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "73a5f25b150e12d7"
+  },
+  {
+   "id": "2026-06-18/bugfix/stadium/3",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "92e862398d947d97"
+  },
+  {
+   "id": "2026-06-18/bugfix/stadium/4",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "b5cf5ff9ef8e2332"
+  },
+  {
+   "id": "2026-06-18/bugfix/stadium/5",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "cda8ca3f9b1004f0"
+  },
+  {
+   "id": "2026-06-18/bugfix/stadium/6",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "b0afaf62af8a93ec"
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}

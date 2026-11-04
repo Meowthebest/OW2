@@ -1,0 +1,67 @@
+{
+ "schema": 1,
+ "id": "2026-04-28",
+ "title": "Overwatch Retail Patch Notes – April 28, 2026",
+ "date": "2026-04-28",
+ "type": "update",
+ "season": {
+  "id": "2026-s2",
+  "label": "Season 2",
+  "year": 2026,
+  "number": 2
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/04/#patch-2026-04-28",
+ "forumUrl": null,
+ "contentHash": "eb5d69aae3f3f8d6",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 2
+ },
+ "notes": [],
+ "changes": [],
+ "other": [
+  {
+   "id": "2026-04-28/event/4v4-evolved",
+   "section": "event",
+   "group": null,
+   "title": "4v4 Evolved",
+   "summary": null,
+   "sourceHash": null
+  },
+  {
+   "id": "2026-04-28/bugfix/general/0",
+   "section": "bugfix",
+   "group": "General",
+   "title": null,
+   "summary": null,
+   "sourceHash": "fc91682ba2a6c594"
+  },
+  {
+   "id": "2026-04-28/bugfix/general/1",
+   "section": "bugfix",
+   "group": "General",
+   "title": null,
+   "summary": null,
+   "sourceHash": "c59ddad71507a1e8"
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}

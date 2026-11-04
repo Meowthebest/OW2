@@ -1,0 +1,117 @@
+{
+ "schema": 1,
+ "id": "2026-05-13",
+ "title": "Overwatch Retail Patch Notes – May 14, 2026",
+ "date": "2026-05-13",
+ "type": "hotfix",
+ "season": {
+  "id": "2026-s2",
+  "label": "Season 2",
+  "year": 2026,
+  "number": 2
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/05/#patch-2026-05-13",
+ "forumUrl": null,
+ "contentHash": "c38b824640410fd0",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 6
+ },
+ "notes": [
+  {
+   "heroId": "jetpack-cat",
+   "group": "stadium",
+   "hasDeveloperComment": false,
+   "devIntent": null,
+   "summary": null
+  }
+ ],
+ "changes": [
+  {
+   "id": "2026-05-13/stadium/jetpack-cat/base/0",
+   "series": null,
+   "heroId": "jetpack-cat",
+   "heroName": "Jetpack Cat",
+   "role": "support",
+   "scope": "stadium",
+   "queue": "all",
+   "kind": "base",
+   "ability": null,
+   "stat": null,
+   "categories": [],
+   "previous": null,
+   "next": null,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": null,
+   "direction": "bugfix",
+   "situational": false,
+   "classifiedBy": "rule",
+   "summary": null,
+   "sourceHash": "15f2390dbe8debf6"
+  }
+ ],
+ "other": [
+  {
+   "id": "2026-05-13/bugfix/general/0",
+   "section": "bugfix",
+   "group": "General",
+   "title": null,
+   "summary": null,
+   "sourceHash": "60df6ed5c54c958c"
+  },
+  {
+   "id": "2026-05-13/bugfix/stadium/0",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "6fed9e23a8885ce4"
+  },
+  {
+   "id": "2026-05-13/bugfix/stadium/1",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "07420619b0bf744e"
+  },
+  {
+   "id": "2026-05-13/bugfix/stadium/2",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "218cff022bb4f172"
+  },
+  {
+   "id": "2026-05-13/bugfix/stadium/3",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "831c5986a804c2bf"
+  }
+ ],
+ "firstImportedAt": "2026-11-04T10:05:18.640Z",
+ "lastVerifiedAt": "2026-11-04T10:28:38.447Z",
+ "revisions": []
+}
