@@ -21,7 +21,7 @@ npm run dev
 | `npm run dev` | Start the dev server |
 | `npm run build` | Type-check and build to `dist/` |
 | `npm run preview` | Serve the production build |
-| `npm test` | Run the logic, patch, player, worker and UI tests, plus a build |
+| `npm test` | Run the logic, patch, player, worker, timer and UI tests, plus a build |
 | `npm run check:roster` | Compare the hero list with the live API and check image files |
 | `npm run sync:patches` | Read Blizzard's latest patch notes into `public/data/patches` |
 | `npm run verify:patches` | Compare every stored value against Blizzard's pages again |
@@ -54,6 +54,7 @@ public/data/patches/    Imported patch data, one JSON file per patch
 scripts/patches/        Patch import command, season list, ability names, reviews
 scripts/players/        Steam reading collector
 worker/                 Optional Cloudflare Worker cache
+timer/                  Cloudflare Worker that starts the scheduled jobs
 docs/CAREER_DATA.md     Career data source facts and known limitations
 docs/PATCH_DATA.md      Patch data sources, method and known limitations
 docs/PLAYER_DATA.md     Player data source, storage and known limitations
@@ -77,6 +78,8 @@ Career data works immediately with no setup, because the site can call OverFast 
 `.github/workflows/sync-patches.yml` reads Blizzard's patch notes every six hours, commits any changes and redeploys. To refresh by hand, open **Actions → Sync patch notes → Run workflow** on GitHub, which only people with write access can do.
 
 `.github/workflows/record-players.yml` checks Steam's player count every five minutes and stores new readings on the `player-data` branch. It can also be run by hand from the Actions tab.
+
+GitHub's own schedule has been unreliable, so a small Cloudflare Worker starts this job and the patch sync on time. See [timer/README.md](timer/README.md).
 
 ## Career data
 

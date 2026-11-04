@@ -8,8 +8,9 @@ name: Record Steam players
 # Steam caches this count for about 15 minutes, so most runs find nothing new and commit nothing.
 # Running every five minutes picks up each new count soon after it appears.
 #
-# GitHub runs schedules on a best-effort basis, so a run can be late or skipped. Each reading
-# stores the time Steam produced it, and the site shows that time.
+# GitHub's schedule has been unreliable, so the Worker in timer/ starts this job every five minutes
+# and the schedule below is only a backstop. Each reading stores the time Steam produced it, and
+# the site shows that time.
 
 on:
   schedule:

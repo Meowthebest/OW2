@@ -22,13 +22,21 @@ The [Steam Web API terms](https://steamcommunity.com/dev/apiterms) allow up to 1
 
 Steam caches this response for 15 minutes. Measured over 17 minutes of polling once a minute, the count only changed when the cache expired. Checking more often doesn't produce more data, and working around the cache wouldn't be fair use of Steam's service.
 
-So the job checks every five minutes, which is the shortest interval GitHub allows, and stores a new reading only when Steam has published a new count. That comes to about 96 readings a day, not 288. Each reading is timestamped with when Steam produced it, worked out from the response's cache headers, rather than when it was fetched.
+So the job runs every five minutes and stores a new reading only when Steam has published a new count. That comes to about 96 readings a day, not 288. Each reading is timestamped with when Steam produced it, worked out from the response's cache headers, rather than when it was fetched.
 
 ## How it runs
 
 `.github/workflows/record-players.yml` runs on GitHub Actions, and `scripts/players/collect.mjs` does the work. It has no dependencies, so each run stays short.
 
 Visitors never contact Steam, which also blocks direct browser requests. Everyone reads the same stored files, so traffic adds no calls to Steam.
+
+### What starts the job
+
+A small Cloudflare Worker in [`timer/`](../timer/README.md) starts the job every five minutes through GitHub's API.
+
+GitHub's own schedule can't be relied on for this. Since late August 2026, people have reported scheduled runs that are [hours late or never created](https://github.com/orgs/community/discussions/206019), or [mostly dropped](https://github.com/Stvad/knowledge-medium/issues/1458), with no confirmed cause or fix. When this job was added on November 4, 2026, it had no runs in its first 2 hours 45 minutes, even though it was scheduled every five minutes.
+
+The workflow keeps its own schedule as a backstop. If both start it, nothing is stored twice.
 
 ### Where data lives
 
@@ -91,6 +99,7 @@ Comparisons leave out the release day, because only the date of a patch is store
 
 - **History starts when recording starts.** The longer ranges fill in over time, and patches from before that have no readings around them.
 - **Resolution is about 15 minutes**, set by Steam's cache, not the requested five.
-- **GitHub's schedule is best effort.** Runs can be late or skipped, especially at busy times, which leaves gaps that appear as breaks in the chart. GitHub also pauses scheduled workflows after 60 days with no repository activity. If that happens, turn the job back on from the Actions tab.
-- **Five-minute runs are a heavy use of Actions.** It is free for public repositories and uses very little compute, but GitHub's terms are aimed at building and shipping software, so GitHub could limit it. If that happens, the collector can move to any scheduler, including the optional Cloudflare Worker in `worker/`, by writing the same files elsewhere and setting `VITE_PLAYER_DATA_URL`.
+- **Recording depends on the timer.** If the Worker stops or its GitHub token expires, no readings are taken until that is fixed. The gap appears as a break in the chart, and the page marks the count Stale Data. [`timer/README.md`](../timer/README.md) covers renewing the token, which lasts up to a year. GitHub's own schedule is only a backstop, and its runs can be hours late or missing.
+- **GitHub can pause a workflow.** It pauses scheduled workflows after 60 days with no repository activity. If that happens, turn the job back on from the Actions tab.
+- **Five-minute runs are a heavy use of Actions.** It is free for public repositories and uses very little compute, but GitHub's terms are aimed at building and shipping software, so GitHub could limit it. Starting the job every 15 minutes instead would cut its runs by two thirds, at the cost of slightly older counts. If GitHub does limit it, the collector can move elsewhere, such as into a Cloudflare Worker, by writing the same files there and setting `VITE_PLAYER_DATA_URL`.
 - **"Live" means the most recent reading.** With Steam's cache and the job's timing, the count shown is usually 5 to 25 minutes old. The page always shows its real time.

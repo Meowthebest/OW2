@@ -1,0 +1,16 @@
+name = "ow2-job-timer"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# This Worker has no web address. It only runs on the schedule below, so nothing outside can reach it.
+workers_dev = false
+preview_urls = false
+
+[triggers]
+# Times are UTC. Each one must match a key of JOBS in src/index.js exactly.
+# Cloudflare numbers weekdays differently from GitHub, so use names such as MON.
+crons = ["*/5 * * * *", "17 */6 * * *", "41 6 * * MON"]
+
+# Keeps each run's outcome in the Cloudflare dashboard, under this Worker's Logs.
+[observability]
+enabled = true

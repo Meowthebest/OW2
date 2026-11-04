@@ -1516,6 +1516,8 @@ await test('ranges and chart options update the URL, and a link restores them', 
   await until(() => /patches=0/.test(app.window.location.hash), 'markers off in the URL');
   click(toggle('Compare previous week'));
   await until(() => /compare=1/.test(app.window.location.hash), 'compare in the URL');
+  // Comparing needs the hourly file, so the legend returns once that has loaded.
+  await until(() => app.document.querySelectorAll('.pstat-legend li').length === 3, 'the legend with all three lines');
   assert.deepEqual([...app.document.querySelectorAll('.pstat-legend li')].map((item) => item.textContent), ['Players, hourly average', '6-hour average', 'Same time a week earlier']);
 
   click(buttonByName(app.document, 'Last 30 days'));

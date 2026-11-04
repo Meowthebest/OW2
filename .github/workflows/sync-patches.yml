@@ -1,6 +1,7 @@
 name: Sync patch notes
 
 # Reads Blizzard's published patch notes on a schedule and commits structured data to this repository.
+# GitHub's schedule has been unreliable, so the Worker in timer/ starts these runs and the schedule below is only a backstop.
 # Anyone with write access can also run it by hand from the Actions tab, which is the admin refresh.
 # If anything fails, nothing is committed, so the site keeps serving the last verified data.
 

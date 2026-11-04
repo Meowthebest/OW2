@@ -91,6 +91,8 @@ That prints each line's ID, fingerprint and current result. Copy `reviews/2026-1
 - Once a week it reads every stored month, to catch late edits.
 - People with write access can run it by hand from the Actions tab. That is the admin refresh, and it needs no login system or secret on the site.
 
+The Worker in [`timer/`](../timer/README.md) starts the six-hourly and weekly runs, because GitHub's own schedule has been unreliable since late August 2026. The workflow keeps its schedule as a backstop.
+
 It commits only when something changed, or once a day to update the last-checked time, then starts the deploy workflow. It has to start the deploy itself, because commits made by a workflow do not trigger push events.
 
 On a failed read, the job stops before writing anything. It also refuses to replace stored data if a patch's line count drops sharply, or if a month with stored patches suddenly parses to nothing, because both usually mean the page's markup changed. In those cases the site keeps serving the last verified data, and shows a warning if the last check is more than three days old. A patch that disappears from the page stays stored.
