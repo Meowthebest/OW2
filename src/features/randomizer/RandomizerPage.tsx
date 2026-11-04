@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { PlayerWidget } from '../players/components/PlayerWidget';
 import { HeroStage } from './HeroStage';
 import { RecentResults } from './RecentResults';
 import { Roster } from './Roster';
@@ -20,6 +21,7 @@ export function RandomizerPage({ api, focusRoster }: { api: RandomizerApi; focus
 
   return (
     <div className="randomizer page">
+      <PlayerWidget />
       <div className="randomizer__top">
         <HeroStage api={api} />
         <SettingsPanel api={api} />

@@ -5,6 +5,7 @@ import { RoleIcon } from '../../components/icons';
 import { ROLE_LABEL, type Role } from '../../data/heroes';
 import type { PatchRoute } from '../../lib/router';
 import { cn } from '../../lib/format';
+import { PatchActivity } from '../players/components/PatchActivity';
 import { FilterBar } from './components/FilterBar';
 import { HeroCard } from './components/HeroCard';
 import { HeroDrawer } from './components/HeroDrawer';
@@ -272,6 +273,14 @@ function ChangesTab({ index, query, routeKey, onQuery }: { index: PatchIndex; qu
         />
       ) : (
         <StateBlock title="No patches stored yet">The first import has not run.</StateBlock>
+      )}
+
+      {headerPatch && (
+        <PatchActivity
+          key={headerPatch.id}
+          patch={headerPatch}
+          others={index.patches.filter((patch) => patch.id !== headerPatch.id && (patch.type === 'season' || patch.counts.gameplayChanges > 0 || patch.counts.stadiumChanges > 0))}
+        />
       )}
 
       <FilterBar filters={filters} index={index} onChange={change} onReset={() => setFilters(DEFAULT_FILTERS)} />

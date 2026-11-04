@@ -1283,6 +1283,363 @@ await test('the other pages are unaffected by the new section', async () => {
   app.close();
 });
 
+// Player statistics. All counts below are made up for the tests. The site only shows recorded readings.
+const NOW_SECONDS = Math.floor(Date.now() / 1000);
+const isoAt = (seconds) => new Date(seconds * 1000).toISOString();
+
+function playerLatest(overrides = {}) {
+  return {
+    schema: 1,
+    appId: 2357570,
+    source: 'https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=2357570',
+    trackingSince: isoAt(NOW_SECONDS - 40 * 86400),
+    readings: 3840,
+    current: { players: 45123, at: isoAt(NOW_SECONDS - 300) },
+    lastAttempt: { at: isoAt(NOW_SECONDS - 300), ok: true, error: null },
+    stats: {
+      peak24h: { players: 57111, at: isoAt(NOW_SECONDS - 7200), coveredHours: 24 },
+      change24h: { percent: 5.2, players: 2231, comparedTo: { players: 42892, at: isoAt(NOW_SECONDS - 86400) } },
+      average30d: { players: 39876, hours: 700 },
+      peakRecorded: { players: 61234, at: isoAt(NOW_SECONDS - 20 * 86400) },
+      coverage: { hoursOf24: 24, daysTracked: 40, hoursOf720: 700 },
+    },
+    sparkline: [[NOW_SECONDS - 7200, 40000], [NOW_SECONDS - 3600, 43000], [NOW_SECONDS - 300, 45123]],
+    ...overrides,
+  };
+}
+
+const collectingLatest = () => playerLatest({
+  trackingSince: isoAt(NOW_SECONDS - 3 * 3600),
+  readings: 12,
+  stats: { peak24h: null, change24h: null, average30d: null, peakRecorded: { players: 45123, at: isoAt(NOW_SECONDS - 300) }, coverage: { hoursOf24: 3, daysTracked: 0.1, hoursOf720: 3 } },
+});
+
+function playerHours(days, startOffset = 0) {
+  const rows = [];
+  const end = NOW_SECONDS - (NOW_SECONDS % 3600) - startOffset;
+  for (let time = end - days * 86400; time < end; time += 3600) rows.push([time, 30000, 40000, 50000, 4]);
+  return { schema: 1, hours: rows };
+}
+
+function playerRecent() {
+  const rows = [];
+  for (let time = NOW_SECONDS - 8 * 86400; time <= NOW_SECONDS - 300; time += 900) rows.push([time, 40000 + (time % 1000)]);
+  return { schema: 1, samples: rows };
+}
+
+/** Serves the data branch's files, recording which hosts the browser contacts. */
+function playerApi(files = {}, hosts = []) {
+  const served = { 'latest.json': playerLatest(), 'recent.json': playerRecent(), 'hourly.json': playerHours(40), ...files };
+  const patches = patchApi();
+  return (target, init, count) => {
+    hosts.push(target.hostname);
+    if (target.hostname !== 'raw.githubusercontent.com') return patches(target, init, count);
+    const name = target.pathname.split('/').pop();
+    const file = served[name];
+    if (file === undefined) return jsonResponse({}, { status: 404 });
+    return typeof file === 'function' ? file(count) : jsonResponse(file);
+  };
+}
+
+const widget = (app) => app.document.querySelector('.live-strip');
+const cardNamed = (document, label) => [...document.querySelectorAll('.pstat-card')].find((card) => card.querySelector('.pstat-card__label').textContent === label);
+const cardValue = (document, label) => cardNamed(document, label).querySelector('.pstat-card__value').textContent;
+const playersReady = (app) => until(() => app.document.querySelector('.pstat-cards .pstat-card__label'), 'player cards');
+
+await test('the homepage widget shows the recorded count, change and peak, and opens the full page', async () => {
+  const hosts = [];
+  const app = boot({ storage: MOTION_OFF, api: playerApi({}, hosts) });
+  const strip = await until(() => app.document.querySelector('.live-strip__now'), 'widget').then(() => widget(app));
+  assert.equal(strip.tagName, 'A');
+  assert.equal(strip.getAttribute('href'), '#/players');
+  const text = strip.textContent;
+  assert.match(text, /Steam player activity/);
+  assert.match(text, /Steam only/);
+  assert.match(text, /45,123/);
+  assert.match(text, /Playing now/);
+  assert.match(text, /\+5\.2%/);
+  assert.match(text, /vs 24 hours ago/);
+  assert.match(text, /57,111/);
+  assert.ok(strip.querySelector('.pstat-spark path'), 'sparkline');
+  assert.ok(app.document.querySelector('.randomizer__top'), 'the randomizer is still there');
+  assert.equal(app.document.querySelectorAll('.hero-tile').length, 54);
+
+  app.window.location.hash = strip.getAttribute('href');
+  await playersReady(app);
+  assert.equal(app.document.querySelector('.site-nav__link.is-active').textContent, 'Players');
+  await until(() => /Player Statistics/.test(app.document.title), 'page title');
+  assert.ok(hosts.every((host) => !/steampowered|steamdb|steamcharts/.test(host)), hosts.join());
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('the widget says when figures are still collecting, and never shows a made-up number', async () => {
+  const app = boot({ storage: MOTION_OFF, api: playerApi({ 'latest.json': collectingLatest() }) });
+  await until(() => app.document.querySelector('.live-strip__now'), 'widget');
+  const text = widget(app).textContent;
+  assert.match(text, /45,123/);
+  assert.match(text, /24h change: collecting/);
+  assert.match(text, /24h peak:\s*collecting/);
+  assert.ok(!/57,111|\+5\.2/.test(text));
+  app.close();
+});
+
+await test('the homepage still works when player data is missing or failing', async () => {
+  const missing = boot({ storage: MOTION_OFF, api: playerApi({ 'latest.json': undefined }) });
+  await until(() => /Recording has not started yet/.test(widget(missing)?.textContent ?? ''), 'not started note');
+  assert.equal(missing.document.querySelectorAll('.hero-tile').length, 54);
+  missing.close();
+
+  const failing = boot({ storage: MOTION_OFF, api: playerApi({ 'latest.json': () => jsonResponse({}, { status: 500 }) }) });
+  await until(() => /unavailable right now/.test(widget(failing)?.textContent ?? ''), 'unavailable note');
+  assert.ok(failing.document.querySelector('.stage'));
+  failing.close();
+
+  const garbage = boot({ storage: MOTION_OFF, api: playerApi({ 'latest.json': { schema: 1, current: { players: 'many' } } }) });
+  await until(() => /unavailable right now/.test(widget(garbage)?.textContent ?? ''), 'rejected data');
+  assert.ok(!/many/.test(widget(garbage).textContent));
+  garbage.close();
+});
+
+await test('the page shows every statistic, labeled as Steam only', async () => {
+  const app = boot({ hash: '#/players', api: playerApi() });
+  await playersReady(app);
+  assert.match(app.document.querySelector('.pstat-head').textContent, /Steam players only/);
+  assert.match(app.document.querySelector('.pstat-head__note').textContent, /Battle\.net or consoles/);
+  assert.match(cardValue(app.document, 'Playing Now'), /45,123/);
+  assert.match(cardValue(app.document, '24-Hour Peak'), /57,111/);
+  assert.match(cardValue(app.document, 'Recorded Peak'), /61,234/);
+  assert.match(cardNamed(app.document, 'Recorded Peak').textContent, /true all-time Steam peak may be higher/);
+  assert.match(cardValue(app.document, '24-Hour Change'), /\+5\.2%/);
+  assert.equal(cardNamed(app.document, '24-Hour Change').querySelector('.pstat-change').dataset.trend, 'up');
+  assert.match(cardNamed(app.document, '24-Hour Change').textContent, /vs 42,892 24 hours ago/);
+  assert.match(cardValue(app.document, '30-Day Average'), /39,876/);
+  assert.match(cardValue(app.document, 'Last Updated'), /5 min ago/);
+  for (const card of app.document.querySelectorAll('.pstat-card')) {
+    assert.ok(card.querySelector('.pstat-card__icon svg'), 'icon');
+    const button = card.querySelector('.pstat-info__button');
+    assert.match(button.getAttribute('aria-label'), /^About /);
+    assert.ok(app.document.getElementById(button.getAttribute('aria-describedby')).textContent.length > 20, 'tooltip');
+  }
+  assert.ok(!app.document.querySelector('.pstat-banner'), 'fresh data has no stale warning');
+  assert.match(app.document.querySelector('.pstat-about').textContent, /not affiliated with or endorsed by Valve/);
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('a falling count shows a down arrow state', async () => {
+  const latest = playerLatest();
+  latest.stats.change24h = { percent: -3.4, players: -1500, comparedTo: { players: 46623, at: isoAt(NOW_SECONDS - 86400) } };
+  const app = boot({ hash: '#/players', api: playerApi({ 'latest.json': latest }) });
+  await playersReady(app);
+  const change = cardNamed(app.document, '24-Hour Change').querySelector('.pstat-change');
+  assert.equal(change.dataset.trend, 'down');
+  assert.match(change.textContent, /−3\.4%/);
+  assert.match(change.textContent, /decrease/);
+  app.close();
+});
+
+await test('statistics without enough data say so, with progress instead of numbers', async () => {
+  const app = boot({ hash: '#/players', api: playerApi({ 'latest.json': collectingLatest(), 'hourly.json': playerHours(0.1), 'recent.json': { schema: 1, samples: [[NOW_SECONDS - 1800, 44000], [NOW_SECONDS - 900, 44500], [NOW_SECONDS - 300, 45123]] } }) });
+  await playersReady(app);
+  assert.equal(cardValue(app.document, '24-Hour Peak'), 'Collecting');
+  assert.match(cardNamed(app.document, '24-Hour Peak').textContent, /3 of the last 24 hours recorded/);
+  assert.equal(cardValue(app.document, '24-Hour Change'), 'Collecting');
+  assert.equal(cardValue(app.document, '30-Day Average'), 'Collecting');
+  assert.match(cardNamed(app.document, '30-Day Average').textContent, /Day 1 of 30/);
+  assert.equal(app.document.querySelectorAll('.pstat-progress__track').length, 2);
+  assert.match(cardValue(app.document, 'Playing Now'), /45,123/);
+  await until(() => /shows less than the last 24 hours/.test(app.document.querySelector('.pstat-panel').textContent), 'partial range note');
+  assert.match(app.document.querySelector('.pstat-panel').textContent, /Recording began/);
+  assert.match(app.document.querySelector('.pstat-compares').textContent, /Available after 48 hours/);
+  assert.match(app.document.querySelector('.pstat-compares').textContent, /Available after 14 days/);
+  app.close();
+});
+
+await test('old or failed readings stay on screen with a stale data warning', async () => {
+  const old = playerLatest({ current: { players: 44444, at: isoAt(NOW_SECONDS - 3 * 3600) } });
+  const app = boot({ hash: '#/players', api: playerApi({ 'latest.json': old }) });
+  await playersReady(app);
+  const banner = app.document.querySelector('.pstat-banner');
+  assert.match(banner.textContent, /Stale data/);
+  assert.match(banner.textContent, /No new reading has arrived recently/);
+  assert.match(banner.textContent, /last valid count/);
+  assert.match(cardValue(app.document, 'Playing Now'), /44,444/);
+  assert.match(cardNamed(app.document, 'Playing Now').textContent, /Last valid count/);
+  assert.match(cardValue(app.document, 'Last Updated'), /3 hr ago/);
+  app.close();
+
+  const failed = playerLatest({ lastAttempt: { at: isoAt(NOW_SECONDS - 60), ok: false, error: 'Steam returned HTTP 500' } });
+  const second = boot({ hash: '#/players', api: playerApi({ 'latest.json': failed }) });
+  await playersReady(second);
+  assert.match(second.document.querySelector('.pstat-banner').textContent, /last attempt to read Steam failed/);
+  assert.match(cardValue(second.document, 'Playing Now'), /45,123/);
+  second.close();
+
+  const home = boot({ storage: MOTION_OFF, api: playerApi({ 'latest.json': old }) });
+  await until(() => home.document.querySelector('.live-strip__stale'), 'stale on the widget');
+  assert.match(widget(home).textContent, /Stale data/);
+  assert.match(widget(home).textContent, /44,444/);
+  home.close();
+});
+
+await test('the page explains an empty store and recovers from a failed load', async () => {
+  const empty = boot({ hash: '#/players', api: playerApi({ 'latest.json': undefined }) });
+  await until(() => /Recording has not started yet/.test(empty.document.querySelector('.pstat-page')?.textContent ?? ''), 'empty state');
+  assert.equal(empty.document.querySelectorAll('.pstat-card__label').length, 0);
+  empty.close();
+
+  let fail = true;
+  const app = boot({ hash: '#/players', api: playerApi({ 'latest.json': () => (fail ? jsonResponse({}, { status: 503 }) : jsonResponse(playerLatest())) }) });
+  await until(() => /Could not load player data/.test(app.document.querySelector('.pstat-page')?.textContent ?? ''), 'error state');
+  fail = false;
+  click(buttonByName(app.document, 'Try again'));
+  await playersReady(app);
+  assert.match(cardValue(app.document, 'Playing Now'), /45,123/);
+  app.close();
+});
+
+await test('ranges and chart options update the URL, and a link restores them', async () => {
+  const app = boot({ hash: '#/players', api: playerApi() });
+  await playersReady(app);
+  const chips = () => [...app.document.querySelectorAll('.pstat-chip')];
+  assert.deepEqual(chips().map((chip) => chip.getAttribute('aria-label')), ['Last 24 hours', 'Last 7 days', 'Last 30 days', 'Last 90 days', 'Last 6 months', 'Last year', 'All time']);
+  assert.equal(chips()[0].getAttribute('aria-pressed'), 'true');
+  click(buttonByName(app.document, 'Last 7 days'));
+  await until(() => app.window.location.hash === '#/players?range=7d', 'range in the URL');
+  assert.match(app.document.querySelector('.pstat-panel__sub').textContent, /last 7 days/);
+
+  const toggle = (name) => [...app.document.querySelectorAll('.pstat-toggle')].find((label) => label.textContent.includes(name)).querySelector('input');
+  click(toggle('Moving average'));
+  await until(() => /average=1/.test(app.window.location.hash), 'average in the URL');
+  click(toggle('Patch markers'));
+  await until(() => /patches=0/.test(app.window.location.hash), 'markers off in the URL');
+  click(toggle('Compare previous week'));
+  await until(() => /compare=1/.test(app.window.location.hash), 'compare in the URL');
+  assert.deepEqual([...app.document.querySelectorAll('.pstat-legend li')].map((item) => item.textContent), ['Players, hourly average', '6-hour average', 'Same time a week earlier']);
+
+  click(buttonByName(app.document, 'Last 30 days'));
+  await until(() => /range=30d/.test(app.window.location.hash), 'range change');
+  assert.equal(toggle('Compare (24H or 7D)').disabled, true);
+  app.close();
+
+  const shared = boot({ hash: '#/players?range=90d&average=1', api: playerApi() });
+  await playersReady(shared);
+  await until(() => [...shared.document.querySelectorAll('.pstat-chip.is-active')].map((chip) => chip.getAttribute('aria-label')).join() === 'Last 90 days', 'restored range');
+  shared.close();
+
+  const unknown = boot({ hash: '#/players?range=forever', api: playerApi() });
+  await playersReady(unknown);
+  assert.equal(unknown.document.querySelector('.pstat-chip.is-active').getAttribute('aria-label'), 'Last 24 hours');
+  unknown.close();
+});
+
+await test('a table gives the same values as the chart, with paging', async () => {
+  const app = boot({ hash: '#/players?range=30d', api: playerApi() });
+  await playersReady(app);
+  const details = await until(() => app.document.querySelector('.pstat-panel .pstat-details'), 'table view');
+  assert.match(details.querySelector('summary').textContent, /as a table/);
+  const rows = () => details.querySelectorAll('tbody tr').length;
+  await until(() => rows() === 30, 'first page');
+  assert.match(details.querySelector('tbody tr').textContent, /40,000/);
+  assert.match(details.querySelector('thead').textContent, /Day \(UTC\)/);
+  click([...details.querySelectorAll('button')].find((button) => button.textContent === 'Show more'));
+  await until(() => rows() > 30, 'next page');
+  app.close();
+});
+
+await test('daily and weekly comparisons use recorded hours', async () => {
+  const app = boot({ hash: '#/players', api: playerApi() });
+  await playersReady(app);
+  await until(() => app.document.querySelector('.pstat-compare__grid'), 'comparison');
+  const text = app.document.querySelector('.pstat-compares').textContent;
+  assert.match(text, /Last 24 hours vs the 24 hours before/);
+  assert.match(text, /Last 7 days vs the 7 days before/);
+  assert.match(text, /40,000/);
+  assert.match(text, /was 40,000/);
+  app.close();
+});
+
+await test('patches appear beside the chart, with comparisons but no claim of cause', async () => {
+  const app = boot({ hash: '#/players?range=all', api: playerApi({ 'hourly.json': playerHours(20) }) });
+  await playersReady(app);
+  const subsection = await until(() => app.document.querySelector('.pstat-subsection tbody tr') && app.document.querySelector('.pstat-subsection'), 'patch table');
+  const text = subsection.textContent;
+  assert.match(text, /not that the patch caused any change/);
+  assert.ok(subsection.querySelector('a[href^="#/patches?patch="]'));
+  app.close();
+});
+
+await test('a history load failure stays local to the chart, and retry works', async () => {
+  let fail = true;
+  const app = boot({ hash: '#/players', api: playerApi({ 'recent.json': () => (fail ? jsonResponse({}, { status: 500 }) : jsonResponse(playerRecent())) }) });
+  await playersReady(app);
+  await until(() => /Could not load the player history/.test(app.document.querySelector('.pstat-panel').textContent), 'chart error');
+  assert.match(cardValue(app.document, 'Playing Now'), /45,123/);
+  fail = false;
+  click(buttonByName(app.document, 'Try again'));
+  await until(() => !/Could not load the player history/.test(app.document.querySelector('.pstat-panel').textContent), 'recovered');
+  app.close();
+});
+
+await test('the patch page offers player activity, loading nothing until opened', async () => {
+  const hosts = [];
+  const app = boot({ hash: '#/patches', api: playerApi({ 'hourly.json': playerHours(3) }, hosts) });
+  await patchesReady(app);
+  const toggle = await until(() => app.document.querySelector('.pstat-activity__toggle'), 'collapsed section');
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.match(toggle.textContent, /Player activity around this patch/);
+  assert.match(toggle.textContent, /Steam only/);
+  assert.ok(!hosts.includes('raw.githubusercontent.com'), 'nothing loaded while collapsed');
+  click(toggle);
+  await until(() => toggle.getAttribute('aria-expanded') === 'true', 'expanded');
+  await until(() => hosts.includes('raw.githubusercontent.com'), 'loads when opened');
+  app.close();
+});
+
+await test('patch activity is honest about patches from before recording began', async () => {
+  if (!novemberPristine) return;
+  const hourly = playerHours(1);
+  const latest = playerLatest({ trackingSince: isoAt(NOW_SECONDS - 86400) });
+  // Far enough ahead of November 3 that nothing was recorded around it.
+  const future = hourly.hours.map((row) => [row[0] + 400 * 86400, row[1], row[2], row[3], row[4]]);
+  const app = boot({ hash: '#/patches?patch=2026-11-03', api: playerApi({ 'latest.json': latest, 'hourly.json': { schema: 1, hours: future } }) });
+  await patchesReady(app);
+  click(await until(() => app.document.querySelector('.pstat-activity__toggle'), 'section'));
+  const body = await until(() => {
+    const node = app.document.querySelector('.pstat-activity__body');
+    return /No player readings exist around this patch/.test(node?.textContent ?? '') ? node : null;
+  }, 'no data message');
+  assert.match(body.textContent, /Recording began/);
+  assert.ok(!body.querySelector('table'));
+  app.close();
+});
+
+await test('patch activity compares sampled days before and after, without claiming a cause', async () => {
+  if (!novemberPristine) return;
+  const released = Date.UTC(2026, 10, 3) / 1000;
+  const rows = [];
+  for (let time = released - 10 * 86400; time < released; time += 3600) rows.push([time, 30000, 40000, 50000, 4]);
+  for (let time = released; time < released + 86400; time += 3600) rows.push([time, 99000, 99000, 99000, 4]);
+  for (let time = released + 86400; time < released + 12 * 86400; time += 3600) rows.push([time, 33000, 44000, 55000, 4]);
+  const latest = playerLatest({ current: { players: 45123, at: isoAt(released + 12 * 86400) } });
+  const app = boot({ hash: '#/patches?patch=2026-11-03', api: playerApi({ 'latest.json': latest, 'hourly.json': { schema: 1, hours: rows } }) });
+  await patchesReady(app);
+  click(await until(() => app.document.querySelector('.pstat-activity__toggle'), 'section'));
+  const table = await until(() => app.document.querySelector('.pstat-activity table'), 'comparison table');
+  const cells = [...table.querySelectorAll('tbody tr')].map((row) => [...row.children].map((cell) => cell.textContent.replace(/\s+/g, ' ').trim()));
+  assert.deepEqual(cells[0].slice(0, 2), ['1 day', '40,000']);
+  assert.equal(cells[0][2], '44,000');
+  assert.match(cells[0][3], /\+10\.0%/);
+  assert.equal(cells[1][0], '3 days');
+  assert.equal(cells[2][0], '7 days');
+  assert.ok(!table.textContent.includes('99,000'), 'the release day is left out');
+  const text = app.document.querySelector('.pstat-activity__body').textContent;
+  assert.match(text, /does not show that the patch caused a change/);
+  assert.match(text, /release day is left out/);
+  app.close();
+});
+
 console.log(`${passed} passed, ${failures.length} failed`);
 if (failures.length) {
   failures.forEach((failure) => console.error('FAIL ' + failure));

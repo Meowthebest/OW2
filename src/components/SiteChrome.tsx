@@ -8,6 +8,7 @@ const NAV: ReadonlyArray<{ href: string; label: string; short?: string; view: Ro
   { href: '#/heroes', label: 'Heroes', view: 'heroes' },
   { href: '#/career', label: 'Career', view: 'career' },
   { href: '#/patches', label: 'Patch Notes', short: 'Patches', view: 'patches' },
+  { href: '#/players', label: 'Players', view: 'players' },
 ];
 
 export function SiteHeader({ route }: { route: Route }) {
@@ -52,6 +53,7 @@ export function SiteFooter() {
           Unofficial fan project, not affiliated with or endorsed by Blizzard Entertainment. Overwatch, hero names and artwork are © Blizzard Entertainment.
           {' '}Career data comes from public profiles through the community-run <a href="https://overfast-api.tekrop.fr/" target="_blank" rel="noreferrer">OverFast API</a>.
           {' '}Patch data is drawn from <a href="https://overwatch.blizzard.com/en-us/news/patch-notes/" target="_blank" rel="noreferrer">Blizzard's published patch notes</a>.
+          {' '}Player counts come from the Steam Web API, cover Steam players only and are provided as is. Not affiliated with or endorsed by Valve or Steam.
         </p>
         <a href="https://github.com/Meowthebest/OW2" target="_blank" rel="noreferrer">Source on GitHub</a>
       </div>

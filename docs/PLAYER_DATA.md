@@ -1,0 +1,96 @@
+# Player data
+
+How the player statistics get their data, and what they do and do not promise.
+
+## Source
+
+| Source | Used for |
+| --- | --- |
+| [Steam's `GetNumberOfCurrentPlayers` API](https://partner.steamgames.com/doc/webapi/ISteamUserStats) for app 2357570 | Every stored number. It needs no API key. |
+
+**Steam players only.** The count leaves out Battle.net and console players, so it isn't Overwatch's total population. The page says this wherever a number appears.
+
+Steam's API reports the current count and nothing else: no history, no peaks, no averages. So every other statistic is worked out from readings this site has stored itself, and history starts when recording starts.
+
+SteamDB and Steam Charts hold longer histories. SteamDB doesn't allow scraping, and neither offers an API or permission to reuse its data here, so neither is an input. The page links to both for reference.
+
+### Steam's terms
+
+The [Steam Web API terms](https://steamcommunity.com/dev/apiterms) allow up to 100,000 calls a day, and this uses at most 288. They also require the data to be offered as is, and no implied endorsement, so the page and footer say both.
+
+### How often a new count appears
+
+Steam caches this response for 15 minutes. Measured over 17 minutes of polling once a minute, the count only changed when the cache expired. Checking more often doesn't produce more data, and working around the cache wouldn't be fair use of Steam's service.
+
+So the job checks every five minutes, which is the shortest interval GitHub allows, and stores a new reading only when Steam has published a new count. That comes to about 96 readings a day, not 288. Each reading is timestamped with when Steam produced it, worked out from the response's cache headers, rather than when it was fetched.
+
+## How it runs
+
+`.github/workflows/record-players.yml` runs on GitHub Actions, and `scripts/players/collect.mjs` does the work. It has no dependencies, so each run stays short.
+
+Visitors never contact Steam, which also blocks direct browser requests. Everyone reads the same stored files, so traffic adds no calls to Steam.
+
+### Where data lives
+
+This site has no database, so readings are stored as files on a separate branch, `player-data`. They aren't on `main` because new readings would clutter its history and keep rejecting other pushes. The site reads the files from `raw.githubusercontent.com`, which caches them for about five minutes, so a new reading doesn't need a deploy.
+
+| File | Contents |
+| --- | --- |
+| `samples/YYYY-MM.jsonl` | Every reading, as `[unixSeconds, players]`. The source of truth, and it is only ever added to. |
+| `recent.json` | The last 8 days of readings, for the 24-hour and 7-day charts. |
+| `hourly.json` | `[hourStart, low, average, high, readings]` per hour, for longer charts and comparisons. |
+| `latest.json` | The current count, statistics, last attempt and a sparkline. |
+
+The history in git keeps every earlier version of these files. If a derived file is ever lost or damaged, the next run rebuilds it from the samples, or you can run:
+
+```bash
+node scripts/players/collect.mjs <data-folder> --rebuild
+```
+
+### When things fail
+
+- **Steam fails, times out or rate limits:** the job retries briefly, honoring `Retry-After`, then notes the failure in `latest.json` and keeps all stored data. The run still counts as successful, so a Steam outage doesn't send a failure email every five minutes. Warnings show on the run's page.
+- **Steam sends something unbelievable:** a missing, non-numeric, zero or impossibly large count is rejected and never stored.
+- **A browser can't load the files:** it keeps showing what it has, marked Stale Data, and waits longer between retries.
+- **A reading gets old:** past 45 minutes, the count is marked Stale Data with its real time.
+
+Identical observations aren't stored twice. Repeat reads inside one Steam cache window share a timestamp, and at most one reading is kept per five-minute window.
+
+## What each statistic needs
+
+Nothing is estimated. Until a statistic has enough data, it shows Collecting and how far along it is.
+
+| Statistic | Available when |
+| --- | --- |
+| Playing Now | After the first reading |
+| 24-Hour Peak | At least 20 of the last 24 hours have a reading |
+| 24-Hour Change | A reading exists within 30 minutes of exactly 24 hours ago |
+| 30-Day Average | 30 days of recording, with at least 80% of hours covered. It averages hourly averages, so a stretch of frequent readings can't outweigh the rest. |
+| Recorded Peak | After the first reading |
+| Daily and weekly comparison | Both periods have at least 80% of their hours |
+| Patch comparison | Both sides have at least 60% of their hours, and the "after" window has finished |
+
+**Recorded Peak isn't Overwatch's all-time peak.** Steam's API has no such figure, so this is only the highest count recorded since this site began. The true all-time Steam peak may well be higher.
+
+## The chart
+
+- The 24-hour and 7-day ranges show every reading. 30 days shows hourly averages.
+- 90 days and longer show daily averages, with each day's low and high shaded, once at least 60 days exist. Days with fewer than 12 recorded hours are left out, because they would skew toward whatever time of day was recorded.
+- The line breaks across gaps in recording, and the chart starts at the first reading. Nothing is drawn or implied before then.
+- A moving average only starts after one full window, and restarts after a gap once half a window has readings.
+
+## Patches
+
+Patch markers come from the patch notes data, and link to those notes. Only gameplay patches and season starts are marked.
+
+Comparisons leave out the release day, because only the date of a patch is stored and not the hour. Windows of 1, 3 and 7 days are shown. The 7-day window is the least affected by the weekly cycle.
+
+**These figures don't show that a patch caused a change.** Counts also move with events, seasons, weekends and time of day, and the page says so beside each comparison.
+
+## Known limitations
+
+- **History starts when recording starts.** The longer ranges fill in over time, and patches from before that have no readings around them.
+- **Resolution is about 15 minutes**, set by Steam's cache, not the requested five.
+- **GitHub's schedule is best effort.** Runs can be late or skipped, especially at busy times, which leaves gaps that appear as breaks in the chart. GitHub also pauses scheduled workflows after 60 days with no repository activity. If that happens, turn the job back on from the Actions tab.
+- **Five-minute runs are a heavy use of Actions.** It is free for public repositories and uses very little compute, but GitHub's terms are aimed at building and shipping software, so GitHub could limit it. If that happens, the collector can move to any scheduler, including the optional Cloudflare Worker in `worker/`, by writing the same files elsewhere and setting `VITE_PLAYER_DATA_URL`.
+- **"Live" means the most recent reading.** With Steam's cache and the job's timing, the count shown is usually 5 to 25 minutes old. The page always shows its real time.

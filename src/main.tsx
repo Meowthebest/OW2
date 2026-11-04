@@ -7,6 +7,7 @@ import './styles/base.css';
 import './styles/randomizer.css';
 import './styles/career.css';
 import './styles/patches.css';
+import './styles/players.css';
 
 purgeRetiredData();
 

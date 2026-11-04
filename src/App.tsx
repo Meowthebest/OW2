@@ -7,6 +7,7 @@ import { useRoute } from './lib/router';
 
 const CareerPage = lazy(() => import('./features/career/CareerPage').then((module) => ({ default: module.CareerPage })));
 const PatchNotesPage = lazy(() => import('./features/patches/PatchNotesPage').then((module) => ({ default: module.PatchNotesPage })));
+const PlayersPage = lazy(() => import('./features/players/PlayersPage').then((module) => ({ default: module.PlayersPage })));
 
 const pageFallback = <div className="page"><div className="skeleton skeleton--page" aria-hidden="true"><span /><span /><span /></div></div>;
 
@@ -33,6 +34,10 @@ function Shell() {
         ) : route.view === 'patches' ? (
           <Suspense fallback={pageFallback}>
             <PatchNotesPage route={route} />
+          </Suspense>
+        ) : route.view === 'players' ? (
+          <Suspense fallback={pageFallback}>
+            <PlayersPage route={route} />
           </Suspense>
         ) : (
           <RandomizerPage api={randomizer} focusRoster={route.view === 'heroes'} />

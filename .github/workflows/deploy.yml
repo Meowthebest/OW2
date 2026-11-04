@@ -27,6 +27,7 @@ jobs:
       - run: npm ci --no-fund --no-audit
       - run: npm run test:logic
       - run: npm run test:patches
+      - run: npm run test:players
       - run: npm run test:worker
       - run: npm run test:ui
       - run: npm run build

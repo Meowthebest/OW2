@@ -1,0 +1,65 @@
+name: Record Steam players
+
+# Reads Steam's concurrent player count for Overwatch and stores it on the player-data branch.
+# Readings get their own branch because a commit every five minutes on main would bury its
+# history and keep rejecting other pushes. The site reads these files directly, so a new
+# reading never needs a deploy.
+#
+# Steam caches this count for about 15 minutes, so most runs find nothing new and commit nothing.
+# Running every five minutes picks up each new count soon after it appears.
+#
+# GitHub runs schedules on a best-effort basis, so a run can be late or skipped. Each reading
+# stores the time Steam produced it, and the site shows that time.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: player-data
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Get the stored readings
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin player-data > /dev/null; then
+            git fetch --depth=1 origin player-data
+            git worktree add --detach .player-data FETCH_HEAD
+          else
+            git worktree add --orphan -b player-data .player-data
+          fi
+
+      - name: Take a reading
+        run: node scripts/players/collect.mjs .player-data
+
+      - name: Store it
+        working-directory: .player-data
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing new to store."
+            exit 0
+          fi
+          git commit -m "Record Steam player count"
+          for attempt in 1 2 3; do
+            if git push origin HEAD:refs/heads/player-data; then
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+          echo "::warning::Could not push this reading. The next run takes a new one."

@@ -7,11 +7,14 @@ export type CareerTab = 'overview' | 'statistics';
 /** The query holds shareable filters, as in #/patches?balance=nerf&role=tank. */
 export type PatchRoute = { view: 'patches'; tab: 'changes' | 'history'; query: string };
 
+export type PlayersRoute = { view: 'players'; query: string };
+
 export type Route =
   | { view: 'randomizer' }
   | { view: 'heroes' }
   | { view: 'career'; playerId?: string; tab: CareerTab; hero?: string }
-  | PatchRoute;
+  | PatchRoute
+  | PlayersRoute;
 
 function decode(segment: string) {
   try {
@@ -26,6 +29,7 @@ export function parseHash(hash: string): Route {
   const mark = raw.indexOf('?');
   const parts = (mark === -1 ? raw : raw.slice(0, mark)).split('/').filter(Boolean);
   if (parts[0] === 'heroes') return { view: 'heroes' };
+  if (parts[0] === 'players') return { view: 'players', query: mark === -1 ? '' : raw.slice(mark + 1) };
   if (parts[0] === 'patches') {
     return { view: 'patches', tab: parts[1] === 'history' ? 'history' : 'changes', query: mark === -1 ? '' : raw.slice(mark + 1) };
   }

@@ -8,9 +8,10 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node scripts/test-logic.mjs && node scripts/test-patches.mjs && node --test worker/test/worker.test.mjs && npm run build && node scripts/test-ui.mjs",
+    "test": "node scripts/test-logic.mjs && node scripts/test-patches.mjs && node scripts/test-players.mjs && node --test worker/test/worker.test.mjs && npm run build && node scripts/test-ui.mjs",
     "test:logic": "node scripts/test-logic.mjs",
     "test:patches": "node scripts/test-patches.mjs",
+    "test:players": "node scripts/test-players.mjs",
     "test:worker": "node --test worker/test/worker.test.mjs",
     "test:ui": "node scripts/test-ui.mjs",
     "check:roster": "node scripts/check-roster.mjs",
@@ -21,7 +22,8 @@
   "dependencies": {
     "lucide-react": "^0.441.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "uplot": "^1.6.32"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
