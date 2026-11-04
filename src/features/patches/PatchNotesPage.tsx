@@ -99,13 +99,13 @@ function Results({ cards, filters, multiple, onOpen }: { cards: HeroCardModel[];
                     {role === 'other' ? 'Other' : <><RoleIcon role={role} size={15} /> {ROLE_LABEL[role]}</>}
                     <span className="result-role__count">{list.length}</span>
                   </h3>
-                  <div className="hero-grid">
+                  <div className="patch-grid">
                     {list.map((card) => <HeroCard key={card.key} card={card} showDate={false} onOpen={onOpen} />)}
                   </div>
                 </div>
               ))
             ) : (
-              <div className="hero-grid">
+              <div className="patch-grid">
                 {section.cards.map((card) => <HeroCard key={card.key} card={card} showDate={multiple} onOpen={onOpen} />)}
               </div>
             )}
@@ -293,7 +293,7 @@ function ChangesTab({ index, query, routeKey, onQuery }: { index: PatchIndex; qu
         )}
 
         {busy && !files.data && (
-          <div className="hero-grid" aria-hidden="true">
+          <div className="patch-grid" aria-hidden="true">
             {Array.from({ length: 6 }, (_, index_) => <div key={index_} className="hero-card hero-card--skeleton"><div className="skeleton"><span /><span /><span /></div></div>)}
           </div>
         )}
@@ -359,7 +359,7 @@ export function PatchNotesPage({ route }: { route: PatchRoute }) {
       {index.status === 'loading' && !index.data && (
         <div className="patch-loading" aria-label="Loading patch data">
           <div className="skeleton skeleton--page" aria-hidden="true"><span /></div>
-          <div className="hero-grid" aria-hidden="true">
+          <div className="patch-grid" aria-hidden="true">
             {Array.from({ length: 6 }, (_, item) => <div key={item} className="hero-card hero-card--skeleton"><div className="skeleton"><span /><span /><span /></div></div>)}
           </div>
         </div>

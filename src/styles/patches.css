@@ -186,7 +186,7 @@ button.patch-tile:hover { border-color: var(--tile); transform: translateY(-1px)
 .result-role__title svg { color: var(--role); }
 .result-role__count { display: inline-flex; align-items: center; justify-content: center; min-width: 22px; height: 20px; padding: 0 6px; border-radius: 10px; background: var(--panel-3); color: var(--ink-2); font: 700 12px/1 var(--font-label); letter-spacing: 0; }
 
-.hero-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 10px; }
+.patch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 10px; }
 .hero-card {
   --accent: var(--neutral);
   position: relative;
