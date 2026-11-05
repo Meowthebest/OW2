@@ -197,7 +197,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   // Everything the shop has listed, whether sold alone or inside a bundle.
   const shopChecked = inputs.state.lastRecorded ?? null;
   const itemsByKey = new Map();
-  const noteShopItem = (record, key, { rarity, image, url }) => {
+  const noteShopItem = (record, key, { rarity, image }) => {
     record.rarity ??= rarity ?? null;
     if (image && !record.images.includes(image)) record.images.unshift(image);
     if (key) {
@@ -210,7 +210,6 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     if (!record.sources.some((source) => source.source === ITEMSHOP_NAME)) {
       record.sources.push({ source: ITEMSHOP_NAME, title: 'Data from itemshop.gg', url: core.ITEMSHOP_PAGE, checkedAt: shopChecked });
     }
-    if (url && !record.storeUrl) record.storeUrl = url;
     return record;
   };
   // The live Shop page builds ids from the shop's own labels, so an id that joined another record still has to lead there.
@@ -375,6 +374,35 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     }
   }
 
+  // Where each cosmetic can be bought by itself. Only the latest shop counts, since the store drops a page once an item leaves.
+  const storeUrls = new Map();
+  const knownItems = {};
+  for (const part of latest?.sections ?? []) {
+    if (part.upcoming) continue;
+    for (const [key] of part.listings) {
+      const item = inputs.items[key];
+      if (!item) continue;
+      if (item.kind === 'cosmetic') {
+        const record = itemsByKey.get(key);
+        if (record) {
+          const url = item.url ?? core.itemStoreUrl(key, item.name);
+          if (url) storeUrls.set(record.id, url);
+          knownItems[key] = { id: record.id, prices: record.prices };
+        }
+      }
+      for (const content of item.contents ?? []) {
+        const { type, heroName } = core.parseTypeLabel(content.typeLabel ?? null);
+        const record = type ? recordFor(type, core.heroIdFromName(heroName), content.name) : null;
+        if (!record) continue;
+        if (content.key) knownItems[content.key] = { id: record.id, prices: record.prices };
+        if (core.soldByItself(type, content.rarity ?? record.rarity) && !storeUrls.has(record.id)) {
+          const url = core.itemStoreUrl(content.key, content.name);
+          if (url) storeUrls.set(record.id, url);
+        }
+      }
+    }
+  }
+
   // Bundles, with their items as references to the one record of each cosmetic.
   const bundles = [];
   for (const [key, item] of Object.entries(inputs.items)) {
@@ -410,6 +438,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
         image: content.image ?? record?.images[0] ?? null,
         quantity: content.quantity ?? 1,
         prices: record?.prices ?? [],
+        ...(record && storeUrls.has(record.id) ? { storeUrl: storeUrls.get(record.id) } : {}),
       };
     });
     bundles.push({
@@ -560,6 +589,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
       lastSeen: record.lastSeen ?? null,
       seen: record.appearances,
       order: orderOf(record),
+      ...(storeUrls.has(record.id) ? { storeUrl: storeUrls.get(record.id) } : {}),
     };
     rows.push(row);
     details.set(record.id, {
@@ -572,7 +602,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
       stays: record.stays,
       sources: record.sources,
       mythic: record.mythic,
-      storeUrl: record.storeUrl ?? null,
+      storeUrl: storeUrls.get(record.id) ?? null,
     });
   }
   // Newest first, which is the order most visits ask for, so sorting in the browser has almost nothing to do.
@@ -745,6 +775,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
         schema: 1,
         recordedAt: inputs.state.lastRecorded ?? latest.at,
         rotation: rotationSummaries.at(-1),
+        items: knownItems,
         snapshot: {
           shopDate: latest.shopDate,
           updatedAt: latest.updatedAt,
@@ -780,7 +811,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
                 contents: (item.contents ?? []).map((content) => {
                   const parsed = core.parseTypeLabel(content.typeLabel);
                   const contentHero = core.heroIdFromName(parsed.heroName);
-                  return { key: content.key, name: content.name, typeLabel: content.typeLabel, type: parsed.type, hero: contentHero, rarity: content.rarity, image: content.image, quantity: content.quantity ?? 1, cosmeticId: parsed.type ? recordFor(parsed.type, contentHero, content.name)?.id ?? null : null };
+                  return { key: content.key, name: content.name, typeLabel: content.typeLabel, type: parsed.type, hero: contentHero, rarity: content.rarity, image: content.image, quantity: content.quantity ?? 1, cosmeticId: parsed.type ? recordFor(parsed.type, contentHero, content.name)?.id ?? null : null, url: core.soldByItself(parsed.type, content.rarity ?? null) ? core.itemStoreUrl(content.key, content.name) : null };
                 }),
                 statedCount: item.statedCount ?? null,
                 soldOut: false,

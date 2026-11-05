@@ -1,4 +1,4 @@
-import { Layers, Package, ShoppingBag } from 'lucide-react';
+import { ExternalLink, Layers, Package, ShoppingBag } from 'lucide-react';
 import { HeroPortrait } from '../../../components/media';
 import { cn } from '../../../lib/format';
 import { isSet, bundleProgress } from '../core/collection';
@@ -18,6 +18,14 @@ function HeroChip({ hero }: { hero: string | null }) {
     <span className="cx-hero-chip" title={info.name}>
       <HeroPortrait id={info.id} name={info.name} role={info.role} />
     </span>
+  );
+}
+
+function BuyLink({ href, name }: { href: string; name: string }) {
+  return (
+    <a className="cx-track__link cx-track__link--buy" href={href} target="_blank" rel="noreferrer" title="Buy on Battle.net" aria-label={`Buy ${name} on Battle.net`}>
+      Buy <ExternalLink size={12} aria-hidden="true" />
+    </a>
   );
 }
 
@@ -52,7 +60,7 @@ export function CosmeticCard({ row, seasonLabel }: { row: CatalogRow; seasonLabe
           </div>
         </div>
       </a>
-      <TrackButtons id={row.id} name={row.name} />
+      <TrackButtons id={row.id} name={row.name} lead={row.storeUrl ? <BuyLink href={row.storeUrl} name={row.name} /> : undefined} />
     </article>
   );
 }
@@ -74,7 +82,7 @@ export function CosmeticListRow({ row, seasonLabel }: { row: CatalogRow; seasonL
         <span className="cx-row__status"><AvailabilityPill availability={row.availability} /></span>
         <span className="cx-row__seen">{row.lastSeen ? `Seen ${dayText(row.lastSeen)}` : ''}</span>
       </a>
-      <TrackButtons id={row.id} name={row.name} />
+      <TrackButtons id={row.id} name={row.name} lead={row.storeUrl ? <BuyLink href={row.storeUrl} name={row.name} /> : undefined} />
     </li>
   );
 }
@@ -110,8 +118,13 @@ export function BundleCard({ bundle }: { bundle: Bundle }) {
   );
 }
 
-/** A bundle's item. Something that isn't a cosmetic, such as coins or tier skips, has no page to open. */
-export function BundleItemCard({ item, bundleName }: { item: BundleItem; bundleName: string }) {
+/**
+ * One item from a bundle or from the shop. Something that isn't a cosmetic, such as coins or tier skips, has no page to open.
+ * With buyFirst, clicking it goes straight to its page in the store. Otherwise it opens here, with a small link to buy it.
+ */
+export function BundleItemCard({ item, bundleName, buyFirst = false }: { item: BundleItem; bundleName?: string; buyFirst?: boolean }) {
+  const storeUrl = item.storeUrl ?? null;
+  const toStore = buyFirst && storeUrl !== null;
   const inner = (
     <>
       <div className="cx-card__media">
@@ -125,14 +138,31 @@ export function BundleItemCard({ item, bundleName }: { item: BundleItem; bundleN
         </p>
         <h3 className="cx-card__name">{item.name}{item.quantity > 1 ? ` × ${item.quantity}` : ''}</h3>
         <p className="cx-card__hero">{item.hero ? heroLabel(item.hero) : item.type ? (HERO_BOUND_TYPES.has(item.type) ? 'Hero not stated' : 'Any hero') : ' '}</p>
-        <div className="cx-card__foot"><PriceList prices={item.prices} limit={1} /></div>
+        <div className="cx-card__foot">
+          {/* The store sells in Coins, so a price in Credits would be the wrong number beside its link. */}
+          <PriceList prices={toStore ? item.prices.filter((price) => price.currency === 'coins') : item.prices} limit={1} />
+          {toStore &&<span className="cx-card__buy">Buy on Battle.net <ExternalLink size={12} aria-hidden="true" /></span>}
+        </div>
       </div>
     </>
   );
+  const details = item.id ? `#/cosmetics/${item.id}` : null;
   return (
     <article className="cx-card" data-rarity={item.rarity ?? 'none'}>
-      {item.id ? <a className="cx-card__link" href={`#/cosmetics/${item.id}`}>{inner}</a> : <div className="cx-card__link">{inner}</div>}
-      {item.id && <TrackButtons id={item.id} name={`${item.name} from ${bundleName}`} />}
+      {toStore ? (
+        <a className="cx-card__link" href={storeUrl} target="_blank" rel="noreferrer">{inner}</a>
+      ) : details ? (
+        <a className="cx-card__link" href={details}>{inner}</a>
+      ) : (
+        <div className="cx-card__link">{inner}</div>
+      )}
+      {item.id && (
+        <TrackButtons
+          id={item.id}
+          name={bundleName ? `${item.name} from ${bundleName}` : item.name}
+          lead={toStore ? <a className="cx-track__link" href={details!} aria-label={`Details for ${item.name}`}>Details</a> : storeUrl ? <BuyLink href={storeUrl} name={item.name} /> : undefined}
+        />
+      )}
     </article>
   );
 }

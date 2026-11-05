@@ -214,6 +214,7 @@ export function BundleDetailPage({ id }: { id: string }) {
       {bundle.items.length > 0 && (
         <section className="cx-related">
           <header className="cx-related__head"><h2 className="cx-section-title">What's included</h2></header>
+          {bundle.status === 'active' && bundle.items.some((item) => item.storeUrl) && <p className="cx-muted cx-muted--small">Want just one? Click an item to buy it on its own on Battle.net.</p>}
           {types.length > 1 && (
             <div className="cx-chips" role="group" aria-label="Item category">
               <button type="button" className={cn('cx-filter-chip', type === 'all' && 'is-active')} aria-pressed={type === 'all'} onClick={() => setType('all')}>All <span className="cx-filter-chip__count">{bundle.items.length}</span></button>
@@ -224,7 +225,7 @@ export function BundleDetailPage({ id }: { id: string }) {
               ))}
             </div>
           )}
-          <div className="cx-grid">{shownItems.map((item, index) => <BundleItemCard key={`${item.id ?? item.name}-${index}`} item={item} bundleName={bundle.name} />)}</div>
+          <div className="cx-grid">{shownItems.map((item, index) => <BundleItemCard key={`${item.id ?? item.name}-${index}`} item={item} bundleName={bundle.name} buyFirst={bundle.status === 'active'} />)}</div>
         </section>
       )}
       <ItemshopCredit />

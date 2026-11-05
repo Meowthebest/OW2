@@ -75,6 +75,14 @@ A failed, damaged or stale answer changes nothing, so the site keeps its last go
 
 The Shop page also asks itemshop.gg directly, which its documentation allows from a web page, so it can be newer than the last recording. If that fails it shows the recorded shop and says so. Countdowns only use end times from the source, because sections and items end at different times.
 
+### Buying one item
+
+itemshop.gg links whole listings, but its item keys hold the store's product numbers, and each item on sale has a page of its own at `us.shop.battle.net/en-us/family/overwatch/items/<number>/<name>`, even if it's only listed inside a bundle. `itemStoreUrl` in `core/shop.ts` builds that link, and the Shop page, bundle pages and catalogue use it.
+
+- **Only while it's on sale.** The store drops an item's page once it leaves, so links come from the latest shop and never from older product numbers.
+- **No links for mythics inside a bundle.** Those have no page of their own, so `soldByItself` leaves them out.
+- **Prices.** The source gives no price for something inside a bundle. Cards show the price the catalogue already has in Coins, and otherwise leave it to the store.
+
 ### Past shops need a key
 
 Past shops and item history need a free key.

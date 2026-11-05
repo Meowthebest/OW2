@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ITEMSHOP_API, normalizeShop, shardFile, shardOf, type ShopSnapshot } from './core';
-import type { BattlePass, Bundle, CatalogMeta, CatalogRow, CatalogStats, CosmeticDetail, DropCampaign, LootPool, MythicAspect, MythicItem, PassRules, RotationDetail, RotationSummary, Season } from './core/types';
+import type { BattlePass, Bundle, CatalogMeta, CatalogRow, CatalogStats, CosmeticDetail, DropCampaign, LootPool, MythicAspect, MythicItem, PassRules, Price, RotationDetail, RotationSummary, Season } from './core/types';
 
 // Everything here except the live shop check reads JSON that ships with the site. It's built ahead of time from the
 // stored sources by scripts/cosmetics/cli.mjs, split so that a visit loads only what its page needs.
@@ -62,6 +62,8 @@ export interface RecordedShop {
   schema: 1;
   recordedAt: string;
   rotation: RotationSummary;
+  /** What the live feed can't say about an item: its record in the catalogue and its known prices. */
+  items?: Record<string, { id: string; prices: Price[] }>;
   snapshot: ShopSnapshot;
   changes: { previousAt: string; added: RecordedChange[]; removed: RecordedChange[] } | null;
 }

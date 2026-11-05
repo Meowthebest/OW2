@@ -63,6 +63,8 @@ export interface CatalogRow {
   lastSeen: string | null;
   /** Recorded shop appearances. */
   seen: number;
+  /** The store's page for just this item, while it's on sale by itself. */
+  storeUrl?: string | null;
   /** Higher is newer. Built from the season and the product id, so it's only a rough order within a season. */
   order: number;
 }
@@ -118,6 +120,8 @@ export interface BundleItem {
   quantity: number;
   /** A price for this item alone, when a source lists one. */
   prices: Price[];
+  /** The store's page for just this item, while it's on sale by itself. */
+  storeUrl?: string | null;
 }
 
 export type BundleStatus = 'active' | 'previous';

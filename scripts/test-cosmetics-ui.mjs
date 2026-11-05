@@ -397,7 +397,7 @@ await test('a cosmetic page shows its record and links everything related', asyn
   await until(() => app.document.querySelector('.cx-bundle__link'), 'the bundle link');
   const page = text(app.document.querySelector('.cx-page'));
   assert.equal(text(app.document.querySelector('.cx-detail__name')), 'Aurora');
-  for (const piece of ['A made-up description.', '2026: Season 5', '101', '1,900 Coins', 'In the shop, in a bundle', 'Last seen in shop', 'Data from itemshop.gg', 'Overwatch Wiki']) assert.ok(page.includes(piece), piece);
+  for (const piece of ['A made-up description.', '2026: Season 5', '101', '1,900 Coins', 'In the shop, on its own or in a bundle', 'Last seen in shop', 'Data from itemshop.gg', 'Overwatch Wiki']) assert.ok(page.includes(piece), piece);
   assert.equal(app.document.querySelector('.cx-bundle__link').getAttribute('href'), '#/bundles/100');
   assert.ok(app.document.querySelector('a.cx-buy').href.startsWith('https://us.shop.battle.net/'), 'official store link');
   assert.ok([...app.document.querySelectorAll('.cx-related .cx-card__link')].some((link) => link.getAttribute('href') === '#/cosmetics/skin.ana.bastet'), 'similar skins link');
@@ -478,7 +478,140 @@ await test('a bundle page tracks owned items without claiming you own the bundle
   app.close();
 });
 
+const STORE_ITEM = (id, name) => `https://us.shop.battle.net/en-us/family/overwatch/items/${id}/${name}`;
+const opensStore = (link, url) => {
+  assert.equal(link.getAttribute('href'), url);
+  assert.equal(link.getAttribute('target'), '_blank', 'the site stays open');
+  assert.match(link.getAttribute('rel'), /noreferrer/);
+};
+
+await test('on a bundle in the shop, clicking an item goes to that item in the store', async () => {
+  const items = [
+    BUNDLE_ITEM({ storeUrl: STORE_ITEM(101, 'aurora') }),
+    BUNDLE_ITEM({ id: 'weapon-skin.ana.mythic', name: 'Mythic Rifle', type: 'weapon-skin', rarity: 'mythic' }),
+    BUNDLE_ITEM({ id: null, name: '20 Battle Pass Tiers', type: null, typeLabel: null, hero: null, rarity: null }),
+  ];
+  const app = boot({ hash: '#/bundles/100', api: dataApi({ files: { ...FILES, 'bundles.json': [{ ...BUNDLES[0], items }, BUNDLES[1]] } }) });
+  await until(() => app.document.querySelector('.cx-related .cx-card'), 'the items');
+  const [aurora, mythic, tiers] = app.document.querySelectorAll('.cx-related .cx-card');
+  opensStore(aurora.querySelector('.cx-card__link'), STORE_ITEM(101, 'aurora'));
+  assert.match(text(aurora), /Buy on Battle\.net/);
+  assert.equal(aurora.querySelector('.cx-track__link').getAttribute('href'), '#/cosmetics/skin.ana.aurora', 'its page here is still a click away');
+  assert.equal(mythic.querySelector('.cx-card__link').getAttribute('href'), '#/cosmetics/weapon-skin.ana.mythic', 'no store page, so it opens here');
+  assert.doesNotMatch(text(mythic), /Buy/);
+  assert.equal(tiers.querySelector('a'), null);
+  assert.match(text(app.document.querySelector('.cx-related')), /Want just one\?/);
+  app.close();
+});
+
+await test('on a bundle that has left, items open here, and only what\'s still on sale offers a buy link', async () => {
+  const items = [BUNDLE_ITEM({ storeUrl: STORE_ITEM(101, 'aurora') }), BUNDLE_ITEM({ id: 'skin.ana.bastet', name: 'Bastet' })];
+  const app = boot({ hash: '#/bundles/200', api: dataApi({ files: { ...FILES, 'bundles.json': [BUNDLES[0], { ...BUNDLES[1], items, types: ['skin'] }] } }) });
+  await until(() => app.document.querySelector('.cx-related .cx-card'), 'the items');
+  const [aurora, bastet] = app.document.querySelectorAll('.cx-related .cx-card');
+  assert.equal(aurora.querySelector('.cx-card__link').getAttribute('href'), '#/cosmetics/skin.ana.aurora');
+  opensStore(aurora.querySelector('.cx-track__link--buy'), STORE_ITEM(101, 'aurora'));
+  assert.equal(bastet.querySelector('.cx-track__link'), null);
+  assert.doesNotMatch(text(app.document.querySelector('.cx-related')), /Want just one\?/);
+  app.close();
+});
+
+await test('catalogue cards open here, with a buy link only on what\'s on sale', async () => {
+  const catalog = CATALOG.map((row, index) => (index === 0 ? { ...row, storeUrl: STORE_ITEM(101, 'aurora') } : row));
+  const app = boot({ hash: '#/cosmetics', api: dataApi({ files: { ...FILES, 'catalog.json': catalog } }) });
+  await until(() => app.document.querySelector('.cx-grid .cx-card'), 'the cards');
+  const cards = [...app.document.querySelectorAll('.cx-grid .cx-card')];
+  const aurora = cards.find((card) => text(card.querySelector('.cx-card__name')) === catalog[0].name);
+  assert.equal(aurora.querySelector('.cx-card__link').getAttribute('href'), `#/cosmetics/${catalog[0].id}`);
+  const buy = aurora.querySelector('.cx-track__link--buy');
+  opensStore(buy, STORE_ITEM(101, 'aurora'));
+  assert.equal(buy.getAttribute('aria-label'), `Buy ${catalog[0].name} on Battle.net`);
+  assert.equal(app.document.querySelectorAll('.cx-grid .cx-track__link--buy').length, 1, 'nothing else offers one');
+  app.close();
+});
+
+await test('a cosmetic out of the shop, or with no store page, has no buy button', async () => {
+  const app = boot({ hash: '#/cosmetics/skin.ana.bastet' });
+  await until(() => app.document.querySelector('.cx-detail__name'), 'the page');
+  assert.equal(app.document.querySelector('a.cx-buy'), null);
+  app.close();
+});
+
 // Shop
+const AURORA_CONTENT = { key: 'ow:item:101', name: 'Aurora', typeLabel: 'Skins · Ana', type: 'skin', hero: 'ana', rarity: 'legendary', image: null, quantity: 1, cosmeticId: 'skin.ana.aurora', url: STORE_ITEM(101, 'aurora') };
+const shopWith = (contents, items = {}) => ({
+  ...RECORDED,
+  items,
+  snapshot: { ...RECORDED.snapshot, sections: [{ title: 'Overwatch Shop', upcoming: false, endsAt: iso(5 * DAY), listings: [SHOP_LISTING({ contents })] }] },
+});
+const CHARM_CONTENT = { key: 'ow:item:102', name: 'Double Dice', typeLabel: 'Weapon Charms', type: 'weapon-charm', hero: null, rarity: 'epic', image: null, quantity: 1, cosmeticId: 'weapon-charm.double-dice', url: STORE_ITEM(102, 'double-dice') };
+const TIERS_CONTENT = { key: 'ow:item:103', name: '20 Battle Pass Tiers', typeLabel: null, type: null, hero: null, rarity: null, image: null, quantity: 1, cosmeticId: null, url: null };
+
+await test('Individual Cosmetics lists what\'s inside bundles, and a click goes to that item in the store', async () => {
+  const files = { ...FILES, 'shop.json': shopWith([AURORA_CONTENT, CHARM_CONTENT, TIERS_CONTENT], { 'ow:item:101': { id: 'skin.ana.aurora', prices: [{ amount: 1900, currency: 'coins' }] }, 'ow:item:102': { id: 'weapon-charm.double-dice', prices: [{ amount: 50, currency: 'credits' }] } }) };
+  const app = boot({ hash: '#/shop?show=cosmetics', api: dataApi({ files, live: () => jsonResponse({}, { status: 503 }) }) });
+  await until(() => app.document.querySelector('.cx-grid .cx-card'), 'the items');
+  assert.equal(app.document.querySelectorAll('.cx-bundle').length, 0, 'items, not bundles');
+  assert.deepEqual(cardNames(app.document), ['Aurora', 'Double Dice'], 'tier skips aren\'t a cosmetic');
+  assert.equal(resultCount(app.document), '2');
+  const [aurora, charm] = app.document.querySelectorAll('.cx-grid .cx-card');
+  opensStore(aurora.querySelector('.cx-card__link'), STORE_ITEM(101, 'aurora'));
+  assert.match(text(aurora), /1,900 Coins/);
+  assert.equal(aurora.querySelector('.cx-track__link').getAttribute('href'), '#/cosmetics/skin.ana.aurora');
+  assert.ok(aurora.querySelector('.cx-track [data-mark="owned"]'), 'the marks are still there');
+  assert.doesNotMatch(text(charm), /Credits/, 'the store sells in Coins, so a Credits price would be wrong here');
+  app.close();
+});
+
+await test('the live shop\'s items join their catalogue records, and new ones still link to the store', async () => {
+  const files = { ...FILES, 'shop.json': shopWith([AURORA_CONTENT], { 'ow:item:101': { id: 'skin.ana.aurora-canonical', prices: [{ amount: 1900, currency: 'coins' }] } }) };
+  const contents = [
+    { name: 'Aurora', type: 'Skins · Ana', rarity: { name: 'Legendary', color: '#fff' }, image: null, quantity: 1, itemKey: 'ow:item:101', paint: null },
+    { name: 'Brand New', type: 'Skins · Ana', rarity: { name: 'Epic', color: '#fff' }, image: null, quantity: 1, itemKey: 'ow:item:999', paint: null },
+  ];
+  const live = () => jsonResponse(LIVE({ sections: [{ title: 'Overwatch Shop', upcoming: false, endsAt: iso(2 * DAY), items: [liveItem({ contents })] }] }));
+  const app = boot({ hash: '#/shop?show=cosmetics', api: dataApi({ files, live }) });
+  const cards = await until(() => { const list = [...app.document.querySelectorAll('.cx-grid .cx-card')]; return list.length === 2 && /1,900 Coins/.test(text(list[0])) ? list : null; }, 'the live items');
+  assert.equal(cards[0].querySelector('.cx-track__link').getAttribute('href'), '#/cosmetics/skin.ana.aurora-canonical', 'marks and links use the catalogue\'s own id');
+  opensStore(cards[1].querySelector('.cx-card__link'), STORE_ITEM(999, 'brand-new'));
+  assert.doesNotMatch(text(cards[1]), /Coins/, 'no price is guessed');
+  app.close();
+});
+
+await test('Individual Cosmetics filters by type, hero and search, and keeps them in the address', async () => {
+  const files = { ...FILES, 'shop.json': shopWith([AURORA_CONTENT, CHARM_CONTENT]) };
+  const app = boot({ hash: '#/shop?show=cosmetics', api: dataApi({ files, live: () => jsonResponse({}, { status: 503 }) }) });
+  await until(() => app.document.querySelector('.cx-grid .cx-card'), 'the items');
+  click(buttonNamed(app.document, /^Weapon Charms/));
+  await until(() => cardNames(app.document).join() === 'Double Dice', 'the type filter');
+  await until(() => app.window.location.hash === '#/shop?show=cosmetics&type=weapon-charm', 'the address');
+  click(buttonNamed(app.document, 'Reset'));
+  await until(() => cardNames(app.document).length === 2, 'the reset');
+  setInput(app.window, selectLabeled(app.document, 'Hero'), 'ana');
+  await until(() => cardNames(app.document).join() === 'Aurora', 'the hero filter');
+  await until(() => app.window.location.hash === '#/shop?show=cosmetics&hero=ana', 'the address');
+  click(buttonNamed(app.document, 'Reset'));
+  await until(() => cardNames(app.document).length === 2, 'the reset');
+  setInput(app.window, app.document.querySelector('.cx-toolbar input[type="search"]'), 'nothing like this');
+  await until(() => /No items match/.test(text(app.document.querySelector('.cx-page'))), 'the empty state');
+  app.close();
+  const linked = boot({ hash: '#/shop?show=cosmetics&q=dice', api: dataApi({ files, live: () => jsonResponse({}, { status: 503 }) }) });
+  await until(() => cardNames(linked.document).join() === 'Double Dice', 'a shared link');
+  linked.close();
+});
+
+await test('a single cosmetic on the shop goes straight to the store, and a bundle opens here first', async () => {
+  const alone = SHOP_LISTING({ key: 'ow:item:200', name: 'Eclypse', kind: 'cosmetic', typeLabel: 'Skin - Illari', type: 'skin', hero: 'illari', amount: 1900, badge: null, statedCount: null, url: STORE_ITEM(200, 'eclypse'), cosmeticId: 'skin.illari.eclypse' });
+  const files = { ...FILES, 'shop.json': { ...RECORDED, snapshot: { ...RECORDED.snapshot, sections: [{ title: 'Overwatch Shop', upcoming: false, endsAt: iso(5 * DAY), listings: [SHOP_LISTING({}), alone] }] } } };
+  const app = boot({ hash: '#/shop', api: dataApi({ files, live: () => jsonResponse({}, { status: 503 }) }) });
+  const cards = await until(() => { const list = [...app.document.querySelectorAll('.cx-shop-card')]; return list.length === 2 ? list : null; }, 'the listings');
+  assert.equal(cards[0].querySelector('.cx-bundle__link').getAttribute('href'), '#/bundles/100');
+  assert.equal(cards[0].querySelector('.cx-shop-card__more'), null);
+  opensStore(cards[1].querySelector('.cx-bundle__link'), STORE_ITEM(200, 'eclypse'));
+  assert.equal(cards[1].querySelector('.cx-shop-card__more').getAttribute('href'), '#/cosmetics/skin.illari.eclypse');
+  app.close();
+});
+
 await test('the live shop shows with its attribution, and new items compare with the recording', async () => {
   const app = boot({ hash: '#/shop' });
   await until(() => [...app.document.querySelectorAll('.cx-bundle__name')].some((name) => text(name) === 'Brand New Bundle'), 'the live listing');

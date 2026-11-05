@@ -1,10 +1,11 @@
 // Reads itemshop.gg's shop answer. The recording job and the Shop page share this, so both see the same rules.
 // https://itemshop.gg/developers
-import { cosmeticId, hash32, heroIdFromName, safeUrl, slugify } from './text';
-import type { CosmeticType, Rarity, ShopStay } from './types';
+import { cosmeticId, hash32, heroIdFromName, normalizeText, safeUrl, slugify } from './text';
+import { COSMETIC_TYPES, RARITY_RANK, type CosmeticType, type Price, type Rarity, type ShopStay } from './types';
 
 export const ITEMSHOP_API = 'https://itemshop.gg/api/v1';
 export const ITEMSHOP_PAGE = 'https://itemshop.gg/overwatch';
+const STORE_ITEMS = 'https://us.shop.battle.net/en-us/family/overwatch/items';
 
 export class ShopFormatError extends Error {}
 
@@ -63,6 +64,8 @@ export interface ShopContent {
   quantity: number;
   /** Null for something that isn't a cosmetic, such as tier skips or coins. */
   cosmeticId: string | null;
+  /** The store's page for just this item. Null when it can't be bought by itself. */
+  url: string | null;
 }
 
 export type ListingKind = 'bundle' | 'cosmetic' | 'product';
@@ -125,6 +128,20 @@ function storeUrl(value: unknown) {
   return host === 'battle.net' || host.endsWith('.battle.net') || host.endsWith('.blizzard.com') ? url : null;
 }
 
+/**
+ * The store's own page for one item, which works whether it's listed alone or only shown inside a bundle.
+ * The feed only links whole listings, but its item keys hold the store's product numbers.
+ */
+export function itemStoreUrl(key: string | null | undefined, name: string) {
+  const product = /^ow:item:(\d+)$/.exec(key ?? '')?.[1];
+  if (!product) return null;
+  const slug = slugify(name);
+  return slug ? `${STORE_ITEMS}/${product}/${slug}` : `${STORE_ITEMS}/${product}`;
+}
+
+/** Mythics are unlocked with prisms in the game. Inside a bundle they have no store page of their own. */
+export const soldByItself = (type: CosmeticType | null, rarity: Rarity | null) => type !== null && rarity !== 'mythic';
+
 function readContent(raw: unknown): ShopContent | null {
   if (!isObject(raw)) return null;
   const name = text(raw.name);
@@ -132,16 +149,19 @@ function readContent(raw: unknown): ShopContent | null {
   const typeLabel = text(raw.type);
   const { type, heroName } = parseTypeLabel(typeLabel);
   const hero = heroIdFromName(heroName);
+  const key = text(raw.itemKey);
+  const rarity = rarityFromName(isObject(raw.rarity) ? raw.rarity.name : null);
   return {
-    key: text(raw.itemKey),
+    key,
     name,
     typeLabel,
     type,
     hero,
-    rarity: rarityFromName(isObject(raw.rarity) ? raw.rarity.name : null),
+    rarity,
     image: safeUrl(raw.image),
     quantity: amount(raw.quantity) ?? 1,
     cosmeticId: type ? cosmeticId(type, hero, name) : null,
+    url: soldByItself(type, rarity) ? itemStoreUrl(key, name) : null,
   };
 }
 
@@ -166,6 +186,7 @@ function readListing(raw: unknown): ShopListing {
   const availability = isObject(raw.availability) ? raw.availability : {};
   const images = isObject(raw.images) ? raw.images : {};
   const label = text(price.label);
+  const rarity = rarityFromName(isObject(raw.rarity) ? raw.rarity.name : null);
   // Older records put a dollar price in the label, and still call the currency Coins.
   const dollars = amount(price.amount) === null ? /^US\$\s*(\d+(?:\.\d+)?)$/.exec(label ?? '') : null;
 
@@ -177,7 +198,7 @@ function readListing(raw: unknown): ShopListing {
     typeLabel,
     type: kind === 'cosmetic' ? type : null,
     hero,
-    rarity: rarityFromName(isObject(raw.rarity) ? raw.rarity.name : null),
+    rarity,
     amount: dollars ? Number(dollars[1]) : amount(price.amount),
     priceLabel: dollars ? null : label,
     currency: dollars ? 'USD' : text(price.currency) ?? '',
@@ -190,7 +211,7 @@ function readListing(raw: unknown): ShopListing {
     contents,
     statedCount: stated ? Number(stated[1]) : null,
     soldOut: raw.soldOut === true,
-    url: storeUrl(raw.sourceUrl),
+    url: storeUrl(raw.sourceUrl) ?? (kind === 'cosmetic' && soldByItself(type, rarity) ? itemStoreUrl(key, name) : null),
     cosmeticId: kind === 'cosmetic' && type ? cosmeticId(type, hero, name) : null,
   };
 }
@@ -284,12 +305,88 @@ export type ShopGroup = 'all' | 'bundles' | 'cosmetics' | 'offers' | 'esports' |
 export const SHOP_GROUPS: { id: ShopGroup; label: string; hint: string }[] = [
   { id: 'all', label: 'Everything', hint: 'Everything the source lists right now.' },
   { id: 'bundles', label: 'Bundles', hint: 'Listings sold as bundles.' },
-  { id: 'cosmetics', label: 'Individual Cosmetics', hint: 'Single cosmetics sold on their own.' },
+  { id: 'cosmetics', label: 'Individual Cosmetics', hint: 'Every cosmetic you can buy on its own, including ones that also come in a bundle.' },
   { id: 'offers', label: 'Special Offers', hint: 'Listings with a store discount tag, such as "37% off".' },
   { id: 'esports', label: 'Esports', hint: 'Everything in the Esports section of the shop.' },
   { id: 'limited', label: 'Limited Time', hint: 'Listings with an end time from the source.' },
   { id: 'passes', label: 'Battle Pass & Packs', hint: 'Battle passes, event passes and other products that aren\'t a single cosmetic.' },
 ];
+
+/** A cosmetic you can buy by itself, whether the store lists it alone or only shows it inside bundles. */
+export interface ShopItem {
+  key: string;
+  /** Canonical cosmetic id, the same field a bundle's items use. */
+  id: string | null;
+  name: string;
+  type: CosmeticType;
+  typeLabel: string | null;
+  rarity: Rarity | null;
+  hero: string | null;
+  image: string | null;
+  quantity: number;
+  /** Only known here when the store lists it alone. The source gives no price for an item inside a bundle. */
+  prices: Price[];
+  storeUrl: string;
+  /** The bundles in this shop that include it. */
+  bundles: string[];
+}
+
+export interface ShopItemFilters {
+  q: string;
+  hero: string;
+  type: CosmeticType | 'all';
+}
+
+const TYPE_ORDER = new Map<string, number>(COSMETIC_TYPES.map((type, index) => [type.id, index]));
+const rarityRank = (rarity: Rarity | null) => (rarity ? RARITY_RANK[rarity] : -1);
+
+/**
+ * Everything in the shop that can be bought by itself, once each, under the first section that has it.
+ * Skips sections that aren't on sale yet and anything listed as sold out, since those have no page to buy from.
+ */
+export function shopItemGroups<Section extends Pick<ShopSection, 'upcoming' | 'listings'>>(sections: readonly Section[]) {
+  const found = new Map<string, ShopItem>();
+  const groups: { section: Section; items: ShopItem[] }[] = [];
+  for (const section of sections) {
+    if (section.upcoming) continue;
+    const items: ShopItem[] = [];
+    const note = (item: ShopItem) => {
+      const known = found.get(item.key);
+      if (known) {
+        if (known.prices.length === 0) known.prices = item.prices;
+        known.bundles.push(...item.bundles.filter((name) => !known.bundles.includes(name)));
+        return;
+      }
+      found.set(item.key, item);
+      items.push(item);
+    };
+    for (const listing of section.listings) {
+      if (listing.soldOut) continue;
+      if (listing.kind === 'cosmetic' && listing.type && listing.url) {
+        const coins = listing.amount !== null && /^coins$/i.test(listing.currency);
+        note({ key: listing.key, id: listing.cosmeticId, name: listing.name, type: listing.type, typeLabel: listing.typeLabel, rarity: listing.rarity, hero: listing.hero, image: listing.image, quantity: 1, prices: coins ? [{ amount: listing.amount!, currency: 'coins' }] : [], storeUrl: listing.url, bundles: [] });
+      }
+      for (const content of listing.contents) {
+        if (!content.url || !content.type || !content.key) continue;
+        note({ key: content.key, id: content.cosmeticId, name: content.name, type: content.type, typeLabel: content.typeLabel, rarity: content.rarity, hero: content.hero, image: content.image, quantity: content.quantity, prices: [], storeUrl: content.url, bundles: [listing.name] });
+      }
+    }
+    items.sort((a, b) => (TYPE_ORDER.get(a.type) ?? 99) - (TYPE_ORDER.get(b.type) ?? 99) || rarityRank(b.rarity) - rarityRank(a.rarity) || a.name.localeCompare(b.name));
+    if (items.length > 0) groups.push({ section, items });
+  }
+  return groups;
+}
+
+/** Searches an item's name, its type and hero as the store labels them, and the bundles it comes in. */
+export function matchesShopItem(item: ShopItem, { q, hero, type }: ShopItemFilters) {
+  if (type !== 'all' && item.type !== type) return false;
+  if (hero !== 'all' && item.hero !== hero) return false;
+  const words = normalizeText(q).split(' ').filter(Boolean);
+  if (words.length === 0) return true;
+  const searched = normalizeText([item.name, item.typeLabel ?? '', ...item.bundles].join(' '));
+  const joined = searched.replace(/ /g, '');
+  return words.every((word) => searched.includes(word) || joined.includes(word));
+}
 
 export function matchesShopGroup(listing: ShopListing, section: Pick<ShopSection, 'title' | 'endsAt'>, group: ShopGroup) {
   switch (group) {

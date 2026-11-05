@@ -42,13 +42,13 @@ export function PriceList({ prices, limit }: { prices: Price[]; limit?: number }
 }
 
 /** The favorite, wishlist and owned marks. All of them are manual and saved by the visitor. */
-export function TrackButtons({ id, name, labels = false }: { id: string; name: string; labels?: boolean }) {
+export function TrackButtons({ id, name, labels = false, lead }: { id: string; name: string; labels?: boolean; lead?: React.ReactNode }) {
   const entries = useCollection();
   const favorite = isSet(entries, 'favorite', id);
   const wished = isSet(entries, 'wishlist', id);
   const owned = isSet(entries, 'owned', id);
-  return (
-    <div className={cn('cx-track', labels && 'cx-track--labels')}>
+  const marks = (
+    <>
       <button type="button" className={cn('cx-track__button', favorite && 'is-on')} data-mark="favorite" aria-pressed={favorite} aria-label={`Favorite ${name}`} title="Favorite" onClick={() => toggleMark('favorite', id)}>
         <Heart size={labels ? 16 : 15} aria-hidden="true" fill={favorite ? 'currentColor' : 'none'} />
         {labels && <span>Favorite</span>}
@@ -61,6 +61,11 @@ export function TrackButtons({ id, name, labels = false }: { id: string; name: s
         <Check size={labels ? 16 : 15} aria-hidden="true" strokeWidth={owned ? 3 : 2} />
         {labels && <span>{owned ? 'Owned' : 'Mark as owned'}</span>}
       </button>
+    </>
+  );
+  return (
+    <div className={cn('cx-track', labels && 'cx-track--labels', Boolean(lead) && 'cx-track--lead')}>
+      {lead ? <>{lead}<span className="cx-track__marks">{marks}</span></> : marks}
     </div>
   );
 }

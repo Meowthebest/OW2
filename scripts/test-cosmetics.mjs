@@ -223,6 +223,63 @@ await test('shop groups sort listings the way their labels say', () => {
   assert.ok(!group('limited').includes('Premium Battle Pass'), 'no end time means not limited');
 });
 
+const STORE = 'https://us.shop.battle.net/en-us/family/overwatch/items';
+
+await test('each item has its own store page', () => {
+  assert.equal(core.itemStoreUrl('ow:item:2145353', 'EVE'), `${STORE}/2145353/eve`);
+  assert.equal(core.itemStoreUrl('ow:item:7', 'Lily & Providence'), `${STORE}/7/lily-and-providence`);
+  assert.equal(core.itemStoreUrl('ow:item:7', '(/°□°)/'), `${STORE}/7`, 'the store doesn\'t need the name part');
+  for (const key of [null, undefined, '', 'ow:bundle:7', 'listing:7:eve', 'ow:item:7:eve', 'ow:item:eve']) assert.equal(core.itemStoreUrl(key, 'Eve'), null, String(key));
+
+  const [eve, intro, tiers] = core.normalizeShop(shopAnswer([section('S', [listing()])])).sections[0].listings[0].contents;
+  assert.equal(eve.url, `${STORE}/101/eve`);
+  assert.equal(intro.url, `${STORE}/102/stellar-reload`);
+  assert.equal(tiers.url, null, 'tier skips aren\'t a cosmetic');
+});
+
+await test('a mythic inside a bundle has no store page of its own', () => {
+  const sections = core.normalizeShop(shopAnswer([section('S', [listing({ contents: [content('Treblemaker', 'Weapon Skin · Lúcio', 'Mythic', 'ow:item:500')] })])])).sections;
+  assert.equal(sections[0].listings[0].contents[0].url, null);
+  assert.deepEqual(core.shopItemGroups(sections), []);
+});
+
+await test('a single cosmetic with no link from the feed still gets its page, and a bundle doesn\'t', () => {
+  const [alone, whole] = core.normalizeShop(shopAnswer([section('S', [{ ...single, sourceUrl: null }, listing({ sourceUrl: null })])])).sections[0].listings;
+  assert.equal(alone.url, `${STORE}/200/eclypse`);
+  assert.equal(whole.url, null);
+});
+
+await test('what you can buy on its own is listed once, wherever it appears', () => {
+  const second = listing({ id: 'b2', itemKey: 'ow:bundle:900', name: 'Second Bundle', contents: [content('Eve', 'Skins · Widowmaker', 'Legendary', 'ow:item:101'), content('Eclypse', 'Skins · Illari', 'Legendary', 'ow:item:200')] });
+  const team = listing({ id: 'b3', itemKey: 'ow:bundle:500', name: 'Team Bundle', contents: [content('OWCS Team', 'Sprays', 'Common', 'ow:item:501'), content('Lily', 'Skins · D.Va', 'Ultra', 'ow:item:502'), content('Eve', 'Skins · Widowmaker', 'Legendary', 'ow:item:101')] });
+  const later = listing({ id: 'b4', itemKey: 'ow:bundle:600', name: 'Later Bundle', contents: [content('Later', 'Skins · Ana', 'Epic', 'ow:item:601')] });
+  const gone = listing({ id: 'b5', itemKey: 'ow:bundle:700', name: 'Gone Bundle', soldOut: true, contents: [content('Gone', 'Skins · Ana', 'Epic', 'ow:item:701')] });
+  const { sections } = core.normalizeShop(shopAnswer([section('Shop', [listing(), second]), section('Esports', [single, team, gone]), section('Next Week', [later], { upcoming: true })]));
+  const groups = core.shopItemGroups(sections);
+  assert.deepEqual(groups.map(({ section: part, items }) => [part.title, items.map((item) => item.name)]), [
+    ['Shop', ['Eclypse', 'Eve', 'Stellar Reload']],
+    ['Esports', ['Lily', 'OWCS Team']],
+  ], 'skins first, what isn\'t on sale yet or is sold out left off, and no repeats');
+  const items = groups.flatMap((group) => group.items);
+  const find = (name) => items.find((item) => item.name === name);
+  assert.deepEqual(find('Eve').bundles, ['Test Mega Bundle', 'Second Bundle', 'Team Bundle']);
+  assert.equal(find('Eve').storeUrl, `${STORE}/101/eve`);
+  assert.deepEqual(find('Eve').prices, [], 'a bundle\'s price is never an item\'s price');
+  assert.deepEqual(find('Eclypse').prices, [{ amount: 1900, currency: 'coins' }], 'its own listing gives its own price, even if a bundle came first');
+  assert.equal(find('Eclypse').storeUrl, `${STORE}/200/eclypse`);
+  assert.equal(find('Eclypse').id, 'skin.illari.eclypse');
+
+  const names = (filters) => items.filter((item) => core.matchesShopItem(item, { q: '', hero: 'all', type: 'all', ...filters })).map((item) => item.name);
+  assert.equal(names({}).length, items.length);
+  assert.deepEqual(names({ type: 'spray' }), ['OWCS Team']);
+  assert.deepEqual(names({ hero: 'illari' }), ['Eclypse']);
+  assert.deepEqual(names({ q: 'widowmaker' }), ['Eve', 'Stellar Reload'], 'searches the hero');
+  assert.deepEqual(names({ q: 'EVE wido' }), ['Eve'], 'every word has to match');
+  assert.deepEqual(names({ q: 'dva' }), ['Lily'], 'a hero\'s name with a dot still matches');
+  assert.deepEqual(names({ q: 'team bundle', type: 'skin' }), ['Eve', 'Lily'], 'searches the bundles it comes in');
+  assert.deepEqual(names({ q: 'nothing like this' }), []);
+});
+
 await test('a countdown needs a real time', () => {
   assert.equal(core.secondsUntil(null, 0), null);
   assert.equal(core.secondsUntil('not a time', 0), null);
@@ -617,6 +674,29 @@ await test('every bundle item and every shop link resolves', async () => {
     if (change.href?.startsWith('#/bundles/')) assert.ok(ids.has(change.href.split('/').pop()));
     if (change.href?.startsWith('#/cosmetics/')) assert.ok(catalog.has(change.href.split('/').pop()));
   }
+});
+
+await test('a cosmetic has a store link only while it\'s on sale', async () => {
+  const catalog = readOut('catalog.json');
+  const urlOf = (id) => catalog.find((item) => item.id === id)?.storeUrl;
+  assert.equal(urlOf('skin.widowmaker.eve'), `${STORE}/101/eve`, 'on sale inside a bundle');
+  assert.equal(shardFor('skin.widowmaker.eve').storeUrl, `${STORE}/101/eve`);
+  assert.equal(urlOf('spray.owcs-team'), `${STORE}/501/owcs-team`);
+  for (const id of ['skin.illari.eclypse', 'highlight-intro.widowmaker.stellar-reload']) {
+    assert.equal(urlOf(id), undefined, `${id} has left the shop`);
+    assert.equal(shardFor(id).storeUrl, null, id);
+  }
+  const old = readOut('bundles.json').find((bundle) => bundle.id === '100');
+  assert.equal(old.status, 'previous');
+  const inOld = (name) => old.items.find((item) => item.name === name);
+  assert.equal(inOld('Eve').storeUrl, `${STORE}/101/eve`, 'still sold through another bundle');
+  assert.equal(inOld('Stellar Reload').storeUrl, undefined);
+  assert.equal(inOld('20 Battle Pass Tiers').storeUrl, undefined);
+  const shop = readOut('shop.json');
+  const contents = shop.snapshot.sections.flatMap((part) => part.listings).find((row) => row.key === 'ow:bundle:900').contents;
+  assert.equal(contents[0].url, `${STORE}/101/eve`, 'the recorded shop can list items the same way as the live one');
+  assert.deepEqual(Object.keys(shop.items).sort(), ['ow:item:101', 'ow:item:501'], 'only what\'s on sale now');
+  assert.equal(shop.items['ow:item:101'].id, 'skin.widowmaker.eve');
 });
 
 await test('appearances are traceable: dates, prices and how it was sold', async () => {
@@ -1227,6 +1307,28 @@ await test('a missing hero is filled only when it can be worked out', () => {
   assert.equal(byName('Mercy And Friends Bundle').contents[1].typeLabel, 'Highlight Intros');
   assert.equal(result.items['listing:starlight.kiriko'].typeLabel, 'Skins · Kiriko', 'the same product states its hero on another day');
   assert.equal(result.items['listing:starlight'].kind, 'product', 'a skin with no hero anywhere can\'t be a cosmetic record');
+});
+
+await test('a mythic on sale in a bundle gets no store link, and an old product id isn\'t reused', async () => {
+  resetData();
+  const mythic = content('Treblemaker', 'Weapon Skin · Lúcio', 'Mythic', 'ow:item:500');
+  const earlier = listing({ id: 'p1', itemKey: 'ow:bundle:810', name: 'Earlier Bundle', type: 'Bundle 1', contents: [content('Eve', 'Skins · Widowmaker', 'Legendary', 'ow:item:90')] });
+  api.shop = shopAnswer([section('Overwatch Shop', [earlier])]);
+  await sync();
+  api.fingerprint = 'fp-2';
+  api.etag = 'W/"after-earlier"';
+  api.changedAt = '2026-11-10T19:15:00.000Z';
+  const now = listing({ id: 'p2', itemKey: 'ow:bundle:811', name: 'Mythic Bundle', type: 'Bundle 2', contents: [mythic, content('Eve', 'Skins · Widowmaker', 'Legendary', 'ow:item:91')] });
+  api.shop = shopAnswer([section('Overwatch Shop', [now])]);
+  await sync();
+  await buildCatalog({ now: new Date('2026-11-11T00:00:00Z') });
+  const treblemaker = shardFor('weapon-skin.lucio.treblemaker');
+  assert.equal(treblemaker.availability, 'in-shop');
+  assert.equal(treblemaker.storeUrl, null);
+  const bundle = readOut('bundles.json').find((item) => item.id === '811');
+  assert.equal(bundle.items.find((item) => item.name === 'Treblemaker').storeUrl, undefined);
+  assert.deepEqual(shardFor('skin.widowmaker.eve').productIds, [90, 91], 'the same skin under two product ids');
+  assert.equal(shardFor('skin.widowmaker.eve').storeUrl, `${STORE}/91/eve`, 'the id on sale now, since the old one\'s page is gone');
 });
 
 await test('prices from inside a bundle stay the bundle\'s, and one stay counts once', async () => {

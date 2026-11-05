@@ -293,7 +293,7 @@ export function CosmeticDetailPage({ id }: { id: string }) {
             {seasonLabel && <Fact label="Season introduced"><a className="text-link" href={`#/cosmetics?season=${detail.season}`}>{seasonLabel}</a></Fact>}
             {eventLabel && <Fact label="Event or release"><a className="text-link" href={`#/cosmetics?event=${detail.event}`}>{eventLabel}</a></Fact>}
             {detail.prices.length > 0 && <Fact label="Known price"><PriceList prices={detail.prices} /></Fact>}
-            {detail.prices.length === 0 && detail.stays.length > 0 && detail.stays.every((stay) => stay.bundle) && <Fact label="Known price">Only recorded inside bundles, with no price of its own</Fact>}
+            {detail.prices.length === 0 && detail.stays.length > 0 && detail.stays.every((stay) => stay.bundle) && <Fact label="Known price">{detail.storeUrl ? 'Shown on Battle.net' : 'Only recorded inside bundles, with no price of its own'}</Fact>}
             {detail.productIds.length > 0 && <Fact label={detail.productIds.length === 1 ? 'Product ID' : 'Product IDs'}><span className="cx-mono">{detail.productIds.join(', ')}</span></Fact>}
             {detail.acquisition.length > 0 && (
               <Fact label="How to get it">
@@ -306,7 +306,7 @@ export function CosmeticDetailPage({ id }: { id: string }) {
               </Fact>
             )}
             <Fact label="Shop status">
-              {detail.availability === 'in-shop' ? (activeBundles.length > 0 ? `In the shop, in ${activeBundles.length === 1 ? 'a bundle' : `${activeBundles.length} bundles`}` : 'In the shop') : 'Not in the most recent shop data'}
+              {detail.availability === 'in-shop' ? (activeBundles.length > 0 ? `In the shop, ${detail.storeUrl ? 'on its own or ' : ''}in ${activeBundles.length === 1 ? 'a bundle' : `${activeBundles.length} bundles`}` : 'In the shop') : 'Not in the most recent shop data'}
             </Fact>
             <Fact label="Last seen in shop">{detail.lastSeen ? dayText(detail.lastSeen) : 'Not recorded'}</Fact>
             <Fact label="Shop appearances">{detail.seen > 0 ? formatInt(detail.seen) : 'None recorded'}</Fact>
