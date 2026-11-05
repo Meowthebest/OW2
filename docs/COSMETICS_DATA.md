@@ -95,7 +95,7 @@ itemshop.gg's record starts on September 24, 2026, so nothing earlier is availab
 
 ## Importing the wiki
 
-The wiki's terms don't allow automated access without consent, so this is done by a person in their own browser. It takes about two minutes.
+The wiki's terms don't allow automated access without consent, so this is done by a person in their own browser. It takes about two minutes. A [GitHub issue](ALERTS.md) reminds you when a season has ended.
 
 1. Build the export links from the current roster, and open each one in your browser:
 
@@ -147,7 +147,7 @@ There's no admin web page. Admin access is write access to the repository.
 | --- | --- |
 | Sync the shop now | **Actions → Record the shop → Run workflow** |
 | Re-read every item's history | The same workflow, with `stays` |
-| Add or fix a Twitch campaign or a loot pool | Edit `data/cosmetics/curated/*.json`. Each record needs a source, or the build stops |
+| Add or fix a Twitch campaign or a loot pool | Edit `data/cosmetics/curated/*.json`. Each record needs a source, or the build stops. A [GitHub issue](ALERTS.md) flags new posts from Blizzard |
 | Rename a cosmetic | `corrections.json`: `"rename": { "old.id": "new.id" }` |
 | Fix a field | `corrections.json`: `"set": { "skin.ana.citrine": { "rarity": "rare" } }` |
 | Hide a bad record | `corrections.json`: `"hide": ["skin.ana.wrong"]` |

@@ -1,0 +1,62 @@
+name: Check what needs a person
+
+# Keeps one GitHub issue open for each thing on the site that a person has to deal with. See docs/ALERTS.md.
+# It runs after each patch sync, which the Worker in timer/ starts every six hours, so it needs no timer of its own.
+# The schedule below is only a backstop. Anyone with write access can also run it by hand from the Actions tab.
+
+on:
+  workflow_run:
+    workflows: [Sync patch notes]
+    types: [completed]
+  schedule:
+    - cron: '23 5 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only report, without opening or closing issues
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+concurrency:
+  group: site-alerts
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      # Remembers when each source was last readable, so a short outage stays quiet. Losing it only restarts that clock.
+      - name: Restore what the last run knew
+        uses: actions/cache/restore@v4
+        with:
+          path: .alerts-state.json
+          key: alerts-state-${{ github.run_id }}
+          restore-keys: alerts-state-
+
+      - name: Check and update the issues
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          # Only says whether the secret is set. The job never reads its value.
+          HAS_ITEMSHOP_KEY: ${{ secrets.ITEMSHOP_API_KEY != '' }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: node scripts/alerts/cli.mjs
+
+      - name: Save what this run knows
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .alerts-state.json
+          key: alerts-state-${{ github.run_id }}

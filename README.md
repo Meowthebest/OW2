@@ -22,8 +22,9 @@ npm run dev
 | `npm run dev` | Start the dev server |
 | `npm run build` | Type-check and build to `dist/` |
 | `npm run preview` | Serve the production build |
-| `npm test` | Run the logic, patch, player, cosmetics, worker, timer, accounts and UI tests, plus a build |
+| `npm test` | Run the logic, patch, player, cosmetics, alert, worker, timer, accounts and UI tests, plus a build |
 | `npm run check:roster` | Compare the hero list with the live API and check image files |
+| `npm run check:alerts` | Report what needs a person, without changing anything |
 | `npm run sync:patches` | Read Blizzard's latest patch notes into `public/data/patches` |
 | `npm run verify:patches` | Compare every stored value against Blizzard's pages again |
 | `npm run check:patches` | Check the stored patch data, offline |
@@ -73,6 +74,7 @@ docs/CAREER_DATA.md     Career data source facts and known limitations
 docs/PATCH_DATA.md      Patch data sources, method and known limitations
 docs/PLAYER_DATA.md     Player data source, storage and known limitations
 docs/COSMETICS_DATA.md  Cosmetics sources, storage, admin tools and known limitations
+docs/ALERTS.md          What the alert issues flag and how they behave
 ```
 
 ## Add a new hero
@@ -97,6 +99,8 @@ Career data works immediately with no setup, because the site can call OverFast 
 `.github/workflows/sync-shop.yml` checks itemshop.gg for a new shop every 15 minutes. When there is one, it stores it under `data/cosmetics/shop` and redeploys. It can also be run by hand, which is the admin refresh.
 
 GitHub's own schedule has been unreliable, so a small Cloudflare Worker starts these jobs on time. See [timer/README.md](timer/README.md).
+
+`.github/workflows/alerts.yml` opens a GitHub issue when something needs a person, such as a new hero, a wiki export that's due or a job that keeps failing. See [docs/ALERTS.md](docs/ALERTS.md).
 
 | Setting | Where | What it's for |
 | --- | --- | --- |

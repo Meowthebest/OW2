@@ -6,3 +6,4 @@ dist/
 
 # Built from data/cosmetics by scripts/cosmetics/cli.mjs
 public/data/cosmetics/
+.alerts-state.json

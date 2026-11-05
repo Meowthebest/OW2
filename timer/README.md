@@ -38,7 +38,7 @@ Within five minutes, **Record Steam players** should show a new run in the repos
 
 ## Renew the token
 
-The token lasts up to a year. When it expires, GitHub refuses the timer's requests, readings stop and the site marks the player count Stale Data.
+The token lasts up to a year. When it expires, GitHub refuses the timer's requests, readings stop and the site marks the player count Stale Data. A [GitHub issue](../docs/ALERTS.md) reminds you on October 1, 2027, and another opens if the jobs stop running. After renewing, change the reminder's date in `scripts/alerts/checks.mjs`.
 
 To renew it, create a new token with the link above, then run this from this folder:
 
