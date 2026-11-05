@@ -127,7 +127,7 @@ export function BundlesPage({ query, routeKey }: { query: string; routeKey: unkn
     <div className="page cx-page">
       <PageHeader eyebrow="Cosmetics" title="Bundles" intro="Every bundle the shop data has listed, with prices, contents and your own progress on each one." />
       {bundles.data ? <BundleBrowser bundles={bundles.data} query={query} routeKey={routeKey} /> : <DataState status={bundles.status} error={bundles.error} retry={bundles.retry} what="bundles" skeleton={<GridSkeleton tall />} />}
-      {meta.data?.shopHistoryFrom && !meta.data.shopHistoryComplete && <Note>Shop records start on {dayText(meta.data.shopHistoryFrom)}, so older bundles appear only if they return.</Note>}
+      {meta.data?.shopHistoryFrom && <Note>Shop records start on {dayText(meta.data.shopHistoryFrom)}, so older bundles appear only if they return.</Note>}
       <ItemshopCredit />
     </div>
   );
@@ -137,7 +137,7 @@ export function BundleDetailPage({ id }: { id: string }) {
   const bundles = useAsync(loadBundles, 'bundles');
   const entries = useCollection();
   const [type, setType] = useState<CosmeticType | 'all'>('all');
-  const bundle = bundles.data?.find((item) => item.id === id) ?? null;
+  const bundle = bundles.data?.find((item) => item.id === id || item.slug === id) ?? null;
   usePageTitle(bundle ? bundle.name : 'Bundle');
 
   if (!bundles.data) {

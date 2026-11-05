@@ -86,21 +86,28 @@ export function rotationFromSnapshot(snapshot, core, { at, sourceFingerprint = n
   };
 }
 
-/** Adds what a snapshot says about each item. A value is never replaced by a blank one. */
+/**
+ * Adds what a snapshot says about each item. A value is never replaced by a blank one.
+ * A past shop read after a newer one only fills gaps, so it can't bring back an old name or picture.
+ */
 export function mergeItems(items, snapshot, seenAt) {
   const keep = (next, previous) => (next === null || next === undefined || next === '' ? previous ?? null : next);
   for (const section of snapshot.sections) {
     for (const listing of section.listings) {
       const before = items[listing.key] ?? {};
-      const contents = listing.contents.length > 0 ? listing.contents.map(({ key, name, typeLabel, rarity, image, quantity }) => ({ key, name, typeLabel, rarity, image, quantity })) : before.contents ?? [];
+      const older = Boolean(before.lastSeen && before.lastSeen > seenAt);
+      const choose = (next, previous) => (older ? keep(previous, next) : keep(next, previous));
+      const listed = listing.contents.map(({ key, name, typeLabel, rarity, image, quantity }) => ({ key, name, typeLabel, rarity, image, quantity }));
+      const known = before.contents ?? [];
+      const contents = older ? (known.length > 0 ? known : listed) : listed.length > 0 ? listed : known;
       items[listing.key] = {
-        name: listing.name,
-        kind: listing.kind,
-        typeLabel: keep(listing.typeLabel, before.typeLabel),
-        rarity: keep(listing.rarity, before.rarity),
-        image: keep(listing.image, before.image),
-        statedCount: keep(listing.statedCount, before.statedCount),
-        url: keep(listing.url, before.url),
+        name: choose(listing.name, before.name),
+        kind: choose(listing.kind, before.kind),
+        typeLabel: choose(listing.typeLabel, before.typeLabel),
+        rarity: choose(listing.rarity, before.rarity),
+        image: choose(listing.image, before.image),
+        statedCount: choose(listing.statedCount, before.statedCount),
+        url: choose(listing.url, before.url),
         contents,
         firstSeen: before.firstSeen && before.firstSeen < seenAt ? before.firstSeen : seenAt,
         lastSeen: before.lastSeen && before.lastSeen > seenAt ? before.lastSeen : seenAt,

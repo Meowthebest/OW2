@@ -29,7 +29,7 @@ npm run dev
 | `npm run check:patches` | Check the stored patch data, offline |
 | `npm run sync:shop` | Record the Overwatch shop if it changed |
 | `npm run backfill:shop` | Read past shops and item history. Needs `ITEMSHOP_API_KEY` |
-| `npm run import:wiki -- FILE` | Import a hand-made wiki export, offline |
+| `npm run import:wiki -- FILE...` | Import hand-made wiki export files, offline |
 | `npm run check:cosmetics` | Check the stored cosmetics data, offline |
 
 ## Project layout

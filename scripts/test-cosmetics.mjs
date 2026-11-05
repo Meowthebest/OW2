@@ -67,6 +67,7 @@ delete process.env.ITEMSHOP_API_KEY;
 const importScript = (name) => import(pathToFileURL(path.resolve('scripts/cosmetics', name)).href);
 const { syncShop, backfillShop, request: apiRequest, mergeItems } = await importScript('itemshop.mjs');
 const { buildCatalog } = await importScript('build.mjs');
+const { reconcileShop } = await importScript('reconcile.mjs');
 const wiki = await importScript('wiki.mjs');
 
 const noWait = async () => {};
@@ -941,6 +942,375 @@ await test('titles, mythics and descriptions are read', () => {
   assert.equal(mythics[0].season, 'ow2-s1');
   assert.deepEqual(mythics[0].options, [{ name: 'Weapon', count: 2 }, { name: 'Tattoo', count: 3 }, { name: 'Color', count: 3 }]);
   assert.equal(wiki.parseSkinDescriptions(COSMETICS_PAGE).get('citrine'), "Ana's biotic rifle uses a modified technology.");
+});
+
+await test('voice lines keep their group, season and price', () => {
+  const page = `intro
+==Cosmetics==
+===Voice Lines===
+{| class="wikitable quote-table"
+|-
+! colspan="2" width="25%" | Availability
+! width="65%" | Quote
+! width="10%" | Audio
+|-
+| rowspan="1" colspan="2" | <center><big>'''Default'''</big></center>
+|Justice delivered.
+|{{Audio|Ana - Justice delivered (2).ogg}}
+|-
+| rowspan="2" colspan="2" | <center><big>'''25 {{credits}}'''</big></center>
+|Children, behave.
+|{{Audio|Ana - Children, behave.ogg}}
+|-
+|{{QuoteTranslation| quote = Al-adalah nazlah.|translation = Justice comes down.|script = Arabic|native = x}}
+|{{Audio|Ana - (Arabic) x.ogg}}
+|-
+| rowspan="2" | <center><big>'''{{Battle Pass}} [[Battle Pass]]'''</big></center>
+| rowspan="1" | <center>'''Season 1'''</center>
+|High tech, low tech.
+|{{Audio|Ana - High tech.ogg}}
+|-
+| rowspan="1" | <center>'''Season 13'''</center>
+|Hush, little baby.
+|{{Audio|Ana - Hush.ogg}}
+|-
+| rowspan="1" colspan="2" | <center><big>'''{{Summer Icon}} [[Summer Games]]<br>50 {{credits}}'''</big></center>
+|Do less.
+|{{Audio|Ana - Do less.ogg}}
+|-
+| rowspan="1" colspan="2" | <center><big>'''[[Cosmic Crisis]]<br>"Loyal Agent" Challenge'''</big></center>
+|Something else.
+|{{Audio|Ana - x.ogg}}
+|}
+
+==Interactions==
+{| class="wikitable"
+|-
+|Not a voice line.
+|}`;
+  const lines = new Map(wiki.parseVoiceLines(page, { hero: 'ana', pageTitle: 'Ana/Quotes' }).map((record) => [record.name, record]));
+  assert.deepEqual([...lines.keys()], ['Justice delivered.', 'Children, behave.', 'Al-adalah nazlah.', 'High tech, low tech.', 'Hush, little baby.', 'Do less.', 'Something else.']);
+  assert.ok(lines.get('Justice delivered.').tags.includes('base'));
+  assert.deepEqual(lines.get('Children, behave.').prices, [{ amount: 25, currency: 'credits' }]);
+  assert.equal(lines.get('Al-adalah nazlah.').description, 'Means "Justice comes down."');
+  assert.deepEqual(lines.get('Al-adalah nazlah.').prices, [{ amount: 25, currency: 'credits' }]);
+  assert.equal(lines.get('High tech, low tech.').season, 'ow2-s1');
+  assert.ok(lines.get('High tech, low tech.').tags.includes('battle-pass'));
+  assert.equal(lines.get('Hush, little baby.').season, 'ow2-s13');
+  assert.equal(lines.get('Do less.').event, 'summer-games');
+  assert.deepEqual(lines.get('Do less.').prices, [{ amount: 50, currency: 'credits' }]);
+  assert.equal(lines.get('Do less.').season, null, 'a season doesn\'t carry over to the next group');
+  assert.equal(lines.get('Something else.').event, 'cosmic-crisis');
+  assert.ok(lines.get('Something else.').tags.includes('challenge'));
+  assert.ok(!lines.has('Not a voice line.'));
+});
+
+await test('inner cells add a season, price or challenge to their group', () => {
+  const page = `===Voice Lines===
+{|
+|-
+| rowspan="3" | <center><big>'''{{Battle Pass}} [[Battle Pass]]'''</big></center>
+| rowspan="1" | <center>'''Season 1 (2026)'''</center>
+|Line one.
+|{{Audio|a.ogg}}
+|-
+| rowspan="1" | <center>'''[[Season#Season 7|Season 7]]'''</center>
+|Line two.
+|{{Audio|b.ogg}}
+|-
+| rowspan="1" | <center>'''[[Season#Season 4 (2026)|Season 4 (2026)]]'''</center>
+|Line three.
+|{{Audio|c.ogg}}
+|-
+| rowspan="2" | <center><big>'''{{Halloween Icon}} [[Halloween Terror]]'''</big></center>
+| rowspan="1" | <center>'''{{credits}} 50'''</center>
+|Line four.
+|{{Audio|d.ogg}}
+|-
+| rowspan="1" | <center>'''Wrath of the Bride Challenge'''</center>
+|Line five.
+|{{Audio|e.ogg}}
+|-
+| rowspan="1" colspan="2" | <center><big>'''[[Overwatch 2 x Street Fighter 6|Street Fighter 6]]'''</big></center>
+|Line six.
+|{{Audio|f.ogg}}
+|-
+| rowspan="1" colspan="2" | <center><big>'''[[Overwatch x Street Fighter 6]]</big><br>''Round Two'' Challenge'''</center>
+|Line seven.
+|{{Audio|g.ogg}}
+|-
+| rowspan="1" colspan="2" | <center><big>'''Progression Level 3'''</big></center>
+|Line eight.
+|{{Audio|h.ogg}}
+|-
+| rowspan="1" colspan="2" | <center><big>'''{{Shop}} [[Shop]]<br>{{Coins}} 100'''</big></center>
+|{{QuoteTranslation|quote=Okashi.|translation=Trick or treat.
+|{{Audio|i.ogg}}
+|}`;
+  const lines = new Map(wiki.parseVoiceLines(page, { hero: 'ana', pageTitle: 'Ana/Quotes' }).map((record) => [record.name, record]));
+  assert.equal(lines.get('Line one.').season, '2026-s1');
+  assert.equal(lines.get('Line two.').season, 'ow2-s7');
+  assert.equal(lines.get('Line three.').season, '2026-s4');
+  assert.equal(lines.get('Line three.').event, null, 'a season link isn\'t an event');
+  assert.equal(lines.get('Line four.').event, 'halloween-terror');
+  assert.deepEqual(lines.get('Line four.').prices, [{ amount: 50, currency: 'credits' }]);
+  assert.equal(lines.get('Line four.').season, null);
+  assert.deepEqual(lines.get('Line five.').prices, [], 'the price cell above covers only its own rows');
+  assert.ok(lines.get('Line five.').tags.includes('challenge'));
+  assert.equal(lines.get('Line six.').event, 'street-fighter-6');
+  assert.ok(lines.get('Line six.').tags.includes('collab'));
+  assert.equal(lines.get('Line seven.').event, 'street-fighter-6', 'one event, however its name is written');
+  assert.ok(lines.get('Line eight.').tags.includes('base'));
+  assert.deepEqual(lines.get('Okashi.').prices, [{ amount: 100, currency: 'coins' }]);
+  assert.ok(lines.get('Okashi.').tags.includes('shop'));
+  assert.equal(lines.get('Okashi.').description, 'Means "Trick or treat."', 'a call with no closing braces still reads');
+});
+
+await test('a voice line\'s bracket note isn\'t part of its name, and old seasons share one count', () => {
+  const page = `===Voice Lines===
+{|
+|-
+| rowspan="2" colspan="2" | <center><big>'''{{Shop}} [[Shop]]'''</big></center>
+|Such bottomless stupidity. (Destro Doomfist Bundle)
+|{{Audio|a.ogg}}
+|-
+|Charge, Johanna! (from the Queen D.Va Bundle)
+|{{Audio|b.ogg}}
+|}`;
+  const lines = wiki.parseVoiceLines(page, { hero: 'dva', pageTitle: 'D.Va/Quotes' });
+  assert.deepEqual(lines.map((line) => line.name), ['Such bottomless stupidity.', 'Charge, Johanna!']);
+  assert.ok(lines[1].acquisition.includes('Sold with the Queen D.Va Bundle'));
+  assert.equal(wiki.seasonFromText('2025: Season 16'), 'ow2-s16');
+  assert.equal(wiki.seasonFromText('Season 3 (2026)'), '2026-s3');
+  assert.equal(wiki.seasonFromText('[[Season#Season 20|Season 20]]'), 'ow2-s20');
+  assert.equal(wiki.seasonFromText('Not a season'), null);
+});
+
+await test('headings don\'t turn page links into events', () => {
+  assert.equal(wiki.readGroupLabel('[[Emotes]]').event, null);
+  assert.equal(wiki.readGroupLabel('[[Event]]').event, null);
+  assert.ok(wiki.readGroupLabel('[[Twitch Drops]]').tags.includes('twitch'));
+  assert.equal(wiki.readGroupLabel('[[Twitch Drops]]').event, null);
+  assert.equal(wiki.readGroupLabel('[[Underworld (mission)]]').event, 'underworld');
+  assert.equal(wiki.readGroupLabel('[[Overwatch x Gi-Joe]]').event, 'gi-joe');
+  assert.equal(wiki.readGroupLabel('[[Overwatch 2 x G.I. Joe]]').event, 'gi-joe');
+});
+
+await test('older shop records read the same as new ones', () => {
+  const dollars = listing({ id: 'overwatch-sweet-bundle', itemKey: null, type: 'Bundle · 3 items', rarity: { name: 'Bundle', color: '#fff' }, price: { amount: null, label: 'US$9.99', currency: 'Coins', currencyIcon: null, regular: null }, contents: [] });
+  const heroOnly = listing({ id: '0000000060B2.0A5', itemKey: null, name: 'Pumpkin', type: 'Bastion', rarity: { name: 'epic', color: '#fff' }, contents: [] });
+  const noHero = listing({ id: 'overwatch-shop-2115606', itemKey: null, name: 'Starlight Champion', type: 'Skins', contents: [] });
+  const counted = listing({ id: 'overwatch-shop-3', itemKey: null, name: 'A Bundle', type: 'Bundle (10 items)', contents: [] });
+  const snapshot = core.normalizeShop(shopAnswer([section('Overwatch Shop · ', [dollars, heroOnly]), section('Overwatch Shop', [noHero, counted])]));
+  assert.equal(snapshot.sections.length, 1, 'one section, however its title is written');
+  assert.equal(snapshot.sections[0].title, 'Overwatch Shop');
+  const [bundle, pumpkin, skin, ten] = snapshot.sections[0].listings;
+  assert.equal(bundle.kind, 'bundle');
+  assert.equal(bundle.amount, 9.99);
+  assert.equal(bundle.currency, 'USD');
+  assert.equal(bundle.priceLabel, null);
+  assert.equal(bundle.statedCount, 3);
+  assert.equal(bundle.rarity, null);
+  assert.equal(ten.statedCount, 10);
+  assert.equal(pumpkin.kind, 'product', 'a hero alone doesn\'t say what kind of cosmetic it is');
+  assert.equal(pumpkin.hero, 'bastion');
+  assert.equal(pumpkin.rarity, 'epic');
+  assert.equal(skin.kind, 'product', 'a skin with no hero can\'t be linked');
+  assert.equal(skin.cosmeticId, null);
+});
+
+const rawItem = (over) => ({ name: 'X', kind: 'bundle', typeLabel: null, rarity: null, image: null, statedCount: null, url: null, contents: [], firstSeen: '2026-10-01', lastSeen: '2026-10-01', ...over });
+const rawRotation = (at, listings, title = 'Overwatch Shop') => ({ id: at, at, updatedAt: at, shopDate: at.slice(0, 10), sections: [{ title, upcoming: false, endsAt: null, listings }] });
+
+await test('one id used for two different items stays two items', () => {
+  const skin = listing({ id: 'overwatch-shop-2126628', itemKey: null, name: 'Eclypse', type: 'Skin - Illari', contents: [] });
+  const bundle = listing({ id: 'overwatch-shop-2126628', itemKey: null, name: 'Dokiwatch 2.0 Mega Bundle', type: 'Bundle 22', contents: [content('Eve', 'Skins · Widowmaker', 'Legendary', null)] });
+  const items = {};
+  mergeItems(items, core.normalizeShop(shopAnswer([section('Overwatch Shop', [skin, bundle])])), '2026-10-20T00:00:00Z');
+  const names = Object.values(items).map((item) => item.name).sort();
+  assert.deepEqual(names, ['Dokiwatch 2.0 Mega Bundle', 'Eclypse']);
+  const result = reconcileShop(core, items, []);
+  assert.equal(Object.values(result.items).find((item) => item.name === 'Eclypse').contents.length, 0, 'a skin doesn\'t pick up a bundle\'s contents');
+});
+
+await test('one time on sale is one row, however many bundles it was in', () => {
+  const stay = (over) => ({ start: '2026-11-04T00:00:00Z', end: '2026-11-10T00:00:00Z', price: null, currency: 'Coins', section: null, bundle: null, bundleId: null, bundlePrice: null, source: 'itemshop-history', ...over });
+  const rows = core.groupStays([
+    stay({ bundle: 'Mega', bundleId: '1', bundlePrice: 6900 }),
+    stay({ bundle: 'Small', bundleId: '2', bundlePrice: 2800 }),
+    stay({ bundle: 'Small', bundleId: '2', bundlePrice: 2800 }),
+    stay({ start: '2026-10-01T00:00:00Z', end: '2026-10-08T00:00:00Z', price: 1900, section: 'Overwatch Shop' }),
+  ]);
+  assert.equal(rows.length, 2);
+  assert.deepEqual(rows[0].bundles, [{ name: 'Mega', id: '1', price: 6900 }, { name: 'Small', id: '2', price: 2800 }]);
+  assert.equal(rows[0].price, null);
+  assert.equal(rows[1].price, 1900);
+  assert.equal(rows[1].section, 'Overwatch Shop');
+  assert.deepEqual(rows[1].bundles, []);
+});
+
+await test('one bundle under several ids becomes one item', () => {
+  const items = {
+    'listing:overwatch-team-mega-bundle': rawItem({ name: 'Team Mega Bundle', typeLabel: 'Bundle · 2 items', firstSeen: '2026-09-24', lastSeen: '2026-09-24', image: 'https://x.test/old.png' }),
+    'listing:overwatch-shop-111': rawItem({ name: 'Team Mega Bundle', typeLabel: 'Bundle (2 items)', firstSeen: '2026-09-25', lastSeen: '2026-09-30', contents: [{ key: null, name: 'A', typeLabel: 'Sprays' }] }),
+    'listing:overwatch-esports-shop-111': rawItem({ name: 'Team Mega Bundle', typeLabel: 'Bundle (2 items)', firstSeen: '2026-09-25', lastSeen: '2026-09-30' }),
+    'ow:bundle:999': rawItem({ name: 'Team Mega Bundle', typeLabel: 'Bundle 2', firstSeen: '2026-11-01', lastSeen: '2026-11-03', image: 'https://x.test/new.png' }),
+    // The store reuses numbers, so a shared number alone never joins two things.
+    'listing:battle-pass-809988': rawItem({ name: 'Widowmaker Mythic Bundle' }),
+    'listing:overwatch-shop-809988': rawItem({ name: 'Sojourn Mythic Bundle' }),
+    'listing:overwatch-only-past-bundle': rawItem({ name: 'Only Past Bundle', typeLabel: 'Bundle · 1 items' }),
+  };
+  const rotations = [
+    rawRotation('2026-09-24T00:00:00Z', [['listing:overwatch-team-mega-bundle', 4500, 'Coins'], ['listing:overwatch-only-past-bundle', 700, 'Coins']]),
+    rawRotation('2026-09-25T00:00:00Z', [['listing:overwatch-shop-111', 4500, 'Coins'], ['listing:overwatch-esports-shop-111', 4500, 'Coins'], ['listing:overwatch-only-past-bundle', 700, 'Coins']]),
+    rawRotation('2026-11-01T00:00:00Z', [['ow:bundle:999', 3000, 'Coins']]),
+  ];
+  const result = reconcileShop(core, items, rotations);
+  const team = result.items['ow:bundle:999'];
+  assert.equal(team.image, 'https://x.test/new.png');
+  assert.equal(team.firstSeen, '2026-09-24');
+  assert.equal(team.lastSeen, '2026-11-03');
+  assert.equal(team.contents.length, 1, 'contents known from an older listing are kept');
+  assert.equal(Object.values(result.items).filter((item) => item.name === 'Team Mega Bundle').length, 1);
+  assert.ok(result.items['listing:only-past-bundle']);
+  assert.equal(Object.values(result.items).filter((item) => /Mythic/.test(item.name)).length, 2);
+  assert.equal(result.rotations.length, 2, 'the same things on sale is the same shop, whatever the ids');
+  assert.equal(result.rotations[0].at, '2026-09-24T00:00:00Z', 'a shop began at its first read');
+  assert.equal(result.rotations[0].shopDate, '2026-09-25', 'and its newest read describes it');
+  assert.deepEqual(result.rotations[0].sections[0].listings.map((row) => row[0]), ['ow:bundle:999', 'listing:only-past-bundle'], 'and it lists an item once');
+});
+
+await test('a price change is a new shop, and the source\'s spelling can be corrected', () => {
+  const items = { 'listing:overwatch-shop-1': rawItem({ name: 'Malus Rammatra Bundle', lastSeen: '2026-10-20' }), 'ow:bundle:2': rawItem({ name: 'Malus Ramattra Bundle', lastSeen: '2026-11-01' }) };
+  const rotations = [rawRotation('2026-10-20T00:00:00Z', [['listing:overwatch-shop-1', 4500, 'Coins']]), rawRotation('2026-10-21T00:00:00Z', [['ow:bundle:2', 3000, 'Coins']])];
+  const plain = reconcileShop(core, items, rotations);
+  assert.equal(Object.keys(plain.items).length, 2, 'different names stay apart without a correction');
+  const fixed = reconcileShop(core, items, rotations, { listingNames: { 'Malus Rammatra Bundle': 'Malus Ramattra Bundle' } });
+  assert.deepEqual(Object.keys(fixed.items), ['ow:bundle:2']);
+  assert.equal(fixed.rotations.length, 2);
+});
+
+await test('a missing hero is filled only when it can be worked out', () => {
+  const intro = (name, image) => ({ key: null, name, typeLabel: 'Highlight Intros', rarity: 'epic', image, quantity: 1 });
+  const items = {
+    'listing:a': rawItem({ name: 'Night - D.Mon Bundle', contents: [{ key: null, name: 'Night', typeLabel: 'Skins · D.Mon', image: 'https://x.test/skin.png' }, intro('Night', 'https://x.test/dmon-intro.png')] }),
+    'listing:b': rawItem({ name: 'Night Mega Bundle', contents: [intro('Night', 'https://x.test/dmon-intro.png'), intro('Night', 'https://x.test/other-intro.png')] }),
+    // Named after one hero, but it sells another hero's item too, so it says nothing about whose this is.
+    'listing:c': rawItem({ name: 'Mercy And Friends Bundle', contents: [{ key: null, name: 'Y', typeLabel: 'Skins · Ana', image: 'https://x.test/y.png' }, intro('Z', 'https://x.test/z.png')] }),
+    'listing:skin': rawItem({ name: 'Starlight', kind: 'cosmetic', typeLabel: 'Skins · Mercy' }),
+    'listing:overwatch-shop-12345': rawItem({ name: 'Starlight', kind: 'cosmetic', typeLabel: 'Skins · Kiriko' }),
+    'listing:overwatch-esports-shop-12345': rawItem({ name: 'Starlight', kind: 'cosmetic', typeLabel: 'Skins' }),
+    'listing:overwatch-shop-777': rawItem({ name: 'Starlight', kind: 'cosmetic', typeLabel: 'Skins' }),
+  };
+  const result = reconcileShop(core, items, []);
+  const byName = (name) => Object.values(result.items).find((item) => item.name === name);
+  assert.equal(byName('Night - D.Mon Bundle').contents[1].typeLabel, 'Highlight Intros · D.Mon');
+  assert.equal(byName('Night Mega Bundle').contents[0].typeLabel, 'Highlight Intros · D.Mon', 'the same picture is the same cosmetic');
+  assert.equal(byName('Night Mega Bundle').contents[1].typeLabel, 'Highlight Intros', 'an unknown picture stays unknown');
+  assert.equal(byName('Mercy And Friends Bundle').contents[1].typeLabel, 'Highlight Intros');
+  assert.equal(result.items['listing:starlight.kiriko'].typeLabel, 'Skins · Kiriko', 'the same product states its hero on another day');
+  assert.equal(result.items['listing:starlight'].kind, 'product', 'a skin with no hero anywhere can\'t be a cosmetic record');
+});
+
+await test('prices from inside a bundle stay the bundle\'s, and one stay counts once', async () => {
+  resetData();
+  const eve = content('Eve', 'Skins · Widowmaker', 'Legendary', 'ow:item:101');
+  const mega = listing({ id: 'm', itemKey: 'ow:bundle:800', name: 'Eve Mega Bundle', type: 'Bundle 1', price: { amount: 6900, label: null, currency: 'Coins', currencyIcon: null, regular: null }, contents: [eve] });
+  const small = listing({ id: 's', itemKey: 'ow:bundle:801', name: 'Eve Widowmaker Bundle', type: 'Bundle 1', price: { amount: 2800, label: null, currency: 'Coins', currencyIcon: null, regular: null }, contents: [eve] });
+  api.shop = shopAnswer([section('Overwatch Shop', [mega, small, single])]);
+  await sync();
+  write('shop/stays.json', {
+    fetchedAt: '2026-11-05T00:00:00Z',
+    items: {
+      'ow:item:101': [
+        ['2026-11-03T00:00:00Z', '2026-11-10T00:00:00Z', 6900, null, 'Eve Mega Bundle', 'now'],
+        ['2026-11-03T00:00:00Z', '2026-11-10T00:00:00Z', 2800, null, 'Eve Widowmaker Bundle', 'now'],
+        ['2026-12-01T00:00:00Z', '2026-12-08T00:00:00Z', 2800, null, 'Eve Widowmaker Bundle', 'upcoming'],
+      ],
+      'ow:item:200': [['2026-11-03T00:00:00Z', '2026-11-10T00:00:00Z', 1900, null, 'Eclypse', 'now']],
+    },
+  });
+  await buildCatalog({ now: new Date('2026-11-05T00:00:00Z') });
+  const inBundles = shardFor('skin.widowmaker.eve');
+  assert.deepEqual(inBundles.prices, [], 'neither bundle\'s price is the skin\'s price');
+  assert.equal(inBundles.seen, 1, 'two bundles at once is one appearance');
+  assert.equal(inBundles.stays.length, 2, 'and both are listed');
+  assert.deepEqual(inBundles.stays.map((stay) => stay.bundlePrice).sort(), [2800, 6900]);
+  assert.deepEqual(inBundles.stays.map((stay) => stay.bundleId).sort(), ['800', '801']);
+  assert.ok(inBundles.stays.every((stay) => stay.price === null));
+  const alone = shardFor('skin.illari.eclypse');
+  assert.deepEqual(alone.prices, [{ amount: 1900, currency: 'coins' }], 'its own listing is its own price');
+  assert.equal(alone.stays[0].bundle, null);
+  assert.equal(alone.stays[0].currency, 'Coins', 'the source only names other currencies');
+});
+
+await test('a recording that starts before the source\'s dates adds only the earlier part', async () => {
+  resetData();
+  api.changedAt = '2026-11-01T00:00:00.000Z';
+  api.shop = shopAnswer([section('Overwatch Shop', [listing()])]);
+  await sync();
+  write('shop/stays.json', { fetchedAt: '2026-11-05T00:00:00Z', items: { 'ow:item:101': [['2026-11-03T00:00:00Z', '2026-11-10T00:00:00Z', 2800, null, 'Test Mega Bundle', 'now']] } });
+  await buildCatalog({ now: new Date('2026-11-05T00:00:00Z') });
+  const stays = shardFor('skin.widowmaker.eve').stays;
+  assert.deepEqual(stays.map((stay) => [stay.start, stay.end, stay.source]), [
+    ['2026-11-03T00:00:00Z', '2026-11-10T00:00:00Z', 'itemshop-history'],
+    ['2026-11-01T00:00:00.000Z', '2026-11-03T00:00:00Z', 'recorded'],
+  ]);
+  assert.equal(shardFor('skin.widowmaker.eve').availability, 'in-shop', 'and it still counts as on sale');
+});
+
+await test('a listing labelled only with a hero joins the catalogue if exactly one cosmetic fits', async () => {
+  resetData();
+  const row = (id, name, type, rarity, amount) => listing({ id, itemKey: null, name, type, rarity: { name: rarity, color: '#fff' }, price: { amount, label: null, currency: 'Coins', currencyIcon: null, regular: null }, contents: [], sourceUrl: null, availability: { from: null, until: null, untilLabel: null } });
+  api.shop = shopAnswer([section('Seasonal Offers', [row('0000000060B2.0A5', 'Pumpkin', 'Bastion', 'epic', 1000), row('000000004B28.0A5', 'Werewolf', 'Winston', 'common', 50), row('000000001722.0A5', 'Flail', 'Brigitte', 'epic', 250), row('0000000055DC.0A5', 'No Match', 'Mercy', 'epic', 1000)])]);
+  await sync();
+  const wikiRow = (type, hero, name, rarity) => ({ type, hero, name, rarity, season: null, event: null, tags: ['gallery'], prices: [], acquisition: [], page: null, pageTitle: 'x', file: null, description: null });
+  write('wiki/catalog.json', [wikiRow('skin', 'bastion', 'Pumpkin', 'epic'), wikiRow('skin', 'winston', 'Werewolf', 'legendary'), wikiRow('emote', 'brigitte', 'Flail', 'epic'), wikiRow('spray', 'brigitte', 'Flail', 'epic')]);
+  await buildCatalog({ now: new Date('2026-11-05T00:00:00Z') });
+  const ids = readOut('catalog.json').map((row) => row.id);
+  assert.deepEqual(shardFor('skin.bastion.pumpkin').prices, [{ amount: 1000, currency: 'coins' }]);
+  assert.deepEqual(shardFor('skin.winston.werewolf').prices, [], 'a common spray at 50 coins isn\'t the legendary skin of that name');
+  assert.deepEqual(shardFor('emote.brigitte.flail').prices, [], 'two cosmetics fit, so neither is chosen');
+  assert.ok(!ids.some((id) => /no-match/.test(id)), 'it never invents a type');
+  const shop = readOut('shop.json');
+  const listed = shop.snapshot.sections.flatMap((part) => part.listings);
+  assert.equal(listed.find((item) => item.name === 'No Match').kind, 'product', 'but it stays in the record of that shop');
+});
+
+await test('a past shop read after a newer one only fills gaps', () => {
+  const listing = (fields) => ({ key: 'ow:item:1', name: 'x', kind: 'item', typeLabel: null, rarity: null, image: null, statedCount: null, url: null, contents: [], ...fields });
+  const snapshot = (fields) => ({ sections: [{ listings: [listing(fields)] }] });
+  const items = {};
+  mergeItems(items, snapshot({ name: 'New name', image: 'new.png', contents: [{ key: 'a', name: 'A' }] }), '2026-11-01T00:00:00Z');
+  mergeItems(items, snapshot({ name: 'Old name', image: 'old.png', rarity: 'Rare', url: 'https://example.com', contents: [{ key: 'b', name: 'B' }] }), '2026-10-01T00:00:00Z');
+  const item = items['ow:item:1'];
+  assert.equal(item.name, 'New name');
+  assert.equal(item.image, 'new.png');
+  assert.equal(item.rarity, 'Rare', 'a gap is filled');
+  assert.equal(item.url, 'https://example.com');
+  assert.deepEqual(item.contents.map((content) => content.key), ['a']);
+  assert.equal(item.firstSeen, '2026-10-01T00:00:00Z');
+  assert.equal(item.lastSeen, '2026-11-01T00:00:00Z');
+  mergeItems(items, snapshot({ name: 'Newest name', image: 'newest.png', contents: [] }), '2026-11-02T00:00:00Z');
+  assert.equal(items['ow:item:1'].name, 'Newest name');
+  assert.equal(items['ow:item:1'].image, 'newest.png');
+  assert.equal(items['ow:item:1'].rarity, 'Rare', 'a blank value never replaces a known one');
+  assert.deepEqual(items['ow:item:1'].contents.map((content) => content.key), ['a']);
+});
+
+await test('export links keep their settings, stay short and include every page', () => {
+  const links = wiki.exportLinks(Array.from({ length: 54 }, (_, index) => `Hero Number ${index}`));
+  assert.ok(links.length >= 2);
+  const pages = [];
+  for (const link of links) {
+    assert.ok(link.length <= 1700, `link is ${link.length} long`);
+    const url = new URL(link);
+    assert.equal(url.search.indexOf('curonly=1'), 1, 'settings come first');
+    assert.equal(url.searchParams.get('templates'), '1');
+    pages.push(...url.searchParams.get('pages').split('\n'));
+  }
+  assert.ok(pages.includes('Hero Number 0/Cosmetics') && pages.includes('Hero Number 53/Quotes') && pages.includes('Mythic Skins'));
+  assert.equal(new Set(pages).size, pages.length, 'no page twice');
 });
 
 await test('markup becomes plain text', () => {

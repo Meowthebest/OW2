@@ -13,12 +13,30 @@ export const pageUrl = (title) => `${WIKI_PAGE}${encodeURIComponent(title.replac
 const ENTITIES = { '&lt;': '<', '&gt;': '>', '&amp;': '&', '&quot;': '"', '&apos;': "'", '&#039;': "'", '&#39;': "'" };
 const decodeXml = (text) => text.replace(/&(?:lt|gt|amp|quot|apos|#0?39);/g, (match) => ENTITIES[match]);
 
-const EXPORT_PAGES = ['Cosmetics', 'Skins', 'Weapon Skins', 'Weapon Charms', 'Souvenirs', 'Sprays', 'Emotes', 'Victory Poses', 'Highlight Intros', 'Voice lines', 'Player Icons', 'Name Cards', 'Player Titles', 'Weapon Variants', 'Mythic Skins', 'Mythic Weapon Skins', 'Mythic Shop', 'Mythic Prisms', 'Battle Pass', 'Season', 'Season/2026', 'Loot Box', 'Shop', 'Twitch Drops', 'Overwatch Esports', 'Overwatch League', 'Limited-time event', 'Overwatch Coins', 'Credits', 'Competitive Points', 'Challenges', 'Achievements', 'Winter Wonderland', 'Summer Games', 'Lunar New Year', 'Halloween Terror', 'Overwatch Anniversary', 'Archives', 'Overwatch Archives', 'Stadium'];
+const EXPORT_PAGES = ['Cosmetics', 'Skins', 'Weapon Skins', 'Weapon Charms', 'Souvenirs', 'Sprays', 'Emotes', 'Victory Poses', 'Highlight Intros', 'Voice lines', 'Player Icons', 'Name Cards', 'Player Titles', 'Weapon Variants', 'Mythic Skins', 'Mythic Shop', 'Mythic Prisms', 'Battle Pass', 'Season', 'Season/2026', 'Loot Box', 'Shop', 'Twitch Drops', 'Overwatch Esports', 'Overwatch League', 'Limited-time event', 'Overwatch Coins', 'Credits', 'Competitive Points', 'Challenges', 'Achievements', 'Winter Wonderland', 'Summer Games', 'Lunar New Year', 'Halloween Terror', 'Overwatch Anniversary', 'Archives', 'Stadium'];
 
-/** The link a person opens in their own browser. The wiki's export page then gives one XML file, with the templates those pages use. */
-export function exportLink(heroNames) {
-  const pages = [...heroNames.flatMap((name) => [`${name}/Cosmetics`, `${name}/Quotes`]), ...EXPORT_PAGES];
-  return `https://overwatch.weirdgloop.org/w/Special:Export?${new URLSearchParams({ pages: pages.join('\n'), curonly: '1', templates: '1', wpDownload: '1' })}`;
+/** Links this long or longer have been cut off on the way to a browser, which silently loses pages. */
+const MAX_LINK_LENGTH = 1700;
+
+const linkFor = (pages) => `https://overwatch.weirdgloop.org/w/Special:Export?curonly=1&templates=1&wpDownload=1&pages=${encodeURIComponent(pages.join('\n'))}`;
+
+/**
+ * The links a person opens in their own browser. Each gives one XML file, with the templates its pages use.
+ * The settings come first in the link, so a link cut short still can't lose them, and the pages are split across links.
+ */
+export function exportLinks(heroNames) {
+  const links = [];
+  let batch = [];
+  const pages = [...heroNames.map((name) => `${name}/Cosmetics`), ...EXPORT_PAGES, ...heroNames.map((name) => `${name}/Quotes`)];
+  for (const page of pages) {
+    if (batch.length > 0 && linkFor([...batch, page]).length > MAX_LINK_LENGTH) {
+      links.push(linkFor(batch));
+      batch = [];
+    }
+    batch.push(page);
+  }
+  if (batch.length > 0) links.push(linkFor(batch));
+  return links;
 }
 
 /** Splits a Special:Export file into pages. Plain string work, so a very large file doesn't need an XML tree in memory. */
@@ -141,16 +159,22 @@ const EVENT_NAMES = new Map(
     archives: ['archives', 'Archives'],
     'overwatch archives': ['archives', 'Archives'],
     stadium: ['stadium', 'Stadium'],
+    'gi-joe': ['gi-joe', 'G.I. Joe'],
+    'g.i. joe': ['gi-joe', 'G.I. Joe'],
   }),
 );
 
-const PRICE_PATTERNS = [
-  [/\{\{\s*Credits\s*\}\}\s*([\d,]+)/i, 'credits'],
-  [/\{\{\s*Coins\s*\}\}\s*([\d,]+)/i, 'coins'],
-  [/\{\{\s*Mythic Prisms\s*\}\}\s*([\d,]+)/i, 'prisms'],
-  [/\{\{\s*(?:Competitive Points|Comp Points|CP)\s*\}\}\s*([\d,]+)/i, 'competitive-points'],
-  [/\{\{\s*League Tokens?\s*\}\}\s*([\d,]+)/i, 'league-tokens'],
+const PRICE_WORDS = [
+  ['Credits', 'credits'],
+  ['Coins', 'coins'],
+  ['Mythic Prisms', 'prisms'],
+  ['Competitive Points|Comp Points|CP', 'competitive-points'],
+  ['League Tokens?', 'league-tokens'],
 ];
+const PRICE_PATTERNS = PRICE_WORDS.flatMap(([word, currency]) => [
+  [new RegExp(`\\{\\{\\s*(?:${word})\\s*\\}\\}\\s*'*\\s*([\\d,]+)`, 'i'), currency],
+  [new RegExp(`([\\d,]+)\\s*'*\\s*\\{\\{\\s*(?:${word})\\s*\\}\\}`, 'i'), currency],
+]);
 
 /** What a section heading says about the cosmetics under it: rarity, prices, origin and event. */
 export function readGroupLabel(raw) {
@@ -166,7 +190,7 @@ export function readGroupLabel(raw) {
 
   for (const [pattern, currency] of PRICE_PATTERNS) {
     const match = pattern.exec(raw);
-    if (match) group.prices.push({ amount: Number(match[1].replace(/,/g, '')), currency });
+    if (match && !group.prices.some((price) => price.currency === currency)) group.prices.push({ amount: Number(match[1].replace(/,/g, '')), currency });
   }
   if (group.prices.some((price) => price.currency === 'credits')) group.tags.push('gallery');
   if (/\(free\)|\bfree\b/i.test(raw)) group.tags.push('base');
@@ -177,27 +201,42 @@ export function readGroupLabel(raw) {
     if (key === 'battle pass') group.tags.push('battle-pass');
     else if (key === 'shop') group.tags.push('shop');
     else if (key === 'mythic shop') group.tags.push('mythic-shop');
+    else if (key === 'hero gallery') group.tags.push('gallery');
     else if (key === 'progression' || key === 'base') group.tags.push('base');
     else if (key === 'achievements' || key === 'achievement') group.tags.push('achievement');
-    else if (/esports|overwatch league|owl\b|owcs|contenders|world cup/.test(key)) group.tags.push('esports');
-    else if (/challenge$/.test(key) || EVENT_NAMES.has(key) || key.length > 2) {
-      const known = EVENT_NAMES.get(key);
-      group.event = known?.[0] ?? label.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-      group.eventLabel = known?.[1] ?? label;
+    else if (key === 'challenges') group.tags.push('challenge');
+    else if (/^season\b/.test(key) || /^(?:events?|emotes?|sprays?|skins?|cosmetics?|name cards?|player icons?|voice lines?)$/.test(key)) continue;
+    else if (key === 'twitch drops') group.tags.push('twitch');
+    else if (/esports|overwatch league|\bowl\b|owcs|contenders|world cup/.test(key)) group.tags.push('esports');
+    else if (key.length > 2) {
+      const collab = /^overwatch(?: 2)? x (.+)$/i.exec(label);
+      const name = (collab ? collab[1] : label).replace(/\s*\(mission\)$/i, '');
+      const known = EVENT_NAMES.get(key) ?? EVENT_NAMES.get(name.toLowerCase());
+      group.event = known?.[0] ?? name.toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      group.eventLabel = known?.[1] ?? name;
       group.tags.push('event');
+      if (collab) group.tags.push('collab');
       if (/challenge$/.test(key)) group.tags.push('challenge');
       if (key !== 'stadium') group.limited = true;
     }
   }
+
+  const text = plainText(raw);
+  if (/\bchallenges?\b/i.test(text)) {
+    group.tags.push('challenge');
+    group.limited = true;
+  }
+  if (/^progression\b/i.test(text) || /^default$/i.test(text)) group.tags.push('base');
   if (group.limited) group.tags.push('limited');
   group.tags = [...new Set(group.tags)];
 
-  const text = plainText(raw);
   if (group.prices.length > 0) group.acquisition.push(...group.prices.map((price) => `Listed at ${price.amount.toLocaleString('en-US')} ${price.currency === 'prisms' ? 'Mythic Prisms' : price.currency.replace(/-/g, ' ')}`));
   if (group.eventLabel) group.acquisition.push(`From ${group.eventLabel}`);
   else if (group.tags.includes('battle-pass')) group.acquisition.push('From a Battle Pass');
   else if (group.tags.includes('base')) group.acquisition.push('Available from the start or through progression');
   else if (group.tags.includes('achievement')) group.acquisition.push('From an achievement');
+  const challenge = /(?:^|[\s"'])([^"']*?\bchallenges?\b)/i.exec(text.replace(group.eventLabel ?? '', ''));
+  if (group.tags.includes('challenge') && challenge) group.acquisition.push(`From the ${challenge[1].replace(/^[\s"']+|[\s"']+$/g, '')}`.replace(/\s+/g, ' '));
   group.text = text;
   return group;
 }
@@ -324,7 +363,7 @@ export function parseGalleries(text, { type, pageTitle, defaults = {} }) {
     if (line.startsWith(';')) {
       const label = line.slice(1).trim();
       const season = SEASON_LINE.exec(plainText(label));
-      if (season) context.season = season[1] ? `${season[1]}-s${season[2]}` : context.era === '2026' ? `2026-s${season[2]}` : `ow2-s${season[2]}`;
+      if (season) context.season = Number(season[1]) >= 2026 ? `${season[1]}-s${season[2]}` : context.era === '2026' ? `2026-s${season[2]}` : `ow2-s${season[2]}`;
       else context.group = readGroupLabel(label);
       continue;
     }
@@ -394,10 +433,11 @@ export function parseTitles(text, pageTitle) {
 
 const seasonFromCell = (cell) => {
   const text = plainText(cell);
-  const year = /Season\/(\d{4})|(\d{4})\s*[:\s]\s*Season/i.exec(cell);
-  const number = /(\d+)\s*$/.exec(text) ?? /Season[_ ](\d+)/i.exec(cell);
+  const year = /Season\/(\d{4})|(\d{4})\s*[:\s]\s*Season|\((\d{4})\)/i.exec(cell);
+  const number = /(\d+)\s*(?:\(\d{4}\))?\s*$/.exec(text) ?? /Season[_ ](\d+)/i.exec(cell);
   if (!number) return null;
-  return year ? `${year[1] ?? year[2]}-s${number[1]}` : `ow2-s${number[1]}`;
+  const when = Number(year?.[1] ?? year?.[2] ?? year?.[3]);
+  return when >= 2026 ? `${when}-s${number[1]}` : `ow2-s${number[1]}`;
 };
 
 /** Reads the mythic list: season, hero, name, and each customization group with its number of choices. */
@@ -430,6 +470,108 @@ export function parseMythics(text, core, pageTitle) {
     });
   }
   return items;
+}
+
+const QUOTE_CALL = /\{\{\s*QuoteTranslation\s*\|[^{}]*?\bquote\s*=\s*([^|{}]+)/i;
+const TRANSLATION = /\{\{\s*QuoteTranslation\s*\|[^{}]*?\btranslation\s*=\s*([^|{}]+)/i;
+
+const unique = (list) => [...new Set(list)];
+
+/** What an inner cell adds to the group it sits under. */
+function combineGroups(outer, inner) {
+  if (!inner) return outer;
+  if (!outer) return inner;
+  return {
+    ...outer,
+    rarity: outer.rarity ?? inner.rarity,
+    event: outer.event ?? inner.event,
+    eventLabel: outer.eventLabel ?? inner.eventLabel,
+    prices: inner.prices.length > 0 ? inner.prices : outer.prices,
+    tags: unique([...outer.tags, ...inner.tags]),
+    acquisition: unique([...(inner.prices.length > 0 ? outer.acquisition.filter((line) => !line.startsWith('Listed at')) : outer.acquisition), ...inner.acquisition]),
+  };
+}
+
+/** "Season 4", "Season 4 (2026)" and "2026: Season 4" all name one season. Returns null for anything else. */
+export function seasonFromText(text) {
+  const plain = plainText(text);
+  const match = /^(?:(\d{4})\s*:\s*)?Season\s+(\d+)(?:\s*\((\d{4})\))?$/i.exec(plain);
+  if (!match) return null;
+  const year = Number(match[1] ?? match[3]);
+  return year >= 2026 ? `${year}-s${match[2]}` : `ow2-s${match[2]}`;
+}
+
+/** Reads the Voice Lines table on a hero's Quotes page. A group cell spans the rows under it, and some have a season cell inside. */
+export function parseVoiceLines(text, { hero, pageTitle }) {
+  const start = text.search(/^={2,4}\s*Voice Lines\s*={2,4}\s*$/im);
+  if (start === -1) return [];
+  const rest = text.slice(start);
+  const lineEnd = rest.indexOf(String.fromCharCode(10));
+  const nextHeading = rest.slice(lineEnd).search(/^={2,3}[^=]/m);
+  const section = nextHeading === -1 ? rest : rest.slice(0, lineEnd + nextHeading);
+  const records = [];
+  const seen = new Set();
+  let group = null;
+  let inner = null;
+  let season = null;
+
+  for (const row of section.split(/\n\|-/).slice(1)) {
+    const cells = row
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('|') && !line.startsWith('|}') && !line.startsWith('|-'))
+      .map((line) => line.slice(1).trim());
+    let quote = null;
+    for (const cell of cells) {
+      if (/^\{\{\s*Audio\b/i.test(cell)) continue;
+      const span = /^(?:rowspan|colspan)=[^|]*\|\s*(.*)$/i.exec(cell);
+      if (span) {
+        const label = span[1];
+        const namedSeason = seasonFromText(label);
+        if (/<big>/i.test(label)) {
+          group = readGroupLabel(label);
+          inner = null;
+          season = null;
+        } else if (namedSeason) {
+          season = namedSeason;
+          inner = null;
+        } else {
+          inner = readGroupLabel(label);
+        }
+        continue;
+      }
+      quote = cell;
+    }
+    if (!quote) continue;
+    const translated = QUOTE_CALL.exec(quote);
+    const rawName = plainText(translated ? translated[1] : quote);
+    const from = /\s*\((?:from the |from )?([^()]*\bbundle)\)\s*$/i.exec(rawName);
+    const name = from ? rawName.slice(0, from.index) : rawName;
+    if (!name) continue;
+    const key = name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const meaning = TRANSLATION.exec(quote);
+    const combined = combineGroups(group, inner);
+    const acquisition = from ? unique([...(combined?.acquisition ?? []), `Sold with the ${from[1]}`]) : combined?.acquisition ?? [];
+    records.push({
+      type: 'voice-line',
+      hero,
+      name,
+      rarity: null,
+      event: combined?.event ?? null,
+      eventLabel: combined?.eventLabel ?? null,
+      season,
+      tags: combined?.tags ?? [],
+      prices: combined?.prices ?? [],
+      acquisition,
+      description: meaning ? `Means "${plainText(meaning[1])}"` : null,
+      file: null,
+      page: pageUrl(pageTitle),
+      pageTitle,
+    });
+  }
+  return records;
 }
 
 /** "Template:Ana Skins" and the like: the hero's name, and which kind of cosmetic the table lists. */
@@ -473,6 +615,18 @@ export function normalizeExport(exported, core, { heroIds }) {
         continue;
       }
       const list = parseCosmeticTable(page.text, { type: TEMPLATE_TYPE[hero[2]], hero: heroId, pageTitle: `${hero[1]}/Cosmetics` });
+      records.push(...list);
+      parsedPages.push({ title: page.title, timestamp: page.timestamp, records: list.length });
+      continue;
+    }
+    const quotesPage = /^(.+)\/Quotes$/.exec(page.title);
+    if (quotesPage) {
+      const heroId = core.heroIdFromName(quotesPage[1]);
+      if (!heroId || !heroIds.has(heroId)) {
+        unused.push(page.title);
+        continue;
+      }
+      const list = parseVoiceLines(page.text, { hero: heroId, pageTitle: page.title });
       records.push(...list);
       parsedPages.push({ title: page.title, timestamp: page.timestamp, records: list.length });
       continue;
@@ -540,12 +694,22 @@ export function normalizeExport(exported, core, { heroIds }) {
   return { records, mythics, parsedPages, unused, events: [...events].map(([id, label]) => ({ id, label })).sort((a, b) => a.label.localeCompare(b.label)) };
 }
 
-export async function importWikiExport(file, { minRecords = 500 } = {}) {
-  if (!fs.existsSync(file)) throw new Error(`No file at ${file}`);
+/** Reads one or more export files as one, where a page in a later file replaces the same page in an earlier one. */
+export function readExports(files) {
+  const pages = new Map();
+  for (const file of files) {
+    if (!fs.existsSync(file)) throw new Error(`No file at ${file}`);
+    for (const page of readExport(fs.readFileSync(file, 'utf8')).pages) pages.set(page.title, page);
+  }
+  return { pages: [...pages.values()] };
+}
+
+export async function importWikiExport(fileOrFiles, { minRecords = 500 } = {}) {
+  const files = [fileOrFiles].flat();
   const core = await loadCore();
   const { loadHeroes } = await import('./heroes-list.mjs');
   const { HEROES } = await loadHeroes();
-  const exported = readExport(fs.readFileSync(file, 'utf8'));
+  const exported = readExports(files);
   const normalized = normalizeExport(exported, core, { heroIds: new Set(HEROES.map((hero) => hero.id)) });
 
   // A partial or wrong export must not replace a good catalogue with a small one.
@@ -553,7 +717,7 @@ export async function importWikiExport(file, { minRecords = 500 } = {}) {
     throw new Error(`Only ${normalized.records.length} cosmetics were read from ${exported.pages.length} pages, so nothing was changed. Check that this is the full export.`);
   }
 
-  const stamp = new Date(fs.statSync(file).mtimeMs).toISOString();
+  const stamp = new Date(Math.max(...files.map((file) => fs.statSync(file).mtimeMs))).toISOString();
   const dir = path.join(DATA_DIR, 'wiki');
   const sorted = [...normalized.records].sort((a, b) => a.type.localeCompare(b.type) || (a.hero ?? '').localeCompare(b.hero ?? '') || a.name.localeCompare(b.name));
   writeJson(path.join(dir, 'catalog.json'), sorted);

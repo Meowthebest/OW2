@@ -47,6 +47,14 @@ for (const [alias, id] of [
 
 export const heroIdFromName = (name: string | null | undefined) => (name ? HERO_NAMES.get(normalizeText(name)) ?? null : null);
 
+/** Every hero a piece of text names in full, such as a bundle's name. */
+export function heroesNamedIn(text: string) {
+  const words = ` ${normalizeText(text)} `;
+  const found = new Set<string>();
+  for (const [name, id] of HERO_NAMES) if (words.includes(` ${name} `)) found.add(id);
+  return [...found];
+}
+
 /** A cosmetic's permanent id. Links and saved collections depend on it, so its parts must not change. */
 export function cosmeticId(type: CosmeticType, heroId: string | null, name: string) {
   const slug = slugify(name) || `x${hash32(name).toString(36)}`;

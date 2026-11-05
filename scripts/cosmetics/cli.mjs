@@ -3,8 +3,8 @@
 //
 //   node scripts/cosmetics/cli.mjs sync [--force]          record the shop if it changed (itemshop.gg)
 //   node scripts/cosmetics/cli.mjs backfill [--stays]      read past shops and item history (needs a key)
-//   node scripts/cosmetics/cli.mjs wiki-link               print the export link to open in your own browser
-//   node scripts/cosmetics/cli.mjs import-wiki FILE        import a Special:Export file, offline
+//   node scripts/cosmetics/cli.mjs wiki-link               print the export links to open in your own browser
+//   node scripts/cosmetics/cli.mjs import-wiki FILE...     import Special:Export files, offline
 //   node scripts/cosmetics/cli.mjs build                   write the files the site reads
 //   node scripts/cosmetics/cli.mjs check                   check the stored data, offline
 //   node scripts/cosmetics/cli.mjs log [N]                 show the last N import log lines
@@ -36,18 +36,18 @@ async function main() {
   }
 
   if (command === 'wiki-link') {
-    const { exportLink } = await import('./wiki.mjs');
+    const { exportLinks } = await import('./wiki.mjs');
     const { loadHeroes } = await import('./heroes-list.mjs');
     const { HEROES } = await loadHeroes();
-    console.log(exportLink(HEROES.map((hero) => hero.name)));
+    for (const link of exportLinks(HEROES.map((hero) => hero.name))) console.log(`${link}\n`);
     return;
   }
 
   if (command === 'import-wiki') {
-    const file = flags._[1];
-    if (!file) throw new Error('Pass the path of the Special:Export file.');
+    const files = flags._.slice(1);
+    if (files.length === 0) throw new Error('Pass the path of each Special:Export file.');
     const { importWikiExport } = await import('./wiki.mjs');
-    const result = await importWikiExport(path.resolve(file));
+    const result = await importWikiExport(files.map((file) => path.resolve(file)));
     console.log(result.summary);
     return;
   }

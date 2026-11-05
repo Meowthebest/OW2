@@ -5,6 +5,7 @@ import { HeroPortrait } from '../../../components/media';
 import { formatInt } from '../../../lib/format';
 import { useAsync } from '../../patches/data';
 import { isSet } from '../core/collection';
+import { groupStays } from '../core/shop';
 import { normalizeText } from '../core/text';
 import type { Bundle, CatalogMeta, CatalogRow, CosmeticDetail, LootPool, Season, ShopStay } from '../core/types';
 import { loadBundles, loadCatalog, loadCosmetic, loadEvents, loadMeta, loadPools, loadSeasons } from '../data';
@@ -93,8 +94,9 @@ function StayTimeline({ stays }: { stays: ShopStay[] }) {
 }
 
 function ShopHistory({ detail, meta }: { detail: CosmeticDetail; meta: CatalogMeta | undefined }) {
+  const rows = useMemo(() => groupStays(detail.stays), [detail.stays]);
   return (
-    <Collapsible title="Shop history" icon={<History size={15} aria-hidden="true" />} count={detail.stays.length} defaultOpen={detail.stays.length > 0 && detail.stays.length <= 6}>
+    <Collapsible title="Shop history" icon={<History size={15} aria-hidden="true" />} count={rows.length} defaultOpen={rows.length > 0 && rows.length <= 6}>
       {detail.stays.length === 0 ? (
         <p className="cx-muted">No shop appearance recorded{meta?.shopHistoryFrom ? ` since ${dayText(meta.shopHistoryFrom)}` : ''}.</p>
       ) : (
@@ -106,12 +108,25 @@ function ShopHistory({ detail, meta }: { detail: CosmeticDetail; meta: CatalogMe
                 <tr><th scope="col">From</th><th scope="col">Until</th><th scope="col" className="num">Price</th><th scope="col">Sold as</th></tr>
               </thead>
               <tbody>
-                {detail.stays.map((stay, index) => (
-                  <tr key={index}>
-                    <td>{stay.start ? dayText(stay.start) : 'Not recorded'}</td>
-                    <td>{stay.end ? dayText(stay.end) : 'Still listed'}</td>
-                    <td className="num">{stay.price !== null && stay.price !== undefined ? `${formatInt(stay.price)}${stay.currency ? ` ${stay.currency}` : ''}` : '—'}</td>
-                    <td>{stay.bundle ? `In ${stay.bundle}` : stay.section ?? 'On its own'}</td>
+                {rows.map((row) => (
+                  <tr key={`${row.start}|${row.end}`}>
+                    <td>{row.start ? dayText(row.start) : 'Not recorded'}</td>
+                    <td>{row.end ? dayText(row.end) : 'Still listed'}</td>
+                    <td className="num">{row.price !== null ? `${formatInt(row.price)}${row.currency ? ` ${row.currency}` : ''}` : '—'}</td>
+                    <td>
+                      {row.bundles.length > 0 ? (
+                        <ul className="cx-plain-list">
+                          {row.bundles.map((bundle) => (
+                            <li key={bundle.name}>
+                              In {bundle.id ? <a className="text-link" href={`#/bundles/${bundle.id}`}>{bundle.name}</a> : bundle.name}
+                              {bundle.price !== null && ` (${formatInt(bundle.price)}${row.currency ? ` ${row.currency}` : ''} for the bundle)`}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        row.section ?? 'On its own'
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -119,7 +134,7 @@ function ShopHistory({ detail, meta }: { detail: CosmeticDetail; meta: CatalogMe
           </div>
         </>
       )}
-      {meta && !meta.shopHistoryComplete && meta.shopHistoryFrom && <p className="cx-muted cx-muted--small">Recorded since {dayText(meta.shopHistoryFrom)}. Earlier appearances aren't included.</p>}
+      {meta?.shopHistoryFrom && <p className="cx-muted cx-muted--small">Recorded since {dayText(meta.shopHistoryFrom)}. Earlier appearances aren't included.</p>}
     </Collapsible>
   );
 }
@@ -277,6 +292,7 @@ export function CosmeticDetailPage({ id }: { id: string }) {
             {seasonLabel && <Fact label="Season introduced"><a className="text-link" href={`#/cosmetics?season=${detail.season}`}>{seasonLabel}</a></Fact>}
             {eventLabel && <Fact label="Event or release"><a className="text-link" href={`#/cosmetics?event=${detail.event}`}>{eventLabel}</a></Fact>}
             {detail.prices.length > 0 && <Fact label="Known price"><PriceList prices={detail.prices} /></Fact>}
+            {detail.prices.length === 0 && detail.stays.length > 0 && detail.stays.every((stay) => stay.bundle) && <Fact label="Known price">Only recorded inside bundles, with no price of its own</Fact>}
             {detail.productIds.length > 0 && <Fact label={detail.productIds.length === 1 ? 'Product ID' : 'Product IDs'}><span className="cx-mono">{detail.productIds.join(', ')}</span></Fact>}
             {detail.acquisition.length > 0 && (
               <Fact label="How to get it">

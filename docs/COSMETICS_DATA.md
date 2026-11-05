@@ -58,7 +58,8 @@ The site is static, so there's no server-side paging. The equivalent here is tha
 
 - **Cosmetics** have one permanent id built from type, hero and name, such as `skin.widowmaker.eve` or `weapon-charm.double-dice`. Sources join on it, so a skin from the wiki and the same skin from the shop are one record, with both sources listed. Links and saved collections depend on these ids. If a name changes, add it to `rename` in `corrections.json`.
 - **Bundles**, **loot pools**, **shop rotations**, **Battle Pass rewards** and **Twitch rewards** refer to cosmetics by id. One cosmetic can be in any number of each, and is never copied.
-- **Stays** are a cosmetic's periods in the shop, with price, section and bundle. Stays from itemshop.gg are used where they exist. Otherwise they come from the recorded shops.
+- **Stays** are a cosmetic's periods in the shop, with price, section and bundle. Stays from itemshop.gg are used where they exist. Otherwise they come from the recorded shops. A price from inside a bundle stays with the bundle, because it isn't what the one item costs.
+- **Shop listings** are filed under one key by `scripts/cosmetics/reconcile.mjs`. Past shops carry no item keys, and their ids change between days and sections, so one name and hero is one item. Product numbers alone can't join them, because the store reuses them. The raw records stay in `items.json`, so a better rule can be applied later.
 - **Sources** are on every record, with the date they were last checked.
 
 ## Shop recording
@@ -81,23 +82,23 @@ Past shops and item history need a free key.
 2. Add it as a repository secret named `ITEMSHOP_API_KEY`, under **Settings → Secrets and variables → Actions**.
 3. Run **Actions → Record the shop → Run workflow** with `backfill`. It only adds days it doesn't have, so it's safe to repeat.
 
-Without a key, history starts from the first recording, and pages say so.
+itemshop.gg's record starts on September 24, 2026, so nothing earlier is available from it, and pages say when the records begin. The first day comes from a different feed, which lists many single items that later days don't. Some of those name only a hero, not what kind of cosmetic it is. They join the catalogue only when exactly one cosmetic fits their hero, name and rarity.
 
 ## Importing the wiki
 
 The wiki's terms don't allow automated access without consent, so this is done by a person in their own browser. It takes about two minutes.
 
-1. Build the export link from the current roster, and open it in your browser:
+1. Build the export links from the current roster, and open each one in your browser:
 
    ```bash
    node scripts/cosmetics/cli.mjs wiki-link
    ```
 
-   The link opens the wiki's own [Special:Export](https://overwatch.wiki/w/Special:Export) page with the right pages filled in, and downloads one XML file.
-2. Import that file, then rebuild:
+   Each link uses the wiki's own [Special:Export](https://overwatch.wiki/w/Special:Export) page and downloads one XML file. There's more than one because very long links get cut off on the way to a browser, which silently loses pages.
+2. Import the files together, then rebuild:
 
    ```bash
-   node scripts/cosmetics/cli.mjs import-wiki path/to/file.xml
+   node scripts/cosmetics/cli.mjs import-wiki path/to/first.xml path/to/second.xml
    ```
 
    ```bash
@@ -122,6 +123,7 @@ There's no admin web page. Admin access is write access to the repository.
 | Rename a cosmetic | `corrections.json`: `"rename": { "old.id": "new.id" }` |
 | Fix a field | `corrections.json`: `"set": { "skin.ana.citrine": { "rarity": "rare" } }` |
 | Hide a bad record | `corrections.json`: `"hide": ["skin.ana.wrong"]` |
+| Join two spellings of one shop listing | `corrections.json`: `"listingNames": { "Wrong Name": "Right Name" }` |
 | Check everything, offline | `npm run check:cosmetics` |
 | See the import log | `node scripts/cosmetics/cli.mjs log` |
 | Roll back | `git revert` the commit. Everything built comes from these files |
@@ -141,6 +143,7 @@ Comments and reactions aren't built. The brief made them depend on existing acco
 - **Mythic Shop stock.** No source says what's in it right now, so mythics show no current availability.
 - **Mythic choices.** The wiki gives how many choices each customization group has, not what each looks like, so choices are numbered.
 - **Prices.** A price is what a source last listed. Check the game before buying. Bundle savings are the store's own tag, such as "37% off", and aren't calculated here, because the feed's "regular" price isn't reliable for bundles.
+- **Heroes in bundles.** The source sometimes leaves out a bundle item's hero. It's filled in when a bundle is named after one hero or the same picture is sold elsewhere with a hero. Otherwise the item shows "Hero not stated" and isn't tracked as a cosmetic.
 - **Availability.** "Not in shop" only means it wasn't in the latest shop data. It may be available another way.
 - **Newest and oldest.** Order comes from the season or first shop sighting, then the product id, so it's rough within a season. Items with neither go last in both directions.
 - **Battle Pass tiers.** Rewards appear only where the wiki export lists them, and old rewards aren't always obtainable now.

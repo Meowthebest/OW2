@@ -8,6 +8,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { DATA_DIR, loadCore, OUT_DIR, readJson, ROOT } from './common.mjs';
 import { readRotations } from './itemshop.mjs';
+import { reconcileShop } from './reconcile.mjs';
 
 const ITEMSHOP_NAME = 'itemshop.gg';
 const WIKI_NAME = 'Overwatch Wiki';
@@ -78,6 +79,9 @@ const nameKey = (core, value) => core.normalizeText(value);
 export async function buildCatalog({ dryRun = false, now = new Date(), outDir = OUT_DIR } = {}) {
   const core = await loadCore();
   const inputs = loadInputs();
+  const reconciled = reconcileShop(core, inputs.items, inputs.rotations, inputs.corrections);
+  inputs.items = reconciled.items;
+  inputs.rotations = reconciled.rotations;
   const warnings = [];
   const errors = [];
   const cosmetics = new Map();
@@ -124,12 +128,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   // Everything the shop has listed, whether sold alone or inside a bundle.
   const shopChecked = inputs.state.lastRecorded ?? null;
   const itemsByKey = new Map();
-  const mergeShopItem = (key, { name, typeLabel, rarity, image, url }) => {
-    const { type, heroName } = core.parseTypeLabel(typeLabel);
-    if (!type) return null;
-    const hero = core.heroIdFromName(heroName);
-    if (heroName && !hero) warnings.push(`Unknown hero "${heroName}" on ${name}`);
-    const record = ensure(type, hero, name);
+  const noteShopItem = (record, key, { rarity, image, url }) => {
     record.rarity ??= rarity ?? null;
     if (image && !record.images.includes(image)) record.images.unshift(image);
     if (key) {
@@ -145,10 +144,48 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     if (url && !record.storeUrl) record.storeUrl = url;
     return record;
   };
+  const mergeShopItem = (key, item) => {
+    const { type, heroName } = core.parseTypeLabel(item.typeLabel);
+    if (!type) return null;
+    const hero = core.heroIdFromName(heroName);
+    if (heroName && !hero) warnings.push(`Unknown hero "${heroName}" on ${item.name}`);
+    if (core.HERO_BOUND_TYPES.has(type) && !hero) return null;
+    return noteShopItem(ensure(type, hero, item.name), key, item);
+  };
+
+  // A listing labelled only with a hero joins the catalogue if exactly one cosmetic fits its hero, name and rarity.
+  const byHeroAndName = new Map();
+  const heroNameKey = (hero, name) => `${hero}|${nameKey(core, name)}`;
+  for (const record of cosmetics.values()) {
+    if (!record.hero) continue;
+    const key = heroNameKey(record.hero, record.name);
+    if (!byHeroAndName.has(key)) byHeroAndName.set(key, []);
+    byHeroAndName.get(key).push(record);
+  }
+  const linkByHero = (key, item) => {
+    const hero = core.heroIdFromName(item.typeLabel);
+    if (!hero) return;
+    const fits = (byHeroAndName.get(heroNameKey(hero, item.name)) ?? []).filter((record) => !item.rarity || !record.rarity || record.rarity === item.rarity);
+    if (fits.length === 1) noteShopItem(fits[0], key, item);
+  };
+
+  // A past bundle's contents have no item keys, so they're followed by the cosmetic they name.
+  const contentKey = (content) => {
+    if (content.key) return content.key;
+    const { type, heroName } = core.parseTypeLabel(content.typeLabel);
+    return type ? `cosmetic:${resolveId(core.cosmeticId(type, core.heroIdFromName(heroName), content.name))}` : null;
+  };
+  const bundleIdOf = (key, item) => {
+    const product = productIdOf(key);
+    return product ? String(product) : core.slugify(item.name);
+  };
+  const bundleIdByName = new Map();
 
   for (const [key, item] of Object.entries(inputs.items)) {
     if (item.kind === 'cosmetic') mergeShopItem(key, item);
-    for (const content of item.contents ?? []) mergeShopItem(content.key, content);
+    else if (item.kind === 'product') linkByHero(key, item);
+    if (item.kind === 'bundle') bundleIdByName.set(nameKey(core, item.name), bundleIdOf(key, item));
+    for (const content of item.contents ?? []) mergeShopItem(contentKey(content), content);
   }
 
   // Corrections are applied last, so a fix keeps working after the next import.
@@ -161,8 +198,8 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     const direct = new Map();
     for (const section of rotation.sections) {
       if (section.upcoming) continue;
-      for (const [key, amount, currency, , , , , until] of section.listings) {
-        direct.set(key, { amount, currency, section: section.title, until: until ?? section.endsAt ?? null });
+      for (const [key, amount, currency, , label, , , until] of section.listings) {
+        direct.set(key, { amount, currency, label, section: section.title, until: until ?? section.endsAt ?? null });
       }
     }
     return direct;
@@ -180,9 +217,11 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     const direct = presentKeys(rotation);
     const here = new Map();
     for (const [key, info] of direct) {
-      here.set(key, { price: info.amount, currency: info.currency, section: info.section, bundle: null });
-      for (const content of inputs.items[key]?.contents ?? []) {
-        if (content.key && !here.has(content.key)) here.set(content.key, { price: null, currency: null, section: info.section, bundle: inputs.items[key].name });
+      here.set(key, { price: info.amount, currency: info.currency, label: info.label, section: info.section, bundle: null, bundleId: null, bundlePrice: null });
+      const item = inputs.items[key];
+      for (const content of item?.contents ?? []) {
+        const ref = contentKey(content);
+        if (ref && !here.has(ref)) here.set(ref, { price: null, currency: info.currency, label: null, section: info.section, bundle: item.name, bundleId: item.kind === 'bundle' ? bundleIdOf(key, item) : null, bundlePrice: info.amount });
       }
     }
     for (const key of [...openStays.keys()]) if (!here.has(key)) closeStay(key, rotation.at);
@@ -197,26 +236,50 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   const inShopKeys = new Set(openStays.keys());
 
   const historyRead = Boolean(inputs.state.historyRead);
+  const latestDate = dateOf([latest?.updatedAt, latest?.at].filter(Boolean).sort().at(-1) ?? null);
   for (const record of cosmetics.values()) {
     const stays = [];
     for (const key of record.keys) {
       const fromSource = inputs.stays.items?.[key];
       if (Array.isArray(fromSource) && fromSource.length > 0) {
-        for (const [start, end, price, currency, shop] of fromSource) stays.push({ start, end, price, currency, section: shop ?? null, bundle: null, source: 'itemshop-history' });
+        for (const [start, end, price, currency, shop, state] of fromSource) {
+          if (state === 'upcoming') continue;
+          // The source files a stay under the listing it was sold in. Unless that's the cosmetic itself, the price is the bundle's.
+          const alone = !shop || nameKey(core, shop) === nameKey(core, record.name);
+          stays.push({
+            start,
+            end,
+            price: alone ? price : null,
+            currency: currency ?? 'Coins',
+            section: null,
+            bundle: alone ? null : shop,
+            bundleId: alone ? null : bundleIdByName.get(nameKey(core, shop)) ?? null,
+            bundlePrice: alone ? null : price,
+            source: 'itemshop-history',
+          });
+        }
       }
     }
     // An item can show no individual stays because it was only ever sold inside bundles. The recording covers those.
+    // It can also start before the source's own dates, and then only that earlier part adds anything.
+    const firstFromSource = stays.map((stay) => stay.start).filter(Boolean).sort()[0] ?? null;
     for (const key of record.keys) {
       for (const stay of recordedStays.get(key) ?? []) {
         const covered = stays.some((other) => other.source === 'itemshop-history' && other.start && stay.start && other.start <= stay.start && (!other.end || !stay.end || other.end >= stay.start));
-        if (!covered) stays.push(stay);
+        if (covered) continue;
+        const runsInto = firstFromSource && stay.start < firstFromSource && (!stay.end || stay.end > firstFromSource);
+        stays.push(runsInto ? { ...stay, end: firstFromSource } : stay);
       }
     }
     stays.sort((a, b) => (b.start ?? '').localeCompare(a.start ?? ''));
     record.stays = stays;
     record.inShop = [...record.keys].some((key) => inShopKeys.has(key));
-    record.lastSeen = record.inShop ? dateOf(latest?.updatedAt ?? latest?.at) : dateOf(stays.map((stay) => stay.end ?? stay.start).filter(Boolean).sort().at(-1) ?? null);
+    // A planned end can still be in the future if the item left early, so the latest shop is the limit.
+    const lastDate = dateOf(stays.map((stay) => stay.end ?? stay.start).filter(Boolean).sort().at(-1) ?? null);
+    record.lastSeen = record.inShop ? latestDate : lastDate && latestDate && lastDate > latestDate ? latestDate : lastDate;
     record.firstSeen = dateOf(stays.map((stay) => stay.start).filter(Boolean).sort()[0] ?? null);
+    // One stay can be in several bundles at once. That's still one appearance.
+    record.appearances = new Set(stays.map((stay) => dateOf(stay.start) ?? 'unknown')).size;
     for (const stay of stays) {
       if (stay.price !== null && stay.price !== undefined && /^coins$/i.test(stay.currency ?? 'coins')) addPrice(record, stay.price, 'coins');
     }
@@ -227,7 +290,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   for (const [key, item] of Object.entries(inputs.items)) {
     if (item.kind !== 'bundle') continue;
     const productId = productIdOf(key);
-    const id = productId ? String(productId) : core.slugify(item.name);
+    const id = bundleIdOf(key, item);
     const stays = recordedStays.get(key) ?? [];
     const open = openStays.get(key);
     let listing = null;
@@ -261,11 +324,12 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     });
     bundles.push({
       id,
+      slug: core.slugify(item.name),
       name: item.name,
       productId,
       rarity: item.rarity ?? null,
       image: item.image ?? null,
-      price: lastStay || listing ? { amount: listing?.[1] ?? lastStay?.price ?? null, currency: listing?.[2] ?? lastStay?.currency ?? '', label: listing?.[4] ?? null } : null,
+      price: lastStay || listing ? { amount: listing?.[1] ?? lastStay?.price ?? null, currency: listing?.[2] ?? lastStay?.currency ?? '', label: listing?.[4] ?? lastStay?.label ?? null } : null,
       statedCount: item.statedCount ?? null,
       items,
       heroes: unique(items.map((row) => row.hero).filter(Boolean)),
@@ -343,7 +407,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
       prices: record.prices,
       availability,
       lastSeen: record.lastSeen ?? null,
-      seen: record.stays.length,
+      seen: record.appearances,
       order: orderOf(record),
     };
     rows.push(row);

@@ -1,0 +1,7885 @@
+{
+ "fetchedAt": "2026-11-05T17:00:19.419Z",
+ "items": {
+  "ow:bundle:1337309": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    14.99,
+    "usd",
+    "Overwatch® – Invasion Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    14.99,
+    "usd",
+    "Overwatch® – Invasion Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    14.99,
+    "usd",
+    "Overwatch® – Invasion Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:1935740": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935688": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935689": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935718": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935738": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935691": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935739": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935830": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935843": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935829": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935841": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935827": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935840": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935825": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935826": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935824": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935845": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1935846": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1936533": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1936532": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:1936528": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    5900,
+    null,
+    "Dokiwatch Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:1996244": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996157": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996156": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996048": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996047": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996110": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996155": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996117": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:1996093": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2013340": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    3400,
+    null,
+    "Neo-Noir Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2027259": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026514": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026511": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026502": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026509": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026503": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026652": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026644": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2026647": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2027143": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2027147": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2027140": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2027138": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2027154": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2027158": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2027152": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    5900,
+    null,
+    "Borealis Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115670": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115704": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115700": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115655": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115653": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115633": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115591": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114987": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114990": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115017": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115061": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115671": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115695": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115691": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115654": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115647": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115636": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115630": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114986": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Disguised OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114993": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Disguised OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115016": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Disguised OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115060": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Disguised OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Disguised OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115673": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115698": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115644": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115635": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115627": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115625": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115622": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2107949": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "JDG OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114994": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "JDG OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2107975": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "JDG OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2108489": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "JDG OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "JDG OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115674": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115680": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115646": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115637": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115620": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115594": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115593": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114984": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114952": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115014": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115058": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115675": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115684": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115676": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115648": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115639": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115616": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115612": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114974": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114997": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115008": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115046": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115720": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115694": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115652": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115660": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115634": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115619": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115617": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114989": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114950": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115018": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115062": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115722": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115688": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115682": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115678": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115632": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115618": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115611": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2107948": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "All Gamers OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114992": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "All Gamers OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2107974": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "All Gamers OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2108016": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "All Gamers OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "All Gamers OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115727": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115661": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115701": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115692": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115690": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115659": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115638": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114975": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "T1 OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114996": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "T1 OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115007": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "T1 OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115047": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "T1 OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "T1 OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115729": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878655": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:876402": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878358": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:877209": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878183": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:877599": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Classic Divinity Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2115730": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ]
+  ],
+  "ow:item:1078313": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ]
+  ],
+  "ow:item:1172352": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ]
+  ],
+  "ow:item:1092188": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ]
+  ],
+  "ow:item:1551155": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ]
+  ],
+  "ow:item:1498580": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Starter Pack Collection",
+    "now"
+   ]
+  ],
+  "ow:bundle:2115737": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:877500": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:877826": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878072": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878008": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878385": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    19.99,
+    "usd",
+    "Spooky Winston Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2115738": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878074": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:878404": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:879784": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    9.99,
+    "usd",
+    "Sweet Brigitte Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2115739": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115685": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115649": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115645": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115640": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115623": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115615": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114973": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114998": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115009": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115049": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115740": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115693": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115686": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115650": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115595": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115629": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115592": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114976": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Peps OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114999": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Peps OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115010": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Peps OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115048": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Peps OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Team Peps OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115741": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115702": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115683": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115641": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115631": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115626": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115613": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114977": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115000": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115011": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115050": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115747": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115703": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115697": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115687": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115643": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115628": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115614": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2107020": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114951": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2107976": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2108514": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115756": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115696": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115681": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115677": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115658": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115642": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115621": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114978": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115001": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115012": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115051": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2115761": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115624": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115656": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115657": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115651": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115689": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115699": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114983": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115002": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2114953": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2115053": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2120797": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    9.99,
+    "usd",
+    "Starter Pack 2026: Season 5",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    9.99,
+    "usd",
+    "Starter Pack 2026: Season 5",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    9.99,
+    "usd",
+    "Starter Pack 2026: Season 5",
+    "now"
+   ]
+  ],
+  "ow:bundle:2120799": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Overwatch® – Ultimate Battle Pass Bundle: Season 5",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Overwatch® – Ultimate Battle Pass Bundle: Season 5",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Overwatch® – Ultimate Battle Pass Bundle: Season 5",
+    "now"
+   ]
+  ],
+  "ow:item:809988": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Lucio - Complete Mythic Weapon Skin Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Roadhog - Complete Mythic Skin Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Lucio - Complete Mythic Weapon Skin Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Lucio - Complete Mythic Weapon Skin Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2129810": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    null,
+    null,
+    "Overwatch® Premium Battle Pass: Season 5",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    null,
+    null,
+    "Overwatch® Premium Battle Pass: Season 5",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    null,
+    null,
+    "Overwatch® Premium Battle Pass: Season 5",
+    "now"
+   ]
+  ],
+  "ow:bundle:2120801": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Roadhog - Complete Mythic Skin Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2120813": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    39.99,
+    "usd",
+    "Lucio - Complete Mythic Weapon Skin Bundle",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    39.99,
+    "usd",
+    "Lucio - Complete Mythic Weapon Skin Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    39.99,
+    "usd",
+    "Lucio - Complete Mythic Weapon Skin Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2131869": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2126627": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2126040": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2126628": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    1900,
+    null,
+    "Eclypse",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    1900,
+    null,
+    "Eclypse",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    1900,
+    null,
+    "Eclypse",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2126036": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    1900,
+    null,
+    "Heart of Tenacity",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    1900,
+    null,
+    "Heart of Tenacity",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    1900,
+    null,
+    "Heart of Tenacity",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2126034": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2133486": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128209": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2132931": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2129308": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128744": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128745": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128746": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128712": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128714": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128715": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2128706": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2129277": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2129276": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2129274": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2129270": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2129269": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    7600,
+    null,
+    "Dokiwatch 2.0 Mega Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2131871": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Woebringer Lifeweaver Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2131872": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    2600,
+    null,
+    "Heart of Mercy Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2131873": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    4500,
+    null,
+    "Malus Ramattra Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2131879": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    null,
+    null,
+    "Premium Battle Pass 2026: Season 5 + 20 Tier Skips",
+    "now"
+   ],
+   [
+    "2026-10-31T06:25:01Z",
+    "2026-11-03T19:15:00Z",
+    null,
+    null,
+    "Premium Battle Pass 2026: Season 5 + 20 Tier Skips",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    null,
+    null,
+    null,
+    "Premium Battle Pass 2026: Season 5 + 20 Tier Skips",
+    "now"
+   ]
+  ],
+  "ow:bundle:2132890": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ]
+  ],
+  "ow:item:2126041": [
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    1900,
+    null,
+    "Heart of Valor",
+    "now"
+   ],
+   [
+    "2026-11-04T07:25:01Z",
+    "2026-11-10T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "now"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    1900,
+    null,
+    "Heart of Valor",
+    "past"
+   ],
+   [
+    "2026-10-27T18:25:01Z",
+    "2026-11-03T19:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    1900,
+    null,
+    "Heart of Valor",
+    "past"
+   ],
+   [
+    "2026-10-26T03:08:24Z",
+    "2026-10-27T18:15:00Z",
+    11800,
+    null,
+    "Dokiwatch Collectors Bundle",
+    "past"
+   ]
+  ],
+  "ow:bundle:2145338": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145332": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145353": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145334": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Raven Freja Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145333": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Adam Soldier: 76 Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145352": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Tachy Vendetta Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145351": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145350": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Raven Freja Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145349": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Tachy Vendetta Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145331": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2142770": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2139847": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2142771": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Adam Soldier: 76 Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145348": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145347": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Raven Freja Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145346": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Tachy Vendetta Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145345": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145330": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Adam Soldier: 76 Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145344": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145329": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Raven Freja Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145328": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Tachy Vendetta Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2142772": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Adam Soldier: 76 Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145327": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145361": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145360": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145359": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145335": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145358": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145357": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Raven Freja Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145356": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Tachy Vendetta Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145355": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Adam Soldier: 76 Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145354": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145326": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145325": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2142769": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Tachy Vendetta Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2145324": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Adam Soldier: 76 Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2142768": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Raven Freja Bundle",
+    "now"
+   ],
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    6900,
+    null,
+    "EVE Protocol Mega Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145339": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Raven Freja Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145340": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    4500,
+    null,
+    "Lily & Providence D.Va Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145341": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Adam Soldier: 76 Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145342": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "Tachy Vendetta Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145343": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-10T19:15:00Z",
+    2800,
+    null,
+    "EVE Widowmaker Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145396": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Virtus.pro OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145397": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Peps OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145398": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Dallas Fuel OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145399": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Weibo Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145400": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "All Gamers OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145425": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Crazy Raccoon OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145428": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Zeta Division OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145429": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Falcons OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145430": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "T1 OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145431": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Twisted Minds OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145438": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Spacestation Gaming OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145439": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Team Liquid OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145440": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "Disguised OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:bundle:2145441": [
+   [
+    "2026-11-03T19:25:02Z",
+    "2026-11-17T19:15:00Z",
+    700,
+    null,
+    "JDG OWCS 2026 Partner Team Supporter Bundle",
+    "now"
+   ]
+  ],
+  "ow:item:2136810": [
+   [
+    "2026-11-03T19:25:02Z",
+    null,
+    1000,
+    null,
+    "Taking Reign - Premium Event Pass",
+    "now"
+   ]
+  ]
+ }
+}

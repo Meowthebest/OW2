@@ -76,6 +76,10 @@ export interface ShopStay {
   section: string | null;
   /** The bundle it was sold with, when it wasn't sold alone. */
   bundle: string | null;
+  /** That bundle's page, when the bundle is known. */
+  bundleId?: string | null;
+  /** The whole bundle's price. It isn't a price for this one item, so it's kept apart from price. */
+  bundlePrice?: number | null;
   source: 'itemshop-history' | 'recorded';
 }
 
@@ -120,6 +124,8 @@ export type BundleStatus = 'active' | 'previous';
 
 export interface Bundle {
   id: string;
+  /** Its name as a link. A bundle first known by name keeps working here after it gets a product number. */
+  slug?: string;
   name: string;
   productId: number | null;
   rarity: Rarity | null;

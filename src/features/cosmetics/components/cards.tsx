@@ -2,6 +2,7 @@ import { Layers, Package, ShoppingBag } from 'lucide-react';
 import { HeroPortrait } from '../../../components/media';
 import { cn } from '../../../lib/format';
 import { isSet, bundleProgress } from '../core/collection';
+import { HERO_BOUND_TYPES } from '../core/shop';
 import type { Bundle, BundleItem, CatalogRow } from '../core/types';
 import { dayText, heroById, heroLabel, sourcePriceText, TAG_LABEL, typeSingular } from '../labels';
 import { useCollection } from '../useCollection';
@@ -123,7 +124,7 @@ export function BundleItemCard({ item, bundleName }: { item: BundleItem; bundleN
           <RarityTag rarity={item.rarity} />
         </p>
         <h3 className="cx-card__name">{item.name}{item.quantity > 1 ? ` × ${item.quantity}` : ''}</h3>
-        <p className="cx-card__hero">{item.hero ? heroLabel(item.hero) : item.type ? 'Any hero' : ' '}</p>
+        <p className="cx-card__hero">{item.hero ? heroLabel(item.hero) : item.type ? (HERO_BOUND_TYPES.has(item.type) ? 'Hero not stated' : 'Any hero') : ' '}</p>
         <div className="cx-card__foot"><PriceList prices={item.prices} limit={1} /></div>
       </div>
     </>

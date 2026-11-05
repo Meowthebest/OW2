@@ -1,7 +1,7 @@
 // Reads itemshop.gg's shop answer. The recording job and the Shop page share this, so both see the same rules.
 // https://itemshop.gg/developers
-import { cosmeticId, hash32, heroIdFromName, safeUrl } from './text';
-import type { CosmeticType, Rarity } from './types';
+import { cosmeticId, hash32, heroIdFromName, safeUrl, slugify } from './text';
+import type { CosmeticType, Rarity, ShopStay } from './types';
 
 export const ITEMSHOP_API = 'https://itemshop.gg/api/v1';
 export const ITEMSHOP_PAGE = 'https://itemshop.gg/overwatch';
@@ -34,6 +34,9 @@ const TYPE_WORDS: Record<string, CosmeticType> = {
   'player title': 'player-title',
   'player titles': 'player-title',
 };
+
+/** Types that always belong to one hero. One of these with no hero named can't be linked to a cosmetic. */
+export const HERO_BOUND_TYPES: ReadonlySet<string> = new Set(['skin', 'weapon-skin', 'highlight-intro', 'victory-pose', 'emote', 'voice-line']);
 
 /** "Skins · D.Va", "Skin - Illari" and "Weapon Charms" all become a type and, when there is one, a hero. */
 export function parseTypeLabel(label: string | null): { type: CosmeticType | null; heroName: string | null } {
@@ -149,16 +152,22 @@ function readListing(raw: unknown): ShopListing {
   if (!id || !name) throw new ShopFormatError('A shop item has no id or name');
 
   const typeLabel = text(raw.type);
-  const key = text(raw.itemKey) ?? `listing:${id}`;
+  // Past shops have no item keys, and the source can use one id for two different items, so the name is part of this.
+  const key = text(raw.itemKey) ?? `listing:${id}:${slugify(name)}`;
   const { type, heroName } = parseTypeLabel(typeLabel);
   const contents = Array.isArray(raw.contents) ? raw.contents.map(readContent).filter((item): item is ShopContent => item !== null) : [];
-  const bundleLike = key.startsWith('ow:bundle:') || /^bundle\b/i.test(typeLabel ?? '');
-  const kind: ListingKind = bundleLike ? 'bundle' : type ? 'cosmetic' : 'product';
-  const stated = /^bundle\s+(\d+)$/i.exec(typeLabel ?? '');
+  const bundleLike = key.startsWith('ow:bundle:') || /^bundles?\b/i.test(typeLabel ?? '');
+  // A label can be just a hero's name. That says whose it is, but not what kind of cosmetic.
+  const hero = heroIdFromName(heroName) ?? (type ? null : heroIdFromName(typeLabel));
+  const isCosmetic = type !== null && (hero !== null || !HERO_BOUND_TYPES.has(type));
+  const kind: ListingKind = bundleLike ? 'bundle' : isCosmetic ? 'cosmetic' : 'product';
+  const stated = /^bundles?\s*(?:[·(]\s*)?(\d+)/i.exec(typeLabel ?? '');
   const price = isObject(raw.price) ? raw.price : {};
   const availability = isObject(raw.availability) ? raw.availability : {};
   const images = isObject(raw.images) ? raw.images : {};
-  const hero = heroIdFromName(heroName);
+  const label = text(price.label);
+  // Older records put a dollar price in the label, and still call the currency Coins.
+  const dollars = amount(price.amount) === null ? /^US\$\s*(\d+(?:\.\d+)?)$/.exec(label ?? '') : null;
 
   return {
     id,
@@ -169,9 +178,9 @@ function readListing(raw: unknown): ShopListing {
     type: kind === 'cosmetic' ? type : null,
     hero,
     rarity: rarityFromName(isObject(raw.rarity) ? raw.rarity.name : null),
-    amount: amount(price.amount),
-    priceLabel: text(price.label),
-    currency: text(price.currency) ?? '',
+    amount: dollars ? Number(dollars[1]) : amount(price.amount),
+    priceLabel: dollars ? null : label,
+    currency: dollars ? 'USD' : text(price.currency) ?? '',
     regular: amount(price.regular),
     image: safeUrl(images.card) ?? safeUrl(images.render),
     badge: text(raw.badge),
@@ -193,12 +202,27 @@ export function normalizeShop(answer: unknown): ShopSnapshot {
   if (data.game !== 'overwatch') throw new ShopFormatError('The answer is not for Overwatch');
   if (!Array.isArray(data.sections)) throw new ShopFormatError('The answer has no sections');
 
-  const sections = data.sections.map((section): ShopSection => {
+  const sections: ShopSection[] = [];
+  for (const section of data.sections) {
     if (!isObject(section) || !Array.isArray(section.items)) throw new ShopFormatError('A section has no items');
-    const title = text(section.title);
+    // Some records have an empty part after the name, such as "Overwatch Shop · ".
+    const title = text(section.title)?.replace(/[\s·–-]+$/, '');
     if (!title) throw new ShopFormatError('A section has no title');
-    return { title, upcoming: section.upcoming === true, endsAt: time(section.endsAt), listings: section.items.map(readListing) };
-  });
+    const upcoming = section.upcoming === true;
+    const endsAt = time(section.endsAt);
+    const listings = section.items.map(readListing);
+    const same = sections.find((other) => other.title === title && other.upcoming === upcoming);
+    if (!same) {
+      sections.push({ title, upcoming, endsAt, listings });
+      continue;
+    }
+    if (same.endsAt !== endsAt) {
+      for (const listing of same.listings) listing.until ??= same.endsAt;
+      for (const listing of listings) listing.until ??= endsAt;
+      same.endsAt = null;
+    }
+    same.listings.push(...listings);
+  }
 
   return {
     shopDate: text(data.shopDate),
@@ -218,6 +242,29 @@ export function shopFingerprint(snapshot: Pick<ShopSnapshot, 'sections'>) {
   }
   parts.sort();
   return hash32(parts.join('\n')).toString(36);
+}
+
+export interface StayRow {
+  start: string | null;
+  end: string | null;
+  price: number | null;
+  currency: string | null;
+  section: string | null;
+  bundles: { name: string; id: string | null; price: number | null }[];
+}
+
+/** One time on sale can be in several bundles at once, so this gives one row for each time on sale. */
+export function groupStays(stays: readonly ShopStay[]) {
+  const rows = new Map<string, StayRow>();
+  for (const stay of stays) {
+    const key = `${stay.start ?? ''}|${stay.end ?? ''}`;
+    const row = rows.get(key) ?? { start: stay.start, end: stay.end, price: null, currency: stay.currency, section: null, bundles: [] };
+    rows.set(key, row);
+    if (typeof stay.price === 'number') row.price = stay.price;
+    row.section ??= stay.section;
+    if (stay.bundle && !row.bundles.some((bundle) => bundle.name === stay.bundle)) row.bundles.push({ name: stay.bundle, id: stay.bundleId ?? null, price: stay.bundlePrice ?? null });
+  }
+  return [...rows.values()];
 }
 
 export const sellableListings = (snapshot: Pick<ShopSnapshot, 'sections'>) => snapshot.sections.filter((section) => !section.upcoming).flatMap((section) => section.listings);
