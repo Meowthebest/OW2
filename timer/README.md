@@ -7,6 +7,7 @@ GitHub's own schedule has been unreliable since late August 2026: people report 
 | Schedule (UTC) | Job |
 | --- | --- |
 | Every 5 minutes | Record Steam players |
+| Every 15 minutes | Record the shop, which stops after one request if nothing changed |
 | Every 6 hours, at 17 minutes past | Sync patch notes, for the current and previous month |
 | Mondays at 06:41 | Sync patch notes, for every stored month |
 

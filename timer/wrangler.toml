@@ -9,7 +9,7 @@ preview_urls = false
 [triggers]
 # Times are UTC. Each one must match a key of JOBS in src/index.js exactly.
 # Cloudflare numbers weekdays differently from GitHub, so use names such as MON.
-crons = ["*/5 * * * *", "17 */6 * * *", "41 6 * * MON"]
+crons = ["*/5 * * * *", "*/15 * * * *", "17 */6 * * *", "41 6 * * MON"]
 
 # Keeps each run's outcome in the Cloudflare dashboard, under this Worker's Logs.
 [observability]

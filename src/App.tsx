@@ -8,6 +8,7 @@ import { useRoute } from './lib/router';
 const CareerPage = lazy(() => import('./features/career/CareerPage').then((module) => ({ default: module.CareerPage })));
 const PatchNotesPage = lazy(() => import('./features/patches/PatchNotesPage').then((module) => ({ default: module.PatchNotesPage })));
 const PlayersPage = lazy(() => import('./features/players/PlayersPage').then((module) => ({ default: module.PlayersPage })));
+const CosmeticsHub = lazy(() => import('./features/cosmetics/CosmeticsHub').then((module) => ({ default: module.CosmeticsHub })));
 
 const pageFallback = <div className="page"><div className="skeleton skeleton--page" aria-hidden="true"><span /><span /><span /></div></div>;
 
@@ -38,6 +39,10 @@ function Shell() {
         ) : route.view === 'players' ? (
           <Suspense fallback={pageFallback}>
             <PlayersPage route={route} />
+          </Suspense>
+        ) : route.view === 'cosmetics' || route.view === 'bundles' || route.view === 'shop' || route.view === 'loot-pools' || route.view === 'hub' || route.view === 'collection' ? (
+          <Suspense fallback={pageFallback}>
+            <CosmeticsHub route={route} />
           </Suspense>
         ) : (
           <RandomizerPage api={randomizer} focusRoster={route.view === 'heroes'} />

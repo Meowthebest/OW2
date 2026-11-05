@@ -1,0 +1,91 @@
+name: Record the shop
+
+# Checks itemshop.gg for a new Overwatch shop and, when there is one, stores it under data/cosmetics/shop and redeploys.
+# A quiet check stops after one request and commits nothing.
+#
+# GitHub's schedule has been unreliable, so the Worker in timer/ starts these runs and the schedule below is only a backstop.
+# Anyone with write access can also run it by hand from the Actions tab, which is the admin refresh:
+#   sync      record the shop if it changed
+#   force     read and store the shop even if the fingerprint hasn't moved
+#   backfill  read past shops and every item's history. Needs the ITEMSHOP_API_KEY secret.
+#   stays     only refresh every item's history. Needs the ITEMSHOP_API_KEY secret.
+#
+# If anything fails, nothing is committed, so the site keeps serving the last good data.
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: What to do
+        type: choice
+        options: [sync, force, backfill, stays]
+        default: sync
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: shop-sync
+  cancel-in-progress: false
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      ACTION: ${{ inputs.action || 'sync' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check for a new shop
+        id: check
+        run: node scripts/cosmetics/shop-changed.mjs
+
+      - name: Install
+        if: steps.check.outputs.changed == 'true' || env.ACTION != 'sync'
+        run: npm ci --no-fund --no-audit
+
+      - name: Read the shop
+        if: steps.check.outputs.changed == 'true' || env.ACTION != 'sync'
+        env:
+          ITEMSHOP_API_KEY: ${{ secrets.ITEMSHOP_API_KEY }}
+        run: |
+          case "$ACTION" in
+            force) node scripts/cosmetics/cli.mjs sync --force ;;
+            backfill) node scripts/cosmetics/cli.mjs backfill ;;
+            stays) node scripts/cosmetics/cli.mjs backfill --stays ;;
+            *) node scripts/cosmetics/cli.mjs sync ;;
+          esac
+
+      - name: Check the stored data
+        if: steps.check.outputs.changed == 'true' || env.ACTION != 'sync'
+        run: node scripts/cosmetics/cli.mjs check
+
+      - name: Commit changes
+        id: commit
+        if: steps.check.outputs.changed == 'true' || env.ACTION != 'sync'
+        run: |
+          git add data/cosmetics
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Record the Overwatch shop from itemshop.gg"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy the site
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref "$GITHUB_REF_NAME"

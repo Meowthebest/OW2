@@ -1,0 +1,1096 @@
+[
+ {
+  "id": "2026-s5-midseason",
+  "name": "Reign of Talon: Season 5 Midseason",
+  "start": "2026-11-03T19:00:00Z",
+  "end": "2026-12-01T07:59:00Z",
+  "claimUntil": "2026-12-02T07:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "30-river-spray",
+    "name": "River Spray",
+    "minutes": 30,
+    "type": "spray",
+    "lookup": "River",
+    "note": null
+   },
+   {
+    "id": "60-lounging-fika-spray",
+    "name": "Lounging Fika Spray",
+    "minutes": 60,
+    "type": "spray",
+    "lookup": "Lounging Fika",
+    "note": null
+   },
+   {
+    "id": "180-sakura-love-spray",
+    "name": "Sakura Love Spray",
+    "minutes": 180,
+    "type": "spray",
+    "lookup": "Sakura Love",
+    "note": null
+   },
+   {
+    "id": "360-regular-loot-box",
+    "name": "Regular Loot Box",
+    "minutes": 360,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-starry-peace-spray",
+    "name": "Starry Peace Spray",
+    "minutes": 600,
+    "type": "spray",
+    "lookup": "Starry Peace",
+    "note": null
+   },
+   {
+    "id": "900-epic-loot-box",
+    "name": "Epic Loot Box",
+    "minutes": 900,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-5-midseason-twitch-drops/1046030",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon - Season 5 Midseason Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-5-midseason-twitch-drops/1046030",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-owcs-s3-playoffs",
+  "name": "OWCS 2026 Stage 3 Playoffs",
+  "start": "2026-10-30T00:00:00Z",
+  "end": "2026-11-23T07:59:00Z",
+  "claimUntil": null,
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "The report doesn't list eligible channels or exact times. Check the campaign on Twitch.",
+  "rewards": [
+   {
+    "id": "60-symmetra-candlelit-spray",
+    "name": "Symmetra Candlelit Spray",
+    "minutes": 60,
+    "type": "spray",
+    "lookup": "Candlelit",
+    "note": null
+   },
+   {
+    "id": "120-purrrfect-evening-spray",
+    "name": "Purrrfect Evening Spray",
+    "minutes": 120,
+    "type": "spray",
+    "lookup": "Purrrfect Evening",
+    "note": null
+   },
+   {
+    "id": "180-domina-sophisticated-sparklers-spray",
+    "name": "Domina Sophisticated Sparklers Spray",
+    "minutes": 180,
+    "type": "spray",
+    "lookup": "Sophisticated Sparklers",
+    "note": null
+   },
+   {
+    "id": "240-esports-loot-box",
+    "name": "Esports Loot Box",
+    "minutes": 240,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "360-lifeweaver-and-palak-lanterns-spray",
+    "name": "Lifeweaver and Palak Lanterns Spray",
+    "minutes": 360,
+    "type": "spray",
+    "lookup": "Lanterns",
+    "note": null
+   },
+   {
+    "id": "480-lantern-lit-night-name-card",
+    "name": "Lantern-lit Night Name Card",
+    "minutes": 480,
+    "type": "name-card",
+    "lookup": "Lantern-lit Night",
+    "note": null
+   },
+   {
+    "id": "600-owcs-home-sombra-skin",
+    "name": "OWCS Home Sombra Skin",
+    "minutes": 600,
+    "type": "skin",
+    "lookup": "OWCS Home",
+    "note": null
+   },
+   {
+    "id": "720-owcs-away-sombra-skin",
+    "name": "OWCS Away Sombra Skin",
+    "minutes": 720,
+    "type": "skin",
+    "lookup": "OWCS Away",
+    "note": null
+   },
+   {
+    "id": "840-esports-loot-box",
+    "name": "Esports Loot Box",
+    "minutes": 840,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "900-esports-loot-box",
+    "name": "Esports Loot Box",
+    "minutes": 900,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://esports.gg/news/overwatch/owcs-2026-stage-3-playoffs-twitch-drops-feature-lifeweaver-x-palak-spray/",
+  "sources": [
+   {
+    "source": "esports.gg",
+    "title": "Reported by esports.gg, not an official post",
+    "url": "https://esports.gg/news/overwatch/owcs-2026-stage-3-playoffs-twitch-drops-feature-lifeweaver-x-palak-spray/",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-s5-launch",
+  "name": "Reign of Talon: Season 5 Launch",
+  "start": "2026-10-06T18:00:00Z",
+  "end": "2026-11-03T07:59:00Z",
+  "claimUntil": "2026-11-04T07:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "30-heroes-of-heart-player-icon",
+    "name": "Heroes of Heart Player Icon",
+    "minutes": 30,
+    "type": "player-icon",
+    "lookup": "Heroes of Heart",
+    "note": null
+   },
+   {
+    "id": "60-hollow-hearts-player-icon",
+    "name": "Hollow Hearts Player Icon",
+    "minutes": 60,
+    "type": "player-icon",
+    "lookup": "Hollow Hearts",
+    "note": null
+   },
+   {
+    "id": "180-hollow-hearts-spray",
+    "name": "Hollow Hearts Spray",
+    "minutes": 180,
+    "type": "spray",
+    "lookup": "Hollow Hearts",
+    "note": null
+   },
+   {
+    "id": "360-regular-loot-box",
+    "name": "Regular Loot Box",
+    "minutes": 360,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-heroes-of-heart-spray",
+    "name": "Heroes of Heart Spray",
+    "minutes": 600,
+    "type": "spray",
+    "lookup": "Heroes of Heart",
+    "note": null
+   },
+   {
+    "id": "900-epic-loot-box",
+    "name": "Epic Loot Box",
+    "minutes": 900,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-5-launch-twitch-drops/1042026",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon - Season 5 Launch Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-5-launch-twitch-drops/1042026",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-s4-drives",
+  "name": "Reign of Talon: Season 4 Competitive Drives",
+  "start": "2026-10-01T18:00:00Z",
+  "end": "2026-10-06T06:00:00Z",
+  "claimUntil": "2026-10-07T06:00:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "120-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 120,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "240-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 240,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "360-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 360,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "480-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 480,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 600,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-4-competitive-drives-twitch-drops/1041325",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: Season 4 Competitive Drives Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-4-competitive-drives-twitch-drops/1041325",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-s4-launch",
+  "name": "Reign of Talon: Season 4 Launch",
+  "start": "2026-08-11T18:00:00Z",
+  "end": "2026-09-19T19:00:00Z",
+  "claimUntil": "2026-09-20T19:00:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "20-bad-news-spray",
+    "name": "Bad News Spray",
+    "minutes": 20,
+    "type": "spray",
+    "lookup": "Bad News",
+    "note": null
+   },
+   {
+    "id": "60-shion-slide-spray",
+    "name": "Shion Slide Spray",
+    "minutes": 60,
+    "type": "spray",
+    "lookup": "Shion Slide",
+    "note": null
+   },
+   {
+    "id": "120-cute-sierra-avatar",
+    "name": "Cute Sierra Avatar",
+    "minutes": 120,
+    "type": "player-icon",
+    "lookup": "Cute Sierra",
+    "note": null
+   },
+   {
+    "id": "180-meka-squad-name-card",
+    "name": "MEKA Squad Name Card",
+    "minutes": 180,
+    "type": "name-card",
+    "lookup": "MEKA Squad",
+    "note": null
+   },
+   {
+    "id": "300-regular-loot-box",
+    "name": "Regular Loot Box",
+    "minutes": 300,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "480-epic-loot-box",
+    "name": "Epic Loot Box",
+    "minutes": 480,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-4-launch-twitch-drops/1032868",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: Season 4 Launch Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-4-launch-twitch-drops/1032868",
+    "checkedAt": "2026-11-05"
+   }
+  ],
+  "note": "The announcement's weekdays don't match its dates, so these dates may be off."
+ },
+ {
+  "id": "2026-s3-drives",
+  "name": "Reign of Talon: Season 3 Competitive Drives",
+  "start": "2026-08-06T18:00:00Z",
+  "end": "2026-08-11T06:00:00Z",
+  "claimUntil": "2026-08-12T06:00:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "120-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 120,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "240-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 240,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "360-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 360,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "480-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 480,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 600,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-3-competitive-drives-twitch-drops/1032131",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: Season 3 Competitive Drives Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-3-competitive-drives-twitch-drops/1032131",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-s3-midseason",
+  "name": "Reign of Talon: Season 3 Midseason",
+  "start": "2026-07-14T18:00:00Z",
+  "end": "2026-08-04T06:59:00Z",
+  "claimUntil": "2026-08-05T06:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "30-dev-doodle-lifeguard-mercy-spray",
+    "name": "Dev Doodle Lifeguard Mercy Spray",
+    "minutes": 30,
+    "type": "spray",
+    "lookup": "Dev Doodle Lifeguard Mercy",
+    "note": null
+   },
+   {
+    "id": "60-dev-doodle-lifeguard-junkrat-spray",
+    "name": "Dev Doodle Lifeguard Junkrat Spray",
+    "minutes": 60,
+    "type": "spray",
+    "lookup": "Dev Doodle Lifeguard Junkrat",
+    "note": null
+   },
+   {
+    "id": "120-dev-doodle-lifeguard-lucio-spray",
+    "name": "Dev Doodle Lifeguard Lucio Spray",
+    "minutes": 120,
+    "type": "spray",
+    "lookup": "Dev Doodle Lifeguard Lucio",
+    "note": null
+   },
+   {
+    "id": "180-dev-doodle-lifeguard-kiriko-spray",
+    "name": "Dev Doodle Lifeguard Kiriko Spray",
+    "minutes": 180,
+    "type": "spray",
+    "lookup": "Dev Doodle Lifeguard Kiriko",
+    "note": null
+   },
+   {
+    "id": "240-dev-doodle-lifeguard-lifeweaver-spray",
+    "name": "Dev Doodle Lifeguard Lifeweaver Spray",
+    "minutes": 240,
+    "type": "spray",
+    "lookup": "Dev Doodle Lifeguard Lifeweaver",
+    "note": null
+   },
+   {
+    "id": "300-dev-doodle-lifeguard-roadhog-spray",
+    "name": "Dev Doodle Lifeguard Roadhog Spray",
+    "minutes": 300,
+    "type": "spray",
+    "lookup": "Dev Doodle Lifeguard Roadhog",
+    "note": null
+   },
+   {
+    "id": "360-dev-doodle-life-preserver-spray",
+    "name": "Dev Doodle Life Preserver Spray",
+    "minutes": 360,
+    "type": "spray",
+    "lookup": "Dev Doodle Life Preserver",
+    "note": null
+   },
+   {
+    "id": "420-regular-loot-box",
+    "name": "Regular Loot Box",
+    "minutes": 420,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-epic-loot-box",
+    "name": "Epic Loot Box",
+    "minutes": 600,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-3-midseason-twitch-drops/1028438",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: Season 3 Midseason Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-3-midseason-twitch-drops/1028438",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-s3-launch",
+  "name": "Reign of Talon: Season 3 Launch",
+  "start": "2026-06-16T18:00:00Z",
+  "end": "2026-07-14T06:59:00Z",
+  "claimUntil": "2026-07-15T06:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "30-captured-moments-player-icon",
+    "name": "Captured Moments Player Icon",
+    "minutes": 30,
+    "type": "player-icon",
+    "lookup": "Captured Moments",
+    "note": null
+   },
+   {
+    "id": "60-blooming-spring-spray-and-name-card",
+    "name": "Blooming Spring Spray and Name Card",
+    "minutes": 60,
+    "type": "spray",
+    "lookup": "Blooming Spring",
+    "note": null
+   },
+   {
+    "id": "120-high-summer-spray-and-name-card",
+    "name": "High Summer Spray and Name Card",
+    "minutes": 120,
+    "type": "spray",
+    "lookup": "High Summer",
+    "note": null
+   },
+   {
+    "id": "240-harvest-autumn-spray-and-name-card",
+    "name": "Harvest Autumn Spray and Name Card",
+    "minutes": 240,
+    "type": "spray",
+    "lookup": "Harvest Autumn",
+    "note": null
+   },
+   {
+    "id": "360-captured-moments-weapon-charm",
+    "name": "Captured Moments Weapon Charm",
+    "minutes": 360,
+    "type": "weapon-charm",
+    "lookup": "Captured Moments",
+    "note": null
+   },
+   {
+    "id": "480-regular-loot-box",
+    "name": "Regular Loot Box",
+    "minutes": 480,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-quiet-winter-spray-and-name-card",
+    "name": "Quiet Winter Spray and Name Card",
+    "minutes": 600,
+    "type": "spray",
+    "lookup": "Quiet Winter",
+    "note": null
+   },
+   {
+    "id": "780-epic-loot-box",
+    "name": "Epic Loot Box",
+    "minutes": 780,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-3-launch-twitch-drops/1024122",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: Season 3 Launch Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-3-launch-twitch-drops/1024122",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-s2-drives",
+  "name": "Reign of Talon: Season 2 Competitive Drives",
+  "start": "2026-06-11T18:00:00Z",
+  "end": "2026-06-16T06:59:00Z",
+  "claimUntil": "2026-06-17T06:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "120-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 120,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "240-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 240,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "360-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 360,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "480-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 480,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 600,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-2-competitive-drives-twitch-drops/1023407",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: Season 2 Competitive Drives Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-2-competitive-drives-twitch-drops/1023407",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-anniversary",
+  "name": "Overwatch 10th Anniversary",
+  "start": "2026-05-12T18:00:00Z",
+  "end": "2026-06-09T06:59:00Z",
+  "claimUntil": "2026-06-10T06:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "15-dev-art-hazardous-tactics-player-icon",
+    "name": "Dev Art Hazardous Tactics Player Icon",
+    "minutes": 15,
+    "type": "player-icon",
+    "lookup": "Dev Art Hazardous Tactics",
+    "note": null
+   },
+   {
+    "id": "30-dev-art-helmet-spray",
+    "name": "Dev Art Helmet Spray",
+    "minutes": 30,
+    "type": "spray",
+    "lookup": "Dev Art Helmet",
+    "note": null
+   },
+   {
+    "id": "60-dev-art-birthday-blast-spray",
+    "name": "Dev Art Birthday Blast Spray",
+    "minutes": 60,
+    "type": "spray",
+    "lookup": "Dev Art Birthday Blast",
+    "note": null
+   },
+   {
+    "id": "120-dev-art-susie-maisie-spray",
+    "name": "Dev Art Susie & Maisie Spray",
+    "minutes": 120,
+    "type": "spray",
+    "lookup": "Dev Art Susie & Maisie",
+    "note": null
+   },
+   {
+    "id": "180-dev-art-maximum-velocity",
+    "name": "Dev Art Maximum Velocity!",
+    "minutes": 180,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "240-dev-art-no-idea-spray",
+    "name": "Dev Art No Idea Spray",
+    "minutes": 240,
+    "type": "spray",
+    "lookup": "Dev Art No Idea",
+    "note": null
+   },
+   {
+    "id": "300-dev-art-fika-food",
+    "name": "Dev Art Fika Food",
+    "minutes": 300,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "420-regular-loot-box",
+    "name": "Regular Loot Box",
+    "minutes": 420,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-epic-loot-box",
+    "name": "Epic Loot Box",
+    "minutes": 600,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/overwatch-10th-anniversary-twitch-drops/1018552",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Overwatch 10th Anniversary Twitch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/overwatch-10th-anniversary-twitch-drops/1018552",
+    "checkedAt": "2026-11-05"
+   }
+  ],
+  "note": "These are the dates at the top of the announcement. Its FAQ repeats dates from an earlier campaign."
+ },
+ {
+  "id": "2026-s2-launch",
+  "name": "Reign of Talon: Season 2 Launch",
+  "start": "2026-04-14T18:00:00Z",
+  "end": "2026-05-11T06:59:00Z",
+  "claimUntil": "2026-05-12T06:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "60-lilith-s-blade-weapon-charm",
+    "name": "Lilith's Blade Weapon Charm",
+    "minutes": 60,
+    "type": "weapon-charm",
+    "lookup": "Lilith's Blade",
+    "note": null
+   },
+   {
+    "id": "120-wolf-pup-weapon-charm",
+    "name": "Wolf Pup Weapon Charm",
+    "minutes": 120,
+    "type": "weapon-charm",
+    "lookup": "Wolf Pup",
+    "note": null
+   },
+   {
+    "id": "240-season-2-loot-box",
+    "name": "Season 2 Loot Box",
+    "minutes": 240,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "480-season-2-epic-loot-box",
+    "name": "Season 2 Epic Loot Box",
+    "minutes": 480,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-2-launch-drops/1013436",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: Season 2 Launch Drops",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-2-launch-drops/1013436",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-s1-launch",
+  "name": "Season 1 Launch",
+  "start": "2026-02-10T19:00:00Z",
+  "end": "2026-03-09T06:59:00Z",
+  "claimUntil": "2026-03-10T06:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "30-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 30,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "60-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 60,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "120-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 120,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "180-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 180,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "240-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 240,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "300-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 300,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "360-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 360,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "420-season-1-loot-box",
+    "name": "Season 1 Loot Box",
+    "minutes": 420,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-season-1-legendary-loot-box",
+    "name": "Season 1 Legendary Loot Box",
+    "minutes": 600,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "780-season-1-legendary-loot-box",
+    "name": "Season 1 Legendary Loot Box",
+    "minutes": 780,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-feb-6-2026/999558",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Twitch Drops [Feb 6, 2026]",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-feb-6-2026/999558",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-lunar-new-year",
+  "name": "Lunar New Year Weekend",
+  "start": "2026-02-06T19:00:00Z",
+  "end": "2026-02-10T18:59:00Z",
+  "claimUntil": null,
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "30-hua-qian-spray",
+    "name": "Hua Qian Spray",
+    "minutes": 30,
+    "type": "spray",
+    "lookup": "Hua Qian",
+    "note": null
+   },
+   {
+    "id": "60-pachiwealthy-player-icon",
+    "name": "Pachiwealthy Player Icon",
+    "minutes": 60,
+    "type": "player-icon",
+    "lookup": "Pachiwealthy",
+    "note": null
+   },
+   {
+    "id": "90-pachiwealthy-name-card",
+    "name": "Pachiwealthy Name Card",
+    "minutes": 90,
+    "type": "name-card",
+    "lookup": "Pachiwealthy",
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-feb-6-2026/999558",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Twitch Drops [Feb 6, 2026]",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-feb-6-2026/999558",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ },
+ {
+  "id": "2026-jan-competitive",
+  "name": "January Competitive Points",
+  "start": "2026-01-30T19:00:00Z",
+  "end": "2026-02-04T07:59:00Z",
+  "claimUntil": null,
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Any Overwatch stream on Twitch with Drops enabled.",
+  "rewards": [
+   {
+    "id": "120-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 120,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "240-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 240,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "360-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 360,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "480-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 480,
+    "type": null,
+    "lookup": null,
+    "note": null
+   },
+   {
+    "id": "600-100-competitive-points",
+    "name": "100 Competitive Points",
+    "minutes": 600,
+    "type": null,
+    "lookup": null,
+    "note": null
+   }
+  ],
+  "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-competitive-points-jan-30-2026/998363",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "Twitch Drops - Competitive Points [Jan 30, 2026]",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-competitive-points-jan-30-2026/998363",
+    "checkedAt": "2026-11-05"
+   }
+  ]
+ }
+]

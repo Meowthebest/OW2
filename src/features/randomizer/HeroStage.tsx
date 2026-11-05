@@ -51,9 +51,12 @@ function HeroDetails({ hero, animate, rolls }: { hero: Hero; animate: boolean; r
       <ul className="stage__abilities" aria-label={`${hero.name} abilities`}>
         {hero.abilities.map((ability) => <li key={ability}>{ability}</li>)}
       </ul>
-      <a className="text-link stage__link" href={`https://overwatch.blizzard.com/en-us/heroes/${hero.id}/`} target="_blank" rel="noreferrer">
-        Official hero page <ExternalLink size={13} aria-hidden="true" />
-      </a>
+      <span className="stage__links">
+        <a className="text-link stage__link" href={`https://overwatch.blizzard.com/en-us/heroes/${hero.id}/`} target="_blank" rel="noreferrer">
+          Official hero page <ExternalLink size={13} aria-hidden="true" />
+        </a>
+        <a className="text-link stage__link" href={`#/cosmetics?hero=${hero.id}`}>{hero.name}'s cosmetics</a>
+      </span>
     </div>
   );
 }

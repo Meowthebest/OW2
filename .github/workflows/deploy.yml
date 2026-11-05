@@ -28,14 +28,20 @@ jobs:
       - run: npm run test:logic
       - run: npm run test:patches
       - run: npm run test:players
+      - run: npm run test:cosmetics
       - run: npm run test:worker
       - run: npm run test:timer
+      - run: npm run test:accounts
       - run: npm run test:ui
+      - run: npm run test:cosmetics-ui
       - run: npm run build
         env:
           # Optional. Set this repository variable to your Cloudflare Worker URL to route
           # career data through it. When empty, the site calls OverFast API directly.
           VITE_CAREER_API_URL: ${{ vars.CAREER_API_URL }}
+          # Optional. The accounts Worker in accounts/. When empty, the site has no sign-in
+          # and personal tracking stays in each visitor's browser.
+          VITE_ACCOUNT_API_URL: ${{ vars.ACCOUNT_API_URL }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

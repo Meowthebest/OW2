@@ -175,6 +175,7 @@ export function HeroDrawer({ target, index, onClose, onSelectPatch }: { target: 
             <div>
               <h2 id="hero-drawer-title" className="hero-drawer__name">{name}</h2>
               {role && <p className="hero-drawer__role"><RoleIcon role={role} size={14} /> {ROLE_LABEL[role]}</p>}
+              <a className="text-link hero-drawer__cosmetics" href={`#/cosmetics?hero=${target.heroId}`}>Cosmetics</a>
             </div>
           </div>
         </header>

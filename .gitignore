@@ -3,3 +3,6 @@ dist/
 .DS_Store
 *.local
 .wrangler/
+
+# Built from data/cosmetics by scripts/cosmetics/cli.mjs
+public/data/cosmetics/

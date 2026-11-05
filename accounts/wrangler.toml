@@ -1,0 +1,19 @@
+name = "ow2-accounts"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+preview_urls = false
+
+[vars]
+# Sites allowed to call this Worker and receive a sign-in. Comma separated.
+ALLOWED_ORIGINS = "https://meowthebest.github.io"
+# Fill these in after creating the Discord application. See README.md.
+DISCORD_CLIENT_ID = ""
+CALLBACK_URL = ""
+
+# Run `npx wrangler d1 create ow2-accounts` and paste the database id here. See README.md.
+[[d1_databases]]
+binding = "DB"
+database_name = "ow2-accounts"
+database_id = "REPLACE_WITH_DATABASE_ID"
+migrations_dir = "migrations"

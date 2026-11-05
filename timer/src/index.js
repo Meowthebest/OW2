@@ -12,6 +12,7 @@ const TIMEOUT_MS = 15000;
 // Each key must match a cron in wrangler.toml exactly. A test checks this.
 export const JOBS = {
   '*/5 * * * *': { workflow: 'record-players.yml' },
+  '*/15 * * * *': { workflow: 'sync-shop.yml' },
   '17 */6 * * *': { workflow: 'sync-patches.yml' },
   '41 6 * * MON': { workflow: 'sync-patches.yml', inputs: { scope: 'all' } },
 };
