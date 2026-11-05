@@ -20,7 +20,7 @@ Nothing on these pages is made up. If no source gives a value, the page says so 
 No cosmetic art is stored in this project.
 
 - **Blizzard's art.** Images from the shop data load from Blizzard's own servers. Originals can be 800 KB each, so pages ask [wsrv.nl](https://wsrv.nl/), a free resizing service, for a smaller copy. If that fails, the original loads, and if that fails, a placeholder shows. That service keeps resized copies in its cache and sees visitors' IP addresses, as any image host does. To stop using it, set `RESIZER` handling in `src/features/cosmetics/components/media.tsx` to return the original.
-- **The wiki's images are off.** A cosmetic known only from the wiki shows a placeholder with its type icon. To load them from the wiki, add `{ "wikiImages": true }` to `data/cosmetics/config.json`. Nothing is copied, but visitors' browsers would then fetch images from the wiki, so it's worth asking the wiki's staff first. Blizzard's art on the wiki isn't the wiki's to license.
+- **Pictures from the wiki load directly from it.** The wiki's staff agreed to this on November 5, 2026. Nothing is copied: visitors' browsers load the wiki's own thumbnails in a few set sizes, and Emotes and Highlight Intros show the frame the wiki makes for each video. A cosmetic whose picture can't be found shows a placeholder with its type icon. To turn this off, remove `"wikiImages": true` from `data/cosmetics/config.json`. Blizzard's art on the wiki isn't the wiki's to license, so its permission covers loading the pictures from its servers.
 
 ## How it's stored
 
@@ -162,7 +162,7 @@ Comments and reactions aren't built. The brief made them depend on existing acco
 - **Loot box odds and contents.** Blizzard describes the boxes but publishes no full list. The E-Sports and Anniversary pools show related cosmetics and say so. Standard and Just For You show no list. No drop rates appear anywhere.
 - **Mythic Shop stock.** No source says what's in it right now, so mythics show no current availability.
 - **Mythic choices.** The wiki gives how many choices each customization group has, not what each looks like, so choices are numbered. Weapons list their levels, with costs and what each unlocks.
-- **Pictures.** Pictures come from the shop data, so the wiki's records show a placeholder unless they've also been in the shop. Wiki pictures are off by default. Setting `{ "wikiImages": true }` in `data/cosmetics/config.json` makes visitors' browsers load them from the wiki, and nothing is copied. Check with the wiki's staff first.
+- **Pictures.** Official shop art is shown first where it exists, and the wiki's picture otherwise. Voice lines and player titles have no picture. Emotes and Highlight Intros show one frame of their video rather than the video.
 - **Rarity.** It's shown only where a source states it. The wiki states one rarity for sprays, player icons, weapon charms, souvenirs and highlight intros, and gives the rest by section. It doesn't give one for name cards, player titles or voice lines, so those only have one if the shop listed them.
 - **Seasons.** A season shows where a source ties a cosmetic to one, which is mostly Battle Passes and shops. Older cosmetics often have none.
 - **Prices.** A price is what a source last listed. Check the game before buying. Bundle savings are the store's own tag, such as "37% off", and aren't calculated here, because the feed's "regular" price isn't reliable for bundles.

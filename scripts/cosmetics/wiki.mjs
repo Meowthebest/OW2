@@ -1058,6 +1058,8 @@ export function parseSeasonList(text, { era }) {
       start: dates ? parseDay(/\d{4}$/.test(dates[1]) ? dates[1] : `${dates[1]} ${dates[3]}`) : null,
       end: dates ? parseDay(dates[2]) : null,
       title,
+      // The picture at the top of a season's section is its roadmap or key art.
+      file: /\[\[File:\s*([^|\]]+)/i.exec(dates ? body.slice(0, dates.index) : '')?.[1]?.replace(/_/g, ' ').trim() ?? null,
     });
   });
   return seasons;

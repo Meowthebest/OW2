@@ -61,6 +61,35 @@ export function cosmeticId(type: CosmeticType, heroId: string | null, name: stri
   return heroId ? `${type}.${heroId}.${slug}` : `${type}.${slug}`;
 }
 
+// Blizzard's originals run to about 800 KB each. This free resizing service brings a card's image under 50 KB.
+// Nothing is stored in this project. If the service fails, the original loads instead, then a placeholder.
+const RESIZER = 'https://wsrv.nl/';
+const RESIZABLE_HOSTS = new Set(['catalog.blzstatic.com', 'blz-contentstack-images.akamaized.net']);
+const WIKI_IMAGES = 'overwatch.weirdgloop.org';
+
+/**
+ * The size of an image to load for a space this wide. The wiki makes its own thumbnails, which visitors' browsers load directly,
+ * as its staff agreed. A few set sizes mean each one is only ever made once.
+ */
+export function resizedImage(src: string, width: number) {
+  try {
+    const url = new URL(src);
+    if (url.hostname === WIKI_IMAGES) {
+      const original = /^\/images\/([^/]+)$/.exec(url.pathname);
+      const poster = /^\/images\/thumb\/([^/]+)\/\d+px--[^/]+\.jpg$/.exec(url.pathname);
+      const file = original?.[1] ?? poster?.[1];
+      if (!file) return src;
+      // A name card is five times wider than it's tall, so it needs more pixels across to fill the same card.
+      const size = width > 420 ? 640 : /^NameCard/i.test(file) ? 480 : 240;
+      return poster ? `${url.origin}/images/thumb/${file}/${size}px--${file}.jpg` : `${url.origin}/images/thumb/${file}/${size}px-${file}`;
+    }
+    if (!RESIZABLE_HOSTS.has(url.hostname)) return src;
+    return `${RESIZER}?url=${encodeURIComponent(url.host + url.pathname)}&w=${width}&output=webp&q=80`;
+  } catch {
+    return src;
+  }
+}
+
 export const SHARD_COUNT = 64;
 export const shardOf = (id: string) => hash32(id) % SHARD_COUNT;
 export const shardFile = (shard: number) => `items/${String(shard).padStart(2, '0')}.json`;

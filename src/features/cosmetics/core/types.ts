@@ -282,6 +282,8 @@ export interface SourceStatus {
   lastSuccess: string | null;
   records: number;
   note: string | null;
+  /** True when this source's pictures are shown too. */
+  pictures?: boolean;
 }
 
 export interface FacetValue {

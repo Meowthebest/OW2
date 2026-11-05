@@ -37,6 +37,7 @@ export function CatalogueCredits() {
       {wiki && (
         <p className="cx-credit">
           Catalogue details adapted from the <a href="https://overwatch.wiki/" target="_blank" rel="noreferrer">Overwatch Wiki</a> under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 3.0</a>, last imported {dayText(wiki.lastSuccess)}.
+          {wiki.pictures && ' Most pictures load from the wiki, with its staff\'s permission.'}
         </p>
       )}
     </div>

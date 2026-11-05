@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Clapperboard, Gift, IdCard, ImageOff, KeyRound, Mic, PartyPopper, Quote, Shirt, Smile, SprayCan, Swords, UserRound, X, ZoomIn, type LucideIcon } from 'lucide-react';
 import { cn } from '../../../lib/format';
 import type { CosmeticType } from '../core/types';
+import { resizedImage } from '../core/text';
 
 const TYPE_ICON: Record<CosmeticType, LucideIcon> = {
   skin: Shirt,
@@ -21,21 +22,6 @@ const TYPE_ICON: Record<CosmeticType, LucideIcon> = {
 export function TypeIcon({ type, size = 16 }: { type: CosmeticType | null; size?: number }) {
   const Icon = type ? TYPE_ICON[type] : ImageOff;
   return <Icon size={size} aria-hidden="true" />;
-}
-
-// Blizzard's originals run to about 800 KB each. This free resizing service brings a card's image under 50 KB.
-// Nothing is stored in this project. If the service fails, the original loads instead, then a placeholder.
-const RESIZER = 'https://wsrv.nl/';
-const RESIZABLE_HOSTS = new Set(['catalog.blzstatic.com', 'blz-contentstack-images.akamaized.net']);
-
-export function resizedImage(src: string, width: number) {
-  try {
-    const url = new URL(src);
-    if (!RESIZABLE_HOSTS.has(url.hostname)) return src;
-    return `${RESIZER}?url=${encodeURIComponent(url.host + url.pathname)}&w=${width}&output=webp&q=80`;
-  } catch {
-    return src;
-  }
 }
 
 /** A cosmetic's image. Holds its space while loading and falls back gracefully, so a missing image never moves the layout. */

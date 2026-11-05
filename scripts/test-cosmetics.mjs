@@ -139,6 +139,23 @@ await test('cosmetic ids are stable and keep heroes apart', () => {
   assert.equal(symbols, core.cosmeticId('player-title', null, '(/°□°)/︵ ┻━┻'));
 });
 
+await test('each kind of image loads at a sensible size', () => {
+  const wikiFile = 'https://overwatch.weirdgloop.org/images/Ana_Skin_Citrine.png';
+  assert.equal(core.resizedImage(wikiFile, 400), 'https://overwatch.weirdgloop.org/images/thumb/Ana_Skin_Citrine.png/240px-Ana_Skin_Citrine.png', 'a card takes the wiki\'s small thumbnail');
+  assert.equal(core.resizedImage(wikiFile, 200), core.resizedImage(wikiFile, 420), 'set sizes, so each thumbnail is only made once');
+  assert.equal(core.resizedImage(wikiFile, 800), 'https://overwatch.weirdgloop.org/images/thumb/Ana_Skin_Citrine.png/640px-Ana_Skin_Citrine.png');
+  assert.equal(core.resizedImage('https://overwatch.weirdgloop.org/images/NameCard_Acropolis.png', 400), 'https://overwatch.weirdgloop.org/images/thumb/NameCard_Acropolis.png/480px-NameCard_Acropolis.png', 'a name card needs more pixels across');
+  const poster = 'https://overwatch.weirdgloop.org/images/thumb/Ana_Emote_Dance.webm/640px--Ana_Emote_Dance.webm.jpg';
+  assert.equal(core.resizedImage(poster, 400), 'https://overwatch.weirdgloop.org/images/thumb/Ana_Emote_Dance.webm/240px--Ana_Emote_Dance.webm.jpg', 'a video\'s frame works the same way');
+  assert.equal(core.resizedImage(poster, 800), poster);
+  assert.equal(core.resizedImage('https://overwatch.weirdgloop.org/images/Lúcio_Skin.png', 400), 'https://overwatch.weirdgloop.org/images/thumb/L%C3%BAcio_Skin.png/240px-L%C3%BAcio_Skin.png', 'an accent in a name stays encoded');
+  assert.equal(core.resizedImage('https://overwatch.weirdgloop.org/w/Some_Page', 400), 'https://overwatch.weirdgloop.org/w/Some_Page', 'anything else on the wiki is left alone');
+  assert.match(core.resizedImage('https://catalog.blzstatic.com//a/b.png', 400), /^https:\/\/wsrv\.nl\/\?url=catalog\.blzstatic\.com/);
+  assert.ok(!core.resizedImage(wikiFile, 400).includes('wsrv'), 'the wiki\'s pictures go straight to the visitor\'s browser');
+  assert.equal(core.resizedImage('https://example.com/a.png', 400), 'https://example.com/a.png');
+  assert.equal(core.resizedImage('not a url', 400), 'not a url');
+});
+
 await test('only https links get through', () => {
   assert.equal(core.safeUrl('https://example.com/a.png'), 'https://example.com/a.png');
   assert.equal(core.safeUrl('http://example.com/a.png'), null);
@@ -1729,6 +1746,8 @@ Seasons will now be named.
     ['ow2-s16', 'Stadium', '2025-04-22', '2025-06-24'],
     ['ow2-s20', 'Vendetta', '2025-12-09', '2026-02-10'],
   ]);
+  assert.equal(seasons[0].file, 'Season 1.png', 'the picture at the top of a section is its art');
+  assert.equal(seasons[1].file, null, 'a picture further down isn\'t');
   assert.equal(wiki.parseSeasonList(page, { era: '2026' })[0].id, '2026-s1');
   assert.equal(wiki.parseSeasonList(page, { era: '2026' })[0].era, 'reign-of-talon');
 });
@@ -1745,6 +1764,37 @@ Mythic Tiers`, 'Battle Pass');
   assert.equal(rules.sources[0].title, 'Battle Pass');
   assert.equal(wiki.parseUnvaultRules('== Unvaulted Battle Passes ==\nComing later.', 'Battle Pass'), null);
   assert.equal(wiki.parseUnvaultRules('nothing here', 'Battle Pass'), null);
+});
+
+await test('wiki pictures: videos show a frame, shop art comes first, and a season without shop art uses its own', async () => {
+  resetData();
+  api.shop = shopAnswer([section('Overwatch Shop', [single])]);
+  await sync();
+  const row = (type, hero, name, file) => ({ type, hero, name, file, tags: ['gallery'], pageTitle: 'x' });
+  write('wiki/catalog.json', [
+    row('skin', 'illari', 'Eclypse', 'Illari Skin Eclypse.png'),
+    row('emote', 'ana', 'Dance', 'Ana Emote Dance.webm'),
+    row('spray', 'ana', 'Citrus', "Spray Ana Rise N' Shine.png"),
+    { type: 'voice-line', hero: 'ana', name: 'Hush', tags: [], pageTitle: 'x' },
+  ]);
+  write('wiki/seasons.json', [{ id: 'ow2-s1', label: 'Season 1', era: 'overwatch-2', number: 1, start: '2022-10-04', end: '2022-12-06', title: null, file: 'Season 1.png' }]);
+  write('wiki/battle-passes.json', [{ id: 'ow2-s1', seasonId: 'ow2-s1', label: 'Season 1', title: null, start: null, end: null, image: null, tiers: 80, note: null, sources: [], rewards: [{ tier: 1, part: null, track: 'free', name: 'Dance', type: 'emote', typeLabel: null, hero: 'ana', rarity: 'epic', quantity: null }] }]);
+  write('wiki/mythic-aspects.json', [{ name: 'Gilded', season: 'ow2-s1', description: 'Gold', file: 'Genji Skin Cyber Demon(Gilded).png', sources: [] }]);
+  write('config.json', { wikiImages: true });
+  await buildCatalog({ now: new Date('2026-11-05T00:00:00Z') });
+  const eclypse = shardFor('skin.illari.eclypse');
+  assert.match(eclypse.image, /catalog\.blzstatic\.com/, 'official shop art comes first');
+  assert.ok(eclypse.images.includes('https://overwatch.weirdgloop.org/images/Illari_Skin_Eclypse.png'), 'with the wiki\'s picture as a second view');
+  assert.equal(shardFor('emote.ana.dance').image, 'https://overwatch.weirdgloop.org/images/thumb/Ana_Emote_Dance.webm/640px--Ana_Emote_Dance.webm.jpg');
+  assert.equal(shardFor('spray.ana.citrus').image, "https://overwatch.weirdgloop.org/images/Spray_Ana_Rise_N'_Shine.png");
+  assert.equal(shardFor('voice-line.ana.hush').image, null);
+  assert.equal(readOut('battle-passes.json')[0].image, 'https://overwatch.weirdgloop.org/images/Season_1.png');
+  assert.equal(readOut('battle-passes/ow2-s1.json').rewards[0].image, shardFor('emote.ana.dance').image);
+  assert.match(readOut('mythic-aspects.json')[0].image, /Cyber_Demon\(Gilded\)\.png$/);
+  rmSync(path.join(dataDir, 'config.json'));
+  await buildCatalog({ now: new Date('2026-11-05T00:00:00Z') });
+  assert.equal(shardFor('emote.ana.dance').image, null, 'and all of it is one setting');
+  assert.equal(readOut('battle-passes.json')[0].image, null);
 });
 
 await test('rewards give cosmetics their season and link back to them', async () => {
@@ -2096,6 +2146,7 @@ await test('wiki and shop records join into one cosmetic, with both sources', as
   write('config.json', { wikiImages: true });
   await buildCatalog({ now: new Date('2026-11-11T00:00:00Z') });
   assert.equal(shardFor('skin.ana.garnet').image, 'https://overwatch.weirdgloop.org/images/Ana_Skin_Garnet.png');
+  assert.ok(readOut('meta.json').sources.find((source) => source.id === 'wiki').pictures, 'the credit knows pictures are on');
   rmSync(path.join(dataDir, 'config.json'));
 });
 

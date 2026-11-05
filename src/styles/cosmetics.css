@@ -508,3 +508,6 @@ a.cx-pagination__item:hover { border-color: var(--orange); color: var(--ink); }
 .cx-reward__left-out { font-size: 0.6875rem; color: var(--ink-3); }
 
 .cx-reward__glyph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--ink-3); }
+
+/* Pictures come in several shapes, so a card's picture box stays one size and text lines up across a row. */
+.cx-card__media > .cx-thumb { position: absolute; inset: 6px; width: auto; height: auto; }

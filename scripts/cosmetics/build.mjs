@@ -16,8 +16,14 @@ const WIKI_NAME = 'Overwatch Wiki';
 const WIKI_URL = 'https://overwatch.wiki/';
 const WIKI_LICENSE = 'CC BY-NC-SA 3.0';
 
-/** Only used if data/cosmetics/config.json turns wiki images on. Nothing is copied: visitors' browsers load the image from the wiki. */
-const wikiImage = (file) => `https://overwatch.weirdgloop.org/images/${encodeURIComponent(file.replace(/ /g, '_'))}`;
+/**
+ * Only used if data/cosmetics/config.json turns wiki images on, which the wiki's staff agreed to. Nothing is copied: visitors' browsers
+ * load the image from the wiki. Emotes and highlight intros are videos there, so they show the frame the wiki makes for each one.
+ */
+const wikiImage = (file) => {
+  const name = encodeURIComponent(file.replace(/ /g, '_'));
+  return /\.webm$/i.test(file) ? `https://overwatch.weirdgloop.org/images/thumb/${name}/640px--${name}.jpg` : `https://overwatch.weirdgloop.org/images/${name}`;
+};
 
 const unique = (list) => [...new Set(list)];
 const dateOf = (iso) => (iso ? iso.slice(0, 10) : null);
@@ -651,7 +657,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   for (const season of seasons) {
     const existing = passes.find((pass) => pass.seasonId === season.id);
     if (existing) {
-      existing.image ??= passArt.get(season.id) ?? null;
+      existing.image ??= passArt.get(season.id) ?? (inputs.config.wikiImages && season.file ? wikiImage(season.file) : null);
       existing.label = season.label;
       existing.title ??= season.title ?? null;
       existing.start ??= season.start ?? null;
@@ -841,7 +847,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     sources: [
       { id: 'itemshop', name: ITEMSHOP_NAME, url: core.ITEMSHOP_PAGE, license: 'Free API, shown with a link back', lastSuccess: inputs.state.lastRecorded ?? null, records: Object.keys(inputs.items).length, note: historyRead ? 'Past shops read through an API key.' : 'History starts from the first recording, because past shops need an API key.' },
       ...(inputs.wikiImport
-        ? [{ id: 'wiki', name: WIKI_NAME, url: WIKI_URL, license: WIKI_LICENSE, lastSuccess: inputs.wikiImport.exportedAt ?? null, records: inputs.wiki.length, note: 'Exported by hand and imported offline, so it is only as current as the last export.' }]
+        ? [{ id: 'wiki', name: WIKI_NAME, url: WIKI_URL, license: WIKI_LICENSE, lastSuccess: inputs.wikiImport.exportedAt ?? null, records: inputs.wiki.length, pictures: Boolean(inputs.config.wikiImages), note: 'Exported by hand and imported offline, so it is only as current as the last export.' }]
         : []),
       ...(campaigns.length ? [{ id: 'blizzard', name: 'Blizzard announcements', url: 'https://us.forums.blizzard.com/en/overwatch/c/announcements/5', license: null, lastSuccess: inputs.drops.map((campaign) => campaign.sources?.[0]?.checkedAt).filter(Boolean).sort().at(-1) ?? null, records: campaigns.length, note: 'Twitch campaigns entered by hand from official posts.' }] : []),
     ],
