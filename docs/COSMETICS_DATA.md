@@ -129,7 +129,7 @@ A Battle Pass reward gives its cosmetic a season and a line saying which tier it
 
 One cosmetic listed on several pages becomes one record, with what each page knows.
 
-If the wiki's staff give consent, an automated run could replace step 1. Until then, nothing here contacts the wiki.
+The wiki's staff agreed to the site showing the wiki's pictures. That doesn't cover scripted exports, so step 1 stays by hand and the import never contacts the wiki. Ask them before automating any of this.
 
 ## Admin tools
 
