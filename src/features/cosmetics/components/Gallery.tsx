@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { Dices, LayoutGrid, Rows3, RotateCcw, Search, SearchX, SlidersHorizontal, Sparkles } from 'lucide-react';
 import { SelectField, StateBlock } from '../../../components/controls';
 import { RoleIcon } from '../../../components/icons';
@@ -6,7 +6,7 @@ import { HEROES, ROLES, ROLE_LABEL, type Role } from '../../../data/heroes';
 import { cn, formatInt } from '../../../lib/format';
 import { navigate } from '../../../lib/router';
 import { InfoTip } from '../../players/components/parts';
-import { activeFilterCount, applyFilters, DEFAULT_FILTERS, pageOf, parseFilters, serializeFilters, type AvailabilityFilter, type CosmeticFilters, type MineFilter, type PriceCurrency, type SortKey } from '../core';
+import { activeFilterCount, applyFilters, prepareSearch, DEFAULT_FILTERS, pageOf, parseFilters, serializeFilters, type AvailabilityFilter, type CosmeticFilters, type MineFilter, type PriceCurrency, type SortKey } from '../core';
 import { COSMETIC_TYPES, type CatalogMeta, type CatalogRow, type CosmeticType, type Rarity } from '../core/types';
 import { isSet } from '../core/collection';
 import { useUrlState } from '../useUrlState';
@@ -51,16 +51,19 @@ export function Gallery({ context, path, query, routeKey, fixed = {}, itemName =
 
   const effective = useMemo(() => ({ ...filters, ...fixed }), [filters, fixed]);
 
+  // Filtering a large catalogue can take a moment on a slow phone, so typing stays responsive while results catch up.
+  const deferred = useDeferredValue(effective);
   const results = useMemo(
     () =>
-      applyFilters(rows, effective, {
+      applyFilters(rows, deferred, {
         isOwned: (id) => isSet(entries, 'owned', id),
         isWished: (id) => isSet(entries, 'wishlist', id),
         isFavorite: (id) => isSet(entries, 'favorite', id),
         eventLabels,
       }),
-    [rows, effective, entries, eventLabels],
+    [rows, deferred, entries, eventLabels],
   );
+  useEffect(() => prepareSearch(rows, { eventLabels }), [rows, eventLabels]);
   const paged = pageOf(results, filters.page);
   const change = (partial: Partial<CosmeticFilters>) => setFilters((current) => ({ ...current, page: 1, ...partial }));
   const reset = () => setFilters((current) => ({ ...DEFAULT_FILTERS, sort: current.sort, view: current.view }));

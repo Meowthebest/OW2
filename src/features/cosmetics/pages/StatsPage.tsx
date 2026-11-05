@@ -12,7 +12,7 @@ import type { CatalogMeta, CatalogStats, FacetValue } from '../core/types';
 import { loadCatalog, loadMeta, loadPass, loadPasses, loadStats, useClock } from '../data';
 import { DataState, GridSkeleton, PageHeader, usePageTitle } from '../components/bits';
 import { CatalogueCredits } from './CosmeticsPage';
-import { dayText, heroLabel, rarityLabel, typeLabel } from '../labels';
+import { dayText, heroLabel, rarityLabel, typeLabel, typeSingular } from '../labels';
 import { useCollection } from '../useCollection';
 import { useUrlState } from '../useUrlState';
 
@@ -113,7 +113,7 @@ function CatalogueStats({ stats }: { stats: CatalogStats }) {
         <BarList title="Introduced per season" values={stats.bySeason} limit={12} hrefFor={(id) => `#/cosmetics?season=${id}`} />
         <BarList title="Shop appearances by type" values={stats.appearancesByType} />
         <BarList title="Shop rotations recorded by month" values={months} limit={12} />
-        {stats.mostSeen.some((row) => row.seen > 1) && <BarList title="Most often in the shop" values={stats.mostSeen.map((row) => ({ id: row.id, label: row.name, count: row.seen }))} hrefFor={(id) => `#/cosmetics/${id}`} />}
+        {stats.mostSeen.some((row) => row.seen > 1) && <BarList title="Most often in the shop" values={stats.mostSeen.map((row) => ({ id: row.id, label: `${row.name} (${typeSingular(row.type)}${row.hero ? `, ${heroLabel(row.hero)}` : ''})`, count: row.seen }))} hrefFor={(id) => `#/cosmetics/${id}`} />}
       </div>
       {meta.data && <SourceStatusPanel meta={meta.data} />}
     </div>

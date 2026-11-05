@@ -494,3 +494,17 @@ a.cx-pagination__item:hover { border-color: var(--orange); color: var(--ink); }
   .cx-grid--wide { grid-template-columns: minmax(0, 1fr); }
   .cx-bars li { grid-template-columns: minmax(0, 42%) minmax(0, 1fr) 44px; }
 }
+
+/* Mythic levels and aspects */
+.cx-levels { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.cx-level { display: flex; gap: 10px; align-items: flex-start; }
+.cx-level p { margin: 0; font-size: 0.875rem; line-height: 1.45; }
+.cx-level__cost { display: inline-flex; align-items: center; gap: 3px; font-variant-numeric: tabular-nums; color: var(--ink); font-weight: 600; margin-right: 4px; }
+.cx-aspects { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
+.cx-aspects p { margin: 2px 0 0; font-size: 0.875rem; }
+
+.cx-fact dd svg { display: inline-block; vertical-align: -2px; }
+
+.cx-reward__left-out { font-size: 0.6875rem; color: var(--ink-3); }
+
+.cx-reward__glyph { display: grid; place-items: center; width: 100%; height: 100%; color: var(--ink-3); }

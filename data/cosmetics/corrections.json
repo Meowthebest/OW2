@@ -1,7 +1,15 @@
 {
- "rename": {},
- "hide": [],
- "set": {},
+ "rename": {
+  "player-icon.advanced-wearables-domjna": "player-icon.domina.advanced-wearables-domina"
+ },
+ "hide": [
+  "highlight-intro.doctrine.s"
+ ],
+ "set": {
+  "player-icon.domina.advanced-wearables-domina": {
+   "name": "Advanced Wearables Domina"
+  }
+ },
  "listingNames": {
   "Malus Rammatra Bundle": "Malus Ramattra Bundle"
  }

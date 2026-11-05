@@ -1277,6 +1277,735 @@ await test('a listing labelled only with a hero joins the catalogue if exactly o
   assert.equal(listed.find((item) => item.name === 'No Match').kind, 'product', 'but it stays in the record of that shop');
 });
 
+// The wiki's real page formats
+await test('a heading\'s links are read for what they mean', () => {
+  const event = (raw) => wiki.readGroupLabel(raw).event;
+  assert.equal(event('[[BCRF Charity Event#BCRF Charity Event 2018]]'), 'bcrf-charity-event');
+  assert.equal(event('[[Overwach Anniversary]]'), 'anniversary', 'a misspelled link is still the event');
+  assert.equal(event('[[One-Punch_Man_x_Overwatch_2|One-Punch Man]]'), 'one-punch-man');
+  assert.equal(event('[[BlizzCon 2018]]'), 'blizzcon');
+  assert.equal(event('[[Hero Mastery (event)|Hero Mastery Event]]'), 'hero-mastery');
+  assert.equal(event('[[File:Icon-Ana.png|20px]]'), null, 'a picture isn\'t an event');
+  for (const page of ['[[Limited-time event]]', '[[Mythic]]', '[[Special]]', '[[Skins#Trivia]]', '[[Overwatch_League#Skins]]', '[[Ana\'s Bastet Challenge]]', '[[Haunted Maquerade Challenage]]', '[[Loot Boxes]]', '[[Origins Edition]]', '[[Reign of Talon (competitive year)|Reign of Talon]]']) {
+    assert.equal(event(page), null, page);
+  }
+  assert.ok(wiki.readGroupLabel('[[Overwatch_League#Skins]]').tags.includes('esports'));
+  assert.ok(wiki.readGroupLabel('[[Overwatch Champions Series]]').tags.includes('esports'));
+  assert.ok(wiki.readGroupLabel('[[Ana\'s Bastet Challenge]]').tags.includes('challenge'));
+  assert.ok(wiki.readGroupLabel('[[Haunted Maquerade Challenage]]').tags.includes('challenge'));
+  assert.ok(wiki.readGroupLabel('[[Loot Boxes]]').tags.includes('loot-box'));
+  assert.ok(wiki.readGroupLabel('[[List_of_previous_Battle_Passes/2022-2026#Season 1|Battle Pass]]').tags.includes('battle-pass'));
+  assert.ok(wiki.readGroupLabel('[[Origins Edition]]').acquisition.includes('From the Origins Edition'));
+  assert.equal(wiki.readGroupLabel('Epic (Overwatch 2 [[Overwatch League]]) (150 {{League Tokens}})').rarity, 'epic');
+  assert.deepEqual(wiki.readGroupLabel('Epic ([[Overwatch League]]) (150 {{League Tokens}})').prices, [{ amount: 150, currency: 'league-tokens' }]);
+});
+
+await test('a plain heading says the same as a linked one', () => {
+  assert.ok(wiki.readGroupLabel('Battle Pass').tags.includes('battle-pass'));
+  assert.ok(wiki.readGroupLabel('Shop').tags.includes('shop'));
+  assert.ok(wiki.readGroupLabel('Hero Gallery').tags.includes('gallery'));
+  assert.ok(wiki.readGroupLabel('Competitive Rewards').tags.includes('competitive'));
+  assert.equal(wiki.readGroupLabel('Winter Wonderland').event, 'winter-wonderland');
+  assert.ok(wiki.readGroupLabel('Events').tags.includes('event'));
+  assert.deepEqual(wiki.readGroupLabel('Some Other Thing').tags, [], 'other words mean nothing');
+  assert.equal(wiki.readGroupLabel('Some Other Thing').event, null);
+});
+
+await test('every way of naming a season gives one id', () => {
+  const season = wiki.seasonFromLabel;
+  assert.equal(season('[[List of previous Battle Passes/2022-2026#Season 1|Season 1 Battle Pass]]'), 'ow2-s1');
+  assert.equal(season('[[List of previous Battle Passes/2026#Season 5: A Grim Doctrine|Season 5]]'), '2026-s5');
+  assert.equal(season('[[Battle Pass#Season 4:Heroes of Busan|Reign of Talon Season 4 Battle Pass]]'), '2026-s4');
+  assert.equal(season('<big>[[Season#Season 3: Into the Tiger\'s Den|Reign of Talon Season 3: Into the Tiger\'s Den]]</big>'), '2026-s3');
+  assert.equal(season('[[Reign of Talon (competitive year)|Reign of Talon]]: [[Season 1: Conquest|Season 1]]'), '2026-s1');
+  assert.equal(season('Season 4 (2026)'), '2026-s4');
+  assert.equal(season('Season 2', { era: '2026' }), '2026-s2', 'a table can say its era once, at the top');
+  assert.equal(season('Season 2'), 'ow2-s2');
+  assert.equal(season('2016'), null);
+  assert.equal(season('General'), null);
+});
+
+await test('a cosmetics table: a price isn\'t a year, and headers stack or sit side by side', () => {
+  const table = `{{CTH|h=Ana|i=Skins|collapse=mw-collapsible}}
+|-
+{{CTS|n=Common (Free)}}
+{{CPB|h=Ana Skin|l=Classic|n=Overwatch Classic||c=2|w1=1}}
+{{CPB|h=Ana Skin|l=Overwatch 2|n=Overwatch|c=2}}
+|-
+{{CTS|n={{rl|e}} {{Credits}} 250|linend=|c=2}}
+{{CTS|n={{rl|e}} {{Coins}} 1000}}
+{{CPB|h=Ana Skin|n=Merciful|c=2}}
+{{CPB|h=Ana Skin|n=Shrike|l=Shrike|c=2}}
+|-
+{{CTS|n=2019}}
+{{CTS|n={{rl|l|Halloween Terror}} {{Credits}} 3000}}
+{{CPB|h=Ana Skin|n=Corsair|c=4}}
+|}`;
+  const records = new Map(wiki.parseCosmeticTable(table, { type: 'skin', hero: 'ana', pageTitle: 'Ana/Cosmetics' }).map((record) => [record.name, record]));
+  assert.equal(records.get('Merciful').rarity, 'epic');
+  assert.deepEqual(records.get('Merciful').prices, [{ amount: 250, currency: 'credits' }]);
+  assert.equal(records.get('Shrike').rarity, 'epic');
+  assert.deepEqual(records.get('Shrike').prices, [{ amount: 1000, currency: 'coins' }], 'the second header covers the second column');
+  assert.equal(records.get('Corsair').event, 'halloween-terror');
+  assert.deepEqual(records.get('Corsair').prices, [{ amount: 3000, currency: 'credits' }]);
+  assert.equal(records.get('Overwatch Classic').file, 'Ana Skin Classic.png');
+});
+
+await test('a spray table: each row names its hero, and a season heading holds', () => {
+  const table = `{{CTH|h=Battle Pass|i=Sprays|t=[[Battle Pass]] [[Sprays]] ([[Season/2026|Reign of Talon]])}}
+|-
+{{CTS|n=[[List of previous Battle Passes/2026#Season 1: Conquest|Season 1]]|w=12%}}
+{{CTS|n=General}}
+{{CPB|h=Spray|n=Arcade|c=4}}
+|-
+{{CTS|n=Hero Specific}}
+{{CPB|h=Spray Cassidy|n=Rise N' Shine}} '''([[Cassidy]])'''
+{{CPB|h=Spray McCree|n=Old Name}} '''([[Cassidy]])'''
+{{CPB|h=Genji Skin|n=2018 Pacific All-Stars<br>([[Genji]])}}
+{{CPB|h=S76 Skin Away|n=Soldier|l=OWCS}}
+|}`;
+  const records = wiki.parseCosmeticTable(table, { type: 'spray', pageTitle: 'Sprays', core, defaults: { tags: ['battle-pass'], prices: [], acquisition: ['From a Battle Pass'] } });
+  const by = new Map(records.map((record) => [record.name, record]));
+  assert.equal(by.get('Arcade').hero, null);
+  assert.equal(by.get('Arcade').season, '2026-s1', 'the table said its era at the top');
+  assert.equal(by.get("Rise N' Shine").hero, 'cassidy');
+  assert.equal(by.get("Rise N' Shine").season, '2026-s1');
+  assert.ok(by.get('Arcade').tags.includes('battle-pass'));
+  assert.equal(by.get('Old Name').hero, 'cassidy', 'an old hero name in a file still counts');
+  assert.equal(by.get('2018 Pacific All-Stars').hero, 'genji', 'the hero note is not part of the name');
+  assert.equal(by.get('Soldier').hero, 'soldier-76');
+});
+
+await test('galleries: a section\'s heading says what it lists, and other sections are skipped', () => {
+  const page = `==Cosmetics==
+===Player Icons===
+<onlyinclude><gallery widths=100>
+File: PI Uprising 2017.png|<center>Uprising 2017
+</gallery></onlyinclude>
+===Twitch Emotes===
+<gallery>
+File:Emote One.png|<center>Not a cosmetic
+</gallery>
+====Skins====
+<gallery mode="nolines">
+File:Venture Skin Monarch.png|[[File:Icon-Venture.png|20px]] {{rl|r|Monarch}}
+File:Unknown Thing.png|{{rl|r|No Hero Here}}
+</gallery>`;
+  const records = wiki.parseGalleries(page, { pageTitle: 'Overwatch Esports', core, defaults: { tags: ['esports'] } });
+  assert.deepEqual(records.map((record) => [record.type, record.hero, record.name, record.rarity]), [
+    ['player-icon', null, 'Uprising 2017', null],
+    ['skin', 'venture', 'Monarch', 'rare'],
+  ]);
+  assert.ok(records.every((record) => record.tags.includes('esports')));
+  assert.equal(records[0].file, 'PI Uprising 2017.png');
+  const rows = wiki.parseGalleries('<gallery>\nFile: PI League.png||Overwatch League\nFile: PI Snow.png|<center>Snowboarder (Baptiste)\nFile: PI Lich.png|<center>Lich King (2018)\n</gallery>', { type: 'player-icon', pageTitle: 'Player Icons', core });
+  assert.deepEqual(rows.map((row) => [row.hero, row.name]), [[null, 'Overwatch League'], ['baptiste', 'Snowboarder'], [null, 'Lich King (2018)']]);
+});
+
+await test('name cards: groups span rows, seasons hold, and a note can name the hero', () => {
+  const table = `; <big>[[Season#Season 1|Season 1]]</big>
+{| class="wikitable"
+|-
+! Name
+|-
+| rowspan="2" |<center><big>'''[[List_of_previous_Battle_Passes/2022-2026#Season 1|Battle Pass]]'''</big></center>
+|<center>[[:File:Genji Skin Cyber Demon.png|Cyber Demon]]<br>'''([[Genji]])'''
+|<center>[[File:NameCard_Cyber Demon.png|450x450px]]
+|
+|-
+|<center>Great Waves
+|<center>[[File:NameCard_Great Waves.png|450x450px]]
+|
+|-
+|rowspan="1"|<center><big>'''[[One-Punch_Man_x_Overwatch_2|One-Punch Man]]'''</big></center>
+|<center>[[:File:Genji Skin Genos.png|Genos]] - [[Genji]]
+|<center>[[File:NameCard_ Genos - Genji.png|450x450px]]
+|<center>Was available in the [[Shop]].
+|}
+; <big>[[Season#Season 1: Conquest|Reign of Talon Season 1: Conquest]]</big>
+{| class="wikitable"
+|-
+| rowspan="1" |<center><big>'''[[Shop]]'''</big></center>
+|<center>Hearts & Stars</center>
+|[[File:NameCard_Hearts_&_Stars.png|450x450px]]
+|
+|}`;
+  const records = new Map(wiki.parseNameCards(table, { pageTitle: 'Name Cards', core }).map((record) => [record.name, record]));
+  assert.equal(records.get('Cyber Demon').hero, 'genji');
+  assert.equal(records.get('Cyber Demon').season, 'ow2-s1');
+  assert.ok(records.get('Cyber Demon').tags.includes('battle-pass'));
+  assert.ok(records.get('Great Waves').tags.includes('battle-pass'), 'a group cell covers the rows under it');
+  assert.equal(records.get('Great Waves').hero, null);
+  assert.equal(records.get('Genos').hero, 'genji');
+  assert.equal(records.get('Genos').event, 'one-punch-man');
+  assert.ok(records.get('Genos').tags.includes('shop'), 'from the note');
+  assert.ok(records.get('Genos').acquisition.includes('Was available in the Shop.'));
+  assert.equal(records.get('Hearts & Stars').season, '2026-s1');
+  assert.equal(records.get('Hearts & Stars').file, 'NameCard Hearts & Stars.png');
+
+  const progression = `{| class="wikitable"
+|-
+| rowspan="2" |<center><big>[[Ana]]</center>
+|<center>Tier 1
+|[[File:NameCard Ana - Tier 1.png|center|450x450px]]
+|<center>Reach <b>Level 8</b> as Ana
+|-
+|<center>Tier 2
+|[[File:NameCard Ana - Tier 2.png|center|450x450px]]
+|<center>Reach <b>Level 15</b> as Ana
+|}`;
+  const tiers = wiki.parseNameCards(progression, { pageTitle: 'Name Cards', core });
+  assert.deepEqual(tiers.map((record) => [record.hero, record.name, record.event]), [['ana', 'Ana - Tier 1', null], ['ana', 'Ana - Tier 2', null]], 'a hero in the group cell isn\'t an event');
+  assert.ok(tiers[0].acquisition.includes('Reach Level 8 as Ana'));
+});
+
+await test('mythics: seasons span rows, weapons list their levels, and aspects are read', () => {
+  const page = `intro
+==List of Mythic Skins==
+===Reign of Talon===
+{| class="wikitable"
+!'''Season'''
+!'''Hero'''
+!'''Name'''
+!'''Image'''
+!'''Customization Options'''
+|-
+| rowspan="2"|[[Season/2026#Season 1:Conquest|1]]
+|[[Mercy]]
+|{{rl|m|Celestial Guardian}}
+|[[File:Mercy Skin Celestial Guardian.png|250x250px]]
+|
+* Ability VFX - 2
+* Wings - 3
+|-
+|[[Mei]]
+|{{rl|m|Hop Online!}}
+|[[File:Mei Skin Hop Online!.png|250x250px]]
+|
+* Color - 3
+|}
+===Skin Descriptions===
+==List of Mythic Aspects==
+{| class="wikitable"
+!Season
+|-
+|[[Season/2022-2026#Season_13|Season 13]]
+|'''Gilded'''
+|[[File:Gilded Icon.png|100px]]
+|[[File:Genji Skin Cyber Demon(Gilded).png|200px]]
+|
+Coats the mythic skin with metallic gold
+|}
+== List of Mythic Weapons ==
+=== Overwatch 2 ===
+{| class="mw-collapsible wikitable"
+!Season
+|-
+|[[Season|11]]
+|[[File:Icon-Reinhardt.png|100x100px]]<br><center>
+[[Reinhardt]]
+|<center>[[File:Reinhardt_Weapon_Skin_Bound_Demon.png|200px]]<br>
+'''Bound Demon'''
+|
+* '''Level 1''' ({{Mythic Prisms}} 50): Unlocks the base weapon skin.
+* '''Level 2''' ({{Mythic Prisms}} 10): '''Eliminations''' enhances the effects.
+|}
+=== Reign of Talon ===
+{| class="mw-collapsible wikitable"
+!Season
+|-
+|[[Season|1]]
+|[[File:Icon-Juno.png|100x100px]]<br><center>
+[[Juno]]
+|<center>[[File:Juno_Weapon_Skin_Star_Shooter.png|200px]]<br>
+'''Star Shooter'''
+|
+* '''Level 1''' ({{Mythic Prisms}} 50): Unlocks the base weapon skin.
+|}`;
+  const items = new Map(wiki.parseMythics(page, core, 'Mythic Skins').map((item) => [item.name, item]));
+  assert.equal(items.get('Celestial Guardian').season, '2026-s1');
+  assert.equal(items.get('Hop Online!').season, '2026-s1', 'a season cell covers the row under it');
+  assert.equal(items.get('Hop Online!').hero, 'mei');
+  assert.deepEqual(items.get('Celestial Guardian').options, [{ name: 'Ability VFX', count: 2 }, { name: 'Wings', count: 3 }]);
+  assert.equal(items.get('Bound Demon').kind, 'weapon');
+  assert.equal(items.get('Bound Demon').season, 'ow2-s11');
+  assert.equal(items.get('Bound Demon').prisms, 50);
+  assert.deepEqual(items.get('Bound Demon').levels[1], { level: 2, prisms: 10, text: 'Eliminations enhances the effects.' });
+  assert.equal(items.get('Star Shooter').season, '2026-s1', 'the section says the era');
+  assert.deepEqual(wiki.parseMythicAspects(page, 'Mythic Skins').map((aspect) => [aspect.name, aspect.season, aspect.description]), [['Gilded', 'ow2-s13', 'Coats the mythic skin with metallic gold']]);
+});
+
+await test('player titles take their source from the section they\'re in', () => {
+  const page = `== Overwatch ==
+{| class="wikitable"
+!Title
+!Requirements
+|-
+|Stalwart Hero
+|Win 250 games in any mode.
+|}
+== Battle Pass ==
+{| class="wikitable"
+|+ Season One Battle Pass Titles
+!Title
+!Requirements
+|-
+|Nomad
+|Unlock Tier 85 of Battle Pass Season 1 Prestige Tiers.
+|-
+|Immortal
+|Unlock Tier 100 of Battle Pass Season 5 (2026) Prestige Tiers
+|}`;
+  const titles = new Map(wiki.parseTitles(page, 'Player Titles').map((title) => [title.name, title]));
+  assert.ok(titles.get('Stalwart Hero').tags.includes('challenge'));
+  assert.ok(titles.get('Nomad').tags.includes('battle-pass'));
+  assert.equal(titles.get('Nomad').season, 'ow2-s1');
+  assert.equal(titles.get('Immortal').season, '2026-s5');
+  assert.equal(titles.size, 3, 'a caption isn\'t a title');
+});
+
+await test('a tier\'s cell can hold several rewards of any kind', () => {
+  const cell = `
+Unlock [[Kiriko]]
+
+{{rl|l|EDM|skin|D.Va}}
+
+{{rl|e|CyberMari|charm}}
+
++20% XP All Season
+{{Credits}} 100
+{{rl|l|Legendary Loot Box}}
+{{rl|e|Spell Potion - Weapon Charm}}
+{{Mythic Prisms}} 10
+{{Raritylink|text=Other Way|rarity=r|type=pi}}`;
+  const rewards = wiki.parseRewardCell(cell, core);
+  assert.deepEqual(rewards.map((reward) => [reward.name, reward.type, reward.typeLabel, reward.hero, reward.rarity]), [
+    ['Unlock Kiriko', null, 'Hero', null, null],
+    ['EDM', 'skin', null, 'dva', 'legendary'],
+    ['CyberMari', 'weapon-charm', null, null, 'epic'],
+    ['+20% XP All Season', null, 'XP boost', null, null],
+    ['100 Credits', null, 'Credits', null, null],
+    ['Legendary Loot Box', null, 'Loot Box', null, 'legendary'],
+    ['Spell Potion', 'weapon-charm', null, null, 'epic'],
+    ['10 Mythic Prisms', null, 'Mythic Prisms', null, null],
+    ['Other Way', 'player-icon', null, null, 'rare'],
+  ]);
+  assert.deepEqual(wiki.parseRewardCell('', core), []);
+});
+
+await test('Battle Passes: free and premium cells, prestige tiers and numbered tracks', () => {
+  const page = `This is a list.
+
+== Season 1 ==
+===Free===
+* 2 {{rl|E}} [[Skins]]
+
+===Tiers===
+{| class="wikitable"
+! colspan="3" | Season 1 Battle Pass {{Anchor|Season 1 Battle Pass}}
+|-
+! Tier
+! style="width:45%" | Free
+! style="width:45%" | Premium
+|-
+|1
+|
+|
+{{rl|l|EDM|skin|D.Va}}
+
+{{rl|e|CyberMari|charm}}
+|-
+|2
+|{{rl|r|Cybermari|icon}}
+|
+|-
+|5
+|{{Credits}} 250
+|{{rl|c|Salute|spray|Winston}}
+|-
+! colspan="3" | Prestige Tiers
+|-
+|85
+| colspan="2" | {{rl|p|Nomad|title}}
+|}
+
+==Season 4: Heroes of Busan==
+=== Tiers ===
+{| class="wikitable"
+! colspan="4" |Season 4: Heroes of Busan Battle Pass (1) {{Anchor|x}}
+|-
+! Tier
+|-
+|1
+|
+|{{rl|l|Cyber Mechanic|skin|D.Va}}
+|}
+
+{| class="wikitable"
+! colspan="4" |Season 4: Heroes of Busan Battle Pass (2) {{Anchor|x}}
+|-
+|1
+|{{rl|c|Sing For Me!|voice|Shion}}
+|
+|}
+
+{| class="wikitable"
+! colspan="4" |Season 4: Heroes of Busan Battle Pass (Mythic) {{Anchor|x}}
+|-
+|1
+|
+|{{Mythic Prisms}} 10
+|}
+
+{| class="wikitable"
+! colspan="4" |Season 4: Heroes of Busan Battle Pass (8) {{Anchor|x}}
+|-
+! colspan="3" | Prestige Tiers
+|-
+|10
+| colspan="2" | {{rl|r|Squad Member|title}}
+|}
+
+== Not a Season ==
+{| class="wikitable"
+|-
+|1
+|{{rl|r|Should Not Appear|icon}}
+|
+|}`;
+  const [first, fourth] = wiki.parseBattlePasses(page, { era: '2026', pageTitle: 'List of previous Battle Passes/2026', core });
+  assert.equal(first.id, '2026-s1');
+  assert.equal(first.label, '2026: Season 1');
+  assert.equal(first.tiers, 3, 'prestige tiers aren\'t counted as tiers');
+  assert.deepEqual(first.rewards.map((reward) => [reward.tier, reward.part, reward.track, reward.name]), [
+    [1, null, 'premium', 'EDM'],
+    [1, null, 'premium', 'CyberMari'],
+    [2, null, 'free', 'Cybermari'],
+    [5, null, 'free', '250 Credits'],
+    [5, null, 'premium', 'Salute'],
+    [85, 'Prestige', 'both', 'Nomad'],
+  ]);
+  assert.equal(first.note, null);
+  assert.equal(fourth.title, 'Heroes of Busan');
+  assert.deepEqual(fourth.rewards.map((reward) => [reward.part, reward.tier, reward.name]), [
+    ['Track 1', 1, 'Cyber Mechanic'],
+    ['Track 2', 1, 'Sing For Me!'],
+    ['Mythic track', 1, '10 Mythic Prisms'],
+    ['Prestige', 10, 'Squad Member'],
+  ]);
+  assert.equal(fourth.tiers, 3);
+  assert.match(fourth.note, /tracks/);
+  assert.ok(!JSON.stringify(fourth).includes('Should Not Appear'), 'a section ends at the next heading');
+  assert.equal(wiki.parseBattlePasses(page, { era: 'ow2', pageTitle: 'x', core })[0].id, 'ow2-s1');
+});
+
+await test('season dates and titles are read, and a season with no name yet is left out', () => {
+  assert.equal(wiki.parseDay('4 October 2022'), '2022-10-04');
+  assert.equal(wiki.parseDay('December 9, 2025'), '2025-12-09');
+  assert.equal(wiki.parseDay('February 2027'), null);
+  assert.equal(wiki.parseDay('Soon'), null);
+  const page = `==List of Seasons==
+===Season 1===
+[[File:Season 1.png|300px|thumb|Season 1 Roadmap]]
+(4 October 2022 - 6 December 2022)
+
+===Season 6: Invasion <span class="anchor" id="Season 6"></span>===
+(10 August 2023 - 10 October 2023)
+Seasons will now be named.
+===Season 15: Honor and Glory ===
+(February 18 - 22 April 2025)
+===Season 16: Stadium===
+(April 22 - June 24, 2025)
+===Season 20: Vendetta===
+(December 9, 2025 - February 10, 2026)
+=== Season 21: TBA <span class="anchor" id="Season 21"></span>===
+(8 December 2026 - February 2027)
+`;
+  const seasons = wiki.parseSeasonList(page, { era: 'ow2' });
+  assert.deepEqual(seasons.map((season) => [season.id, season.title, season.start, season.end]), [
+    ['ow2-s1', null, '2022-10-04', '2022-12-06'],
+    ['ow2-s6', 'Invasion', '2023-08-10', '2023-10-10'],
+    ['ow2-s15', 'Honor and Glory', '2025-02-18', '2025-04-22'],
+    ['ow2-s16', 'Stadium', '2025-04-22', '2025-06-24'],
+    ['ow2-s20', 'Vendetta', '2025-12-09', '2026-02-10'],
+  ]);
+  assert.equal(wiki.parseSeasonList(page, { era: '2026' })[0].id, '2026-s1');
+  assert.equal(wiki.parseSeasonList(page, { era: '2026' })[0].era, 'reign-of-talon');
+});
+
+await test('the rules for buying a past pass are read exactly, or not at all', () => {
+  const rules = wiki.parseUnvaultRules(`== Unvaulted Battle Passes ==
+Unvaulted Battle Pass has been introduced in Reign of Talon Season 5. Each previous battle passes costs 1000 {{Coins}} and permanently available on your Overwatch account. Mythic skin, Mythic Prisms, Overwatch Coins, player titles, and XP boosts does not included.
+
+==References==
+Mythic Tiers`, 'Battle Pass');
+  assert.equal(rules.coins, 1000);
+  assert.equal(rules.since, '2026-s5');
+  assert.deepEqual(rules.excludes, ['Mythic skins', 'Mythic Prisms', 'Overwatch Coins', 'Player titles', 'XP boosts']);
+  assert.equal(rules.sources[0].title, 'Battle Pass');
+  assert.equal(wiki.parseUnvaultRules('== Unvaulted Battle Passes ==\nComing later.', 'Battle Pass'), null);
+  assert.equal(wiki.parseUnvaultRules('nothing here', 'Battle Pass'), null);
+});
+
+await test('rewards give cosmetics their season and link back to them', async () => {
+  resetData();
+  const wikiRow = (type, hero, name, over = {}) => ({ type, hero, name, tags: ['gallery'], pageTitle: 'x', ...over });
+  write('wiki/catalog.json', [
+    wikiRow('skin', 'dva', 'EDM', { rarity: 'legendary', tags: ['battle-pass'], acquisition: ['From a Battle Pass'] }),
+    wikiRow('player-title', null, 'Netbreaker'),
+    wikiRow('skin', 'soldier-76', 'Gladiator'),
+    wikiRow('spray', 'mei', 'Ice Wall', { season: 'ow2-s9' }),
+    wikiRow('emote', 'kiriko', 'Fox Dance'),
+    wikiRow('voice-line', 'moira', 'Science demands it.'),
+    wikiRow('voice-line', 'ana', 'Children, behave.'),
+  ]);
+  write('wiki/seasons.json', [
+    { id: 'ow2-s1', label: 'Season 1', era: 'overwatch-2', number: 1, start: '2022-10-04', end: '2022-12-06', title: null },
+    { id: 'ow2-s2', label: 'Season 2', era: 'overwatch-2', number: 2, start: '2022-12-06', end: '2023-02-07', title: 'Second' },
+  ]);
+  write('wiki/battle-pass-rules.json', { coins: 1000, since: '2026-s5', excludes: ['Player titles', 'XP boosts', 'Mythic Prisms', 'Mythic skins', 'Overwatch Coins'], sources: [] });
+  const reward = (tier, name, type, over = {}) => ({ tier, part: null, track: 'premium', name, type, typeLabel: null, hero: null, rarity: null, quantity: null, ...over });
+  write('wiki/battle-passes.json', [
+    {
+      id: 'ow2-s2', seasonId: 'ow2-s2', label: 'Season 2', title: 'Second', start: null, end: null, image: null, tiers: 80, note: null, sources: [{ source: 'Overwatch Wiki', title: 'Pass Page', url: 'https://overwatch.wiki/w/Pass', checkedAt: null }],
+      rewards: [
+        reward(4, 'EDM', 'skin', { hero: 'dva', rarity: 'legendary' }),
+        reward(9, 'Brand New', 'skin', { hero: 'ana', rarity: 'epic' }),
+      ],
+    },
+    {
+      id: 'ow2-s1', seasonId: 'ow2-s1', label: 'Season 1', title: null, start: null, end: null, image: null, tiers: 80, note: null, sources: [{ source: 'Overwatch Wiki', title: 'Pass Page', url: 'https://overwatch.wiki/w/Pass', checkedAt: null }],
+      rewards: [
+        reward(1, 'EDM', 'skin', { hero: 'dva', rarity: 'legendary' }),
+        reward(85, 'Netbraker', 'player-title', { part: 'Prestige', track: 'both', rarity: 'rare' }),
+        reward(2, 'Gladiator: LXXVI', 'skin', { hero: 'soldier-76' }),
+        reward(3, 'Ice Wall', 'spray', { hero: 'mei' }),
+        reward(4, 'Fox Dance', 'emote'),
+        reward(5, 'Not On Its Page', 'voice-line', { hero: 'moira' }),
+        reward(6, '250 Credits', null, { typeLabel: 'Credits' }),
+        reward(7, '10 Mythic Prisms', null, { typeLabel: 'Mythic Prisms' }),
+        reward(8, 'New Hero Skin', 'skin'),
+      ],
+    },
+  ]);
+  await buildCatalog({ now: new Date('2026-11-05T00:00:00Z') });
+  const edm = shardFor('skin.dva.edm');
+  assert.equal(edm.season, 'ow2-s1', 'a reward that returned keeps its first season');
+  assert.deepEqual(edm.acquisition.slice().sort(), ['Season 1 Battle Pass, tier 1 (premium)', 'Season 2 Battle Pass, tier 4 (premium)'], 'specific lines replace the general one');
+  assert.ok(edm.tags.includes('battle-pass'));
+  assert.equal(shardFor('skin.soldier-76.gladiator').season, 'ow2-s1', 'a longer name in the tier list still finds it');
+  assert.equal(shardFor('spray.mei.ice-wall').season, 'ow2-s9', 'a season a table already gave is kept');
+  const title = shardFor('player-title.netbreaker');
+  assert.equal(title.rarity, 'rare', 'a letter off in the tier list still finds it, and gives it its rarity');
+  assert.ok(title.acquisition.includes('Season 1 Battle Pass, Prestige, tier 85 (free and premium)'));
+  const made = shardFor('skin.ana.brand-new');
+  assert.equal(made.season, 'ow2-s2', 'a cosmetic only the tier list names gets a record');
+  assert.equal(made.rarity, 'epic');
+  assert.ok(made.sources.some((source) => source.url === 'https://overwatch.wiki/w/Pass'));
+
+  const first = readOut('battle-passes/ow2-s1.json');
+  const by = new Map(first.rewards.map((item) => [item.name, item]));
+  assert.equal(first.label, 'Season 1');
+  assert.equal(first.start, '2022-10-04', 'dates come from the season list');
+  assert.equal(by.get('EDM').id, 'skin.dva.edm');
+  assert.equal(by.get('Fox Dance').id, 'emote.kiriko.fox-dance', 'one cosmetic of that name, so the missing hero is no problem');
+  assert.equal(by.get('Not On Its Page').id, null, 'a voice line title can\'t safely become a new record');
+  assert.equal(by.get('New Hero Skin').id, null, 'nor can a skin with no hero');
+  assert.equal(by.get('250 Credits').id, null);
+  assert.equal(by.get('10 Mythic Prisms').notInUnvault, true);
+  assert.equal(by.get('Netbraker').notInUnvault, true);
+  assert.equal(by.get('EDM').notInUnvault, false);
+  assert.equal(by.get('Netbraker').part, 'Prestige');
+  assert.deepEqual(readOut('battle-pass-rules.json').coins, 1000);
+  const list = readOut('battle-passes.json');
+  assert.equal(list.find((pass) => pass.id === 'ow2-s2').title, 'Second');
+  assert.ok(!('rewards' in list[0]), 'the list stays small');
+});
+
+await test('tracks each count from 1, so progress keeps their tiers apart', () => {
+  const rewards = [
+    { tier: 1, part: 'Track 1', track: 'free', name: 'a', id: null },
+    { tier: 1, part: 'Track 2', track: 'free', name: 'b', id: null },
+    { tier: 1, part: null, track: 'free', name: 'c', id: null },
+  ];
+  assert.deepEqual(rewards.map(core.rewardTierKey), ['Track 1/1', 'Track 2/1', '1']);
+  const entries = { [core.entryKey('tier', core.tierId('p', 'Track 1/1'))]: [1, 1] };
+  const result = core.passProgress({ id: 'p', rewards }, entries);
+  assert.equal(result.tiers.total, 3);
+  assert.equal(result.tiers.done, 1);
+});
+
+await test('legendary and collaboration weapon skins are read, and mythic ones are left to their own list', () => {
+  const page = `==List of Weapon Skins==
+===Legendary===
+;<big><big>{{rl|l|Hard Light}}</big></big>
+{| class="wikitable"
+|-
+{{Hero table cell|Reaper|size=100x100px}}
+{{CPB|h=Reaper Weapon Skin|n=Hard Light|thumb}}
+|Details
+|-
+{{Hero table cell|Mercy|span=2}}
+{{CPB|h=Mercy Weapon Skin|l=Hard Light Staff|n=Hard Light}}
+|-
+{{CPB|h=Mercy Weapon Skin|l=Hard Light Blaster|n=Hard Light}}
+|}
+===Collab Skins===
+;<big><big>{{rl|l|Nerf}}</big></big>
+{| class="wikitable"
+|-
+{{CPB|h=Baptiste Weapon Skin|n=Nerf Loadout Commander}}
+|}
+===Mythic===
+{| class="wikitable"
+|-
+{{CPB|h=Ana Weapon Skin|n=Should Not Appear}}
+|}`;
+  const records = wiki.parseWeaponSkins(page, { core, pageTitle: 'Weapon Skins' });
+  assert.deepEqual(records.map((record) => `${record.hero}|${record.name}`), ['reaper|Hard Light', 'mercy|Hard Light', 'baptiste|Nerf Loadout Commander']);
+  assert.deepEqual(records[0].prices, [{ amount: 1200, currency: 'coins' }]);
+  assert.equal(records[2].event, 'nerf');
+  assert.ok(records[2].tags.includes('collab'));
+  assert.deepEqual(records[2].prices, []);
+});
+
+await test('one export becomes one catalogue: league skins, team skins, merged pages and stated rarities', () => {
+  const heroIds = new Set(['ana', 'genji', 'mercy', 'kiriko']);
+  const page = (title, text) => ({ title, timestamp: '2026-11-05T00:00:00Z', text });
+  const exported = {
+    pages: [
+      page('Ana/Cosmetics', `==Skins==
+;{{rl|e|Shrike}} / {{rl|l|Sniper}}
+:Both of these.
+==Overwatch League Teams==
+{{CTH|h=Ana|i=Overwatch League}}
+|-
+{{OWLSkinsHero|h=Ana|w1=1}}
+|}`),
+      page('Template:OWLSkinsHero', `<noinclude>{{doc}}</noinclude><includeonly>
+{{CTS|n=Epic ([[Overwatch League]]) (100 {{League Tokens}})}}
+{{CPB|h={{{h}}} Skin|n=Atlanta Reign|l=Reign|w1={{{w1|}}}|w2={{{w2|}}}}}
+{{CPB|h={{{h}}} Skin|n=Atlanta Reign Away|l=Reign Away|w1={{{w1|}}}}}
+</includeonly>`),
+      page('Template:OWCS Skins', `{{Template:ESports skins table header|h=Overwatch Champions Series|i=Skins}}
+|-
+{{CTS|n=Home}}
+{{CPB|h=Ana Skin|n=Ana|l=OWCS|w1=1|}}
+|-
+{{CTS|n=Away}}
+{{CPB|h=Ana Skin Away|n=Ana|l=OWCS|w1=1|}}
+|}`),
+      page('Template:Ana Skins', '{{CTS|n={{rl|e}} {{Coins}} 1000}}\n{{CPB|h=Ana Skin|n=Shrike}}\n{{CPB|h=Ana Skin|n=Citrine}}'),
+      page('Template:Ana Sprays', '{{CTS|n=[[Winter Wonderland]]}}\n{{CPB|h=Spray Ana|n=Ornament}}'),
+      page('Template:OW1 Winter Wonderland Sprays', '{{CTS|n=Hero Specific}}\n{{CPB|h=Spray Ana|n=Ornament}}\n{{CPB|h=Spray Genji|n=Ornament}}\n{{CPB|h=Spray|n=Snowball}}'),
+      page('Template:Battle Pass Sprays 1', '{{CTH|h=Battle Pass|i=Sprays}}\n{{CTS|n=Season 3}}\n{{CPB|h=Spray Ana|n=Pass Spray}}'),
+      page('Template:Ana Weapon Skins', '{{CTS|n={{rl|m}} - [[Mythic Shop]] {{Mythic Prisms}} 50}}\n{{CPB|h=Ana Weapon Skin|n=Midnight Sun}}'),
+      page('Mythic Skins', `== List of Mythic Weapons ==
+=== Overwatch 2 ===
+{| class="wikitable"
+|-
+|[[Season|12]]
+|[[File:Icon-Ana.png|100x100px]]
+|<center>[[File:Ana_Weapon_Skin_Midnight_Sun.png|250px]]<br>'''Midnight Sun'''
+|
+* '''Level 1''' ({{Mythic Prisms}} 50): Base.
+|-
+|[[Season|18]]
+|[[File:Icon-Kiriko.png|100x100px]]
+|<center>[[File:Kiriko_Weapon_Skin_Fox.png|250px]]<br>'''Fox Blade'''
+|
+* '''Level 1''' ({{Mythic Prisms}} 50): Base.
+|}`),
+      page('Template:Shop Player Icons', '<gallery>\nFile: PI Witch.png|<center>Witch\n</gallery>'),
+      page('Player Icons', '<gallery>\nFile: PI Logo.png|<center>Logo\n</gallery>'),
+      page('Template:Seasons Name Cards', '; [[Season#Season 1|Season 1]]\n{|\n|-\n| rowspan="1" |<big>[[Shop]]</big>\n|Witch Card\n|[[File:NameCard_Witch.png|450px]]\n|\n|}'),
+      page('Template:Navbox', 'not a cosmetic'),
+    ],
+  };
+  const result = wiki.normalizeExport(exported, core, { heroIds });
+  const by = new Map(result.records.map((record) => [`${record.type}|${record.hero ?? ''}|${record.name}`, record]));
+  const league = by.get('skin|ana|Atlanta Reign');
+  assert.equal(league.rarity, 'epic');
+  assert.ok(league.tags.includes('esports'));
+  assert.deepEqual(league.prices, [{ amount: 100, currency: 'league-tokens' }]);
+  assert.equal(league.file, 'Ana Skin Reign.png', 'the hero is filled in from the page that uses the template');
+  assert.ok(by.has('skin|ana|Atlanta Reign Away'));
+  assert.ok(by.has('skin|ana|OWCS'), 'a team skin is named for the team, not the hero');
+  assert.ok(by.get('skin|ana|OWCS Away').tags.includes('esports'));
+  assert.equal(by.get('skin|ana|OWCS Away').file, 'Ana Skin Away OWCS.png');
+  assert.equal(by.get('skin|ana|Shrike').description, 'Both of these.');
+  const ornament = by.get('spray|ana|Ornament');
+  assert.equal(ornament.event, 'winter-wonderland', 'two pages, one record');
+  assert.equal(ornament.rarity, 'common', 'the Sprays page says all sprays are Common');
+  assert.equal(result.records.filter((record) => record.type === 'spray' && record.hero === 'ana' && record.name === 'Ornament').length, 1);
+  assert.equal(by.get('spray|genji|Ornament').event, 'winter-wonderland');
+  assert.equal(by.get('spray||Snowball').hero, null);
+  assert.equal(by.get('spray|ana|Pass Spray').season, 'ow2-s3');
+  assert.ok(by.get('spray|ana|Pass Spray').tags.includes('battle-pass'));
+  assert.equal(by.get('player-icon||Witch').rarity, 'rare');
+  assert.ok(by.get('player-icon||Witch').tags.includes('shop'));
+  assert.ok(by.has('player-icon||Logo'));
+  assert.equal(by.get('name-card||Witch Card').season, 'ow2-s1');
+  assert.equal(by.get('weapon-skin|ana|Midnight Sun').season, 'ow2-s12', 'the mythic list gives the hero table its season');
+  assert.ok(by.has('weapon-skin|kiriko|Fox Blade'), 'a mythic the hero table leaves out still gets a record');
+  assert.equal(result.mythics.filter((item) => item.name === 'Midnight Sun').length, 1, 'listed in two places, one mythic');
+  assert.ok(result.unused.includes('Template:Navbox'));
+  assert.ok(!wiki.normalizeExport({ pages: [page('Template:Ana Emotes', '{{CTS|n={{rl|e}}}}\n{{CPB|h=Ana Emote|n=TBA}}\n{{CPB|h=Ana Emote|n=Dance}}')] }, core, { heroIds }).records.some((record) => record.name === 'TBA'), 'a placeholder isn\'t a cosmetic');
+});
+
+await test('shop and wiki records join on one cosmetic, even when their names and heroes differ', async () => {
+  resetData();
+  const row = (name, typeLabel, key) => ({ name, type: typeLabel, rarity: { name: 'Rare', color: '#fff' }, image: `https://catalog.blzstatic.com//x/${key}.png`, quantity: 1, itemKey: key, paint: null });
+  const bundle = listing({
+    id: 'b',
+    itemKey: 'ow:bundle:700',
+    name: 'Join Bundle',
+    type: 'Bundle 9',
+    contents: [
+      row('Mercy Winged Victory', 'Skins · Mercy', 'ow:item:1'),
+      row('Call me Lily', 'Voice Lines · D.Va', 'ow:item:2'),
+      row('Advanced Icon', 'Player Icons · Ana', 'ow:item:3'),
+      row('Team Spray', 'Sprays', 'ow:item:4'),
+      row('Both Heroes', 'Sprays', 'ow:item:5'),
+      row('Team Skin', 'Skins · Ana', 'ow:item:6'),
+      row('Team Skin', 'Skins · Genji', 'ow:item:7'),
+      row('Team Skin', 'Skins', 'ow:item:8'),
+      row('Other Skin', 'Skins', 'ow:item:9'),
+    ],
+  });
+  api.shop = shopAnswer([section('Overwatch Shop', [bundle])]);
+  await sync();
+  const wikiRow = (type, hero, name) => ({ type, hero, name, rarity: 'epic', tags: ['gallery'], pageTitle: 'x' });
+  write('wiki/catalog.json', [
+    wikiRow('skin', 'mercy', 'Winged Victory'),
+    wikiRow('voice-line', 'dva', 'You can just call me Lily. Hehe.'),
+    wikiRow('player-icon', null, 'Advanced Icon'),
+    wikiRow('spray', 'genji', 'Team Spray'),
+    wikiRow('spray', 'ana', 'Both Heroes'),
+    wikiRow('spray', 'genji', 'Both Heroes'),
+    wikiRow('skin', 'ana', 'Team Skin'),
+    wikiRow('skin', 'genji', 'Team Skin'),
+    wikiRow('skin', 'mercy', 'Team Skin'),
+    wikiRow('skin', 'ana', 'Other Skin'),
+    wikiRow('skin', 'genji', 'Other Skin'),
+  ]);
+  await buildCatalog({ now: new Date('2026-11-05T00:00:00Z') });
+  const ids = new Set(readOut('catalog.json').map((row_) => row_.id));
+  assert.ok(ids.has('skin.mercy.winged-victory'));
+  assert.ok(!ids.has('skin.mercy.mercy-winged-victory'), 'the hero in the shop\'s name doesn\'t make a second skin');
+  assert.deepEqual(shardFor('skin.mercy.winged-victory').bundles, ['700']);
+  assert.ok(ids.has('voice-line.dva.you-can-just-call-me-lily-hehe'));
+  assert.ok(!ids.has('voice-line.dva.call-me-lily'), 'a short title joins the whole line');
+  assert.ok(ids.has('player-icon.ana.advanced-icon'), 'the shop\'s hero fills in what the wiki left out');
+  assert.ok(!ids.has('player-icon.advanced-icon'));
+  assert.ok(ids.has('spray.genji.team-spray') && !ids.has('spray.team-spray'), 'a name only one hero has');
+  assert.ok(ids.has('spray.both-heroes'), 'two heroes share this name, so the shop\'s unlabeled one stays apart');
+  assert.deepEqual(shardFor('skin.mercy.team-skin').bundles, ['700'], 'the only hero the bundle doesn\'t already name');
+  const items = readOut('bundles.json').find((item) => item.id === '700').items;
+  assert.equal(items.find((item) => item.name === 'Other Skin').id, null, 'two heroes are left, so it isn\'t guessed');
+  assert.deepEqual(shardFor('voice-line.dva.call-me-lily'), { aliasOf: 'voice-line.dva.you-can-just-call-me-lily-hehe' }, 'its old link still leads there');
+});
+
 await test('a past shop read after a newer one only fills gaps', () => {
   const listing = (fields) => ({ key: 'ow:item:1', name: 'x', kind: 'item', typeLabel: null, rarity: null, image: null, statedCount: null, url: null, contents: [], ...fields });
   const snapshot = (fields) => ({ sections: [{ listings: [listing(fields)] }] });

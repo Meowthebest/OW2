@@ -175,6 +175,15 @@ export interface MythicOption {
   count: number;
 }
 
+/** A color theme a mythic skin can have. */
+export interface MythicAspect {
+  name: string;
+  season: string | null;
+  description: string;
+  image: string | null;
+  sources: SourceRef[];
+}
+
 export interface MythicItem {
   id: string;
   cosmeticId: string | null;
@@ -185,6 +194,8 @@ export interface MythicItem {
   image: string | null;
   /** Customization groups as the source lists them. */
   options: MythicOption[];
+  /** A weapon's upgrade levels, when a source lists them. */
+  levels?: { level: number; prisms: number; text: string }[];
   /** Prism cost when a source states it. */
   prisms: number | null;
   /** True when the source says it's in the Mythic Shop right now. */
@@ -194,7 +205,9 @@ export interface MythicItem {
 
 export interface PassReward {
   tier: number;
-  track: 'free' | 'premium';
+  /** Which part of the pass the tier is in, for passes split into tracks and for prestige tiers. Null for the main run of tiers. */
+  part: string | null;
+  track: 'free' | 'premium' | 'both';
   name: string;
   /** Canonical cosmetic id, when the reward is a cosmetic in the catalogue. */
   id: string | null;
@@ -204,6 +217,17 @@ export interface PassReward {
   hero: string | null;
   image: string | null;
   quantity: number | null;
+  /** True when the rules for buying a past pass leave this out. */
+  notInUnvault?: boolean;
+}
+
+/** What it costs to buy a past Battle Pass, and what that leaves out. */
+export interface PassRules {
+  coins: number;
+  /** The season these rules started, when the source says. */
+  since: string | null;
+  excludes: string[];
+  sources: SourceRef[];
 }
 
 export interface BattlePass {
@@ -300,7 +324,7 @@ export interface CatalogStats {
   bundles: { total: number; active: number; previous: number; averageItems: number | null };
   rotationsByMonth: { month: string; rotations: number; listings: number }[];
   appearancesByType: FacetValue[];
-  mostSeen: { id: string; name: string; seen: number }[];
+  mostSeen: { id: string; name: string; type: CosmeticType; hero: string | null; seen: number }[];
 }
 
 export interface RotationSummary {

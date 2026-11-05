@@ -52,11 +52,12 @@ data/cosmetics/
 | `items/NN.json` | Full records, split into 64 files by id | One file for each cosmetic opened |
 | `bundles.json`, `shop.json`, `rotations/*`, `battle-passes/*`, `mythics.json`, `twitch-drops.json`, `loot-pools.json`, `stats.json` | One page's data each | Only on that page |
 
-The site is static, so there's no server-side paging. The equivalent here is that nothing in this section loads until someone opens it, a detail page loads 1/64 of the full records, filtering runs on a compact index, and only 48 cards render at a time. If the catalogue grows far past 20,000 rows, split `catalog.json` by type.
+The site is static, so there's no server-side paging. The equivalent here is that nothing in this section loads until someone opens it, a detail page loads 1/64 of the full records, filtering runs on a compact index, and only 48 cards render at a time. `catalog.json` is written newest first, each sort order is worked out once in the browser, and search text is prepared while the page is idle, so a keystroke only has to filter. With about 15,600 cosmetics, the file is about 300 KB when compressed. If the catalogue grows far past 20,000 rows, split `catalog.json` by type.
 
 ### The model
 
 - **Cosmetics** have one permanent id built from type, hero and name, such as `skin.widowmaker.eve` or `weapon-charm.double-dice`. Sources join on it, so a skin from the wiki and the same skin from the shop are one record, with both sources listed. Links and saved collections depend on these ids. If a name changes, add it to `rename` in `corrections.json`.
+- **When the shop and the wiki disagree**, the build still joins them where it can be sure: a hero added to a name ("Mercy Winged Victory" is Winged Victory), a short title for a voice line ("Call me Lily" is part of the whole line), or a hero named on one side for something not tied to a hero. A bundle item with no hero takes the only hero the catalogue lists for that name that the bundle doesn't already name. An id that joined another record still leads to it. Anything less certain stays separate.
 - **Bundles**, **loot pools**, **shop rotations**, **Battle Pass rewards** and **Twitch rewards** refer to cosmetics by id. One cosmetic can be in any number of each, and is never copied.
 - **Stays** are a cosmetic's periods in the shop, with price, section and bundle. Stays from itemshop.gg are used where they exist. Otherwise they come from the recorded shops. A price from inside a bundle stays with the bundle, because it isn't what the one item costs.
 - **Shop listings** are filed under one key by `scripts/cosmetics/reconcile.mjs`. Past shops carry no item keys, and their ids change between days and sections, so one name and hero is one item. Product numbers alone can't join them, because the store reuses them. The raw records stay in `items.json`, so a better rule can be applied later.
@@ -98,7 +99,7 @@ The wiki's terms don't allow automated access without consent, so this is done b
 2. Import the files together, then rebuild:
 
    ```bash
-   node scripts/cosmetics/cli.mjs import-wiki path/to/first.xml path/to/second.xml
+   node scripts/cosmetics/cli.mjs import-wiki path/to/first.xml path/to/second.xml path/to/third.xml
    ```
 
    ```bash
@@ -107,7 +108,26 @@ The wiki's terms don't allow automated access without consent, so this is done b
 
 3. Commit `data/cosmetics/wiki`.
 
-An export with fewer than 500 cosmetics is refused and changes nothing, so a partial file can't shrink the catalogue. Repeat this after a new season or event. The catalogue is only as current as the last export, and the page credits show the date.
+An export with fewer than 500 cosmetics is refused and changes nothing, so a partial file can't shrink the catalogue. Repeat this after a new season or event. The catalogue is only as current as the last export, and the page credits show the date. `wiki/import.json` lists every page read and how many records each gave, and the pages that weren't used.
+
+| What the import reads | Where it comes from |
+| --- | --- |
+| Skins, weapon skins, emotes, victory poses, highlight intros, sprays | Each hero's cosmetics tables |
+| General sprays, Battle Pass and Shop sprays by season, event sprays | The tables behind the Sprays page |
+| League team skins | The shared table each hero's page fills in with that hero |
+| Contenders and OWCS team skins | The esports tables, named for the team, since their rows are named for the hero |
+| Weapon charms, souvenirs, player icons | Picture galleries, under headings that give the season and source |
+| Name cards | Tables with a group, name, picture and notes |
+| Player titles | Tables by section, with the season read from the requirement |
+| Mythic skins, weapons and aspects | The Mythic Skins page, with customization groups and weapon levels |
+| Voice lines | The table on each hero's Quotes page |
+| Battle Pass rewards | The tier tables for each season, on the Battle Pass page and the lists of previous passes |
+| Season dates and titles | The season lists for each era |
+| The rules for buying a past pass | The Unvaulted section of the Battle Pass page |
+
+A Battle Pass reward gives its cosmetic a season and a line saying which tier it came from, and fills in a rarity the tables left out. Most rewards match a cosmetic by name, allowing for a letter or two, or a name shortened in the tier list. A cosmetic only a tier list names gets its own record, except for voice lines, because tier lists give them a title where the Quotes pages give the whole line. Those stay on the pass without a link.
+
+One cosmetic listed on several pages becomes one record, with what each page knows.
 
 If the wiki's staff give consent, an automated run could replace step 1. Until then, nothing here contacts the wiki.
 
@@ -141,10 +161,13 @@ Comments and reactions aren't built. The brief made them depend on existing acco
 - **Your Just For You offers.** Only the game shows these.
 - **Loot box odds and contents.** Blizzard describes the boxes but publishes no full list. The E-Sports and Anniversary pools show related cosmetics and say so. Standard and Just For You show no list. No drop rates appear anywhere.
 - **Mythic Shop stock.** No source says what's in it right now, so mythics show no current availability.
-- **Mythic choices.** The wiki gives how many choices each customization group has, not what each looks like, so choices are numbered.
+- **Mythic choices.** The wiki gives how many choices each customization group has, not what each looks like, so choices are numbered. Weapons list their levels, with costs and what each unlocks.
+- **Pictures.** Pictures come from the shop data, so the wiki's records show a placeholder unless they've also been in the shop. Wiki pictures are off by default. Setting `{ "wikiImages": true }` in `data/cosmetics/config.json` makes visitors' browsers load them from the wiki, and nothing is copied. Check with the wiki's staff first.
+- **Rarity.** It's shown only where a source states it. The wiki states one rarity for sprays, player icons, weapon charms, souvenirs and highlight intros, and gives the rest by section. It doesn't give one for name cards, player titles or voice lines, so those only have one if the shop listed them.
+- **Seasons.** A season shows where a source ties a cosmetic to one, which is mostly Battle Passes and shops. Older cosmetics often have none.
 - **Prices.** A price is what a source last listed. Check the game before buying. Bundle savings are the store's own tag, such as "37% off", and aren't calculated here, because the feed's "regular" price isn't reliable for bundles.
 - **Heroes in bundles.** The source sometimes leaves out a bundle item's hero. It's filled in when a bundle is named after one hero or the same picture is sold elsewhere with a hero. Otherwise the item shows "Hero not stated" and isn't tracked as a cosmetic.
 - **Availability.** "Not in shop" only means it wasn't in the latest shop data. It may be available another way.
 - **Newest and oldest.** Order comes from the season or first shop sighting, then the product id, so it's rough within a season. Items with neither go last in both directions.
-- **Battle Pass tiers.** Rewards appear only where the wiki export lists them, and old rewards aren't always obtainable now.
+- **Battle Pass tiers.** Rewards come from the wiki's tier lists. A past pass can be bought under the rules the Battle Pass page gives, which leave some rewards out, and these are marked. Those rules are the wiki's, so check the game before buying.
 - **OWCS Twitch campaigns.** Blizzard's forum doesn't announce these, so the one listed is reported by esports.gg and labeled that way. Others may be missing.

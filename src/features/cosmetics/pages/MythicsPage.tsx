@@ -4,10 +4,10 @@ import { StateBlock } from '../../../components/controls';
 import { HeroPortrait } from '../../../components/media';
 import { cn, formatInt } from '../../../lib/format';
 import { useAsync } from '../../patches/data';
-import { isSet, mythicOptionId, mythicProgress } from '../core/collection';
+import { isSet, mythicChoiceIds, mythicOptionId, mythicProgress } from '../core/collection';
 import type { MythicItem } from '../core/types';
-import { loadMythics, loadSeasons } from '../data';
-import { BackLink, DataState, GridSkeleton, Note, PageHeader, SourceList, TrackButtons, usePageTitle } from '../components/bits';
+import { loadMythicAspects, loadMythics, loadSeasons } from '../data';
+import { BackLink, Collapsible, DataState, GridSkeleton, Note, PageHeader, SourceList, TrackButtons, usePageTitle } from '../components/bits';
 import { Thumb, ZoomableImage } from '../components/media';
 import { heroById } from '../labels';
 import { CatalogueCredits, CatalogueScope } from './CosmeticsPage';
@@ -50,6 +50,7 @@ export function MythicsPage({ query, routeKey }: { query: string; routeKey: unkn
   usePageTitle('Mythics');
   const mythics = useAsync(loadMythics, 'mythics');
   const seasons = useAsync(loadSeasons, 'seasons');
+  const aspects = useAsync(loadMythicAspects, 'mythic aspects');
   const [kind, setKind] = useUrlState('#/hub/mythics', query, routeKey, parseKind, serializeKind);
   const labels = useMemo(() => new Map((seasons.data ?? []).map((season) => [season.id, season.label])), [seasons.data]);
   const order = useMemo(() => new Map((seasons.data ?? []).map((season, index) => [season.id, index])), [seasons.data]);
@@ -80,6 +81,20 @@ export function MythicsPage({ query, routeKey }: { query: string; routeKey: unkn
         )
       ) : (
         <DataState status={mythics.status} error={mythics.error} retry={mythics.retry} what="mythics" skeleton={<GridSkeleton />} />
+      )}
+      {(aspects.data?.length ?? 0) > 0 && (
+        <Collapsible title="Mythic Aspects" icon={<Sparkles size={15} aria-hidden="true" />} count={aspects.data?.length} defaultOpen={false}>
+          <ul className="cx-aspects">
+            {aspects.data?.map((aspect) => (
+              <li key={aspect.name}>
+                <strong>{aspect.name}</strong>
+                {aspect.season && labels.get(aspect.season) && <span className="cx-muted"> · {labels.get(aspect.season)}</span>}
+                <p className="cx-muted">{aspect.description}</p>
+              </li>
+            ))}
+          </ul>
+          <SourceList sources={aspects.data?.[0]?.sources ?? []} />
+        </Collapsible>
       )}
       <Note>Current availability isn't shown, because no source confirms what the Mythic Shop holds right now. Check the game.</Note>
       <CatalogueCredits />
@@ -114,7 +129,7 @@ export function MythicDetailPage({ id }: { id: string }) {
   const hero = heroById(item.hero);
   const tracked = mythicProgress(item, entries);
   const seasonLabel = seasons.data?.find((season) => season.id === item.season)?.label ?? null;
-  const allOptions = item.options.flatMap((option) => Array.from({ length: option.count }, (_, index) => mythicOptionId(item.id, option.name, index + 1)));
+  const allOptions = mythicChoiceIds(item);
 
   return (
     <div className="page cx-page">
@@ -169,6 +184,35 @@ export function MythicDetailPage({ id }: { id: string }) {
                 <button type="button" className="cx-tool" disabled={tracked.done === 0} onClick={() => setMarks('mythic', allOptions, false)}>Clear marks</button>
               </div>
               <p className="cx-muted cx-muted--small">The source lists how many choices each group has, not what each looks like, so choices are numbered. Your marks stay on this device or account.</p>
+            </section>
+          ) : (item.levels?.length ?? 0) > 0 ? (
+            <section className="cx-mythic-options">
+              <header className="cx-related__head">
+                <h2 className="cx-section-title">Levels</h2>
+                <span className="cx-muted">{tracked.done} of {tracked.total} marked</span>
+              </header>
+              <div className="cx-meter" role="progressbar" aria-label="Levels marked as unlocked" aria-valuemin={0} aria-valuemax={tracked.total} aria-valuenow={tracked.done}><span style={{ width: `${tracked.percent}%` }} /></div>
+              <ol className="cx-levels">
+                {item.levels?.map((level) => {
+                  const levelId = mythicOptionId(item.id, 'Level', level.level);
+                  const on = isSet(entries, 'mythic', levelId);
+                  return (
+                    <li key={level.level} className="cx-level">
+                      <button type="button" className={cn('cx-option__choice', on && 'is-on')} aria-pressed={on} aria-label={`Level ${level.level}`} onClick={() => toggleMark('mythic', levelId)}>
+                        {on ? <Check size={14} aria-hidden="true" /> : level.level}
+                      </button>
+                      <p>
+                        <span className="cx-level__cost"><Gem size={13} aria-hidden="true" /> {formatInt(level.prisms)}</span> {level.text}
+                      </p>
+                    </li>
+                  );
+                })}
+              </ol>
+              <div className="cx-tracker__actions">
+                <button type="button" className="cx-tool" disabled={tracked.done === tracked.total} onClick={() => setMarks('mythic', allOptions, true)}>Mark all unlocked</button>
+                <button type="button" className="cx-tool" disabled={tracked.done === 0} onClick={() => setMarks('mythic', allOptions, false)}>Clear marks</button>
+              </div>
+              <p className="cx-muted cx-muted--small">Your marks stay on this device or account.</p>
             </section>
           ) : (
             <Note>No source lists this mythic's customization groups, so none are shown.</Note>

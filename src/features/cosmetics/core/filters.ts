@@ -193,7 +193,9 @@ function matches(row: CatalogRow, filters: CosmeticFilters, words: string[], con
   return true;
 }
 
-const byName = (a: CatalogRow, b: CatalogRow) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }) || a.id.localeCompare(b.id);
+// Comparing through one shared collator is many times faster than localeCompare with options, which matters across thousands of rows.
+const nameOrder = new Intl.Collator('en', { sensitivity: 'base' });
+const byName = (a: CatalogRow, b: CatalogRow) => nameOrder.compare(a.name, b.name) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
 /** Items with no value for a sort go last in both directions, so an unknown never reads as newest or cheapest. */
 function compareKnown(a: number | string | null, b: number | string | null, direction: 1 | -1) {
@@ -219,9 +221,44 @@ export function sortRows(rows: CatalogRow[], sort: SortKey, currency: PriceCurre
   return [...rows].sort(compare[sort]);
 }
 
+/** Each order is worked out once. After that a keystroke only has to filter, which keeps a large catalogue quick. */
+const sortedLists = new WeakMap<readonly CatalogRow[], Map<string, CatalogRow[]>>();
+
+function sortedOnce(rows: readonly CatalogRow[], sort: SortKey, currency: PriceCurrency) {
+  let lists = sortedLists.get(rows);
+  if (!lists) {
+    lists = new Map();
+    sortedLists.set(rows, lists);
+  }
+  const key = `${sort}|${currency}`;
+  let list = lists.get(key);
+  if (!list) {
+    list = sortRows(rows as CatalogRow[], sort, currency);
+    lists.set(key, list);
+  }
+  return list;
+}
+
 export function applyFilters(rows: readonly CatalogRow[], filters: CosmeticFilters, context: FilterContext = {}) {
   const words = normalizeText(filters.q).split(' ').filter(Boolean);
-  return sortRows(rows.filter((row) => matches(row, filters, words, context)), filters.sort, filters.currency);
+  return sortedOnce(rows, filters.sort, filters.currency).filter((row) => matches(row, filters, words, context));
+}
+
+/** Prepares search text in small steps while the page is idle, so the first keystroke doesn't have to. Returns a way to stop. */
+export function prepareSearch(rows: readonly CatalogRow[], context: FilterContext = {}) {
+  let index = 0;
+  let stopped = false;
+  const later = (run: () => void) => (typeof requestIdleCallback === 'function' ? requestIdleCallback(run) : setTimeout(run, 16));
+  const step = () => {
+    if (stopped) return;
+    const end = Math.min(index + 800, rows.length);
+    for (; index < end; index += 1) searchText(rows[index], context);
+    if (index < rows.length) later(step);
+  };
+  later(step);
+  return () => {
+    stopped = true;
+  };
 }
 
 export function pageOf<T>(rows: readonly T[], page: number, size = PAGE_SIZE) {

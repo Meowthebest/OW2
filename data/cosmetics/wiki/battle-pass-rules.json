@@ -1,0 +1,19 @@
+{
+ "coins": 1000,
+ "since": "2026-s5",
+ "excludes": [
+  "Mythic skins",
+  "Mythic Prisms",
+  "Overwatch Coins",
+  "Player titles",
+  "XP boosts"
+ ],
+ "sources": [
+  {
+   "source": "Overwatch Wiki",
+   "title": "Battle Pass",
+   "url": "https://overwatch.wiki/w/Battle_Pass",
+   "checkedAt": null
+  }
+ ]
+}

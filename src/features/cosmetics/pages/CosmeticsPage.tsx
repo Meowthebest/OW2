@@ -279,7 +279,7 @@ export function CosmeticDetailPage({ id }: { id: string }) {
               <RarityTag rarity={detail.rarity} />
               <span className="cx-chip">{typeSingular(detail.type)}</span>
               <AvailabilityPill availability={detail.availability} />
-              {detail.tags.filter((tag) => tag !== 'shop').map((tag) => <span key={tag} className="cx-chip">{TAG_LABEL[tag]}</span>)}
+              {detail.tags.filter((tag) => tag !== 'shop' && !(tag === 'gallery' && detail.availability === 'gallery')).map((tag) => <span key={tag} className="cx-chip">{TAG_LABEL[tag]}</span>)}
             </p>
           </header>
 

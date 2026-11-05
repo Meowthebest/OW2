@@ -1,7 +1,7 @@
 // Personal tracking. Every mark is manual: the site can't see what a player really owns in the game.
 // Each entry keeps the time it was set, so two devices can merge: the newest change to an entry wins,
 // and removing something is kept as a mark too, so the removal reaches the other device.
-import type { Bundle, CatalogRow, DropCampaign, MythicItem, BattlePass, Rarity, CosmeticType, FacetValue } from './types';
+import type { Bundle, CatalogRow, DropCampaign, MythicItem, BattlePass, PassReward, Rarity, CosmeticType, FacetValue } from './types';
 
 export type EntryKind = 'owned' | 'wishlist' | 'favorite' | 'notify' | 'tier' | 'mythic' | 'drop';
 
@@ -90,10 +90,13 @@ export function bundleProgress(bundle: Pick<Bundle, 'items'>, entries: EntryMap)
   return progress(cosmetics.filter((item) => isSet(entries, 'owned', item.id!)).length, cosmetics.length);
 }
 
-export const tierId = (passId: string, tier: number) => `${passId}/${tier}`;
+export const tierId = (passId: string, tier: number | string) => `${passId}/${tier}`;
+
+/** A tier's own key. Tracks each count from 1, so the number alone isn't enough. */
+export const rewardTierKey = (reward: Pick<PassReward, 'tier' | 'part'>) => (reward.part ? `${reward.part}/${reward.tier}` : String(reward.tier));
 
 export function passProgress(pass: Pick<BattlePass, 'id' | 'rewards'>, entries: EntryMap) {
-  const tiers = [...new Set(pass.rewards.map((reward) => reward.tier))];
+  const tiers = [...new Set(pass.rewards.map(rewardTierKey))];
   const tiersDone = tiers.filter((tier) => isSet(entries, 'tier', tierId(pass.id, tier))).length;
   const cosmetics = [...new Set(pass.rewards.filter((reward) => reward.id).map((reward) => reward.id!))];
   const owned = cosmetics.filter((id) => isSet(entries, 'owned', id)).length;
@@ -102,15 +105,17 @@ export function passProgress(pass: Pick<BattlePass, 'id' | 'rewards'>, entries: 
 
 export const mythicOptionId = (mythicId: string, group: string, choice: number) => `${mythicId}/${group}/${choice}`;
 
-export function mythicProgress(item: Pick<MythicItem, 'id' | 'options'>, entries: EntryMap) {
-  const total = item.options.reduce((sum, option) => sum + option.count, 0);
-  let done = 0;
-  for (const option of item.options) {
-    for (let choice = 1; choice <= option.count; choice += 1) {
-      if (isSet(entries, 'mythic', mythicOptionId(item.id, option.name, choice))) done += 1;
-    }
-  }
-  return progress(done, total);
+/** Everything on a mythic that can be marked as unlocked: each numbered choice, and each level of a weapon. */
+export function mythicChoiceIds(item: Pick<MythicItem, 'id' | 'options' | 'levels'>) {
+  return [
+    ...item.options.flatMap((option) => Array.from({ length: option.count }, (_, index) => mythicOptionId(item.id, option.name, index + 1))),
+    ...(item.levels ?? []).map((level) => mythicOptionId(item.id, 'Level', level.level)),
+  ];
+}
+
+export function mythicProgress(item: Pick<MythicItem, 'id' | 'options' | 'levels'>, entries: EntryMap) {
+  const ids = mythicChoiceIds(item);
+  return progress(ids.filter((id) => isSet(entries, 'mythic', id)).length, ids.length);
 }
 
 export const dropRewardId = (campaignId: string, rewardId: string) => `${campaignId}/${rewardId}`;

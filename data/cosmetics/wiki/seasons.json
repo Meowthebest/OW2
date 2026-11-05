@@ -1,0 +1,227 @@
+[
+ {
+  "id": "2026-s1",
+  "label": "2026: Season 1",
+  "era": "reign-of-talon",
+  "number": 1,
+  "start": "2026-02-10",
+  "end": "2026-04-14",
+  "title": "Conquest"
+ },
+ {
+  "id": "2026-s2",
+  "label": "2026: Season 2",
+  "era": "reign-of-talon",
+  "number": 2,
+  "start": "2026-04-14",
+  "end": "2026-06-16",
+  "title": "Summit"
+ },
+ {
+  "id": "2026-s3",
+  "label": "2026: Season 3",
+  "era": "reign-of-talon",
+  "number": 3,
+  "start": "2026-06-16",
+  "end": "2026-08-11",
+  "title": "Into the Tiger's Den"
+ },
+ {
+  "id": "2026-s4",
+  "label": "2026: Season 4",
+  "era": "reign-of-talon",
+  "number": 4,
+  "start": "2026-08-11",
+  "end": "2026-10-06",
+  "title": "Heroes of Busan"
+ },
+ {
+  "id": "2026-s5",
+  "label": "2026: Season 5",
+  "era": "reign-of-talon",
+  "number": 5,
+  "start": "2026-10-06",
+  "end": "2026-12-08",
+  "title": "A Grim Doctrine"
+ },
+ {
+  "id": "ow2-s1",
+  "label": "Season 1",
+  "era": "overwatch-2",
+  "number": 1,
+  "start": "2022-10-04",
+  "end": "2022-12-06",
+  "title": null
+ },
+ {
+  "id": "ow2-s2",
+  "label": "Season 2",
+  "era": "overwatch-2",
+  "number": 2,
+  "start": "2022-12-06",
+  "end": "2023-02-07",
+  "title": null
+ },
+ {
+  "id": "ow2-s3",
+  "label": "Season 3",
+  "era": "overwatch-2",
+  "number": 3,
+  "start": "2023-02-07",
+  "end": "2023-04-11",
+  "title": null
+ },
+ {
+  "id": "ow2-s4",
+  "label": "Season 4",
+  "era": "overwatch-2",
+  "number": 4,
+  "start": "2023-04-11",
+  "end": "2023-06-13",
+  "title": null
+ },
+ {
+  "id": "ow2-s5",
+  "label": "Season 5",
+  "era": "overwatch-2",
+  "number": 5,
+  "start": "2023-06-13",
+  "end": "2023-08-10",
+  "title": null
+ },
+ {
+  "id": "ow2-s6",
+  "label": "Season 6",
+  "era": "overwatch-2",
+  "number": 6,
+  "start": "2023-08-10",
+  "end": "2023-10-10",
+  "title": "Invasion"
+ },
+ {
+  "id": "ow2-s7",
+  "label": "Season 7",
+  "era": "overwatch-2",
+  "number": 7,
+  "start": "2023-10-10",
+  "end": "2023-12-05",
+  "title": "Rise of Darkness"
+ },
+ {
+  "id": "ow2-s8",
+  "label": "Season 8",
+  "era": "overwatch-2",
+  "number": 8,
+  "start": "2023-12-05",
+  "end": "2024-02-13",
+  "title": "Call of the Hunt"
+ },
+ {
+  "id": "ow2-s9",
+  "label": "Season 9",
+  "era": "overwatch-2",
+  "number": 9,
+  "start": "2024-02-13",
+  "end": "2024-04-16",
+  "title": "Champions"
+ },
+ {
+  "id": "ow2-s10",
+  "label": "Season 10",
+  "era": "overwatch-2",
+  "number": 10,
+  "start": "2024-04-16",
+  "end": "2024-06-20",
+  "title": "Venture Forth"
+ },
+ {
+  "id": "ow2-s11",
+  "label": "Season 11",
+  "era": "overwatch-2",
+  "number": 11,
+  "start": "2024-06-20",
+  "end": "2024-08-20",
+  "title": "Super Mega Ultrawatch"
+ },
+ {
+  "id": "ow2-s12",
+  "label": "Season 12",
+  "era": "overwatch-2",
+  "number": 12,
+  "start": "2024-08-20",
+  "end": "2024-10-15",
+  "title": "New Frontiers"
+ },
+ {
+  "id": "ow2-s13",
+  "label": "Season 13",
+  "era": "overwatch-2",
+  "number": 13,
+  "start": "2024-10-15",
+  "end": "2024-12-10",
+  "title": "Spellbinder"
+ },
+ {
+  "id": "ow2-s14",
+  "label": "Season 14",
+  "era": "overwatch-2",
+  "number": 14,
+  "start": "2024-12-10",
+  "end": "2025-02-18",
+  "title": "Hazard"
+ },
+ {
+  "id": "ow2-s15",
+  "label": "Season 15",
+  "era": "overwatch-2",
+  "number": 15,
+  "start": "2025-02-18",
+  "end": "2025-04-22",
+  "title": "Honor and Glory"
+ },
+ {
+  "id": "ow2-s16",
+  "label": "Season 16",
+  "era": "overwatch-2",
+  "number": 16,
+  "start": "2025-04-22",
+  "end": "2025-06-24",
+  "title": "Stadium"
+ },
+ {
+  "id": "ow2-s17",
+  "label": "Season 17",
+  "era": "overwatch-2",
+  "number": 17,
+  "start": "2025-06-24",
+  "end": "2025-08-26",
+  "title": "Powered Up!"
+ },
+ {
+  "id": "ow2-s18",
+  "label": "Season 18",
+  "era": "overwatch-2",
+  "number": 18,
+  "start": "2025-08-26",
+  "end": "2025-10-14",
+  "title": "Stadium Quick Play"
+ },
+ {
+  "id": "ow2-s19",
+  "label": "Season 19",
+  "era": "overwatch-2",
+  "number": 19,
+  "start": "2025-10-14",
+  "end": "2025-12-09",
+  "title": "Haunted Masquerade"
+ },
+ {
+  "id": "ow2-s20",
+  "label": "Season 20",
+  "era": "overwatch-2",
+  "number": 20,
+  "start": "2025-12-09",
+  "end": "2026-02-10",
+  "title": "Vendetta"
+ }
+]

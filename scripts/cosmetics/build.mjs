@@ -9,6 +9,7 @@ import path from 'node:path';
 import { DATA_DIR, loadCore, OUT_DIR, readJson, ROOT } from './common.mjs';
 import { readRotations } from './itemshop.mjs';
 import { reconcileShop } from './reconcile.mjs';
+import { pageUrl } from './wiki.mjs';
 
 const ITEMSHOP_NAME = 'itemshop.gg';
 const WIKI_NAME = 'Overwatch Wiki';
@@ -31,7 +32,9 @@ function loadInputs() {
     wiki: readJson(path.join(DATA_DIR, 'wiki/catalog.json'), []),
     wikiImport: readJson(path.join(DATA_DIR, 'wiki/import.json'), null),
     wikiMythics: readJson(path.join(DATA_DIR, 'wiki/mythics.json'), []),
+    wikiAspects: readJson(path.join(DATA_DIR, 'wiki/mythic-aspects.json'), []),
     wikiPasses: readJson(path.join(DATA_DIR, 'wiki/battle-passes.json'), []),
+    wikiPassRules: readJson(path.join(DATA_DIR, 'wiki/battle-pass-rules.json'), null),
     wikiSeasons: readJson(path.join(DATA_DIR, 'wiki/seasons.json'), []),
     wikiEvents: readJson(path.join(DATA_DIR, 'wiki/events.json'), []),
     seasons: curated('seasons', []),
@@ -98,20 +101,79 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   const rename = inputs.corrections.rename ?? {};
   const resolveId = (id) => rename[id] ?? id;
 
+  const byTypeAndName = new Map();
   function ensure(type, hero, name) {
     const id = resolveId(core.cosmeticId(type, hero, name));
     let record = cosmetics.get(id);
     if (!record) {
       record = blankCosmetic(id, type, hero, name);
       cosmetics.set(id, record);
+      const key = `${type}|${nameKey(core, name)}`;
+      if (!byTypeAndName.has(key)) byTypeAndName.set(key, []);
+      byTypeAndName.get(key).push(record);
     }
     return record;
   }
 
+  /**
+   * The record for a cosmetic, allowing for sources that disagree about a hero on types not tied to one:
+   * a shop can label an icon with a hero while the wiki lists it for everyone, and the other way around.
+   */
+  function recordFor(type, hero, name) {
+    const exact = cosmetics.get(resolveId(core.cosmeticId(type, hero, name)));
+    if (exact) return exact;
+    if (hero) {
+      // The shop can add the hero to a name, such as "Mercy Winged Victory".
+      const shorter = withoutHero(name, hero);
+      const found = shorter ? cosmetics.get(resolveId(core.cosmeticId(type, hero, shorter))) : null;
+      if (found) return found;
+      // And it gives voice lines a short title, where the wiki has the whole line.
+      if (type === 'voice-line') {
+        const words = ` ${nameKey(core, name)} `;
+        const fits = [...cosmetics.values()].filter((record) => record.type === type && record.hero === hero && ` ${nameKey(core, record.name)} `.includes(words));
+        if (fits.length === 1) return fits[0];
+      }
+    }
+    if (core.HERO_BOUND_TYPES.has(type)) return null;
+    const same = byTypeAndName.get(`${type}|${nameKey(core, name)}`) ?? [];
+    if (hero) return same.find((record) => !record.hero) ?? null;
+    return same.length === 1 ? same[0] : null;
+  }
+
+  /** A name with the hero's own name taken off either end, or null if it isn't there. */
+  function withoutHero(name, hero) {
+    const words = nameKey(core, name).split(' ');
+    for (let count = 1; count <= 3 && count < words.length; count += 1) {
+      if (core.heroIdFromName(words.slice(0, count).join(' ')) === hero) return words.slice(count).join(' ');
+      if (core.heroIdFromName(words.slice(-count).join(' ')) === hero) return words.slice(0, -count).join(' ');
+    }
+    return null;
+  }
+
+  // Which one hero the shop names for something the wiki lists for everyone.
+  const shopHeroes = new Map();
+  const noteShopHero = ({ name, typeLabel }) => {
+    const { type, heroName } = core.parseTypeLabel(typeLabel ?? null);
+    const hero = core.heroIdFromName(heroName);
+    if (!type || !hero || core.HERO_BOUND_TYPES.has(type)) return;
+    const key = `${type}|${nameKey(core, name)}`;
+    if (!shopHeroes.has(key)) shopHeroes.set(key, new Set());
+    shopHeroes.get(key).add(hero);
+  };
+  for (const item of Object.values(inputs.items)) {
+    noteShopHero(item);
+    for (const content of item.contents ?? []) noteShopHero(content);
+  }
+  const heroForEntry = (entry) => {
+    if (entry.hero) return entry.hero;
+    const stated = shopHeroes.get(`${entry.type}|${nameKey(core, entry.name)}`);
+    return stated?.size === 1 ? [...stated][0] : null;
+  };
+
   // The wiki import is the base catalogue.
   const checkedAt = inputs.wikiImport?.exportedAt ?? null;
   for (const entry of inputs.wiki) {
-    const record = ensure(entry.type, entry.hero ?? null, entry.name);
+    const record = ensure(entry.type, heroForEntry(entry), entry.name);
     record.rarity ??= entry.rarity ?? null;
     record.season ??= entry.season ?? null;
     record.event ??= entry.event ?? null;
@@ -119,9 +181,10 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     for (const tag of entry.tags ?? []) record.tags.add(tag);
     for (const price of entry.prices ?? []) addPrice(record, price.amount, price.currency);
     for (const line of entry.acquisition ?? []) if (!record.acquisition.includes(line)) record.acquisition.push(line);
-    if (inputs.config.wikiImages && entry.file) record.images.push(wikiImage(entry.file));
-    if (!record.sources.some((source) => source.source === WIKI_NAME && source.url === (entry.page ?? null))) {
-      record.sources.push({ source: WIKI_NAME, title: entry.pageTitle ? `${WIKI_NAME}: ${entry.pageTitle}` : WIKI_NAME, url: entry.page ?? WIKI_URL, checkedAt });
+    if (inputs.config.wikiImages && entry.file && !record.images.includes(wikiImage(entry.file))) record.images.push(wikiImage(entry.file));
+    const page = entry.page ?? (entry.pageTitle ? pageUrl(entry.pageTitle) : WIKI_URL);
+    if (!record.sources.some((source) => source.source === WIKI_NAME && source.url === page)) {
+      record.sources.push({ source: WIKI_NAME, title: entry.pageTitle ? `${WIKI_NAME}: ${entry.pageTitle}` : WIKI_NAME, url: page, checkedAt });
     }
   }
 
@@ -144,13 +207,18 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     if (url && !record.storeUrl) record.storeUrl = url;
     return record;
   };
+  // The live Shop page builds ids from the shop's own labels, so an id that joined another record still has to lead there.
+  const aliases = new Map();
   const mergeShopItem = (key, item) => {
     const { type, heroName } = core.parseTypeLabel(item.typeLabel);
     if (!type) return null;
     const hero = core.heroIdFromName(heroName);
     if (heroName && !hero) warnings.push(`Unknown hero "${heroName}" on ${item.name}`);
     if (core.HERO_BOUND_TYPES.has(type) && !hero) return null;
-    return noteShopItem(ensure(type, hero, item.name), key, item);
+    const record = recordFor(type, hero, item.name) ?? ensure(type, hero, item.name);
+    const stated = resolveId(core.cosmeticId(type, hero, item.name));
+    if (stated !== record.id) aliases.set(stated, record.id);
+    return noteShopItem(record, key, item);
   };
 
   // A listing labelled only with a hero joins the catalogue if exactly one cosmetic fits its hero, name and rarity.
@@ -173,13 +241,29 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   const contentKey = (content) => {
     if (content.key) return content.key;
     const { type, heroName } = core.parseTypeLabel(content.typeLabel);
-    return type ? `cosmetic:${resolveId(core.cosmeticId(type, core.heroIdFromName(heroName), content.name))}` : null;
+    if (!type) return null;
+    const hero = core.heroIdFromName(heroName);
+    const record = recordFor(type, hero, content.name);
+    return `cosmetic:${record?.id ?? resolveId(core.cosmeticId(type, hero, content.name))}`;
   };
   const bundleIdOf = (key, item) => {
     const product = productIdOf(key);
     return product ? String(product) : core.slugify(item.name);
   };
   const bundleIdByName = new Map();
+
+  // A bundle can leave out one item's hero. If the catalogue lists that name for exactly one hero the bundle doesn't already name, it's that hero's.
+  const { HEROES } = await import('./heroes-list.mjs').then((module) => module.loadHeroes());
+  const heroName = new Map(HEROES.map((hero) => [hero.id, hero.name]));
+  for (const item of Object.values(inputs.items)) {
+    item.contents = (item.contents ?? []).map((content) => {
+      const { type, heroName: stated } = core.parseTypeLabel(content.typeLabel ?? null);
+      if (!type || stated || !core.HERO_BOUND_TYPES.has(type)) return content;
+      const named = new Set(item.contents.filter((other) => nameKey(core, other.name) === nameKey(core, content.name)).map((other) => core.heroIdFromName(core.parseTypeLabel(other.typeLabel ?? null).heroName)).filter(Boolean));
+      const left = (byTypeAndName.get(`${type}|${nameKey(core, content.name)}`) ?? []).filter((record) => record.hero && !named.has(record.hero));
+      return left.length === 1 ? { ...content, typeLabel: `${content.typeLabel} · ${heroName.get(left[0].hero)}` } : content;
+    });
+  }
 
   for (const [key, item] of Object.entries(inputs.items)) {
     if (item.kind === 'cosmetic') mergeShopItem(key, item);
@@ -308,7 +392,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     const items = (item.contents ?? []).map((content) => {
       const { type, heroName } = core.parseTypeLabel(content.typeLabel);
       const hero = core.heroIdFromName(heroName);
-      const record = type ? cosmetics.get(resolveId(core.cosmeticId(type, hero, content.name))) ?? null : null;
+      const record = type ? recordFor(type, hero, content.name) : null;
       if (record) record.bundles.add(id);
       return {
         id: record?.id ?? null,
@@ -356,6 +440,67 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
         if (item) for (const content of item.contents ?? []) itemsByKey.get(content.key)?.tags.add('esports');
         itemsByKey.get(key)?.tags.add('esports');
       }
+    }
+  }
+
+  // A Battle Pass reward says which season and tier a cosmetic came from. Oldest passes first, so a reward that returned keeps its first season.
+  const seasonIndex = new Map(seasons.map((season, index) => [season.id, index]));
+  const seasonNamed = new Map(seasons.map((season) => [season.id, season.label]));
+  const editDistance = (a, b) => {
+    if (Math.abs(a.length - b.length) > 2) return 3;
+    let row = Array.from({ length: b.length + 1 }, (_, index) => index);
+    for (let i = 1; i <= a.length; i += 1) {
+      const next = [i];
+      for (let j = 1; j <= b.length; j += 1) next[j] = Math.min(next[j - 1] + 1, row[j] + 1, row[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      row = next;
+    }
+    return row[b.length];
+  };
+  // Tier lists are typed by hand, so a reward can be a letter or two off the cosmetic's name. One close match is safe, and two aren't.
+  const closeRecord = ({ type, hero, name }) => {
+    const words = nameKey(core, name);
+    if (words.length < 6) return null;
+    const fits = [...cosmetics.values()].filter((record) => record.type === type && (!hero || !record.hero || record.hero === hero) && editDistance(words, nameKey(core, record.name)) <= 2);
+    return fits.length === 1 ? fits[0] : null;
+  };
+  // A tier list can shorten or lengthen a name: "Gladiator: LXXVI" is Gladiator. All of one name's words in the other, with one candidate, is safe.
+  const looseRecord = ({ type, hero, name }) => {
+    if (type === 'voice-line') return null;
+    const words = new Set(nameKey(core, name).split(' ').filter((word) => core.heroIdFromName(word) !== hero));
+    if (words.size === 0) return null;
+    const fits = [...cosmetics.values()].filter((record) => {
+      if (record.type !== type || (hero && record.hero && record.hero !== hero)) return false;
+      const other = new Set(nameKey(core, record.name).split(' ').filter((word) => core.heroIdFromName(word) !== hero));
+      if (other.size === 0) return false;
+      const [small, large] = words.size <= other.size ? [words, other] : [other, words];
+      return [...small].every((word) => large.has(word));
+    });
+    return fits.length === 1 ? fits[0] : null;
+  };
+  const unlinkedRewards = [];
+  for (const pass of [...inputs.wikiPasses].sort((a, b) => (seasonIndex.get(a.seasonId) ?? 0) - (seasonIndex.get(b.seasonId) ?? 0))) {
+    for (const reward of pass.rewards) {
+      if (!reward.type) continue;
+      const sameName = byTypeAndName.get(`${reward.type}|${nameKey(core, reward.name)}`) ?? [];
+      let record = recordFor(reward.type, reward.hero ?? null, reward.name) ?? (!reward.hero && sameName.length === 1 ? sameName[0] : null) ?? closeRecord(reward) ?? looseRecord(reward);
+      // Anything else is a cosmetic the wiki's tables leave out, so it gets a record of its own. Voice lines are the exception:
+      // the Quotes pages give the whole line where a tier list gives a title, so a new record could easily be a second copy.
+      if (!record && reward.type !== 'voice-line' && (reward.hero || !core.HERO_BOUND_TYPES.has(reward.type))) {
+        record = ensure(reward.type, reward.hero ?? null, reward.name);
+        record.sources.push({ source: WIKI_NAME, title: pass.sources[0]?.title ? `${WIKI_NAME}: ${pass.sources[0].title}` : WIKI_NAME, url: pass.sources[0]?.url ?? WIKI_URL, checkedAt });
+      }
+      if (!record) {
+        unlinkedRewards.push(`${pass.seasonId}: ${reward.type} ${reward.name}${reward.hero ? ` (${reward.hero})` : ''}`);
+        continue;
+      }
+      reward.recordId = record.id;
+      record.tags.add('battle-pass');
+      record.season ??= pass.seasonId;
+      record.rarity ??= reward.rarity ?? null;
+      const track = reward.track === 'both' ? 'free and premium' : reward.track;
+      record.acquisition = record.acquisition.filter((line) => line !== 'From a Battle Pass');
+      const line = `${seasonNamed.get(pass.seasonId) ?? pass.label} Battle Pass, ${reward.part ? `${reward.part}, ` : ''}tier ${reward.tier} (${track})`;
+      if (!record.acquisition.includes(line)) record.acquisition.unshift(line);
     }
   }
 
@@ -424,7 +569,9 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
       storeUrl: record.storeUrl ?? null,
     });
   }
-  rows.sort((a, b) => a.id.localeCompare(b.id));
+  // Newest first, which is the order most visits ask for, so sorting in the browser has almost nothing to do.
+  const rowName = new Intl.Collator('en', { sensitivity: 'base' });
+  rows.sort((a, b) => Number(!a.order) - Number(!b.order) || b.order - a.order || rowName.compare(a.name, b.name) || (a.id < b.id ? -1 : 1));
 
   // Duplicate check: a product id must belong to one cosmetic.
   const productOwner = new Map();
@@ -477,15 +624,18 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     details.get(row.id).mythic = id;
   }
 
+  // What a past pass leaves out when it's bought later, in the words the rules give.
+  const left = inputs.wikiPassRules?.excludes ?? [];
+  const leftOut = (reward) =>
+    (left.includes('Mythic skins') && reward.rarity === 'mythic') ||
+    (left.includes('Mythic Prisms') && reward.typeLabel === 'Mythic Prisms') ||
+    (left.includes('Overwatch Coins') && reward.typeLabel === 'Coins') ||
+    (left.includes('Player titles') && reward.type === 'player-title') ||
+    (left.includes('XP boosts') && reward.typeLabel === 'XP boost');
   const passes = inputs.wikiPasses.map((pass) => {
-    const rewards = pass.rewards.map((reward) => {
-      const id = reward.type ? resolveId(core.cosmeticId(reward.type, reward.hero ?? null, reward.name)) : null;
-      const record = id ? cosmetics.get(id) : null;
-      if (record) {
-        const row = rows.find((candidate) => candidate.id === id);
-        if (row && !row.tags.includes('battle-pass')) row.tags = [...row.tags, 'battle-pass'].sort();
-      }
-      return { ...reward, id: record ? id : null, rarity: reward.rarity ?? record?.rarity ?? null, image: record?.images[0] ?? reward.image ?? null };
+    const rewards = pass.rewards.map(({ recordId, ...reward }) => {
+      const record = recordId ? cosmetics.get(recordId) : null;
+      return { ...reward, part: reward.part ?? null, id: record?.id ?? null, rarity: reward.rarity ?? record?.rarity ?? null, image: record?.images[0] ?? reward.image ?? null, notInUnvault: leftOut(reward) };
     });
     return { ...pass, rewards, rewardCount: rewards.length };
   });
@@ -502,6 +652,10 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     const existing = passes.find((pass) => pass.seasonId === season.id);
     if (existing) {
       existing.image ??= passArt.get(season.id) ?? null;
+      existing.label = season.label;
+      existing.title ??= season.title ?? null;
+      existing.start ??= season.start ?? null;
+      existing.end ??= season.end ?? null;
       continue;
     }
     passes.push({
@@ -524,7 +678,6 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
 
   // Facets and statistics come from the rows above, never from a written-down number.
   const labelOfHero = new Map();
-  const { HEROES } = await import('./heroes-list.mjs').then((module) => module.loadHeroes());
   for (const hero of HEROES) labelOfHero.set(hero.id, hero.name);
   const eventLabels = new Map([...inputs.wikiEvents, ...inputs.events].map((event) => [event.id, event.label]));
   const typeLabels = new Map(core.COSMETIC_TYPES.map((type) => [type.id, type.label]));
@@ -621,12 +774,12 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
                 contents: (item.contents ?? []).map((content) => {
                   const parsed = core.parseTypeLabel(content.typeLabel);
                   const contentHero = core.heroIdFromName(parsed.heroName);
-                  return { key: content.key, name: content.name, typeLabel: content.typeLabel, type: parsed.type, hero: contentHero, rarity: content.rarity, image: content.image, quantity: content.quantity ?? 1, cosmeticId: parsed.type ? resolveId(core.cosmeticId(parsed.type, contentHero, content.name)) : null };
+                  return { key: content.key, name: content.name, typeLabel: content.typeLabel, type: parsed.type, hero: contentHero, rarity: content.rarity, image: content.image, quantity: content.quantity ?? 1, cosmeticId: parsed.type ? recordFor(parsed.type, contentHero, content.name)?.id ?? null : null };
                 }),
                 statedCount: item.statedCount ?? null,
                 soldOut: false,
                 url: item.url ?? null,
-                cosmeticId: item.kind === 'cosmetic' && type ? resolveId(core.cosmeticId(type, hero, item.name)) : null,
+                cosmeticId: item.kind === 'cosmetic' && type ? recordFor(type, hero, item.name)?.id ?? null : itemsByKey.get(key)?.id ?? null,
               };
             }),
           })),
@@ -676,7 +829,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
     bundles: { total: bundles.length, active: activeBundles, previous: bundles.length - activeBundles, averageItems: bundles.length ? Math.round((bundles.reduce((sum, bundle) => sum + bundle.items.length, 0) / bundles.length) * 10) / 10 : null },
     rotationsByMonth: [...monthly.values()],
     appearancesByType: facet(countBy(seenRows, (row) => row.type), typeLabels, (a, b) => b.count - a.count),
-    mostSeen: [...seenRows].sort((a, b) => b.seen - a.seen || a.name.localeCompare(b.name)).slice(0, 10).map((row) => ({ id: row.id, name: row.name, seen: row.seen })),
+    mostSeen: [...seenRows].sort((a, b) => b.seen - a.seen || a.name.localeCompare(b.name)).slice(0, 10).map((row) => ({ id: row.id, name: row.name, type: row.type, hero: row.hero, seen: row.seen })),
   };
 
   const priceMax = rows.reduce((max, row) => Math.max(max, ...row.prices.filter((price) => price.currency === 'coins').map((price) => price.amount)), 0);
@@ -727,7 +880,9 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   write('bundles.json', bundles);
   write('stats.json', stats);
   write('seasons.json', seasons);
+  write('battle-pass-rules.json', inputs.wikiPassRules);
   write('mythics.json', mythics);
+  write('mythic-aspects.json', inputs.wikiAspects.map(({ file, ...aspect }) => ({ ...aspect, image: inputs.config.wikiImages && file ? wikiImage(file) : null })));
   write('battle-passes.json', passes.map(({ rewards, ...rest }) => rest));
   for (const pass of passes) write(`battle-passes/${pass.id}.json`, pass);
   write('twitch-drops.json', campaigns);
@@ -738,6 +893,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   for (const [month, list] of rotationDetails) write(`rotations/${month}.json`, list);
   const shards = Array.from({ length: core.SHARD_COUNT }, () => ({}));
   for (const [id, detail] of details) shards[core.shardOf(id)][id] = detail;
+  for (const [id, target] of aliases) if (!details.has(id) && details.has(target)) shards[core.shardOf(id)][id] = { aliasOf: target };
   shards.forEach((shard, index) => write(core.shardFile(index), shard));
 
   fs.rmSync(outDir, { recursive: true, force: true });

@@ -3,11 +3,22 @@
   "slug": "standard",
   "name": "Standard Loot Pool",
   "description": "Regular, Epic and Legendary Loot Boxes. Each box holds four random cosmetics, with at least one Rare or better.",
-  "basis": "Blizzard describes what a box contains but doesn't publish a list of every eligible cosmetic. Shop collaborations can't come from Loot Boxes.",
+  "basis": "Blizzard describes what a box contains but doesn't publish a list of every eligible cosmetic. Shop collaborations can't come from Loot Boxes. The Overwatch Wiki lists the types a box can hold: Sprays (Common), Voice Lines (Common, Rare), Player Icons, Victory Poses and Souvenirs (Rare), Skins (Rare, Epic, Legendary), Emotes (Epic, Legendary), Highlight Intros and Weapon Charms (Epic), and Weapon Skins (Legendary).",
   "rule": null,
   "confirmed": false,
   "sources": [
-   { "source": "Blizzard", "title": "Twitch Drops [Feb 6, 2026], Loot Box rules", "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-feb-6-2026/999558", "checkedAt": "2026-11-05" }
+   {
+    "source": "Blizzard",
+    "title": "Twitch Drops [Feb 6, 2026], Loot Box rules",
+    "url": "https://us.forums.blizzard.com/en/overwatch/t/twitch-drops-feb-6-2026/999558",
+    "checkedAt": "2026-11-05"
+   },
+   {
+    "source": "Overwatch Wiki",
+    "title": "Loot Box",
+    "url": "https://overwatch.wiki/w/Loot_Box",
+    "checkedAt": "2026-11-05"
+   }
   ]
  },
  {
@@ -15,10 +26,25 @@
   "name": "E-Sports Loot Pool",
   "description": "Overwatch Esports Loot Boxes, which Blizzard says draw from past esports programs, including Overwatch League team skins.",
   "basis": "Blizzard hasn't published a full list, so this shows every esports cosmetic in this site's catalogue. Some of them may not be obtainable from a box.",
-  "rule": { "tags": ["esports"] },
+  "rule": {
+   "tags": [
+    "esports"
+   ]
+  },
   "confirmed": false,
   "sources": [
-   { "source": "Blizzard", "title": "OWCS 2026 Pre-Season Bootcamp Viewers Guide", "url": "https://overwatch.blizzard.com/en-us/news/24244469/owcs-2026-pre-season-bootcamp-viewers-guide/", "checkedAt": "2026-11-05" }
+   {
+    "source": "Blizzard",
+    "title": "OWCS 2026 Pre-Season Bootcamp Viewers Guide",
+    "url": "https://overwatch.blizzard.com/en-us/news/24244469/owcs-2026-pre-season-bootcamp-viewers-guide/",
+    "checkedAt": "2026-11-05"
+   },
+   {
+    "source": "Overwatch Wiki",
+    "title": "Loot Box",
+    "url": "https://overwatch.wiki/w/Loot_Box",
+    "checkedAt": "2026-11-05"
+   }
   ]
  },
  {
@@ -26,10 +52,19 @@
   "name": "Anniversary Loot Pool",
   "description": "Anniversary Loot Boxes from the Anniversary event, including the 10 Year Anniversary Loot Box.",
   "basis": "Blizzard hasn't published a full list, so this shows the Anniversary event's cosmetics in this site's catalogue. Some of them may not be obtainable from a box.",
-  "rule": { "events": ["anniversary"] },
+  "rule": {
+   "events": [
+    "anniversary"
+   ]
+  },
   "confirmed": false,
   "sources": [
-   { "source": "Blizzard", "title": "Reign of Talon: S2 Midcycle Continues the Climb", "url": "https://overwatch.blizzard.com/en-us/news/24266875/reign-of-talon-s2-midcycle-continues-the-climb/", "checkedAt": "2026-11-05" }
+   {
+    "source": "Blizzard",
+    "title": "Reign of Talon: S2 Midcycle Continues the Climb",
+    "url": "https://overwatch.blizzard.com/en-us/news/24266875/reign-of-talon-s2-midcycle-continues-the-climb/",
+    "checkedAt": "2026-11-05"
+   }
   ]
  },
  {
@@ -40,7 +75,12 @@
   "rule": null,
   "confirmed": false,
   "sources": [
-   { "source": "Blizzard", "title": "Overwatch 2 Explained: Battle Pass, Shop, Hero Unlocks, and more", "url": "https://overwatch.blizzard.com/en-us/news/23824003/overwatch-2-explained-battle-pass-shop-hero-unlocks-and-more/", "checkedAt": "2026-11-05" }
+   {
+    "source": "Blizzard",
+    "title": "Overwatch 2 Explained: Battle Pass, Shop, Hero Unlocks, and more",
+    "url": "https://overwatch.blizzard.com/en-us/news/23824003/overwatch-2-explained-battle-pass-shop-hero-unlocks-and-more/",
+    "checkedAt": "2026-11-05"
+   }
   ]
  }
 ]

@@ -1,0 +1,44 @@
+[
+ {
+  "name": "Gilded",
+  "season": "ow2-s13",
+  "description": "Coats the mythic skin with metallic gold and black accents",
+  "file": "Genji Skin Cyber Demon(Gilded).png",
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "name": "Iridescent",
+  "season": "ow2-s16",
+  "description": "The mythic skin is colorized with a shiny, sparkling light purple pallet with light blue and pink accents.",
+  "file": "Genji Skin Cyber Demon(Iridescent).png",
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "name": "Dawn",
+  "season": "2026-s1",
+  "description": "The mythic skin is colorized with a bright pastel orange, a sparkling white pallet, with rose pink and blue accents. (Available for Genji, Orisa, Zenyatta, Juno, Celestial Guardian Mercy, Illari and Mauga)",
+  "file": "Genji Skin Cyber Demon(Dawn).png",
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ }
+]

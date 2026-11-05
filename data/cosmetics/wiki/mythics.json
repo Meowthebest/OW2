@@ -1,0 +1,1765 @@
+[
+ {
+  "id": "genji-cyber-demon",
+  "name": "Cyber Demon",
+  "kind": "skin",
+  "hero": "genji",
+  "season": "ow2-s1",
+  "file": "Genji Skin Cyber Demon.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Tattoo",
+    "count": 3
+   },
+   {
+    "name": "Mask",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "junker-queen-zeus",
+  "name": "Zeus",
+  "kind": "skin",
+  "hero": "junker-queen",
+  "season": "ow2-s2",
+  "file": "Junker Queen Skin Zeus.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Armor",
+    "count": 2
+   },
+   {
+    "name": "Shoulder Pad",
+    "count": 2
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "kiriko-amaterasu",
+  "name": "Amaterasu",
+  "kind": "skin",
+  "hero": "kiriko",
+  "season": "ow2-s3",
+  "file": "Kiriko Skin Amaterasu.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Crown",
+    "count": 3
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "sigma-galactic-emperor",
+  "name": "Galactic Emperor",
+  "kind": "skin",
+  "hero": "sigma",
+  "season": "ow2-s4",
+  "file": "Sigma Skin Galactic Emperor.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Helmet",
+    "count": 3
+   },
+   {
+    "name": "Armor",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "tracer-adventurer",
+  "name": "Adventurer",
+  "kind": "skin",
+  "hero": "tracer",
+  "season": "ow2-s5",
+  "file": "Tracer Skin Adventurer.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 3
+   },
+   {
+    "name": "Armor",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "ana-a-7000-wargod",
+  "name": "A-7000 Wargod",
+  "kind": "skin",
+  "hero": "ana",
+  "season": "ow2-s6",
+  "file": "Ana Skin A-7000 Wargod.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Armor",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "hanzo-onryo",
+  "name": "Onryō",
+  "kind": "skin",
+  "hero": "hanzo",
+  "season": "ow2-s7",
+  "file": "Hanzo Skin Onryō.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "orisa-grand-beast",
+  "name": "Grand Beast",
+  "kind": "skin",
+  "hero": "orisa",
+  "season": "ow2-s8",
+  "file": "Orisa Skin Grand Beast.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Color",
+    "count": 4
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "moira-ancient-caller",
+  "name": "Ancient Caller",
+  "kind": "skin",
+  "hero": "moira",
+  "season": "ow2-s9",
+  "file": "Moira Skin Ancient Caller.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Mask",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 4
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "mercy-vengeance",
+  "name": "Vengeance",
+  "kind": "skin",
+  "hero": "mercy",
+  "season": "ow2-s10",
+  "file": "Mercy Skin Vengeance.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Mask",
+    "count": 3
+   },
+   {
+    "name": "Hair",
+    "count": 2
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "ashe-calamity-empress",
+  "name": "Calamity Empress",
+  "kind": "skin",
+  "hero": "ashe",
+  "season": "ow2-s11",
+  "file": "Ashe Skin Calamity Empress.png",
+  "options": [
+   {
+    "name": "Weapon",
+    "count": 2
+   },
+   {
+    "name": "Crown",
+    "count": 2
+   },
+   {
+    "name": "Mask",
+    "count": 2
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "reaper-anubis",
+  "name": "Anubis",
+  "kind": "skin",
+  "hero": "reaper",
+  "season": "ow2-s12",
+  "file": "Reaper Skin Anubis.png",
+  "options": [
+   {
+    "name": "Mask",
+    "count": 3
+   },
+   {
+    "name": "Armor",
+    "count": 4
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "widowmaker-spellbinder",
+  "name": "Spellbinder",
+  "kind": "skin",
+  "hero": "widowmaker",
+  "season": "ow2-s13",
+  "file": "Widowmaker Skin Spellbinder.png",
+  "options": [
+   {
+    "name": "Outfit",
+    "count": 4
+   },
+   {
+    "name": "Hat",
+    "count": 4
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "reinhardt-thor",
+  "name": "Thor",
+  "kind": "skin",
+  "hero": "reinhardt",
+  "season": "ow2-s14",
+  "file": "Reinhardt Skin Thor.png",
+  "options": [
+   {
+    "name": "Effects",
+    "count": 2
+   },
+   {
+    "name": "Helmet",
+    "count": 3
+   },
+   {
+    "name": "Armor",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "zenyatta-pixiu",
+  "name": "Pixiu",
+  "kind": "skin",
+  "hero": "zenyatta",
+  "season": "ow2-s15",
+  "file": "Zenyatta Skin Pixiu.png",
+  "options": [
+   {
+    "name": "Effects",
+    "count": 2
+   },
+   {
+    "name": "Mask",
+    "count": 3
+   },
+   {
+    "name": "Armor",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "juno-heart-of-hope",
+  "name": "Heart of Hope",
+  "kind": "skin",
+  "hero": "juno",
+  "season": "ow2-s16",
+  "file": "Juno Skin Heart of Hope.png",
+  "options": [
+   {
+    "name": "Effects",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Outfit",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "dva-horang",
+  "name": "Horang",
+  "kind": "skin",
+  "hero": "dva",
+  "season": "ow2-s17",
+  "file": "D.Va Skin Horang.png",
+  "options": [
+   {
+    "name": "Effects",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Mech",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "sojourn-ultraviolet-sentinel",
+  "name": "Ultraviolet Sentinel",
+  "kind": "skin",
+  "hero": "sojourn",
+  "season": "ow2-s18",
+  "file": "Sojourn Skin Ultraviolet Sentinel.png",
+  "options": [
+   {
+    "name": "Effects",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Armor",
+    "count": 4
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "lifeweaver-divine-druid",
+  "name": "Divine Druid",
+  "kind": "skin",
+  "hero": "lifeweaver",
+  "season": "ow2-s19",
+  "file": "Lifeweaver Skin Divine Druid.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Back",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "junkrat-cyber-fuel",
+  "name": "Cyber Fuel",
+  "kind": "skin",
+  "hero": "junkrat",
+  "season": "ow2-s19",
+  "file": "Junkrat Skin Cyber Fuel.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Tire",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "cassidy-divine-desperado",
+  "name": "Divine Desperado",
+  "kind": "skin",
+  "hero": "cassidy",
+  "season": "ow2-s20",
+  "file": "Cassidy Skin Divine Desperado.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "doomfist-magma-titan",
+  "name": "Magma Titan",
+  "kind": "skin",
+  "hero": "doomfist",
+  "season": "ow2-s20",
+  "file": "Doomfist Skin Magma Titan.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Gauntlet",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "mercy-celestial-guardian",
+  "name": "Celestial Guardian",
+  "kind": "skin",
+  "hero": "mercy",
+  "season": "2026-s1",
+  "file": "Mercy Skin Celestial Guardian.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Wings",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "mei-hop-online",
+  "name": "Hop Online!",
+  "kind": "skin",
+  "hero": "mei",
+  "season": "2026-s1",
+  "file": "Mei Skin Hop Online!.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "soldier-76-volted-overdrive",
+  "name": "Volted Overdrive",
+  "kind": "skin",
+  "hero": "soldier-76",
+  "season": "2026-s2",
+  "file": "S76 Skin Volted Overdrive.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "ana-ra",
+  "name": "Ra",
+  "kind": "skin",
+  "hero": "ana",
+  "season": "2026-s2",
+  "file": "Ana Skin Ra.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "illari-ascendant-phoenix",
+  "name": "Ascendant Phoenix",
+  "kind": "skin",
+  "hero": "illari",
+  "season": "2026-s3",
+  "file": "Illari Skin Ascendant Phoenix.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Cape",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "mauga-world-forger",
+  "name": "World Forger",
+  "kind": "skin",
+  "hero": "mauga",
+  "season": "2026-s3",
+  "file": "Mauga Skin World Forger.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "genji-koi-of-duality",
+  "name": "Koi of Duality",
+  "kind": "skin",
+  "hero": "genji",
+  "season": "2026-s4",
+  "file": "Genji Skin Koi of Duality.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "widowmaker-void-dancer",
+  "name": "Void Dancer",
+  "kind": "skin",
+  "hero": "widowmaker",
+  "season": "2026-s4",
+  "file": "Widowmaker Skin Void Dancer.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "wuyang-dragon-shaoxia",
+  "name": "Dragon Shaoxia",
+  "kind": "skin",
+  "hero": "wuyang",
+  "season": "2026-s5",
+  "file": "Wuyang Skin Dragon Shaoxia.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Hair",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "roadhog-necrotic-knight",
+  "name": "Necrotic Knight",
+  "kind": "skin",
+  "hero": "roadhog",
+  "season": "2026-s5",
+  "file": "Roadhog Skin Necrotic Knight.png",
+  "options": [
+   {
+    "name": "Ability VFX",
+    "count": 2
+   },
+   {
+    "name": "Skin VFX",
+    "count": 2
+   },
+   {
+    "name": "Helmet",
+    "count": 3
+   },
+   {
+    "name": "Color",
+    "count": 3
+   }
+  ],
+  "levels": [],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "reinhardt-bound-demon-weapon",
+  "name": "Bound Demon",
+  "kind": "weapon",
+  "hero": "reinhardt",
+  "season": "ow2-s11",
+  "file": "Reinhardt Weapon Skin Bound Demon.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the effects of the weapon."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Reinhardt performs a quick spin with his hammer."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final blows will cause the enemy to burst into flames, with a fiery runic circle left behind."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "ana-midnight-sun-weapon",
+  "name": "Midnight Sun",
+  "kind": "weapon",
+  "hero": "ana",
+  "season": "ow2-s12",
+  "file": "Ana Weapon Skin Midnight Sun.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances weapon's effects. The weapon changes colour if damaging or healing."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Ana can continuously spins her Sleep Dart, which can be fired mid-animation."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Eliminations will smite the enemy with a sword from above, disintegrating them."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "soldier-76-deliverance-weapon",
+  "name": "Deliverance",
+  "kind": "weapon",
+  "hero": "soldier-76",
+  "season": "ow2-s13",
+  "file": "S76 Weapon Skin Deliverance.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects. Resets when eliminated."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Blue soul orbs orbit. Can be looped."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Eliminations will make the enemy burst into spiral blue flames and their soul being absorbed by the weapon."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "ashe-lead-rose-weapon",
+  "name": "Lead Rose",
+  "kind": "weapon",
+  "hero": "ashe",
+  "season": "ow2-s14",
+  "file": "Ashe Weapon Skin Lead Rose.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - A rose is shaken in her hand, then it's spun & thrown."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final blows will cause enemies to explode with rose petals and a pink double slash effect."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "widowmaker-dame-chance-weapon",
+  "name": "Dame Chance",
+  "kind": "weapon",
+  "hero": "widowmaker",
+  "season": "ow2-s15",
+  "file": "Widowmaker Weapon Skin Dame Chance.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects. Total eliminations are displayed when scoped."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Her Grappling Hook is spun on a loop."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Eliminations will cause enemies to burst into a violet web-shaped cut."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "mercy-merciful-magitech-weapon",
+  "name": "Merciful Magitech",
+  "kind": "weapon",
+  "hero": "mercy",
+  "season": "ow2-s16",
+  "file": "Mercy Weapon Skin Merciful Magitech.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Adds effects to the weapon when using abilities."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Eleos (the Hamster) bounces up and down."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Assists and eliminations will make a damage-boosted ally burst a heart-shaped puff of light.Final blows by Mercy makes enemies burst instead."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "reaper-steel-death-weapon",
+  "name": "Steel Death",
+  "kind": "weapon",
+  "hero": "reaper",
+  "season": "ow2-s17",
+  "file": "Reaper Weapon Skin Steel Death.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Reaper sharpens the blades of his shotguns against each other."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final blows cause a burst of dark smoke to emerge from the ground to forming a smokey blue skull."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "cassidy-blazing-sunsetter-weapon",
+  "name": "Blazing Sunsetter",
+  "kind": "weapon",
+  "hero": "cassidy",
+  "season": "ow2-s18",
+  "file": "Cassidy Weapon Skin Blazing Sunsetter.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Cassidy performs spinning tricks with his revolver."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final blows targets to be consumed by a one-eyed flaming skull, that quickly dissipates."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "kiriko-spirit-keeper-weapon",
+  "name": "Spirit Keeper",
+  "kind": "weapon",
+  "hero": "kiriko",
+  "season": "ow2-s19",
+  "file": "Kiriko Weapon Skin Spirit Keeper.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Kiriko spins her kunai, with 3 different possible animations."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final Blows causes targets to explode with a blue nine-tailed fox briefly appearing."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "orisa-capsule-cannon-weapon",
+  "name": "Capsule Cannon",
+  "kind": "weapon",
+  "hero": "orisa",
+  "season": "ow2-s20",
+  "file": "Orisa Weapon Skin Capsule Cannon.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - A small plushie jumps out of the weapon, which Orisa can squish before discarding."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final Blows cause targets to explode in a cute starry explosion."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "juno-star-shooter-weapon",
+  "name": "Star Shooter",
+  "kind": "weapon",
+  "hero": "juno",
+  "season": "2026-s1",
+  "file": "Juno Weapon Skin Star Shooter.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks the weapon flourish - Dipper (a small alien bear) jumps out of the weapon, flipping and waving."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Eliminations cause a small UFO to appear above targets that abducts them with a glowing pink/purple tractor beam, rings, and sparkles."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "genji-sumi-ichimonji-weapon",
+  "name": "Sumi-Ichimonji",
+  "kind": "weapon",
+  "hero": "genji",
+  "season": "2026-s2",
+  "file": "Genji Weapon Skin Sumi-Ichimonji.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks weapon flourish animation - Genji fidgets with his shurkins, spinning them or rolling one through his fingers."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Eliminations cause a black-red slash that bursts into white smoke behind an ink dragon with symbols."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "hanzo-tokyo-rebel-weapon",
+  "name": "Tokyo Rebel",
+  "kind": "weapon",
+  "hero": "hanzo",
+  "season": "2026-s3",
+  "file": "Hanzo Weapon Skin Tokyo Rebel.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks weapon flourish animation - Hanzo's holographic dragon wraps around his arm and bow before roaring."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final Blows cause a cylindrical, cyber-themed explosion at the target, with a holographic dragon coming down."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "sojourn-eternal-crystal-weapon",
+  "name": "Eternal Crystal",
+  "kind": "weapon",
+  "hero": "sojourn",
+  "season": "2026-s4",
+  "file": "Sojourn Weapon Skin Eternal Crystal.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks weapon flourish animation - She spins a crystal blade with her left hand."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final Blows cause the target to burst in a crystal explosion."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ },
+ {
+  "id": "lucio-treblemaker-weapon",
+  "name": "Treblemaker",
+  "kind": "weapon",
+  "hero": "lucio",
+  "season": "2026-s5",
+  "file": "Lúcio Weapon Skin Treblemaker.png",
+  "options": [],
+  "levels": [
+   {
+    "level": 1,
+    "prisms": 50,
+    "text": "Unlocks the base weapon skin."
+   },
+   {
+    "level": 2,
+    "prisms": 10,
+    "text": "Eliminations enhances the weapon's effects."
+   },
+   {
+    "level": 3,
+    "prisms": 10,
+    "text": "Unlocks weapon flourish animation - The weapon opens up, with the frog inside dancing, while the music grows louder."
+   },
+   {
+    "level": 4,
+    "prisms": 10,
+    "text": "Final Blows cause a graphiti-like explosion at the target, with a depiction of one of three frogs appearing, and a low-booming sound."
+   }
+  ],
+  "prisms": 50,
+  "note": null,
+  "sources": [
+   {
+    "source": "Overwatch Wiki",
+    "title": "Mythic Skins",
+    "url": "https://overwatch.wiki/w/Mythic_Skins",
+    "checkedAt": null
+   }
+  ]
+ }
+]

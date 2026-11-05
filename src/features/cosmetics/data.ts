@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ITEMSHOP_API, normalizeShop, shardFile, shardOf, type ShopSnapshot } from './core';
-import type { BattlePass, Bundle, CatalogMeta, CatalogRow, CatalogStats, CosmeticDetail, DropCampaign, LootPool, MythicItem, RotationDetail, RotationSummary, Season } from './core/types';
+import type { BattlePass, Bundle, CatalogMeta, CatalogRow, CatalogStats, CosmeticDetail, DropCampaign, LootPool, MythicAspect, MythicItem, PassRules, RotationDetail, RotationSummary, Season } from './core/types';
 
 // Everything here except the live shop check reads JSON that ships with the site. It's built ahead of time from the
 // stored sources by scripts/cosmetics/cli.mjs, split so that a visit loads only what its page needs.
@@ -43,15 +43,19 @@ export const loadSeasons = () => load<Season[]>('seasons.json');
 export const loadEvents = () => load<{ id: string; label: string }[]>('events.json');
 export const loadPools = () => load<LootPool[]>('loot-pools.json');
 export const loadMythics = () => load<MythicItem[]>('mythics.json');
+export const loadMythicAspects = () => load<MythicAspect[]>('mythic-aspects.json');
 export const loadPasses = () => load<Omit<BattlePass, 'rewards'>[]>('battle-passes.json');
+export const loadPassRules = () => load<PassRules | null>('battle-pass-rules.json');
 export const loadPass = (id: string) => load<BattlePass>(`battle-passes/${encodeURIComponent(id)}.json`);
 export const loadDrops = () => load<DropCampaign[]>('twitch-drops.json');
 export const loadRotations = () => load<RotationSummary[]>('rotations.json');
 export const loadRotationMonth = (month: string) => load<RotationDetail[]>(`rotations/${encodeURIComponent(month)}.json`);
 
 export async function loadCosmetic(id: string): Promise<CosmeticDetail | null> {
-  const shard = await load<Record<string, CosmeticDetail>>(shardFile(shardOf(id)));
-  return shard[id] ?? null;
+  const shard = await load<Record<string, CosmeticDetail | { aliasOf: string }>>(shardFile(shardOf(id)));
+  const found = shard[id];
+  if (found && 'aliasOf' in found) return loadCosmetic(found.aliasOf);
+  return found ?? null;
 }
 
 export interface RecordedShop {
