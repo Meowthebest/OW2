@@ -1,8 +1,8 @@
 {
  "schema": 1,
  "source": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/",
- "lastCheckedAt": "2026-11-05T12:18:17.594Z",
- "lastChangedAt": "2026-11-04T10:05:18.640Z",
+ "lastCheckedAt": "2026-11-06T00:17:13.799Z",
+ "lastChangedAt": "2026-11-06T00:17:13.799Z",
  "seasons": [
   {
    "year": 2026,
@@ -31,6 +31,44 @@
   }
  ],
  "patches": [
+  {
+   "id": "2026-11-05",
+   "title": "Overwatch Retail Patch Notes – November 5, 2026",
+   "date": "2026-11-05",
+   "type": "hotfix",
+   "season": {
+    "id": "2026-s5",
+    "label": "Season 5",
+    "year": 2026,
+    "number": 5
+   },
+   "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/11/#patch-2026-11-05",
+   "forumUrl": null,
+   "contentHash": "75ecedc4153a2e81",
+   "reviewedAt": null,
+   "counts": {
+    "heroesBuffed": 0,
+    "heroesNerfed": 0,
+    "heroesMixed": 0,
+    "heroesNeutral": 0,
+    "heroesNeedsReview": 1,
+    "buffs": 0,
+    "nerfs": 0,
+    "neutral": 0,
+    "qol": 0,
+    "needsReview": 2,
+    "sixVsSix": 0,
+    "gameplayChanges": 2,
+    "stadiumHeroes": 0,
+    "stadiumChanges": 0,
+    "limitedHeroes": 0,
+    "limitedChanges": 0,
+    "bugFixes": 3
+   },
+   "firstImportedAt": "2026-11-06T00:17:13.799Z",
+   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
+   "revisions": []
+  },
   {
    "id": "2026-11-03",
    "title": "Overwatch Retail Patch Notes – November 3, 2026",
@@ -66,7 +104,7 @@
     "bugFixes": 12
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-05T12:18:17.594Z",
+   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
    "revisions": []
   },
   {
@@ -104,7 +142,7 @@
     "bugFixes": 2
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-05T12:18:17.594Z",
+   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
    "revisions": []
   },
   {
@@ -142,7 +180,7 @@
     "bugFixes": 0
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-05T12:18:17.594Z",
+   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
    "revisions": []
   },
   {
@@ -180,7 +218,7 @@
     "bugFixes": 18
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-05T12:18:17.594Z",
+   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
    "revisions": []
   },
   {

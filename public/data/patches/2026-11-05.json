@@ -1,0 +1,126 @@
+{
+ "schema": 1,
+ "id": "2026-11-05",
+ "title": "Overwatch Retail Patch Notes – November 5, 2026",
+ "date": "2026-11-05",
+ "type": "hotfix",
+ "season": {
+  "id": "2026-s5",
+  "label": "Season 5",
+  "year": 2026,
+  "number": 5
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/11/#patch-2026-11-05",
+ "forumUrl": null,
+ "contentHash": "75ecedc4153a2e81",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 1,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 2,
+  "sixVsSix": 0,
+  "gameplayChanges": 2,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 3
+ },
+ "notes": [
+  {
+   "heroId": "wrecking-ball",
+   "group": "standard",
+   "hasDeveloperComment": false,
+   "devIntent": null,
+   "summary": null
+  }
+ ],
+ "changes": [
+  {
+   "id": "2026-11-05/standard/wrecking-ball/grappling-claw/0",
+   "series": null,
+   "heroId": "wrecking-ball",
+   "heroName": "Wrecking Ball",
+   "role": "tank",
+   "scope": "standard",
+   "queue": "all",
+   "kind": "ability",
+   "ability": "Grappling Claw",
+   "stat": null,
+   "categories": [],
+   "previous": null,
+   "next": null,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": null,
+   "direction": "needs-review",
+   "situational": false,
+   "classifiedBy": "none",
+   "summary": null,
+   "sourceHash": "72f78b738c3bd5e2"
+  },
+  {
+   "id": "2026-11-05/standard/wrecking-ball/grappling-claw/1",
+   "series": null,
+   "heroId": "wrecking-ball",
+   "heroName": "Wrecking Ball",
+   "role": "tank",
+   "scope": "standard",
+   "queue": "all",
+   "kind": "ability",
+   "ability": "Grappling Claw",
+   "stat": null,
+   "categories": [],
+   "previous": null,
+   "next": null,
+   "changeBy": null,
+   "unit": null,
+   "qualifier": null,
+   "note": null,
+   "percentChange": null,
+   "direction": "needs-review",
+   "situational": false,
+   "classifiedBy": "none",
+   "summary": null,
+   "sourceHash": "49ab27ba89f73e52"
+  }
+ ],
+ "other": [
+  {
+   "id": "2026-11-05/bugfix/general/0",
+   "section": "bugfix",
+   "group": "General",
+   "title": null,
+   "summary": null,
+   "sourceHash": "fb4415209175cd7d"
+  },
+  {
+   "id": "2026-11-05/bugfix/heroes/0",
+   "section": "bugfix",
+   "group": "Heroes",
+   "title": null,
+   "summary": null,
+   "sourceHash": "857e6a36144bb8eb"
+  },
+  {
+   "id": "2026-11-05/bugfix/stadium/0",
+   "section": "bugfix",
+   "group": "Stadium",
+   "title": null,
+   "summary": null,
+   "sourceHash": "be500d9f8efd8635"
+  }
+ ],
+ "firstImportedAt": "2026-11-06T00:17:13.799Z",
+ "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
+ "revisions": []
+}

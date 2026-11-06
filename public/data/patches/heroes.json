@@ -745,6 +745,16 @@
     "nerfs": 0,
     "other": 1,
     "review": 0
+   },
+   {
+    "patch": "2026-11-05",
+    "date": "2026-11-05",
+    "group": "standard",
+    "classification": "needs-review",
+    "buffs": 0,
+    "nerfs": 0,
+    "other": 0,
+    "review": 2
    }
   ],
   "zarya": [
