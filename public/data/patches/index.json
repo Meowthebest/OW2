@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "source": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/",
- "lastCheckedAt": "2026-11-06T00:17:13.799Z",
+ "lastCheckedAt": "2026-11-07T00:17:12.110Z",
  "lastChangedAt": "2026-11-06T00:17:13.799Z",
  "seasons": [
   {
@@ -66,7 +66,7 @@
     "bugFixes": 3
    },
    "firstImportedAt": "2026-11-06T00:17:13.799Z",
-   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
+   "lastVerifiedAt": "2026-11-07T00:17:12.110Z",
    "revisions": []
   },
   {
@@ -104,7 +104,7 @@
     "bugFixes": 12
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
+   "lastVerifiedAt": "2026-11-07T00:17:12.110Z",
    "revisions": []
   },
   {
@@ -142,7 +142,7 @@
     "bugFixes": 2
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
+   "lastVerifiedAt": "2026-11-07T00:17:12.110Z",
    "revisions": []
   },
   {
@@ -180,7 +180,7 @@
     "bugFixes": 0
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
+   "lastVerifiedAt": "2026-11-07T00:17:12.110Z",
    "revisions": []
   },
   {
@@ -218,7 +218,7 @@
     "bugFixes": 18
    },
    "firstImportedAt": "2026-11-04T10:05:18.640Z",
-   "lastVerifiedAt": "2026-11-06T00:17:13.799Z",
+   "lastVerifiedAt": "2026-11-07T00:17:12.110Z",
    "revisions": []
   },
   {
