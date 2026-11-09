@@ -877,7 +877,13 @@ await test('every roster hero has an ability list with a weapon or ultimate', ()
 });
 
 await test('stored seasons match the official season starts', () => {
-  assert.deepEqual(storedIndex.seasons.map((season) => [season.number, season.start]), [[1, '2026-02-09'], [2, '2026-04-14'], [3, '2026-06-16'], [4, '2026-08-11'], [5, '2026-10-06']]);
+  // These five were checked by hand. The patch sync adds later seasons itself, so those only need to follow on in order.
+  assert.deepEqual(storedIndex.seasons.slice(0, 5).map((season) => [season.number, season.start]), [[1, '2026-02-09'], [2, '2026-04-14'], [3, '2026-06-16'], [4, '2026-08-11'], [5, '2026-10-06']]);
+  storedIndex.seasons.slice(5).forEach((season, index) => {
+    const before = storedIndex.seasons[index + 4];
+    assert.ok(season.start > before.start, `season ${season.number} starts after season ${before.number}`);
+    assert.ok(season.number === before.number + 1 || season.year > before.year, `season ${season.number} follows season ${before.number}`);
+  });
   assert.equal(nov3.season.label, 'Season 5');
 });
 

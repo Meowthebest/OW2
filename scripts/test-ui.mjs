@@ -904,14 +904,37 @@ await test('recent players are remembered and can be cleared', async () => {
   app.close();
 });
 
-// Patch notes. These use the real imported data, served by the mocked fetch.
+// Patch notes. These use the real imported data, served by the mocked fetch, as it stood when November 3 was the newest
+// patch. The patch sync adds new patches by itself, and without this cut-off each one would change what these tests
+// expect and stop the site from deploying. One test below opens whichever patch is really the newest.
+// The data also counts as just checked, so a few days without a patch sync can't fail a deploy either.
 const PATCH_DIR = 'public/data/patches';
-function patchApi(overrides = {}) {
+const PATCHES_AS_OF = '2026-11-03';
+function readPatchFile(name, asOf = PATCHES_AS_OF) {
+  const data = JSON.parse(readFileSync(path.join(PATCH_DIR, name), 'utf8'));
+  if (!asOf) return data;
+  if (name === 'index.json') {
+    return {
+      ...data,
+      lastCheckedAt: new Date().toISOString(),
+      seasons: data.seasons.filter((season) => season.start <= asOf),
+      patches: data.patches.filter((patch) => patch.date <= asOf),
+    };
+  }
+  if (name === 'heroes.json') {
+    const heroes = Object.entries(data.heroes).map(([id, tallies]) => [id, tallies.filter((tally) => tally.date <= asOf)]);
+    return { ...data, heroes: Object.fromEntries(heroes.filter(([, tallies]) => tallies.length > 0)) };
+  }
+  return data;
+}
+function patchApi(overrides = {}, { asOf = PATCHES_AS_OF } = {}) {
   return (target, init, count) => {
     const match = /\/OW2\/data\/patches\/(.+)$/.exec(target.pathname);
     if (!match) return jsonResponse({}, { status: 404 });
     if (overrides[match[1]]) return overrides[match[1]](count);
-    return jsonResponse(JSON.parse(readFileSync(path.join(PATCH_DIR, match[1]), 'utf8')));
+    const date = /^(\d{4}-\d{2}-\d{2})\.json$/.exec(match[1])?.[1];
+    if (asOf && date && date > asOf) return jsonResponse({}, { status: 404 });
+    return jsonResponse(readPatchFile(match[1], asOf));
   };
 }
 const cardNames = (document, group) => [...document.querySelectorAll(group ? `.result-section[data-group="${group}"] .hero-card__name` : '.hero-card__name')].map((node) => node.textContent);
@@ -1224,7 +1247,7 @@ await test('a timeline gap never draws an invented connection or a total', async
 
 await test('load failures show an error with retry, and retry recovers', async () => {
   let indexFails = true;
-  const app = boot({ hash: '#/patches', api: patchApi({ 'index.json': () => (indexFails ? jsonResponse({}, { status: 500 }) : jsonResponse(JSON.parse(readFileSync(path.join(PATCH_DIR, 'index.json'), 'utf8')))) }) });
+  const app = boot({ hash: '#/patches', api: patchApi({ 'index.json': () => (indexFails ? jsonResponse({}, { status: 500 }) : jsonResponse(readPatchFile('index.json'))) }) });
   await until(() => /Could not load patch data/.test(app.document.querySelector('.patches')?.textContent ?? ''), 'index error');
   assert.equal(app.document.querySelectorAll('.hero-card__name').length, 0);
   indexFails = false;
@@ -1234,7 +1257,7 @@ await test('load failures show an error with retry, and retry recovers', async (
 
   let patchFails = true;
   const file = '2026-11-03.json';
-  const second = boot({ hash: '#/patches?patch=2026-11-03', api: patchApi({ [file]: () => (patchFails ? jsonResponse({}, { status: 503 }) : jsonResponse(JSON.parse(readFileSync(path.join(PATCH_DIR, file), 'utf8')))) }) });
+  const second = boot({ hash: '#/patches?patch=2026-11-03', api: patchApi({ [file]: () => (patchFails ? jsonResponse({}, { status: 503 }) : jsonResponse(readPatchFile(file))) }) });
   await until(() => /Could not load these patches/.test(second.document.querySelector('.patch-results')?.textContent ?? ''), 'patch error');
   assert.ok(second.document.querySelector('.patch-hero'), 'the header still shows');
   patchFails = false;
@@ -1244,10 +1267,20 @@ await test('load failures show an error with retry, and retry recovers', async (
 });
 
 await test('old data is called out rather than presented as current', async () => {
-  const stale = { ...JSON.parse(readFileSync(path.join(PATCH_DIR, 'index.json'), 'utf8')), lastCheckedAt: '2020-01-01T00:00:00.000Z' };
+  const stale = { ...readPatchFile('index.json'), lastCheckedAt: '2020-01-01T00:00:00.000Z' };
   const app = boot({ hash: '#/patches', api: patchApi({ 'index.json': () => jsonResponse(stale) }) });
   await patchesReady(app);
   assert.match(app.document.querySelector('.patch-hero__verify').textContent, /may be out of date/);
+  app.close();
+});
+
+await test('the newest stored patch opens without errors, whichever it is', async () => {
+  const newest = [...readPatchFile('index.json', null).patches].sort((a, b) => b.date.localeCompare(a.date))[0];
+  const app = boot({ hash: '#/patches', api: patchApi({}, { asOf: null }) });
+  await until(() => app.document.querySelector('.patch-hero__title')?.textContent === newest.title, `${newest.id} shown first`);
+  const results = await until(() => app.document.querySelector('.patch-results[aria-busy="false"]'), 'patch loaded');
+  assert.doesNotMatch(results.textContent, /Could not load/);
+  assert.deepEqual(app.errors, []);
   app.close();
 });
 
@@ -1328,9 +1361,9 @@ function playerRecent() {
 }
 
 /** Serves the data branch's files, recording which hosts the browser contacts. */
-function playerApi(files = {}, hosts = []) {
+function playerApi(files = {}, hosts = [], patchFiles = {}) {
   const served = { 'latest.json': playerLatest(), 'recent.json': playerRecent(), 'hourly.json': playerHours(40), ...files };
-  const patches = patchApi();
+  const patches = patchApi(patchFiles);
   return (target, init, count) => {
     hosts.push(target.hostname);
     if (target.hostname !== 'raw.githubusercontent.com') return patches(target, init, count);
@@ -1583,7 +1616,10 @@ await test('daily and weekly comparisons use recorded hours', async () => {
 });
 
 await test('patches appear beside the chart, with comparisons but no claim of cause', async () => {
-  const app = boot({ hash: '#/players?range=all', api: playerApi({ 'hourly.json': playerHours(20) }) });
+  // The newest patch is moved inside the recorded range, so this holds whenever it runs, even after weeks without a patch.
+  const index = readPatchFile('index.json');
+  const recent = { ...index, patches: [{ ...index.patches[0], date: isoAt(NOW_SECONDS - 5 * 86400).slice(0, 10) }, ...index.patches.slice(1)] };
+  const app = boot({ hash: '#/players?range=all', api: playerApi({ 'hourly.json': playerHours(20) }, [], { 'index.json': () => jsonResponse(recent) }) });
   await playersReady(app);
   const subsection = await until(() => app.document.querySelector('.pstat-subsection tbody tr') && app.document.querySelector('.pstat-subsection'), 'patch table');
   const text = subsection.textContent;
