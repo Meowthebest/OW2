@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ITEMSHOP_API, normalizeShop, shardFile, shardOf, type ShopSnapshot } from './core';
+import type { GameEventsFile } from './core/events';
 import type { BattlePass, Bundle, CatalogMeta, CatalogRow, CatalogStats, CosmeticDetail, DropCampaign, LootPool, MythicAspect, MythicItem, PassRules, Price, RotationDetail, RotationSummary, Season } from './core/types';
 
 // Everything here except the live shop check reads JSON that ships with the site. It's built ahead of time from the
@@ -48,6 +49,7 @@ export const loadPasses = () => load<Omit<BattlePass, 'rewards'>[]>('battle-pass
 export const loadPassRules = () => load<PassRules | null>('battle-pass-rules.json');
 export const loadPass = (id: string) => load<BattlePass>(`battle-passes/${encodeURIComponent(id)}.json`);
 export const loadDrops = () => load<DropCampaign[]>('twitch-drops.json');
+export const loadGameEvents = () => load<GameEventsFile>('game-events.json');
 export const loadRotations = () => load<RotationSummary[]>('rotations.json');
 export const loadRotationMonth = (month: string) => load<RotationDetail[]>(`rotations/${encodeURIComponent(month)}.json`);
 

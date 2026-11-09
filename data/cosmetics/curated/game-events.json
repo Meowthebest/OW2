@@ -1,0 +1,183 @@
+{
+ "schema": 1,
+ "checkedAt": "2026-11-10",
+ "recordedFrom": "2026-10-06",
+ "events": [
+  {
+   "id": "taking-reign",
+   "name": "Taking Reign",
+   "kind": "event",
+   "start": "2026-11-03",
+   "end": "2026-12-07",
+   "summary": "The year-long Reign of Talon story reaches its finale in Rialto. Play and complete challenges to earn rewards from a 24-tier Event Pass.",
+   "image": { "url": "https://bnetcmsus-a.akamaihd.net/cms/gallery/H63926XQFRUQ1793122076475.png", "credit": "Blizzard Entertainment" },
+   "pass": { "tiers": 24, "price": { "amount": 1000, "currency": "coins" }, "note": "Once bought, the premium track can be finished at any time, Season 6 included." },
+   "rewards": [
+    { "name": "Sigma skin recolor", "rarity": "epic", "track": "free" },
+    { "name": "Resurgence Doomfist", "rarity": "legendary", "track": "premium", "cosmeticId": "skin.doomfist.resurgence" },
+    { "name": "Vendetta's new weapon", "rarity": "legendary", "track": "premium" }
+   ],
+   "rewardsNote": "The highlights Blizzard named. The pass holds more.",
+   "cosmeticsEvent": "taking-reign",
+   "sources": [
+    { "source": "Blizzard", "title": "Reign of Talon – S5 Midcycle Sets Up the Showdown", "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "eve-protocol",
+   "name": "Overwatch x EVE Protocol",
+   "kind": "collab",
+   "start": "2026-11-03",
+   "end": "2026-11-17",
+   "summary": "Five EVE Protocol characters arrive as Hero skins: Widowmaker as EVE, D.Va as Lily, Freja as Raven, Vendetta as Tachy and Soldier: 76 as Adam.",
+   "image": { "url": "https://bnetcmsus-a.akamaihd.net/cms/gallery/OGJFIEQ218R81793122076513.png", "credit": "Blizzard Entertainment. ©2024~2026 SHIFT UP Corp. All rights reserved." },
+   "notes": ["D.Va's Lily is an Ultra skin with its own kill effects, reactions and Hello emote, and her mech is based on the Providence boss."],
+   "cosmetics": ["skin.widowmaker.eve", "skin.dva.lily-and-providence", "skin.freja.raven", "skin.vendetta.tachy", "skin.soldier-76.adam"],
+   "cosmeticsEvent": "eve-protocol",
+   "sources": [
+    { "source": "Blizzard", "title": "Reign of Talon – S5 Midcycle Sets Up the Showdown", "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "excavation-initiative-2026-11",
+   "name": "Excavation Initiative",
+   "kind": "challenge",
+   "start": "2026-11-03",
+   "end": "2026-12-07",
+   "summary": "The dig is back. Finish digs each week to earn Loot Boxes.",
+   "image": null,
+   "challenges": [
+    { "task": "Complete 3 digs in a week", "reward": "A Loot Box" },
+    { "task": "Keep digging", "reward": "More Loot Boxes, Epic Loot Boxes and a Legendary Loot Box" }
+   ],
+   "sources": [
+    { "source": "Blizzard", "title": "Reign of Talon – S5 Midcycle Sets Up the Showdown", "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "junkrats-loot-hunt-2026-11",
+   "name": "Junkrat's Loot Hunt",
+   "kind": "challenge",
+   "start": "2026-11-20",
+   "end": "2026-11-23",
+   "summary": "Finish games to earn Loot Boxes at your own pace, with Double XP for the whole event.",
+   "image": null,
+   "challenges": [
+    { "task": "Complete 5 games. Repeat up to 9 times, with no daily reset", "reward": "A Loot Box each time" }
+   ],
+   "notes": ["Double XP is on for the whole event."],
+   "sources": [
+    { "source": "Blizzard", "title": "Reign of Talon – S5 Midcycle Sets Up the Showdown", "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "drives-2026-12",
+   "name": "Quick Play and Competitive Drives",
+   "kind": "competitive",
+   "start": "2026-12-03",
+   "end": "2026-12-07",
+   "summary": "Drives return with separate tracks for Competitive and Quick Play, and you can take on both.",
+   "image": null,
+   "rewards": [
+    { "name": "Up to 3,000 Competitive Points and a Signature", "note": "Competitive Drives" },
+    { "name": "Up to 3,000 Legacy Weapon Points", "note": "Quick Play Drives" }
+   ],
+   "notes": ["Reach the fourth checkpoint this season to equip eligible earlier Signatures."],
+   "sources": [
+    { "source": "Blizzard", "title": "Reign of Talon – S5 Midcycle Sets Up the Showdown", "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "owcs-world-finals-cheer-rally-2026",
+   "name": "OWCS World Finals Cheer Rally",
+   "kind": "esports",
+   "start": "2026-12-03",
+   "end": "2026-12-07",
+   "summary": "Complete in-game challenges to earn Cheer and claim rewards while the 2026 World Finals play out in Guangzhou.",
+   "image": { "url": "https://bnetcmsus-a.akamaihd.net/cms/gallery/sp/SPIREO9YORDW1793660682260.png", "credit": "Blizzard Entertainment" },
+   "notes": ["The World Finals run December 2 to 6. Watching on Twitch or YouTube with a linked account earns more rewards."],
+   "sources": [
+    { "source": "Blizzard", "title": "Reign of Talon – S5 Midcycle Sets Up the Showdown", "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "black-friday-vault-sale-2026",
+   "name": "Black Friday Vault Sale",
+   "kind": "shop",
+   "start": "2026-11-03",
+   "end": "2026-12-07",
+   "summary": "Older cosmetics, some of them hard to find, return in themed shop bundles.",
+   "image": null,
+   "notes": ["Bundles named: Peak Mega Bundle, Hero Spotlight Bundles for Mercy, Soldier: 76, Ramattra and D.Va, 2026 Mega Unvault Bundle, Tank, Support and Damage Essentials Bundle 2, and StarCraft Mega Bundle."],
+   "links": [{ "label": "See today's shop", "href": "#/shop" }],
+   "sources": [
+    { "source": "Blizzard", "title": "Reign of Talon – S5 Midcycle Sets Up the Showdown", "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "mystery-madness-graveyard-games",
+   "name": "Mystery Madness: Graveyard Games",
+   "kind": "seasonal",
+   "start": "2026-10-06",
+   "end": "2026-11-02",
+   "summary": "This year's Halloween event: a mode where every death brings random new powers, with a new Event Pass each week.",
+   "image": { "url": "https://bnetcmsus-a.akamaihd.net/cms/gallery/18/18UBJW5GLQ371790897088162.png", "credit": "Blizzard Entertainment" },
+   "modes": [
+    { "name": "Mystery Madness: Graveyard Games", "about": "Enter as a random Hero and come back from each death with random new powers. The roster grew to 20 Heroes during the event." }
+   ],
+   "challenges": [
+    { "task": "Collect Offerings from challenges and pledge them to Ashe, Moira or Winston", "reward": "Battle Pass XP for each Offering. The Hero with the most joined the mode next" }
+   ],
+   "pass": { "tiers": null, "price": null, "note": "A new Event Pass each week, each ending in a milestone reward." },
+   "cosmeticsEvent": "mystery-madness-graveyard-games",
+   "sources": [
+    { "source": "Blizzard", "title": "Feed Your Hunger in Reign of Talon – Season 5: A Grim Doctrine", "url": "https://overwatch.blizzard.com/en-us/news/24303008/feed-your-hunger-in-reign-of-talon-season-5-a-grim-doctrine/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "shadow-monarch",
+   "name": "Overwatch x Shadow Monarch",
+   "kind": "collab",
+   "start": "2026-10-06",
+   "end": "2026-10-19",
+   "summary": "Hunters and Shadow Army characters arrive as Hero skins: Genji as Sung Jinwoo, Reaper as Igris, Anran as Cha Hae-In, Reinhardt as Iron and Lifeweaver as Choi Jong-In.",
+   "image": { "url": "https://bnetcmsus-a.akamaihd.net/cms/gallery/77AJO8AXFYVZ1790794796630.png", "credit": "Blizzard Entertainment. ©Solo Leveling Animation Partners" },
+   "cosmetics": ["skin.genji.sung-jinwoo", "skin.reaper.igris", "skin.anran.cha-hae-in", "skin.reinhardt.iron", "skin.lifeweaver.choi-jong-in"],
+   "cosmeticsEvent": "shadow-monarch",
+   "sources": [
+    { "source": "Blizzard", "title": "Feed Your Hunger in Reign of Talon – Season 5: A Grim Doctrine", "url": "https://overwatch.blizzard.com/en-us/news/24303008/feed-your-hunger-in-reign-of-talon-season-5-a-grim-doctrine/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "tech-witches-collection",
+   "name": "Tech Witches Collection",
+   "kind": "collection",
+   "start": "2026-10-09",
+   "end": "2026-10-26",
+   "summary": "Halloween skins that trade broomsticks for technology, for D.Mon, Shion, Juno, Sierra and Jetpack Cat.",
+   "image": { "url": "https://bnetcmsus-a.akamaihd.net/cms/gallery/i0/I0Y6B6KQFGNG1791214480842.png", "credit": "Blizzard Entertainment" },
+   "cosmetics": ["skin.dmon.tech-witch", "skin.shion.tech-witch", "skin.juno.tech-witch", "skin.sierra.tech-witch", "skin.jetpack-cat.tech-witch"],
+   "sources": [
+    { "source": "Blizzard", "title": "Feed Your Hunger in Reign of Talon – Season 5: A Grim Doctrine", "url": "https://overwatch.blizzard.com/en-us/news/24303008/feed-your-hunger-in-reign-of-talon-season-5-a-grim-doctrine/", "checkedAt": "2026-11-10" }
+   ]
+  },
+  {
+   "id": "team-drives-2026-10",
+   "name": "Team Drives",
+   "kind": "competitive",
+   "start": "2026-10-29",
+   "end": "2026-11-01",
+   "summary": "Queue alone or with friends. After a win, matched teammates stay together for the next game.",
+   "image": null,
+   "rewards": [
+    { "name": "Competitive Points" },
+    { "name": "Player Card Frames" },
+    { "name": "A Dynamic Title", "note": "For the first 10,000 groups to finish the final Trial" }
+   ],
+   "notes": ["Staying together speeds your climb through the Gladiator Ranks. Finish your Competitive placements first."],
+   "sources": [
+    { "source": "Blizzard", "title": "Feed Your Hunger in Reign of Talon – Season 5: A Grim Doctrine", "url": "https://overwatch.blizzard.com/en-us/news/24303008/feed-your-hunger-in-reign-of-talon-season-5-a-grim-doctrine/", "checkedAt": "2026-11-10" }
+   ]
+  }
+ ]
+}

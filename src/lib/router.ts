@@ -18,7 +18,8 @@ export type CosmeticsRoute =
   | { view: 'shop'; query: string }
   | { view: 'loot-pools'; slug?: string; query: string }
   | { view: 'hub'; page: HubPage; id?: string; query: string }
-  | { view: 'collection'; query: string };
+  | { view: 'collection'; query: string }
+  | { view: 'events'; query: string };
 
 export type Route =
   | { view: 'randomizer' }
@@ -47,6 +48,7 @@ export function parseHash(hash: string): Route {
   if (parts[0] === 'shop') return { view: 'shop', query };
   if (parts[0] === 'loot-pools') return { view: 'loot-pools', slug: parts[1] ? decode(parts[1]) : undefined, query };
   if (parts[0] === 'collection') return { view: 'collection', query };
+  if (parts[0] === 'events') return { view: 'events', query };
   if (parts[0] === 'hub') {
     const page: HubPage = parts[1] === 'mythics' || parts[1] === 'battle-passes' || parts[1] === 'twitch-drops' ? parts[1] : 'stats';
     return { view: 'hub', page, id: parts[2] ? decode(parts[2]) : undefined, query };

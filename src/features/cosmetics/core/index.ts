@@ -5,3 +5,4 @@ export * from './filters';
 export * from './collection';
 export * from './bundles';
 export * from './rates';
+export * from './events';

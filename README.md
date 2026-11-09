@@ -6,6 +6,7 @@ A fan-made Overwatch companion:
 - **Career dashboard:** search public player profiles and browse heroes, roles, ranks and win rates.
 - **Patch notes and balance tracker:** see who was buffed or nerfed, filter every change, open a hero's history, and compare patches. Every value links back to Blizzard's published notes.
 - **Player statistics:** Steam's concurrent player count for Overwatch, recorded over time, with a history chart and patch markers. Steam players only.
+- **In-game events:** what's on now, what's coming up and what just ended, with countdowns, modes, challenges and rewards. Each event links to Blizzard's announcement.
 - **Cosmetics hub:** a searchable catalogue of over 15,000 cosmetics, bundles, the live shop with its history, loot pools, mythics, Battle Passes, Twitch Drops, statistics and hero rates, plus your own collection tracking. Every record shows its source.
 
 Live site: https://meowthebest.github.io/OW2/

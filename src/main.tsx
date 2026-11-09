@@ -9,6 +9,7 @@ import './styles/career.css';
 import './styles/patches.css';
 import './styles/players.css';
 import './styles/cosmetics.css';
+import './styles/events.css';
 
 purgeRetiredData();
 

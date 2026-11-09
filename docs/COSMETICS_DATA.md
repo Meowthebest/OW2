@@ -1,6 +1,6 @@
 # Cosmetics data
 
-Where the cosmetics, shop, bundles, loot pools, mythics, Battle Passes, Twitch Drops and hero rates come from, how they're stored, and what they can't tell you.
+Where the cosmetics, shop, bundles, loot pools, mythics, Battle Passes, Twitch Drops, in-game events and hero rates come from, how they're stored, and what they can't tell you.
 
 Nothing on these pages is made up. If no source gives a value, the page says so or leaves it out.
 
@@ -11,6 +11,7 @@ Nothing on these pages is made up. If no source gives a value, the page says so 
 | [itemshop.gg API](https://itemshop.gg/developers) | The live shop, bundles and their contents, prices, product IDs, shop history | Automatically, every 15 minutes. Free key needed for past shops | Show "Data from itemshop.gg" with a link wherever the data appears. Don't sell the data or present it as your own. Game art is shown only to identify items |
 | [Overwatch Wiki](https://overwatch.wiki/) | The wider catalogue: hero cosmetics, charms, souvenirs, icons, name cards, titles, mythics | By hand. A person exports it and `import-wiki` reads the file, offline | Text is [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/): credit it, no commercial use, share derived data alike. Its [terms](https://weirdgloop.org/terms/) don't allow automated access without consent, so no script here ever contacts it |
 | [Blizzard's forum announcements](https://us.forums.blizzard.com/en/overwatch/c/announcements/5) | Twitch Drops campaigns, loot box rules | By hand, into `data/cosmetics/curated/` | Each record links to its post |
+| [Blizzard's news](https://overwatch.blizzard.com/en-us/news/) | In-game events: dates, modes, challenges, rewards, and the pictures on the Events page | By hand, into `data/cosmetics/curated/game-events.json`. The [alert job](ALERTS.md) reads the list of articles to flag new ones | Each event links to its article. Text is written here in this project's own words. Pictures load from Blizzard's servers |
 | [OverFast API](https://overfast-api.tekrop.fr/) | Pick, win and ban rates, which it reads from [Blizzard's hero statistics](https://overwatch.blizzard.com/en-us/rates/) | Directly from the visitor's browser, with the same filters as Blizzard's page | Community run. Copies are kept for up to an hour |
 
 [OverHub](https://overhub.gg/) was a design reference only. No code, data, private endpoints or images come from it.
@@ -19,7 +20,7 @@ Nothing on these pages is made up. If no source gives a value, the page says so 
 
 No cosmetic art is stored in this project.
 
-- **Blizzard's art.** Images from the shop data load from Blizzard's own servers. Originals can be 800 KB each, so pages ask [wsrv.nl](https://wsrv.nl/), a free resizing service, for a smaller copy. If that fails, the original loads, and if that fails, a placeholder shows. That service keeps resized copies in its cache and sees visitors' IP addresses, as any image host does. To stop using it, set `RESIZER` handling in `src/features/cosmetics/components/media.tsx` to return the original.
+- **Blizzard's art.** Images from the shop data, and the pictures from Blizzard's news articles on the Events page, load from Blizzard's own servers. Originals can be 800 KB to over 2 MB each, so pages ask [wsrv.nl](https://wsrv.nl/), a free resizing service, for a smaller copy. If that fails, the original loads, and if that fails, a placeholder shows. That service keeps resized copies in its cache and sees visitors' IP addresses, as any image host does. To stop using it, make `resizedImage` in `src/features/cosmetics/core/text.ts` return the original.
 - **Pictures from the wiki load directly from it.** The wiki's staff agreed to this on November 5, 2026. Nothing is copied: visitors' browsers load the wiki's own thumbnails in a few set sizes, and Emotes and Highlight Intros show the frame the wiki makes for each video. A cosmetic whose picture can't be found shows a placeholder with its type icon. To turn this off, remove `"wikiImages": true` from `data/cosmetics/config.json`. Blizzard's art on the wiki isn't the wiki's to license, so its permission covers loading the pictures from its servers.
 
 ## How it's stored
@@ -139,6 +140,40 @@ One cosmetic listed on several pages becomes one record, with what each page kno
 
 The wiki's staff agreed to the site showing the wiki's pictures. That doesn't cover scripted exports, so step 1 stays by hand and the import never contacts the wiki. Ask them before automating any of this.
 
+## In-game events
+
+The Events page (`#/events`, under the Cosmetics menu) shows what's on now, what's coming up and what ended in the last 45 days. Older events fold into one list. When nothing is running, the page leads with what's next.
+
+Each event is a record in `data/cosmetics/curated/game-events.json`, taken from a Blizzard article and linking to it. Everything else is worked out on its own:
+
+- **Status and countdowns** change by the hour in each visitor's browser, from the dates in the record. Nothing needs editing when an event starts or ends.
+- **Cosmetics, bundles and the shop.** The build links an event to the cosmetics it names, to the shop bundles that hold them, and to every cosmetic the wiki tags with its event. Whether each one is in the shop comes from the shop recording, every 15 minutes.
+- **New articles.** The [alert job](ALERTS.md) reads Blizzard's news list a few times a day. A recent article that looks like event news, and that no record cites, opens a GitHub issue.
+
+Events are recorded from the start of Season 5, October 6, 2026.
+
+### Adding in-game events
+
+1. Read the article. Blizzard's season and midseason articles name each event with its dates.
+2. Add a record to `events` in `game-events.json`. Copy one that's similar. Write the text in your own words, under 220 characters a line, and give only what the article states.
+3. Run `npm run check:cosmetics`. It stops on a bad date, a missing source, an unknown cosmetic id or event tag, an image without https, or text that's too long.
+4. Commit. The next deploy publishes it, and the alert's issue closes on its next run.
+
+| Field | What it holds |
+| --- | --- |
+| `id` | Lowercase words joined by hyphens, never reused |
+| `kind` | `seasonal`, `event`, `mode`, `challenge`, `collab`, `collection`, `shop`, `competitive` or `esports` |
+| `start`, `end` | `YYYY-MM-DD` as Blizzard writes it, in US Pacific time. A day covers the whole day, so an event "to December 7" runs through December 7. Use a full time with its offset, such as `2026-12-03T10:00:00-08:00`, only when the article gives one: then the countdown shows hours. `end` is `null` when none is announced |
+| `summary`, `notes` | A line or two in your own words |
+| `modes`, `challenges`, `rewards`, `pass` | What the article says, and nothing it doesn't. Add `rewardsNote` when it names only some rewards |
+| `cosmetics`, `rewards[].cosmeticId` | Catalogue ids, such as `skin.widowmaker.eve`. These bring in pictures, shop status and bundles |
+| `cosmeticsEvent` | The wiki's event tag, such as `eve-protocol`, to link every cosmetic from the event |
+| `image` | A picture from the article, with its credit. Partner art keeps the copyright line Blizzard prints under it |
+| `links` | Optional extra links, to a page here (`#/shop`) or an https address |
+| `sources` | The article, with the day you checked it |
+
+An article checked that announces no events can go under `reviewed`, with a short note, so the alert job stops asking about it. Closing its issue does the same.
+
 ## Admin tools
 
 There's no admin web page. Admin access is write access to the repository.
@@ -148,6 +183,7 @@ There's no admin web page. Admin access is write access to the repository.
 | Sync the shop now | **Actions → Record the shop → Run workflow** |
 | Re-read every item's history | The same workflow, with `stays` |
 | Add or fix a Twitch campaign or a loot pool | Edit `data/cosmetics/curated/*.json`. Each record needs a source, or the build stops. A [GitHub issue](ALERTS.md) flags new posts from Blizzard |
+| Add or fix an in-game event | Edit `data/cosmetics/curated/game-events.json`, as in [Adding in-game events](#adding-in-game-events) |
 | Rename a cosmetic | `corrections.json`: `"rename": { "old.id": "new.id" }` |
 | Fix a field | `corrections.json`: `"set": { "skin.ana.citrine": { "rarity": "rare" } }` |
 | Hide a bad record | `corrections.json`: `"hide": ["skin.ana.wrong"]` |
@@ -165,6 +201,8 @@ Comments and reactions aren't built. The brief made them depend on existing acco
 ## What this can't tell you
 
 - **Ownership.** All marks are made by hand. Nothing reads a game account, because Blizzard offers no way to.
+- **Event times.** Blizzard's articles give days, not times, so an event counts as running for the whole of its first and last day in US Pacific time, and countdowns count whole days. The game may start or end it a few hours either side.
+- **Events nobody has added.** New events appear once someone adds them from Blizzard's article. The alert job asks when one appears, but an event announced only somewhere other than Blizzard's news page won't be flagged.
 - **Twitch progress.** "Claimed" marks are reminders. Twitch offers no way to read another site's visitors' watch time without their sign-in and a registered Drops integration.
 - **Your Just For You offers.** Only the game shows these.
 - **Loot box odds and contents.** Blizzard describes the boxes but publishes no full list. The E-Sports and Anniversary pools show related cosmetics and say so. Standard and Just For You show no list. No drop rates appear anywhere.

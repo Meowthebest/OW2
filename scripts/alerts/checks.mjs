@@ -100,6 +100,70 @@ export function checkPosts({ topics, knownUrls, now, maxAgeDays = 45 }) {
   return { alerts, keepOpen: (key) => !known.has(key.split(':')[1]) };
 }
 
+const NEWS = 'https://overwatch.blizzard.com/en-us/news';
+
+/** The article number in a Blizzard news link, which stays the same if the title in the link changes. */
+export const newsArticleId = (url) => /\/news\/(\d+)(?:\/|$)/.exec(url ?? '')?.[1] ?? null;
+
+const decodeHtml = (text) =>
+  String(text)
+    .replace(/<[^>]+>/g, '')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+    .replace(/&rsquo;|&lsquo;/g, "'")
+    .replace(/&ldquo;|&rdquo;|&quot;/g, '"')
+    .replace(/&ndash;/g, '–')
+    .replace(/&mdash;/g, '—')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&reg;/g, '®')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/** The articles listed on Blizzard's news page: number, link, title, and the short description or date when the page gives one. */
+export function parseNewsList(html) {
+  const articles = new Map();
+  const anchor = /<a\b[^>]*\bhref="(?:https:\/\/overwatch\.blizzard\.com)?\/(?:en-us\/)?news\/(\d+)\/([^"/?#\s]+)\/?"[^>]*>([\s\S]*?)<\/a>/gi;
+  for (const [, id, slug, inner] of String(html).matchAll(anchor)) {
+    if (articles.has(id)) continue;
+    const title = decodeHtml(/<h3\b[^>]*>([\s\S]*?)<\/h3>/i.exec(inner)?.[1] ?? /\bheadingtext="([^"]*)"/i.exec(inner)?.[1] ?? '');
+    if (!title) continue;
+    const description = decodeHtml(/\bdescriptiontext="([^"]*)"/i.exec(inner)?.[1] ?? '') || null;
+    const stamp = /<blz-timestamp\b[^>]*\btimestamp="([^"]+)"/i.exec(inner)?.[1] ?? null;
+    articles.set(id, { id, url: `${NEWS}/${id}/${slug}/`, title, description, publishedAt: stamp && Number.isFinite(Date.parse(stamp)) ? stamp : null });
+  }
+  return [...articles.values()];
+}
+
+/** Words in a title that suggest an article announces an event. A wrong guess costs one issue, closed by hand. */
+const EVENT_WORDS = /\b(events?|seasons?|midcycle|mid-?season|returns?|limited[- ]time|arcade|collab(?:oration)?|crossover|challenges?|drives?|loot hunt|excavation|halloween|winter wonderland|lunar new year|summer games|anniversary|celebrat\w*|cheer rally|world finals|double xp|twitch drops|in-game)\b|\s[x×]\s/i;
+
+/**
+ * Blizzard articles that look like event news but that the Events page doesn't cite yet. `known` holds the article numbers already
+ * used as a source, or checked and listed under `reviewed`. An issue stays open until its article is known, or someone closes it.
+ */
+export function checkNews({ articles, known, now, maxAgeDays = 60 }) {
+  const alerts = [];
+  for (const article of articles) {
+    if (known.has(article.id) || !EVENT_WORDS.test(`${article.title} ${article.description ?? ''}`)) continue;
+    const at = article.publishedAt ? Date.parse(article.publishedAt) : null;
+    if (at !== null && now - at > maxAgeDays * DAY) continue;
+    const title = plain(article.title);
+    alerts.push({
+      key: `news:${article.id}`,
+      title: `Check Blizzard's article for events: ${title}`,
+      body: paragraphs(
+        `Blizzard posted [${title}](${NEWS}/${article.id}/)${at !== null ? ` on ${dayText(at)}` : ''}. Its title suggests it announces in-game events, and the Events page doesn't cite it yet.`,
+        `**To fix:** add each event it announces to [game-events.json](${REPO_FILES}/data/cosmetics/curated/game-events.json), with this article as the source. See [Adding in-game events](${REPO_FILES}/docs/COSMETICS_DATA.md#adding-in-game-events). This issue closes once the article is cited there.`,
+        'If it announces no events, list it under `reviewed` in the same file, or just close this issue.',
+      ),
+    });
+  }
+  return { alerts, keepOpen: (key) => !known.has(key.split(':')[1]) };
+}
+
 /** The wiki can't be read by a script, so this goes by what the last export said about the season, and by how old it is. */
 export function checkWiki({ seasons, exportedAt, now, graceDays = 3, maxAgeDays = 75 }) {
   const latest = [...seasons].sort((a, b) => String(a.start ?? '').localeCompare(String(b.start ?? ''))).at(-1);
@@ -233,6 +297,7 @@ export function checkReminders({ now, reminders = REMINDERS }) {
 const SOURCE_NOTES = {
   overfast: { name: 'OverFast', misses: 'new heroes and role changes' },
   forum: { name: 'Blizzard\'s forum', misses: 'new Twitch Drops and loot box posts' },
+  news: { name: 'Blizzard\'s news page', misses: 'new in-game event announcements' },
 };
 
 /**

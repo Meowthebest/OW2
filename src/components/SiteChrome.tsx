@@ -26,6 +26,7 @@ const HUB_GROUPS: ReadonlyArray<{ title: string; links: ReadonlyArray<{ href: st
   {
     title: 'Hub',
     links: [
+      { href: '#/events', label: 'In-Game Events', active: (route) => route.view === 'events' },
       { href: '#/hub/mythics', label: 'Mythics', active: (route) => route.view === 'hub' && route.page === 'mythics' },
       { href: '#/hub/battle-passes', label: 'Battle Passes', active: (route) => route.view === 'hub' && route.page === 'battle-passes' },
       { href: '#/hub/twitch-drops', label: 'Twitch Drops', active: (route) => route.view === 'hub' && route.page === 'twitch-drops' },

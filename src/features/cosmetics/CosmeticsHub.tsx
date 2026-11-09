@@ -8,6 +8,7 @@ import { BundleDetailPage, BundlesPage } from './pages/BundlesPage';
 import { CollectionPage } from './pages/CollectionPage';
 import { CosmeticDetailPage, CosmeticsPage } from './pages/CosmeticsPage';
 import { DropsPage, dropNotifyId } from './pages/DropsPage';
+import { EventsPage } from './pages/EventsPage';
 import { LootPoolDetailPage, LootPoolsPage } from './pages/LootPoolsPage';
 import { MythicDetailPage, MythicsPage } from './pages/MythicsPage';
 import { ShopPage } from './pages/ShopPage';
@@ -110,6 +111,8 @@ export function CosmeticsHub({ route }: { route: Route }) {
       return route.slug ? <LootPoolDetailPage key={route.slug} slug={route.slug} query={route.query} routeKey={route} /> : <LootPoolsPage />;
     case 'collection':
       return <CollectionPage query={route.query} routeKey={route} />;
+    case 'events':
+      return <EventsPage />;
     case 'hub':
       if (route.page === 'mythics') return route.id ? <MythicDetailPage key={route.id} id={route.id} /> : <MythicsPage query={route.query} routeKey={route} />;
       if (route.page === 'battle-passes') return route.id ? <BattlePassDetailPage key={route.id} id={route.id} /> : <BattlePassesPage />;

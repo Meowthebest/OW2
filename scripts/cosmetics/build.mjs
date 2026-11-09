@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { DATA_DIR, loadCore, OUT_DIR, readJson, ROOT } from './common.mjs';
+import { buildGameEvents } from './game-events.mjs';
 import { readRotations } from './itemshop.mjs';
 import { reconcileShop } from './reconcile.mjs';
 import { pageUrl } from './wiki.mjs';
@@ -47,6 +48,7 @@ function loadInputs() {
     drops: curated('twitch-drops', []),
     pools: curated('loot-pools', []),
     events: curated('events', []),
+    gameEvents: curated('game-events', null),
     corrections: readJson(path.join(DATA_DIR, 'corrections.json'), { rename: {}, hide: [], set: {} }),
     config: readJson(path.join(DATA_DIR, 'config.json'), {}),
     patchSeasons: readJson(path.join(ROOT, 'scripts/patches/seasons.json'), []),
@@ -716,6 +718,8 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   const labelOfHero = new Map();
   for (const hero of HEROES) labelOfHero.set(hero.id, hero.name);
   const eventLabels = new Map([...inputs.wikiEvents, ...inputs.events].map((event) => [event.id, event.label]));
+  const gameEvents = buildGameEvents(core, inputs.gameEvents, { rows, bundles, eventLabels });
+  errors.push(...gameEvents.errors);
   const typeLabels = new Map(core.COSMETIC_TYPES.map((type) => [type.id, type.label]));
   const rarityLabels = new Map(core.RARITIES.map((rarity) => [rarity.id, rarity.label]));
   const seasonLabels = new Map(seasons.map((season) => [season.id, season.label]));
@@ -874,7 +878,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   const meta = {
     schema: 1,
     generatedAt: now.toISOString(),
-    counts: { cosmetics: rows.length, bundles: bundles.length, rotations: rotations.length, passes: passes.length, mythics: mythics.length, campaigns: campaigns.length },
+    counts: { cosmetics: rows.length, bundles: bundles.length, rotations: rotations.length, passes: passes.length, mythics: mythics.length, campaigns: campaigns.length, events: gameEvents.file?.events.length ?? 0 },
     sources: [
       { id: 'itemshop', name: ITEMSHOP_NAME, url: core.ITEMSHOP_PAGE, license: 'Free API, shown with a link back', lastSuccess: inputs.state.lastRecorded ?? null, records: Object.keys(inputs.items).length, note: historyRead ? 'Past shops read through an API key.' : 'History starts from the first recording, because past shops need an API key.' },
       ...(inputs.wikiImport
@@ -900,7 +904,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   const report = {
     errors,
     warnings: unique(warnings),
-    summary: `${rows.length} cosmetics, ${bundles.length} bundles, ${rotations.length} shops, ${mythics.length} mythics, ${passes.length} passes, ${campaigns.length} Twitch campaigns. ${errors.length} errors, ${unique(warnings).length} warnings.`,
+    summary: `${rows.length} cosmetics, ${bundles.length} bundles, ${rotations.length} shops, ${mythics.length} mythics, ${passes.length} passes, ${campaigns.length} Twitch campaigns, ${gameEvents.file?.events.length ?? 0} in-game events. ${errors.length} errors, ${unique(warnings).length} warnings.`,
   };
   if (dryRun) return report;
   if (errors.length > 0) throw new Error(`The data has problems, so nothing was written:\n  ${errors.join('\n  ')}`);
@@ -925,6 +929,7 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
   write('twitch-drops.json', campaigns);
   write('loot-pools.json', pools);
   write('events.json', [...eventLabels].map(([id, label]) => ({ id, label })));
+  if (gameEvents.file) write('game-events.json', gameEvents.file);
   write('shop.json', shopFile);
   write('rotations.json', [...rotationSummaries].reverse());
   for (const [month, list] of rotationDetails) write(`rotations/${month}.json`, list);

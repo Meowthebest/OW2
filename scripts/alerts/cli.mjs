@@ -4,7 +4,7 @@
 import path from 'node:path';
 import { DATA_DIR, loadCore, readJson, ROOT, writeJson } from '../cosmetics/common.mjs';
 import { loadHeroes } from '../cosmetics/heroes-list.mjs';
-import { checkHeroes, checkItemshopKey, checkJobs, checkPosts, checkReminders, checkSources, checkWiki, WATCHED_JOBS } from './checks.mjs';
+import { checkHeroes, checkItemshopKey, checkJobs, checkNews, checkPosts, checkReminders, checkSources, checkWiki, newsArticleId, parseNewsList, WATCHED_JOBS } from './checks.mjs';
 import { applyPlan, createGitHub, planIssues } from './github.mjs';
 
 const REPO = process.env.GITHUB_REPOSITORY ?? 'Meowthebest/OW2';
@@ -20,12 +20,12 @@ if (!dryRun && !token) {
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /** Asks a few times, since these sources can fail for a moment. Anything else stops at once, and shows up as that source being down. */
-async function readSource(url) {
+async function readSource(url, as = 'json') {
   let problem = 'no answer';
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      const response = await fetch(url, { headers: { accept: 'application/json', 'user-agent': `ow2-site-alerts (+https://github.com/${REPO})` }, signal: AbortSignal.timeout(20000) });
-      if (response.ok) return await response.json();
+      const response = await fetch(url, { headers: { accept: as === 'json' ? 'application/json' : 'text/html', 'user-agent': `ow2-site-alerts (+https://github.com/${REPO})` }, signal: AbortSignal.timeout(20000) });
+      if (response.ok) return as === 'json' ? await response.json() : await response.text();
       problem = `it answered ${response.status}`;
       if (response.status < 500 && response.status !== 429) break;
     } catch (error) {
@@ -48,6 +48,13 @@ async function readAnnouncements() {
   const topics = (await readSource('https://us.forums.blizzard.com/en/overwatch/c/announcements/5.json'))?.topic_list?.topics;
   if (!Array.isArray(topics) || topics.length === 0 || !topics.every((topic) => topic.id && topic.title && topic.created_at)) throw new Error('its topic list looks wrong');
   return topics;
+}
+
+/** Blizzard's news page, once per run. Its robots.txt allows it, and only the list of articles is read, never the articles. */
+async function readNews() {
+  const articles = parseNewsList(await readSource('https://overwatch.blizzard.com/en-us/news/', 'text'));
+  if (articles.length < 3) throw new Error('its article list looks wrong');
+  return articles;
 }
 
 const outcomes = {};
@@ -77,7 +84,7 @@ for (const item of Object.values(readJson(path.join(DATA_DIR, 'shop/items.json')
   }
 }
 
-const [apiHeroes, topics] = await Promise.all([attempt('overfast', readHeroList), attempt('forum', readAnnouncements)]);
+const [apiHeroes, topics, articles] = await Promise.all([attempt('overfast', readHeroList), attempt('forum', readAnnouncements), attempt('news', readNews)]);
 const state = readJson(STATE_FILE, {}) ?? {};
 const sourceCheck = checkSources({ state, outcomes, now });
 
@@ -92,6 +99,13 @@ if (topics) {
   const curated = (name) => readJson(path.join(DATA_DIR, 'curated', `${name}.json`), []);
   const knownUrls = [...curated('twitch-drops'), ...curated('loot-pools')].flatMap((record) => record.sources ?? []).map((source) => source.url ?? source);
   results.post = checkPosts({ topics, knownUrls, now });
+}
+
+if (articles) {
+  // An article is known once an event cites it, or once it's been checked and listed under "reviewed".
+  const events = readJson(path.join(DATA_DIR, 'curated/game-events.json'), {}) ?? {};
+  const cited = [...(events.events ?? []).flatMap((event) => event.sources ?? []), ...(events.reviewed ?? [])];
+  results.news = checkNews({ articles, known: new Set(cited.map((entry) => newsArticleId(entry.url)).filter(Boolean)), now });
 }
 
 // Only the job can see whether the secret is set, and a local run can't tell.

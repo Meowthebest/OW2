@@ -1,0 +1,191 @@
+/* In-Game Events page. Every rule here starts with ev-, so nothing else on the site changes. */
+
+.ev-section { gap: 10px; }
+.ev-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; align-items: start; min-width: 0; }
+.ev-skeleton { min-height: 360px; }
+
+/* A card: picture on top, then what, when and what you get */
+.ev-card {
+  --ev-state: var(--line-2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--cx-radius);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+}
+.ev-card::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--ev-state); z-index: 1; }
+.ev-card[data-state='live'] { --ev-state: var(--cx-good); border-color: color-mix(in srgb, var(--cx-good) 38%, var(--line)); }
+.ev-card[data-state='upcoming'] { --ev-state: var(--blue); }
+.ev-card[data-state='ended'] { --ev-state: var(--line-2); }
+
+/* Blizzard's article pictures are 16:9, so they show whole. Without one, a short band carries the event's kind. */
+.ev-card__art { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--panel-3); }
+.ev-card__art--plain { aspect-ratio: auto; height: 92px; }
+.ev-card__art > .cx-thumb { position: absolute; inset: 0; }
+.ev-card[data-state='ended'] .ev-card__art > .cx-thumb { filter: saturate(.55) brightness(.85); }
+.ev-card__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 22px;
+  color: var(--orange);
+  background:
+    radial-gradient(circle at 85% 50%, rgba(249, 158, 26, .16), transparent 45%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, .025) 0 10px, transparent 10px 20px),
+    linear-gradient(135deg, var(--panel-3), var(--panel));
+}
+.ev-card[data-state='ended'] .ev-card__placeholder { color: var(--ink-3); }
+.ev-card__kind {
+  position: absolute;
+  left: 8px;
+  top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 4px;
+  background: rgba(9, 12, 18, .82);
+  font: 800 12px/1 var(--font-label);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.ev-card__kind svg { color: var(--orange); }
+.ev-card__credit {
+  position: absolute;
+  right: 6px;
+  bottom: 5px;
+  max-width: calc(100% - 12px);
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(9, 12, 18, .7);
+  font-size: 10.5px;
+  line-height: 1.35;
+  color: var(--ink-2);
+  text-align: right;
+}
+
+.ev-card__body { display: flex; flex-direction: column; gap: 11px; padding: 12px 14px 14px; min-width: 0; }
+.ev-card__head { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ev-card__name { font: italic 900 27px/1 var(--font-display); letter-spacing: .01em; text-transform: uppercase; color: var(--ink); overflow-wrap: anywhere; }
+.ev-card__when { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.ev-card__dates { display: inline-flex; align-items: center; gap: 6px; font: 700 14.5px/1.2 var(--font-label); letter-spacing: .02em; color: var(--ink-2); }
+.ev-card__dates svg { flex: none; color: var(--orange); }
+.ev-status-line { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.ev-status { gap: 5px; }
+.ev-status[data-state='ended'] { color: var(--ink-3); }
+.ev-countdown { font: 800 14.5px/1.2 var(--font-label); letter-spacing: .02em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.ev-card__summary { font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+
+.ev-card__toggle {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 5px;
+  min-height: 34px;
+  padding: 0 2px;
+  font: 700 14px/1 var(--font-label);
+  letter-spacing: .02em;
+  color: var(--ink-2);
+}
+.ev-card__toggle:hover { color: var(--ink); }
+.ev-card__toggle svg { transition: transform .15s var(--ease-out); }
+.ev-card__toggle[aria-expanded='true'] svg { transform: rotate(180deg); }
+.ev-card__details { display: flex; flex-direction: column; gap: 11px; min-width: 0; }
+.ev-card__details[hidden] { display: none; }
+
+.ev-block { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.ev-block__title { display: inline-flex; align-items: center; gap: 6px; font: 800 12px/1 var(--font-label); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.ev-block__title svg { color: var(--orange); }
+.ev-text { font-size: 14px; line-height: 1.45; color: var(--ink-2); }
+
+.ev-list { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.ev-list li { position: relative; padding-left: 15px; font-size: 14px; line-height: 1.45; color: var(--ink-2); overflow-wrap: anywhere; }
+.ev-list li::before { content: ''; position: absolute; left: 2px; top: .6em; width: 6px; height: 6px; background: var(--orange); transform: skewX(var(--skew)); }
+.ev-list li strong { color: var(--ink); font-weight: 700; }
+.ev-list--notes li::before { background: var(--line-2); }
+.ev-challenge__arrow { display: inline-block; margin: 0 5px; vertical-align: -2px; color: var(--orange); }
+.ev-challenge__reward { color: var(--ink); }
+
+.ev-rewards { display: flex; flex-wrap: wrap; gap: 6px; }
+.ev-reward {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 100%;
+  padding: 6px 9px 6px 10px;
+  border: 1px solid var(--line-2);
+  border-left: 3px solid var(--cx-rarity, var(--line-2));
+  border-radius: 5px;
+  background: var(--panel-3);
+}
+.ev-rewards__item { display: flex; max-width: 100%; }
+.ev-reward--link { color: inherit; text-decoration: none; }
+.ev-reward--link .ev-reward__name { text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--cx-rarity, var(--ink-3)) 70%, transparent); text-underline-offset: 2px; }
+.ev-reward--link:hover { border-color: var(--cx-rarity, var(--orange)); }
+.ev-reward__name { font: 700 14px/1.2 var(--font-label); letter-spacing: .01em; color: var(--ink); overflow-wrap: anywhere; }
+.ev-reward__meta { font: 700 11.5px/1.2 var(--font-label); letter-spacing: .05em; text-transform: uppercase; color: var(--cx-rarity, var(--ink-3)); }
+
+/* Cosmetics the event is about, from the catalogue */
+.ev-related { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.ev-cosmetics { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px; }
+.ev-cosmetic { display: flex; flex-direction: column; gap: 4px; min-width: 0; color: var(--ink-2); text-decoration: none; }
+.ev-cosmetic:hover { color: var(--ink); }
+.ev-cosmetic__thumb {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--cx-rarity, var(--line-2)) 55%, var(--line));
+  border-radius: 6px;
+  background: var(--panel-3);
+}
+.ev-cosmetic:hover .ev-cosmetic__thumb { border-color: var(--cx-rarity, var(--orange)); }
+.ev-cosmetic__shop {
+  position: absolute;
+  left: 3px;
+  right: 3px;
+  bottom: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 2px 0;
+  border-radius: 3px;
+  background: rgba(9, 12, 18, .85);
+  font: 800 10px/1 var(--font-label);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #62dda9;
+}
+.ev-cosmetic__name { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font: 700 12.5px/1.15 var(--font-label); letter-spacing: .01em; }
+.ev-links { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; font-size: 14px; line-height: 1.45; color: var(--ink-3); }
+.ev-links:empty { display: none; }
+.ev-links a { color: var(--ink-2); }
+.ev-links__more { display: inline-flex; align-items: center; gap: 4px; font: 700 14px/1.3 var(--font-label); letter-spacing: .02em; }
+.ev-links__more svg { flex: none; color: var(--orange); }
+
+.ev-card__foot { padding-top: 10px; border-top: 1px solid var(--line); }
+
+/* Older events, one line each */
+.ev-earlier { display: flex; flex-direction: column; }
+.ev-earlier li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.ev-earlier li:first-child { border-top: 0; }
+.ev-earlier__name { font: 700 15px/1.2 var(--font-label); color: var(--ink); }
+.ev-earlier__meta { color: var(--ink-3); }
+.ev-earlier a { display: inline-flex; align-items: center; gap: 3px; margin-left: auto; color: var(--ink-2); }
+
+.ev-credit { align-items: flex-start; }
+.ev-credit svg { margin-top: 3px; }
+
+@media (max-width: 600px) {
+  .ev-card__name { font-size: 24px; }
+  .ev-card__body { padding: 11px 12px 12px; }
+  .ev-cosmetics { grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); }
+}

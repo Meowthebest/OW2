@@ -40,7 +40,7 @@ function Shell() {
           <Suspense fallback={pageFallback}>
             <PlayersPage route={route} />
           </Suspense>
-        ) : route.view === 'cosmetics' || route.view === 'bundles' || route.view === 'shop' || route.view === 'loot-pools' || route.view === 'hub' || route.view === 'collection' ? (
+        ) : route.view === 'cosmetics' || route.view === 'bundles' || route.view === 'shop' || route.view === 'loot-pools' || route.view === 'hub' || route.view === 'collection' || route.view === 'events' ? (
           <Suspense fallback={pageFallback}>
             <CosmeticsHub route={route} />
           </Suspense>

@@ -122,6 +122,36 @@ const POOLS = [
 const STATS = { total: CATALOG.length, byType: META.facets.types, byRarity: META.facets.rarities, skinsByRarity: META.facets.rarities, byHero: META.facets.heroes, bySeason: [], origins: [{ id: 'shop', label: 'Seen in shop data', count: 2 }], mythics: { skins: 1, weapons: 0 }, bundles: { total: 2, active: 1, previous: 1, averageItems: 1.5 }, rotationsByMonth: [{ month: '2026-11', rotations: 2, listings: 3 }], appearancesByType: [], mostSeen: [] };
 const RATES = [{ hero: 'ana', pickrate: 24.1, winrate: 45.5, banrate: null }, { hero: 'genji', pickrate: 14, winrate: 52.5, banrate: 9.6 }, { hero: 'reinhardt', pickrate: 13.6, winrate: 53.6, banrate: 3.2 }];
 
+// In-game events, dated from today in US Pacific time, so these tests mean the same thing whenever they run.
+const PACIFIC_TODAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' }).format(NOW);
+const pacificDay = (days) => {
+  const [year, month, day] = PACIFIC_TODAY.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+};
+const EVENT_SOURCES = [{ source: 'Blizzard', title: 'Season article', url: 'https://overwatch.blizzard.com/en-us/news/1/season/', checkedAt: pacificDay(0) }];
+const gameEvent = (id, name, kind, start, end, over = {}) => ({ id, name, kind, start, end, summary: `${name} in a few words.`, image: null, modes: [], challenges: [], rewards: [], rewardsNote: null, pass: null, notes: [], cosmetics: [], cosmeticsEvent: null, links: [], sources: EVENT_SOURCES, featured: [], bundles: [], catalogue: null, ...over });
+const GAME_EVENTS = {
+  schema: 1,
+  checkedAt: pacificDay(0),
+  recordedFrom: pacificDay(-200),
+  events: [
+    gameEvent('reign', 'Reign Event', 'event', pacificDay(-5), pacificDay(20), {
+      image: { url: 'https://bnetcmsus-a.akamaihd.net/cms/gallery/x.png', credit: 'Blizzard Entertainment. ©Partner Studio' },
+      pass: { tiers: 24, price: { amount: 1000, currency: 'coins' }, note: 'Finish it any time.' },
+      rewards: [{ name: 'Aurora', rarity: 'legendary', track: 'premium', note: null, cosmeticId: 'skin.ana.aurora' }, { name: 'A recolor', rarity: 'epic', track: 'free', note: null, cosmeticId: null }],
+      rewardsNote: 'Only the highlights.',
+      featured: [{ id: 'skin.ana.aurora', name: 'Aurora', type: 'skin', rarity: 'legendary', hero: 'ana', image: null, availability: 'in-shop' }],
+      bundles: [{ id: '100', name: 'Aurora Mega Bundle', status: 'active', image: null }],
+      catalogue: { event: 'bastet', label: "Ana's Bastet Challenge", count: 3 },
+    }),
+    gameEvent('dig', 'Dig Event', 'challenge', pacificDay(-5), pacificDay(0), { challenges: [{ task: 'Complete 3 digs in a week', reward: 'A Loot Box' }] }),
+    gameEvent('hunt', 'Hunt Event', 'challenge', pacificDay(2), pacificDay(5), { notes: ['Double XP all event.'] }),
+    gameEvent('later', 'Later Event', 'esports', pacificDay(20), pacificDay(24)),
+    gameEvent('spooky', 'Spooky Event', 'seasonal', pacificDay(-40), pacificDay(-8), { modes: [{ name: 'Graveyard Mode', about: 'Random powers after each death.' }] }),
+    gameEvent('old', 'Old Event', 'collab', pacificDay(-200), pacificDay(-150)),
+  ],
+};
+
 const FILES = {
   'meta.json': META,
   'catalog.json': CATALOG,
@@ -133,6 +163,7 @@ const FILES = {
   'battle-passes.json': [{ ...PASS, rewards: undefined }],
   'battle-passes/2026-s5.json': PASS,
   'twitch-drops.json': DROPS,
+  'game-events.json': GAME_EVENTS,
   'loot-pools.json': POOLS,
   'shop.json': RECORDED,
   'rotations.json': [RECORDED.rotation, { id: 'r1', at: iso(-8 * DAY), shopDate: '2026-10-28', count: 1, added: 0, removed: 0, exact: true }],
@@ -231,14 +262,14 @@ await test('the header menu opens, links to every section and closes with Escape
   click(toggle);
   await until(() => toggle.getAttribute('aria-expanded') === 'true', 'the menu to open');
   const links = [...app.document.querySelectorAll('.cx-nav__link')].map((link) => link.getAttribute('href'));
-  assert.deepEqual(links, ['#/cosmetics', '#/bundles', '#/shop', '#/loot-pools', '#/hub/mythics', '#/hub/battle-passes', '#/hub/twitch-drops', '#/hub/stats', '#/collection']);
+  assert.deepEqual(links, ['#/cosmetics', '#/bundles', '#/shop', '#/loot-pools', '#/events', '#/hub/mythics', '#/hub/battle-passes', '#/hub/twitch-drops', '#/hub/stats', '#/collection']);
   app.document.dispatchEvent(new app.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   await until(() => toggle.getAttribute('aria-expanded') === 'false', 'the menu to close');
   app.close();
 });
 
 await test('every new route opens with no errors', async () => {
-  for (const hash of ['#/cosmetics', '#/cosmetics/skin.ana.aurora', '#/bundles', '#/bundles/100', '#/shop', '#/loot-pools', '#/loot-pools/esports', '#/hub/mythics', '#/hub/mythics/ana-a-7000-wargod', '#/hub/battle-passes', '#/hub/battle-passes/2026-s5', '#/hub/twitch-drops', '#/hub/stats', '#/hub/stats?tab=heroes', '#/hub/stats?tab=collection', '#/collection', '#/collection?tab=alerts']) {
+  for (const hash of ['#/cosmetics', '#/cosmetics/skin.ana.aurora', '#/bundles', '#/bundles/100', '#/shop', '#/loot-pools', '#/loot-pools/esports', '#/hub/mythics', '#/hub/mythics/ana-a-7000-wargod', '#/hub/battle-passes', '#/hub/battle-passes/2026-s5', '#/hub/twitch-drops', '#/hub/stats', '#/hub/stats?tab=heroes', '#/hub/stats?tab=collection', '#/collection', '#/collection?tab=alerts', '#/events']) {
     const app = boot({ hash });
     await until(() => app.document.querySelector('h1'), `${hash} to render`);
     await wait(60);
@@ -904,6 +935,100 @@ await test('a watched cosmetic in the shop gets one message, once', async () => 
   await wait(100);
   assert.equal(again.document.querySelector('.toast'), null);
   again.close();
+});
+
+// In-game events
+const eventCard = (document, name) => [...document.querySelectorAll('.ev-card')].find((card) => card.querySelector('.ev-card__name').textContent === name);
+const sectionNames = (document) => [...document.querySelectorAll('.ev-section .cx-section-title')].map((node) => text(node));
+const namesIn = (document, id) => [...(document.querySelector(`#ev-${id}`)?.closest('section').querySelectorAll('.ev-card__name') ?? [])].map((node) => node.textContent);
+
+await test('the events page shows what is on, what is next and what just ended, with honest countdowns', async () => {
+  const app = boot({ hash: '#/events' });
+  await until(() => app.document.querySelector('.ev-card'), 'event cards');
+  assert.match(app.document.title, /In-Game Events/);
+  assert.deepEqual(sectionNames(app.document), ['Happening now', 'Coming up', 'Recently ended']);
+  assert.deepEqual(namesIn(app.document, 'live'), ['Dig Event', 'Reign Event'], 'ending soonest first');
+  assert.deepEqual(namesIn(app.document, 'upcoming'), ['Hunt Event', 'Later Event']);
+  assert.deepEqual(namesIn(app.document, 'recent'), ['Spooky Event']);
+
+  const dig = eventCard(app.document, 'Dig Event');
+  assert.equal(text(dig.querySelector('.ev-status')), 'Ending soon');
+  assert.equal(text(dig.querySelector('.ev-countdown')), 'Last day');
+  assert.match(dig.querySelector('.ev-countdown').getAttribute('title'), /whole days in US Pacific time/);
+  assert.match(text(dig.querySelector('.ev-challenge')), /Complete 3 digs in a week\s*earns\s*A Loot Box/);
+  const reign = eventCard(app.document, 'Reign Event');
+  assert.equal(text(reign.querySelector('.ev-status')), 'Live now');
+  assert.equal(text(reign.querySelector('.ev-countdown')), 'Ends in 20 days');
+  assert.equal(text(eventCard(app.document, 'Hunt Event').querySelector('.ev-countdown')), 'Starts in 2 days');
+  assert.equal(text(eventCard(app.document, 'Hunt Event').querySelector('.ev-status')), 'Starting soon');
+  assert.equal(text(eventCard(app.document, 'Later Event').querySelector('.ev-countdown')), 'Starts in 20 days');
+  assert.equal(text(eventCard(app.document, 'Spooky Event').querySelector('.ev-status')), 'Ended');
+  assert.ok(!eventCard(app.document, 'Spooky Event').querySelector('.ev-countdown'), 'no countdown once it has ended');
+
+  // What the Reign card links to: the reward, the cosmetic, its bundle and the whole event in the catalogue.
+  assert.equal(reign.querySelector('.ev-reward--link').getAttribute('href'), '#/cosmetics/skin.ana.aurora');
+  assert.match(text(reign.querySelector('.ev-reward--link')), /Aurora\s*Legendary · Premium track/);
+  assert.match(text(reign.querySelector('.ev-rewards')), /A recolor\s*Epic · Free track/);
+  assert.match(text(reign), /24 tiers, premium track 1,000 Coins\. Finish it any time\./);
+  assert.match(text(reign), /Only the highlights\./);
+  assert.equal(reign.querySelector('.ev-cosmetic').getAttribute('href'), '#/cosmetics/skin.ana.aurora');
+  assert.match(text(reign.querySelector('.ev-cosmetic')), /In shop/);
+  assert.equal(reign.querySelector('.ev-links a[href="#/bundles/100"]').textContent, 'Aurora Mega Bundle');
+  assert.match(text(reign.querySelector('.ev-links')), /In the shop now: Aurora Mega Bundle/);
+  assert.match(text(reign.querySelector('a[href="#/cosmetics?event=bastet"]')), /All 3 cosmetics from Ana's Bastet Challenge/);
+  assert.equal(text(reign.querySelector('.ev-card__credit')), '©Partner Studio');
+  assert.equal(text(reign.querySelector('.ev-card__kind')), 'Event');
+  assert.ok(reign.querySelector('.cx-sources a[href="https://overwatch.blizzard.com/en-us/news/1/season/"]'));
+  assert.match(reign.querySelector('.ev-card__art img').getAttribute('src'), /^https:\/\/wsrv\.nl\/\?url=bnetcmsus-a\.akamaihd\.net/, 'the picture is loaded resized');
+  assert.ok(eventCard(app.document, 'Dig Event').querySelector('.ev-card__art--plain .ev-card__placeholder'), 'no picture means a plain band');
+
+  // An event that's over keeps its details a click away.
+  const spooky = eventCard(app.document, 'Spooky Event');
+  const toggle = spooky.querySelector('.ev-card__toggle');
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.ok(!/Graveyard Mode/.test(text(spooky)));
+  click(toggle);
+  await until(() => /Graveyard Mode/.test(text(spooky)), 'the mode shown');
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+
+  // Older events fold away into one list.
+  const earlier = [...app.document.querySelectorAll('.cx-collapse')].find((node) => /Earlier events/.test(text(node)));
+  assert.ok(earlier, 'the earlier list');
+  click(earlier.querySelector('button'));
+  await until(() => /Old Event/.test(text(earlier)), 'the old event listed');
+  assert.match(text(app.document.querySelector('.ev-page')), /Dates are as Blizzard gives them, in US Pacific time/);
+  assert.match(text(app.document.querySelector('.ev-credit')), /List last checked/);
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('with nothing running, the events page leads with what is coming up', async () => {
+  const files = { ...FILES, 'game-events.json': { ...GAME_EVENTS, events: GAME_EVENTS.events.filter((event) => !['reign', 'dig'].includes(event.id)) } };
+  const app = boot({ hash: '#/events', api: dataApi({ files }) });
+  await until(() => app.document.querySelector('.ev-card'), 'event cards');
+  assert.deepEqual(sectionNames(app.document), ['Coming up', 'Recently ended']);
+  assert.match(text(app.document.querySelector('.ev-section')), /Nothing is running right now, so here's what's next\./);
+  app.close();
+});
+
+await test('the events page says plainly when no events are published', async () => {
+  const files = { ...FILES };
+  delete files['game-events.json'];
+  const app = boot({ hash: '#/events', api: dataApi({ files }) });
+  await until(() => /No in-game events published yet/.test(text(app.document.querySelector('.ev-page'))), 'the empty state');
+  assert.equal(app.document.querySelectorAll('.ev-card').length, 0);
+  app.close();
+});
+
+await test('the menu marks In-Game Events as the page you are on', async () => {
+  const app = boot({ hash: '#/events' });
+  const toggle = await until(() => app.document.querySelector('.cx-nav__button'), 'the menu');
+  assert.ok(toggle.classList.contains('is-active'));
+  click(toggle);
+  const link = await until(() => app.document.querySelector('.cx-nav__link[href="#/events"]'), 'the events link');
+  assert.equal(link.textContent, 'In-Game Events');
+  assert.equal(link.getAttribute('aria-current'), 'page');
+  app.close();
 });
 
 await test('a watched campaign near its end gets a reminder', async () => {

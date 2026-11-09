@@ -2,7 +2,7 @@
 // Nothing here contacts another site.
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
-import { checkHeroes, checkItemshopKey, checkJobs, checkPosts, checkReminders, checkSources, checkWiki, plain, REMINDERS, WATCHED_JOBS } from './alerts/checks.mjs';
+import { checkHeroes, checkItemshopKey, checkJobs, checkNews, checkPosts, checkReminders, checkSources, checkWiki, newsArticleId, parseNewsList, plain, REMINDERS, WATCHED_JOBS } from './alerts/checks.mjs';
 import { ALERT_LABEL, applyPlan, createGitHub, issueBody, keyOf, planIssues } from './alerts/github.mjs';
 
 let passed = 0;
@@ -90,6 +90,53 @@ await test('text from another site can\'t ping anyone or add markup', () => {
   const result = checkPosts({ topics: [{ id: 7, title: 'Drops for @someone', created_at: '2026-12-10T00:00:00Z', slug: 'bad)slug' }], knownUrls: [], now: NOW });
   assert.ok(!/@someone/.test(result.alerts[0].title));
   assert.ok(result.alerts[0].body.includes('/t/-/7)'), 'an odd slug can\'t break out of the link');
+});
+
+// Blizzard's news page. The markup copies the shapes the real page uses: featured cards and plain list items.
+const NEWS_PAGE = `
+<a slot="gallery-items" href="/news/24400001/winter-wonderland-2026-returns" target="_blank"><blz-card><blz-image slot="media" src="https://x.test/a.png"></blz-image>
+  <blz-content-block><h3 slot="heading">Winter Wonderland &amp; More Returns</h3></blz-content-block><blz-timestamp slot="footer" timestamp="2026-12-15T18:00:00.000Z"></blz-timestamp></blz-card></a>
+<a slot="gallery-items" href="/news/24400002/weekly-recall" target="_blank"><blz-card><h3 slot="heading">Weekly Recall: Dev Q&amp;A</h3><blz-timestamp timestamp="2026-12-14T18:00:00.000Z"></blz-timestamp></blz-card></a>
+<a href="/news/24400003/overwatch-x-someone"><blz-list-item class="news" headingtext="Overwatch &#215; Someone Collab" descriptiontext="Skins arrive in the shop."><blz-timestamp timestamp="2026-12-12T18:00:00.000Z"></blz-timestamp></blz-list-item></a>
+<a href="/news/24400004/season-1-recap"><blz-list-item class="news" headingtext="Season 1 Recap" descriptiontext="An old one."><blz-timestamp timestamp="2026-08-01T18:00:00.000Z"></blz-timestamp></blz-list-item></a>
+<a href="/en-us/news/24400001/winter-wonderland-2026-returns/">the same article linked twice</a>
+<a href="/news/24400005/no-title-here"><img src="x.png"></a>
+<a href="/patch-notes">Patch notes</a>`;
+
+await test('the news page gives each article once, with its title, description and date', () => {
+  const articles = parseNewsList(NEWS_PAGE);
+  assert.deepEqual(articles.map((article) => article.id), ['24400001', '24400002', '24400003', '24400004']);
+  assert.deepEqual(articles[0], { id: '24400001', url: 'https://overwatch.blizzard.com/en-us/news/24400001/winter-wonderland-2026-returns/', title: 'Winter Wonderland & More Returns', description: null, publishedAt: '2026-12-15T18:00:00.000Z' });
+  assert.equal(articles[2].title, 'Overwatch × Someone Collab');
+  assert.equal(articles[2].description, 'Skins arrive in the shop.');
+  assert.equal(newsArticleId('https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon/'), '24303010');
+  assert.equal(newsArticleId('https://overwatch.blizzard.com/en-us/news/24303010'), '24303010');
+  assert.equal(newsArticleId('https://example.test/'), null);
+});
+
+await test('recent articles that look like event news are flagged, and nothing else', () => {
+  const result = checkNews({ articles: parseNewsList(NEWS_PAGE), known: new Set(), now: NOW });
+  assert.deepEqual(keys(result), ['news:24400001', 'news:24400003'], 'not the recap, not the too-old season post');
+  const [alert] = result.alerts;
+  assert.equal(alert.title, "Check Blizzard's article for events: Winter Wonderland & More Returns");
+  assert.ok(alert.body.includes('(https://overwatch.blizzard.com/en-us/news/24400001/)'));
+  assert.match(alert.body, /on Dec 15, 2026/);
+  assert.match(alert.body, /game-events\.json/);
+});
+
+await test('an article an event already cites isn\'t flagged, and its issue stays open until then', () => {
+  const articles = parseNewsList(NEWS_PAGE);
+  assert.deepEqual(keys(checkNews({ articles, known: new Set(['24400001', '24400003']), now: NOW })), []);
+  const pending = checkNews({ articles: [], known: new Set(), now: NOW });
+  assert.equal(pending.keepOpen('news:24400001'), true, 'gone from the page, but not added yet');
+  assert.equal(checkNews({ articles: [], known: new Set(['24400001']), now: NOW }).keepOpen('news:24400001'), false);
+});
+
+await test('an article title can\'t ping anyone or add markup', () => {
+  const [alert] = checkNews({ articles: [{ id: '9', url: 'https://x.test', title: 'Event for @everyone [click](https://evil.test)', description: null, publishedAt: null }], known: new Set(), now: NOW }).alerts;
+  assert.ok(!/@everyone/.test(alert.title + alert.body));
+  assert.ok(!/\]\(https:\/\/evil\.test/.test(alert.body), 'no link of its own');
+  assert.ok(alert.body.includes('(https://overwatch.blizzard.com/en-us/news/9/)'), 'the link is built from the article number');
 });
 
 // Wiki

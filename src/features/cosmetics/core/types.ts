@@ -299,7 +299,7 @@ export interface FacetValue {
 export interface CatalogMeta {
   schema: 1;
   generatedAt: string;
-  counts: { cosmetics: number; bundles: number; rotations: number; passes: number; mythics: number; campaigns: number };
+  counts: { cosmetics: number; bundles: number; rotations: number; passes: number; mythics: number; campaigns: number; events?: number };
   sources: SourceStatus[];
   facets: {
     heroes: FacetValue[];

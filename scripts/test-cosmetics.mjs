@@ -151,6 +151,7 @@ await test('each kind of image loads at a sensible size', () => {
   assert.equal(core.resizedImage('https://overwatch.weirdgloop.org/images/Lúcio_Skin.png', 400), 'https://overwatch.weirdgloop.org/images/thumb/L%C3%BAcio_Skin.png/240px-L%C3%BAcio_Skin.png', 'an accent in a name stays encoded');
   assert.equal(core.resizedImage('https://overwatch.weirdgloop.org/w/Some_Page', 400), 'https://overwatch.weirdgloop.org/w/Some_Page', 'anything else on the wiki is left alone');
   assert.match(core.resizedImage('https://catalog.blzstatic.com//a/b.png', 400), /^https:\/\/wsrv\.nl\/\?url=catalog\.blzstatic\.com/);
+  assert.match(core.resizedImage('https://bnetcmsus-a.akamaihd.net/cms/gallery/X.png', 640), /^https:\/\/wsrv\.nl\/\?url=bnetcmsus-a\.akamaihd\.net%2Fcms%2Fgallery%2FX\.png&w=640/, 'an article picture on the Events page');
   assert.ok(!core.resizedImage(wikiFile, 400).includes('wsrv'), 'the wiki\'s pictures go straight to the visitor\'s browser');
   assert.equal(core.resizedImage('https://example.com/a.png', 400), 'https://example.com/a.png');
   assert.equal(core.resizedImage('not a url', 400), 'not a url');
@@ -780,6 +781,126 @@ await test('corrections are applied, and last across rebuilds', async () => {
   const bundle = readOut('bundles.json').find((item) => item.id === '100');
   assert.ok(bundle.items.some((item) => item.id === 'skin.widowmaker.eve-corrected'));
   rmSync(path.join(dataDir, 'corrections.json'));
+});
+
+// In-game events
+await test('event days follow US Pacific time, through daylight saving changes', () => {
+  // In 2026 daylight time runs from 2 AM on March 8 to 2 AM on November 1.
+  assert.equal(core.pacificOffsetAt(Date.parse('2026-03-08T09:59:00Z')), 8);
+  assert.equal(core.pacificOffsetAt(Date.parse('2026-03-08T10:00:00Z')), 7);
+  assert.equal(core.pacificOffsetAt(Date.parse('2026-11-01T08:59:00Z')), 7);
+  assert.equal(core.pacificOffsetAt(Date.parse('2026-11-01T09:00:00Z')), 8);
+  assert.equal(new Date(core.pacificDayStart('2026-07-01')).toISOString(), '2026-07-01T07:00:00.000Z');
+  assert.equal(new Date(core.pacificDayStart('2026-12-01')).toISOString(), '2026-12-01T08:00:00.000Z');
+  assert.equal(new Date(core.pacificDayStart('2026-11-01')).toISOString(), '2026-11-01T07:00:00.000Z', 'midnight that day is still daylight time');
+  assert.equal(new Date(core.pacificDayStart('2026-03-08')).toISOString(), '2026-03-08T08:00:00.000Z', 'midnight that day is still standard time');
+  assert.equal(core.pacificDate(Date.parse('2026-11-10T07:59:00Z')), '2026-11-09');
+  assert.equal(core.pacificDate(Date.parse('2026-11-10T08:00:00Z')), '2026-11-10');
+  assert.equal(core.daysBetween('2026-11-10', '2026-12-07'), 27);
+  assert.equal(core.addDays('2026-12-31', 1), '2027-01-01');
+  // Checked against the platform's own time zone data, every few hours across two years.
+  const zone = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Los_Angeles', year: 'numeric', month: '2-digit', day: '2-digit' });
+  for (let time = Date.parse('2026-01-01T00:00:00Z'); time < Date.parse('2028-01-01T00:00:00Z'); time += 3 * 3600000 + 17 * 60000) {
+    assert.equal(core.pacificDate(time), zone.format(time), new Date(time).toISOString());
+  }
+  for (let day = '2026-01-01'; day < '2028-01-01'; day = core.addDays(day, 1)) {
+    const start = core.pacificDayStart(day);
+    assert.equal(zone.format(start), day, day);
+    assert.equal(zone.format(start - 1), core.addDays(day, -1), `${day} starts exactly at midnight`);
+  }
+});
+
+await test('an event is live through its last day, and the countdown counts whole days', () => {
+  const event = { start: '2026-11-03', end: '2026-12-07' };
+  // November 3 is after daylight time ends, so its Pacific midnight is 08:00 UTC.
+  assert.equal(core.gameEventState(event, Date.parse('2026-11-03T07:59:00Z')), 'upcoming');
+  assert.equal(core.gameEventState(event, Date.parse('2026-11-03T08:00:00Z')), 'live');
+  assert.equal(core.gameEventState(event, Date.parse('2026-12-08T07:59:00Z')), 'live', 'through December 7');
+  assert.equal(core.gameEventState(event, Date.parse('2026-12-08T08:00:00Z')), 'ended');
+  const timing = (at, value = event) => core.gameEventTiming(value, Date.parse(at));
+  assert.deepEqual(timing('2026-11-10T20:00:00Z'), { state: 'live', text: 'Ends in 27 days', soon: false });
+  assert.deepEqual(timing('2026-12-06T20:00:00Z'), { state: 'live', text: 'Ends tomorrow', soon: true });
+  assert.deepEqual(timing('2026-12-07T20:00:00Z'), { state: 'live', text: 'Last day', soon: true });
+  assert.deepEqual(timing('2026-11-01T20:00:00Z'), { state: 'upcoming', text: 'Starts in 2 days', soon: true });
+  assert.deepEqual(timing('2026-10-20T20:00:00Z'), { state: 'upcoming', text: 'Starts in 14 days', soon: false });
+  assert.deepEqual(timing('2026-11-02T20:00:00Z'), { state: 'upcoming', text: 'Starts tomorrow', soon: true });
+  assert.deepEqual(timing('2026-12-09T20:00:00Z'), { state: 'ended', text: null, soon: false });
+  assert.deepEqual(timing('2026-11-10T20:00:00Z', { start: '2026-11-03', end: null }), { state: 'live', text: 'No end date announced', soon: false });
+  // Only a stated time gets an hour-by-hour countdown.
+  const timed = { start: '2026-11-03T18:00:00Z', end: '2026-11-05T18:00:00Z' };
+  assert.deepEqual(timing('2026-11-04T18:00:00Z', timed), { state: 'live', text: 'Ends in 1d 0h', soon: true });
+  assert.deepEqual(timing('2026-11-02T12:00:00Z', timed), { state: 'upcoming', text: 'Starts in 1d 6h', soon: true });
+  assert.equal(core.gameEventSpan(timed).exactEnd, true);
+  assert.equal(core.gameEventSpan(event).exactEnd, false);
+});
+
+await test('events are grouped by now, next, just ended and earlier, each in a useful order', () => {
+  const events = [
+    { id: 'later', start: '2026-11-03', end: '2026-12-07' },
+    { id: 'sooner', start: '2026-11-03', end: '2026-11-17' },
+    { id: 'open', start: '2026-09-01', end: null },
+    { id: 'next', start: '2026-11-20', end: '2026-11-23' },
+    { id: 'after', start: '2026-12-03', end: '2026-12-07' },
+    { id: 'just', start: '2026-10-06', end: '2026-11-02' },
+    { id: 'before', start: '2026-10-06', end: '2026-10-19' },
+    { id: 'old', start: '2026-06-01', end: '2026-06-10' },
+  ];
+  const groups = core.groupGameEvents(events, Date.parse('2026-11-10T20:00:00Z'));
+  const ids = (list) => list.map((event) => event.id);
+  assert.deepEqual(ids(groups.live), ['sooner', 'later', 'open'], 'ending soonest first, and no end last');
+  assert.deepEqual(ids(groups.upcoming), ['next', 'after']);
+  assert.deepEqual(ids(groups.recent), ['just', 'before']);
+  assert.deepEqual(ids(groups.earlier), ['old']);
+});
+
+await test('in-game events are joined to the catalogue and the recorded shop', async () => {
+  const sources = [{ source: 'Blizzard', title: 'Post', url: 'https://overwatch.blizzard.com/en-us/news/1/post/', checkedAt: '2026-11-10' }];
+  write('curated/game-events.json', {
+    schema: 1,
+    checkedAt: '2026-11-10',
+    recordedFrom: '2026-10-06',
+    events: [
+      { id: 'collab', name: 'Collab', kind: 'collab', start: '2026-11-03', end: '2026-11-17', summary: 'Skins.', image: null, cosmetics: ['skin.widowmaker.eve'], sources },
+      { id: 'hunt', name: 'Hunt', kind: 'challenge', start: '2026-11-20', end: '2026-11-23', summary: 'Games.', image: { url: 'https://bnetcmsus-a.akamaihd.net/cms/gallery/x.png', credit: 'Blizzard Entertainment' }, challenges: [{ task: 'Complete 5 games', reward: 'A Loot Box' }], sources },
+    ],
+  });
+  await buildCatalog({ now: new Date('2026-11-11T00:00:00Z') });
+  const file = readOut('game-events.json');
+  assert.equal(file.checkedAt, '2026-11-10');
+  assert.equal(file.recordedFrom, '2026-10-06');
+  const collab = file.events.find((event) => event.id === 'collab');
+  assert.deepEqual(collab.featured.map((item) => item.id), ['skin.widowmaker.eve']);
+  assert.ok(collab.featured[0].name && collab.featured[0].availability);
+  assert.ok(collab.bundles.some((bundle) => bundle.id === '100'), 'the bundle that holds the skin');
+  const hunt = file.events.find((event) => event.id === 'hunt');
+  assert.deepEqual([hunt.modes, hunt.rewards, hunt.notes, hunt.links, hunt.featured, hunt.bundles], [[], [], [], [], [], []], 'every list is filled in for the page');
+  assert.equal(hunt.pass, null);
+  assert.equal(hunt.catalogue, null);
+  assert.equal(readOut('meta.json').counts.events, 2);
+  rmSync(path.join(dataDir, 'curated/game-events.json'));
+  await buildCatalog({ now: new Date('2026-11-11T00:00:00Z') });
+  assert.ok(!existsSync(path.join(outDir, 'game-events.json')), 'with no list, no file, so the page says none are published');
+});
+
+await test('a bad in-game event stops the build and says why', async () => {
+  const good = readdirSync(outDir).length;
+  const source = [{ source: 'B', title: 'T', url: 'https://x.test' }];
+  write('curated/game-events.json', {
+    schema: 1,
+    checkedAt: '2026-11-10',
+    events: [
+      { id: 'Bad Id', name: 'X', kind: 'party', start: '2026-12-07', end: '2026-12-03', summary: 'x'.repeat(260), image: { url: 'http://x.test/a.png', credit: '' }, cosmetics: ['skin.nobody.nothing'], cosmeticsEvent: 'no-such-tag', links: [{ label: 'x', href: 'javascript:alert(1)' }], sources: [] },
+      { id: 'twice', name: 'A', kind: 'event', start: '2026-11-01', end: null, summary: 'a', image: null, sources: source },
+      { id: 'twice', name: 'B', kind: 'event', start: 'soon', end: null, summary: 'b', image: null, sources: source },
+    ],
+  });
+  const report = await buildCatalog({ dryRun: true });
+  for (const pattern of [/lowercase words/, /unknown kind/, /ends before it starts/, /under 220 characters/, /https url and a credit/, /no cosmetic skin\.nobody\.nothing/, /no cosmetics are tagged/, /a link needs/, /at least one source/, /used twice/, /start should be/]) {
+    assert.ok(report.errors.some((line) => pattern.test(line)), `an error matching ${pattern}`);
+  }
+  await assert.rejects(buildCatalog(), /nothing was written/);
+  assert.equal(readdirSync(outDir).length, good, 'the last good files stay');
+  rmSync(path.join(dataDir, 'curated/game-events.json'));
 });
 
 await test('admin entries with no source, or bad dates, stop the build', async () => {
@@ -2278,6 +2399,17 @@ await test('real Twitch campaigns have sources, consistent dates and rising watc
     const rewardIds = campaign.rewards.map((reward) => reward.id);
     assert.equal(new Set(rewardIds).size, rewardIds.length, campaign.id);
   }
+});
+
+await test('real in-game events each cite a Blizzard announcement', () => {
+  const file = JSON.parse(readFileSync('data/cosmetics/curated/game-events.json', 'utf8'));
+  assert.ok(file.events.length > 0);
+  for (const event of file.events) {
+    assert.ok(event.sources.length > 0 && event.sources.every((source) => source.url.startsWith('https://overwatch.blizzard.com/')), `${event.id} cites Blizzard`);
+    assert.ok(event.sources.every((source) => /^\d{4}-\d{2}-\d{2}$/.test(source.checkedAt ?? '')), `${event.id} says when it was checked`);
+  }
+  // Checked articles that hold no event to add are listed too, so the alert job doesn't raise them again.
+  for (const article of file.reviewed ?? []) assert.ok(/^https:\/\/overwatch\.blizzard\.com\/en-us\/news\/\d+\//.test(article.url) && article.note, article.url);
 });
 
 await test('real loot pools make no claim without a source', () => {
