@@ -4,6 +4,7 @@ import { HEROES, ROSTER_SEASON } from '../data/heroes';
 import type { Route } from '../lib/router';
 import { cn } from '../lib/format';
 import { LogoMark } from './icons';
+import { SECTIONS, sectionOf, type SectionLink } from './SectionNav';
 
 const NAV: ReadonlyArray<{ href: string; label: string; short?: string; view: Route['view'] }> = [
   { href: '#/', label: 'Randomizer', short: 'Random', view: 'randomizer' },
@@ -13,31 +14,14 @@ const NAV: ReadonlyArray<{ href: string; label: string; short?: string; view: Ro
   { href: '#/players', label: 'Players', view: 'players' },
 ];
 
-const HUB_GROUPS: ReadonlyArray<{ title: string; links: ReadonlyArray<{ href: string; label: string; active: (route: Route) => boolean }> }> = [
-  {
-    title: 'Cosmetics',
-    links: [
-      { href: '#/cosmetics', label: 'Cosmetics', active: (route) => route.view === 'cosmetics' },
-      { href: '#/bundles', label: 'Bundles', active: (route) => route.view === 'bundles' },
-      { href: '#/shop', label: 'Shop', active: (route) => route.view === 'shop' },
-      { href: '#/loot-pools', label: 'Loot Pools', active: (route) => route.view === 'loot-pools' },
-    ],
-  },
-  {
-    title: 'Hub',
-    links: [
-      { href: '#/events', label: 'In-Game Events', active: (route) => route.view === 'events' },
-      { href: '#/guess', label: 'Guess the Pro', active: (route) => route.view === 'guess' },
-      { href: '#/hub/mythics', label: 'Mythics', active: (route) => route.view === 'hub' && route.page === 'mythics' },
-      { href: '#/hub/battle-passes', label: 'Battle Passes', active: (route) => route.view === 'hub' && route.page === 'battle-passes' },
-      { href: '#/hub/twitch-drops', label: 'Twitch Drops', active: (route) => route.view === 'hub' && route.page === 'twitch-drops' },
-      { href: '#/hub/stats', label: 'Stats', active: (route) => route.view === 'hub' && route.page === 'stats' },
-    ],
-  },
-  {
-    title: 'Yours',
-    links: [{ href: '#/collection', label: 'My Collection', active: (route) => route.view === 'collection' }],
-  },
+const linksOf = (id: 'hub' | 'cosmetics') => SECTIONS.find((section) => section.id === id)?.links ?? [];
+const isCollection = (link: SectionLink) => link.href === '#/collection';
+
+/** The phone menu, where there's no room for the two section links. It holds the same pages as the section tabs. */
+const HUB_GROUPS: ReadonlyArray<{ title: string; links: readonly SectionLink[] }> = [
+  { title: 'Cosmetics', links: linksOf('cosmetics').filter((link) => !isCollection(link)) },
+  { title: 'Hub', links: linksOf('hub') },
+  { title: 'Yours', links: linksOf('cosmetics').filter(isCollection) },
 ];
 
 function HubMenu({ route }: { route: Route }) {
@@ -86,7 +70,7 @@ function HubMenu({ route }: { route: Route }) {
             <ul>
               {group.links.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className={cn('cx-nav__link', link.active(route) && 'is-active')} aria-current={link.active(route) ? 'page' : undefined} onClick={() => setOpen(false)}>{link.label}</a>
+                  <a href={link.href} className={cn('cx-nav__link', link.active(route) && 'is-active')} aria-current={link.active(route) ? 'page' : undefined} onClick={() => setOpen(false)}>{link.menuLabel ?? link.label}</a>
                 </li>
               ))}
             </ul>
@@ -121,6 +105,14 @@ export function SiteHeader({ route }: { route: Route }) {
               )}
             </a>
           ))}
+          {SECTIONS.map((section) => {
+            const active = sectionOf(route)?.id === section.id;
+            return (
+              <a key={section.id} href={section.href} className={cn('site-nav__link site-nav__section', active && 'is-active')} aria-current={active ? 'true' : undefined}>
+                {section.title}
+              </a>
+            );
+          })}
           <HubMenu route={route} />
         </nav>
         <p className="site-header__meta">

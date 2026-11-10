@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Bell, BellOff, Check, ExternalLink, Gift, Radio, Tv } from 'lucide-react';
+import { Bell, BellOff, Box, Check, Clock, ExternalLink, Gift, Radio, Tv } from 'lucide-react';
 import { StateBlock } from '../../../components/controls';
 import { cn, formatDateTime } from '../../../lib/format';
 import { useAsync } from '../../patches/data';
@@ -21,7 +21,10 @@ function watchTime(minutes: number | null) {
   return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} ${hours === 1 ? 'hour' : 'hours'}`;
 }
 
-/** Rewards on a line by watch time. The marks are claims the viewer makes, not watch progress from Twitch. */
+/** A loot box has no catalog entry, so without a picture it gets a box rather than a blank. */
+const isLootBox = (reward: DropReward) => reward.type === null && /loot ?box/i.test(reward.name);
+
+/** Rewards as cards in watch-time order. The marks are claims the viewer makes, not watch progress from Twitch. */
 function RewardTimeline({ campaign }: { campaign: DropCampaign }) {
   const entries = useCollection();
   const rewards = useMemo(() => [...campaign.rewards].sort((a, b) => (a.minutes ?? 1e9) - (b.minutes ?? 1e9)), [campaign.rewards]);
@@ -33,13 +36,16 @@ function RewardTimeline({ campaign }: { campaign: DropCampaign }) {
         const name = reward.cosmeticId ? <a href={`#/cosmetics/${reward.cosmeticId}`}>{reward.name}</a> : reward.name;
         return (
           <li key={reward.id} className={cn('cx-drop-reward', claimed && 'is-claimed')}>
-            <span className="cx-drop-reward__time">{watchTime(reward.minutes)}</span>
-            <span className="cx-drop-reward__media"><Thumb src={reward.image} width={120} type={reward.type} /></span>
+            <span className="cx-drop-reward__media">
+              {!reward.image && isLootBox(reward) ? <span className="cx-thumb cx-thumb--empty"><Box size={34} aria-hidden="true" /></span> : <Thumb src={reward.image} width={240} type={reward.type} />}
+              {claimed && <span className="cx-drop-reward__check" aria-hidden="true"><Check size={13} /></span>}
+            </span>
             <span className="cx-drop-reward__text">
               <span className="cx-drop-reward__name">{name}</span>
               {reward.type && <span className="cx-drop-reward__type"><TypeIcon type={reward.type} size={11} /> {typeSingular(reward.type)}</span>}
               {reward.note && <span className="cx-drop-reward__type">{reward.note}</span>}
             </span>
+            <span className="cx-drop-reward__when"><Clock size={12} aria-hidden="true" /><span className="cx-drop-reward__time">{watchTime(reward.minutes)}</span></span>
             <button type="button" className={cn('cx-tool', claimed && 'is-on')} aria-pressed={claimed} aria-label={`Mark ${reward.name} as claimed`} onClick={() => toggleMark('drop', id)}>
               <Check size={13} aria-hidden="true" /> {claimed ? 'Claimed' : 'Mark claimed'}
             </button>
@@ -74,23 +80,26 @@ function CampaignCard({ campaign, state }: { campaign: DropCampaign; state: 'act
           {campaign.url && <a className="cx-tool" href={campaign.url} target="_blank" rel="noreferrer">Announcement <ExternalLink size={13} aria-hidden="true" /></a>}
         </div>
       </header>
-      <p className="cx-drop__where">
-        <Tv size={14} aria-hidden="true" />
-        <span>
-          {campaign.channelNote}
-          {campaign.channels.length > 0 && (
-            <>
-              {campaign.channelNote ? ' ' : ''}
-              {campaign.channels.map((channel, index) => (
-                <span key={channel.label}>
-                  {index > 0 ? ', ' : ''}
-                  {channel.url ? <a href={channel.url} target="_blank" rel="noreferrer">{channel.label}</a> : channel.label}
-                </span>
-              ))}
-            </>
+      {campaign.channels.length > 0 && (
+        <div className="cx-drop__watch">
+          <span className="cx-drop__watch-label">Watch on</span>
+          {campaign.channels.map((channel) =>
+            channel.url ? (
+              <a key={channel.label} className="cx-drop__channel" href={channel.url} target="_blank" rel="noreferrer">
+                <Tv size={13} aria-hidden="true" /> {channel.label} <ExternalLink size={11} aria-hidden="true" />
+              </a>
+            ) : (
+              <span key={channel.label} className="cx-drop__channel"><Tv size={13} aria-hidden="true" /> {channel.label}</span>
+            ),
           )}
-        </span>
-      </p>
+        </div>
+      )}
+      {campaign.channelNote && (
+        <p className="cx-drop__where">
+          <Tv size={14} aria-hidden="true" />
+          <span>{campaign.channelNote}</span>
+        </p>
+      )}
       {campaign.claimUntil && <p className="cx-muted cx-muted--small">Claim by {formatDateTime(Date.parse(campaign.claimUntil))}.</p>}
       {campaign.note && <Note>{campaign.note}</Note>}
       <RewardTimeline campaign={campaign} />

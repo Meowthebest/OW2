@@ -10,6 +10,8 @@ import './styles/patches.css';
 import './styles/players.css';
 import './styles/cosmetics.css';
 import './styles/events.css';
+import './styles/section-nav.css';
+import './styles/hub.css';
 import './styles/pro.css';
 
 purgeRetiredData();

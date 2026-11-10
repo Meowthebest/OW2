@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useRef } from 'react';
+import { SectionNav } from './components/SectionNav';
 import { SiteFooter, SiteHeader } from './components/SiteChrome';
 import { ToastProvider, useToast } from './components/Toast';
 import { RandomizerPage } from './features/randomizer/RandomizerPage';
@@ -28,6 +29,7 @@ function Shell() {
     <>
       <button type="button" className="skip-link" onClick={() => main.current?.focus()}>Skip to content</button>
       <SiteHeader route={route} />
+      <SectionNav route={route} />
       <main ref={main} tabIndex={-1} className="site-main">
         {route.view === 'career' ? (
           <Suspense fallback={pageFallback}>

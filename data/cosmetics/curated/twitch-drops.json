@@ -1,5 +1,140 @@
 [
  {
+  "id": "2026-collegiate-homecoming-finals",
+  "name": "Overwatch Collegiate Homecoming Finals",
+  "start": "2026-11-21T08:00:00Z",
+  "end": "2026-11-23T07:59:00Z",
+  "claimUntil": "2026-11-30T07:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Watch the Overwatch Collegiate Homecoming broadcast on a channel with Drops enabled.",
+  "rewards": [
+   {
+    "id": "30-overwatch-collegiate-2026-icon",
+    "name": "Overwatch Collegiate 2026 Icon",
+    "minutes": 30,
+    "type": "player-icon",
+    "lookup": "Overwatch Collegiate 2026",
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/512x512/684d8a7bd4/overwatch-collegiate-2026-icon-1.png"
+   },
+   {
+    "id": "60-zero-grav-studying-spray",
+    "name": "Zero-grav Studying Spray",
+    "minutes": 60,
+    "type": "spray",
+    "lookup": "Zero-grav Studying",
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/2868x2868/bdcd8cea4e/zero-grav-studying-spray-1.png"
+   },
+   {
+    "id": "120-pachimarchives-name-card",
+    "name": "Pachimarchives Name Card",
+    "minutes": 120,
+    "type": "name-card",
+    "lookup": "Pachimarchives",
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/819x819/8ab8c12fd7/pachimarchivesnamecard-1.png"
+   },
+   {
+    "id": "180-esports-loot-box",
+    "name": "Esports Loot Box",
+    "minutes": 180,
+    "type": null,
+    "lookup": null,
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1475x1475/0a83fe47bb/owe_lb_0.png"
+   },
+   {
+    "id": "300-esports-loot-box",
+    "name": "Esports Loot Box",
+    "minutes": 300,
+    "type": null,
+    "lookup": null,
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1475x1475/0a83fe47bb/owe_lb_0.png"
+   }
+  ],
+  "url": "https://esports.overwatch.com/en-us/rewards",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "2026 Overwatch Collegiate Homecoming Finals Rewards (11/21 - 11/22)",
+    "url": "https://esports.overwatch.com/en-us/rewards",
+    "checkedAt": "2026-11-10"
+   }
+  ],
+  "note": "Blizzard gives the days, not the times. Drops start when the broadcast goes live."
+ },
+ {
+  "id": "2026-collegiate-homecoming-playoffs",
+  "name": "Overwatch Collegiate Homecoming Playoffs",
+  "start": "2026-11-14T08:00:00Z",
+  "end": "2026-11-16T07:59:00Z",
+  "claimUntil": "2026-11-23T07:59:00Z",
+  "image": null,
+  "channels": [
+   {
+    "label": "Overwatch streams with Drops on Twitch",
+    "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
+   }
+  ],
+  "channelNote": "Watch the Overwatch Collegiate Homecoming broadcast on a channel with Drops enabled.",
+  "rewards": [
+   {
+    "id": "60-a-plus-icon",
+    "name": "A+ Icon",
+    "minutes": 60,
+    "type": "player-icon",
+    "lookup": "A+",
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/5120x5120/a2c6a23aac/a-icon.jpg"
+   },
+   {
+    "id": "120-pachizuki-mascot-spray",
+    "name": "Pachizuki Mascot Spray",
+    "minutes": 120,
+    "type": "spray",
+    "lookup": "Pachizuki Mascot",
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/3277x3277/74f45daad2/pachizuki-mascot-spray-1-1.png"
+   },
+   {
+    "id": "180-pachiriko-mascot-spray",
+    "name": "Pachiriko Mascot Spray",
+    "minutes": 180,
+    "type": "spray",
+    "lookup": "Pachiriko Mascot",
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/5120x5120/e75711938c/pachiriko-mascot-spray.png"
+   },
+   {
+    "id": "300-esports-loot-box",
+    "name": "Esports Loot Box",
+    "minutes": 300,
+    "type": null,
+    "lookup": null,
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1475x1475/0a83fe47bb/owe_lb_0.png"
+   }
+  ],
+  "url": "https://esports.overwatch.com/en-us/rewards",
+  "sources": [
+   {
+    "source": "Blizzard",
+    "title": "2026 Overwatch Collegiate Homecoming Playoffs Rewards (11/14 - 11/15)",
+    "url": "https://esports.overwatch.com/en-us/rewards",
+    "checkedAt": "2026-11-10"
+   }
+  ],
+  "note": "Blizzard gives the days, not the times. Drops start when the broadcast goes live."
+ },
+ {
   "id": "2026-s5-midseason",
   "name": "Reign of Talon: Season 5 Midseason",
   "start": "2026-11-03T19:00:00Z",
@@ -60,7 +195,8 @@
     "minutes": 900,
     "type": null,
     "lookup": null,
-    "note": null
+    "note": null,
+    "image": "https://overwatch.weirdgloop.org/images/Epic_Loot_Box.png"
    }
   ],
   "url": "https://us.forums.blizzard.com/en/overwatch/t/reign-of-talon-season-5-midseason-twitch-drops/1046030",
@@ -76,41 +212,52 @@
  {
   "id": "2026-owcs-s3-playoffs",
   "name": "OWCS 2026 Stage 3 Playoffs",
-  "start": "2026-10-30T00:00:00Z",
+  "start": "2026-10-30T07:00:00Z",
   "end": "2026-11-23T07:59:00Z",
-  "claimUntil": null,
+  "claimUntil": "2026-11-30T07:59:00Z",
   "image": null,
   "channels": [
+   {
+    "label": "OW_Esports",
+    "url": "https://www.twitch.tv/ow_esports"
+   },
+   {
+    "label": "PlayOverwatch",
+    "url": "https://www.twitch.tv/playoverwatch"
+   },
    {
     "label": "Overwatch streams with Drops on Twitch",
     "url": "https://www.twitch.tv/directory/category/overwatch?filter=drops"
    }
   ],
-  "channelNote": "The report doesn't list eligible channels or exact times. Check the campaign on Twitch.",
+  "channelNote": "Watch the Stage 3 Playoffs on any channel with Drops enabled. Time on different channels adds up.",
   "rewards": [
    {
     "id": "60-symmetra-candlelit-spray",
-    "name": "Symmetra Candlelit Spray",
+    "name": "Candlelit Spray",
     "minutes": 60,
     "type": "spray",
     "lookup": "Candlelit",
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/2458x2458/aaeb44137b/candlelitsatyaspray-1.png"
    },
    {
     "id": "120-purrrfect-evening-spray",
-    "name": "Purrrfect Evening Spray",
+    "name": "Purrfect Evening Spray",
     "minutes": 120,
     "type": "spray",
-    "lookup": "Purrrfect Evening",
-    "note": null
+    "lookup": "Purrfect Evening",
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/5120x5120/e9ae0a4c28/purrfect-evening.png"
    },
    {
     "id": "180-domina-sophisticated-sparklers-spray",
-    "name": "Domina Sophisticated Sparklers Spray",
+    "name": "Sophisticated Sparklers Spray",
     "minutes": 180,
     "type": "spray",
     "lookup": "Sophisticated Sparklers",
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/3072x3072/beab074e50/sophisticatedsparklersspray-1-2.png"
    },
    {
     "id": "240-esports-loot-box",
@@ -118,23 +265,26 @@
     "minutes": 240,
     "type": null,
     "lookup": null,
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1475x1475/0a83fe47bb/owe_lb_0.png"
    },
    {
     "id": "360-lifeweaver-and-palak-lanterns-spray",
-    "name": "Lifeweaver and Palak Lanterns Spray",
+    "name": "Bua and Palak's Lanterns Spray",
     "minutes": 360,
     "type": "spray",
     "lookup": "Lanterns",
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/2458x2458/135e0e45f8/floatinglanternsspray-1.png"
    },
    {
     "id": "480-lantern-lit-night-name-card",
-    "name": "Lantern-lit Night Name Card",
+    "name": "Lantern-Lit Night Name Card",
     "minutes": 480,
     "type": "name-card",
     "lookup": "Lantern-lit Night",
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/819x819/74ecc414ec/lantern-litnightnamecard-1.png"
    },
    {
     "id": "600-owcs-home-sombra-skin",
@@ -142,7 +292,8 @@
     "minutes": 600,
     "type": "skin",
     "lookup": "OWCS Home",
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1639x1639/a7cd31a0d5/hero-sombra_home-1.png"
    },
    {
     "id": "720-owcs-away-sombra-skin",
@@ -150,7 +301,8 @@
     "minutes": 720,
     "type": "skin",
     "lookup": "OWCS Away",
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1639x1639/571b1d11a1/hero-sombra_away-1.png"
    },
    {
     "id": "840-esports-loot-box",
@@ -158,7 +310,8 @@
     "minutes": 840,
     "type": null,
     "lookup": null,
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1475x1475/0a83fe47bb/owe_lb_0.png"
    },
    {
     "id": "900-esports-loot-box",
@@ -166,16 +319,17 @@
     "minutes": 900,
     "type": null,
     "lookup": null,
-    "note": null
+    "note": null,
+    "image": "https://a.storyblok.com/f/267720/1475x1475/0a83fe47bb/owe_lb_0.png"
    }
   ],
-  "url": "https://esports.gg/news/overwatch/owcs-2026-stage-3-playoffs-twitch-drops-feature-lifeweaver-x-palak-spray/",
+  "url": "https://esports.overwatch.com/en-us/rewards",
   "sources": [
    {
-    "source": "esports.gg",
-    "title": "Reported by esports.gg, not an official post",
-    "url": "https://esports.gg/news/overwatch/owcs-2026-stage-3-playoffs-twitch-drops-feature-lifeweaver-x-palak-spray/",
-    "checkedAt": "2026-11-05"
+    "source": "Blizzard",
+    "title": "2026 OWCS Stage 3 Playoffs Rewards (10/30 - 11/22)",
+    "url": "https://esports.overwatch.com/en-us/rewards",
+    "checkedAt": "2026-11-10"
    }
   ]
  },

@@ -1,0 +1,85 @@
+/* The tabs across the top of the Hub's and the Cosmetics section's pages. Every rule starts with section-nav,
+   apart from the two header rules at the end, which choose between the section links and the phone menu. */
+
+.section-nav { border-bottom: 1px solid var(--line); background: rgba(9, 12, 18, .7); }
+.section-nav__inner {
+  display: flex;
+  gap: 2px;
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 0 clamp(10px, 1.6vw, 24px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.section-nav__inner::-webkit-scrollbar { display: none; }
+.section-nav__link {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 54px;
+  padding: 0 14px;
+  font: 700 15px/1 var(--font-label);
+  letter-spacing: .03em;
+  color: var(--ink-3);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .15s;
+}
+.section-nav__link svg { flex: none; color: var(--ink-3); transition: color .15s; }
+.section-nav__link:hover, .section-nav__link:hover svg { color: var(--ink); }
+.section-nav__link.is-active { color: var(--ink); }
+.section-nav__link.is-active svg { color: var(--orange); }
+.section-nav__link::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--orange);
+  transform: scaleX(0);
+  transition: transform .2s var(--ease-out);
+}
+.section-nav__link.is-active::after { transform: scaleX(1); }
+.section-nav__link:focus-visible { outline: 2px solid var(--orange); outline-offset: -4px; border-radius: 6px; }
+/* A small red tag over the Twitch tab while a campaign runs, as streaming sites mark live channels. */
+.section-nav__live {
+  position: absolute;
+  top: 5px;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 5px 2px 4px;
+  border-radius: 999px;
+  background: #d92b36;
+  font: 800 9.5px/1 var(--font-label);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.section-nav__live::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+
+/* The header shows the two section links where there's room, and the one menu button on a phone. The two links
+   take a little more room than the menu button did, so the brand's name and the roster note step aside sooner. */
+.site-nav__section { white-space: nowrap; }
+@media (min-width: 601px) {
+  .site-nav .cx-nav { display: none; }
+}
+@media (min-width: 761px) and (max-width: 900px) {
+  .site-header .brand__text { display: none; }
+}
+@media (max-width: 1100px) {
+  .site-header__meta { display: none; }
+}
+@media (max-width: 600px) {
+  .site-nav__section { display: none; }
+  .section-nav__link { min-height: 48px; padding: 0 11px; font-size: 14px; gap: 7px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-nav__link, .section-nav__link svg, .section-nav__link::after { transition: none; }
+}

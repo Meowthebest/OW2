@@ -9,7 +9,9 @@ export type PatchRoute = { view: 'patches'; tab: 'changes' | 'history'; query: s
 
 export type PlayersRoute = { view: 'players'; query: string };
 
-export type HubPage = 'mythics' | 'battle-passes' | 'twitch-drops' | 'stats';
+export type HubPage = 'mythics' | 'battle-passes' | 'twitch-drops' | 'stats' | 'news' | 'drives';
+
+const HUB_PAGES: readonly string[] = ['mythics', 'battle-passes', 'twitch-drops', 'stats', 'news', 'drives'];
 
 /** Everything in the cosmetics section. As with patches, the query holds shareable filters. */
 export type CosmeticsRoute =
@@ -52,7 +54,7 @@ export function parseHash(hash: string): Route {
   if (parts[0] === 'collection') return { view: 'collection', query };
   if (parts[0] === 'events') return { view: 'events', query };
   if (parts[0] === 'hub') {
-    const page: HubPage = parts[1] === 'mythics' || parts[1] === 'battle-passes' || parts[1] === 'twitch-drops' ? parts[1] : 'stats';
+    const page: HubPage = HUB_PAGES.includes(parts[1]) ? (parts[1] as HubPage) : 'stats';
     return { view: 'hub', page, id: parts[2] ? decode(parts[2]) : undefined, query };
   }
   if (parts[0] === 'players') return { view: 'players', query: mark === -1 ? '' : raw.slice(mark + 1) };

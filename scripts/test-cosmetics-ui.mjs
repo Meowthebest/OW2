@@ -169,7 +169,8 @@ const FILES = {
   'rotations.json': [RECORDED.rotation, { id: 'r1', at: iso(-8 * DAY), shopDate: '2026-10-28', count: 1, added: 0, removed: 0, exact: true }],
 };
 
-function dataApi({ files = FILES, live = () => jsonResponse(LIVE()), rates = () => jsonResponse(RATES), account = null } = {}) {
+/** `hub` holds the Hub's own daily files, by their path under data/, as news.json or rates/index.json. */
+function dataApi({ files = FILES, live = () => jsonResponse(LIVE()), rates = () => jsonResponse(RATES), account = null, hub = {} } = {}) {
   return (target, init) => {
     if (target.hostname === 'itemshop.gg') return live();
     if (target.hostname === 'overfast-api.tekrop.fr') return rates(target);
@@ -180,6 +181,8 @@ function dataApi({ files = FILES, live = () => jsonResponse(LIVE()), rates = () 
       if (match[1] in files) return jsonResponse(files[match[1]]);
       return jsonResponse({}, { status: 404 });
     }
+    const hubMatch = /\/OW2\/data\/(.+)$/.exec(target.pathname);
+    if (hubMatch && hubMatch[1] in hub) return jsonResponse(hub[hubMatch[1]]);
     return jsonResponse({}, { status: 404 });
   };
 }
@@ -262,10 +265,44 @@ await test('the header menu opens, links to every section and closes with Escape
   click(toggle);
   await until(() => toggle.getAttribute('aria-expanded') === 'true', 'the menu to open');
   const links = [...app.document.querySelectorAll('.cx-nav__link')].map((link) => link.getAttribute('href'));
-  assert.deepEqual(links, ['#/cosmetics', '#/bundles', '#/shop', '#/loot-pools', '#/events', '#/guess', '#/hub/mythics', '#/hub/battle-passes', '#/hub/twitch-drops', '#/hub/stats', '#/collection']);
+  assert.deepEqual(links, ['#/cosmetics', '#/bundles', '#/shop', '#/loot-pools', '#/events', '#/hub/twitch-drops', '#/hub/battle-passes', '#/hub/mythics', '#/hub/drives', '#/hub/stats', '#/hub/news', '#/guess', '#/collection']);
   app.document.dispatchEvent(new app.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   await until(() => toggle.getAttribute('aria-expanded') === 'false', 'the menu to close');
   app.close();
+});
+
+await test('each section has a row of tabs, and the Twitch tab says Live while a campaign runs', async () => {
+  const hub = boot({ hash: '#/events' });
+  const tabs = await until(() => hub.document.querySelector('nav.section-nav'), 'the hub tabs');
+  assert.equal(tabs.getAttribute('aria-label'), 'Hub');
+  assert.deepEqual([...tabs.querySelectorAll('a')].map((link) => link.getAttribute('href')), ['#/events', '#/hub/twitch-drops', '#/hub/battle-passes', '#/hub/mythics', '#/hub/drives', '#/hub/stats', '#/hub/news', '#/guess']);
+  assert.equal(text(tabs.querySelector('[aria-current="page"]')), 'Events');
+  const twitch = tabs.querySelector('a[href="#/hub/twitch-drops"]');
+  await until(() => twitch.querySelector('.section-nav__live'), 'the live tag');
+  assert.equal(text(twitch), 'Twitch Drops, Live now');
+  const section = [...hub.document.querySelectorAll('.site-nav__section')];
+  assert.deepEqual(section.map(text), ['Hub', 'Cosmetics']);
+  assert.ok(section[0].classList.contains('is-active') && !section[1].classList.contains('is-active'), 'the header marks the section');
+  hub.close();
+
+  const quiet = boot({ hash: '#/hub/news', api: dataApi({ files: { ...FILES, 'twitch-drops.json': [DROPS[2]] } }) });
+  const quietTabs = await until(() => quiet.document.querySelector('nav.section-nav'), 'the hub tabs');
+  assert.equal(text(quietTabs.querySelector('[aria-current="page"]')), 'News');
+  await wait(50);
+  assert.equal(quietTabs.querySelector('.section-nav__live'), null, 'no tag with nothing running');
+  quiet.close();
+
+  const shop = boot({ hash: '#/shop' });
+  const shopTabs = await until(() => shop.document.querySelector('nav.section-nav'), 'the cosmetics tabs');
+  assert.equal(shopTabs.getAttribute('aria-label'), 'Cosmetics');
+  assert.deepEqual([...shopTabs.querySelectorAll('a')].map(text), ['Cosmetics', 'Bundles', 'Shop', 'Loot Pools', 'My Collection']);
+  assert.equal(text(shopTabs.querySelector('[aria-current="page"]')), 'Shop');
+  shop.close();
+
+  const elsewhere = boot({ hash: '#/heroes' });
+  await until(() => elsewhere.document.querySelector('.site-nav__link.is-active'), 'the page');
+  assert.equal(elsewhere.document.querySelector('nav.section-nav'), null, 'pages outside the two sections have no tabs');
+  elsewhere.close();
 });
 
 await test('every new route opens with no errors', async () => {
@@ -818,7 +855,8 @@ await test('hero rates use Blizzard\'s filters, show ban rate only in Competitiv
   const app = boot({ hash: '#/hub/stats?tab=heroes', api: dataApi({ rates: (target) => { urls.push(target.href); return jsonResponse(RATES); } }) });
   await until(() => app.document.querySelector('.cx-rates tbody tr'), 'the table');
   assert.ok(urls[0].includes('platform=pc') && urls[0].includes('gamemode=quickplay') && urls[0].includes('region=europe'));
-  assert.deepEqual([...app.document.querySelectorAll('.cx-rates thead th')].map(text), ['Hero', 'Pick rate', 'Win rate']);
+  assert.deepEqual([...app.document.querySelectorAll('.cx-rates thead th')].map(text), ['#', 'Hero', 'Pick rate', 'Win rate']);
+  assert.equal(app.document.querySelector('.rt-win[data-direction]'), null, 'no arrows without a recorded day');
   assert.match(text(app.document.querySelector('.cx-rates tbody tr')), /Ana\s*24\.1%\s*45\.5%/);
   setInput(app.window, selectLabeled(app.document, 'Game mode'), 'competitive');
   await until(() => urls.some((url) => url.includes('gamemode=competitive')), 'the competitive request');
@@ -829,6 +867,67 @@ await test('hero rates use Blizzard\'s filters, show ban rate only in Competitiv
   const official = [...app.document.querySelectorAll('.cx-credit a')].find((link) => /Blizzard/.test(text(link)));
   assert.match(official.href, /rates\/\?input=PC.*rq=1/);
   await until(() => /tab=heroes/.test(app.window.location.hash) && /mode=competitive/.test(app.window.location.hash), 'the address');
+  app.close();
+});
+
+await test('recorded days give each win rate an arrow, and any recorded day can be shown', async () => {
+  const day = (offset) => new Date(NOW + offset * DAY).toISOString().slice(0, 10);
+  const recorded = (date, rows) => ({ day: date, recordedAt: `${date}T05:00:00.000Z`, views: { 'pc/quickplay/europe': rows } });
+  const hub = {
+    'rates/index.json': { days: [day(0), day(-1), day(-2)] },
+    [`rates/${day(0)}.json`]: recorded(day(0), [['ana', 24.1, 45.5, null], ['genji', 14, 52.5, 9.6], ['reinhardt', 13.6, 53.6, 3.2]]),
+    [`rates/${day(-1)}.json`]: recorded(day(-1), [['ana', 23, 45, null], ['genji', 15, 53, 9], ['reinhardt', 13.6, 53.6, 3]]),
+    [`rates/${day(-2)}.json`]: recorded(day(-2), [['ana', 22, 44, null], ['genji', 16, 50, 8], ['reinhardt', 12, 54, 3]]),
+  };
+  const app = boot({ hash: '#/hub/stats?tab=heroes', api: dataApi({ hub }) });
+  await until(() => app.document.querySelectorAll('.rt-win[data-direction]').length === 3, 'the arrows');
+  const directions = () => Object.fromEntries([...app.document.querySelectorAll('.cx-rates tbody tr')].map((row) => [text(row.querySelector('.cx-rates__hero')), row.querySelector('.rt-win').dataset.direction]));
+  assert.deepEqual(directions(), { Ana: 'up', Genji: 'down', Reinhardt: 'same' }, 'live against yesterday');
+  assert.match(text(app.document.querySelector('.rt-win[data-direction="up"]')), /45\.5%, up 0\.5 points since/);
+  assert.match(text(app.document.querySelector('.cx-credit')), /Arrows compare the win rate with/);
+  const daySelect = selectLabeled(app.document, 'Day');
+  assert.deepEqual([...daySelect.options].map((option) => option.value), ['live', day(0), day(-1), day(-2)]);
+  setInput(app.window, daySelect, day(-1));
+  await until(() => /23\.0%/.test(text(app.document.querySelector('.cx-rates tbody'))), "that day's numbers");
+  assert.deepEqual(directions(), { Ana: 'up', Genji: 'up', Reinhardt: 'down' }, 'that day against the day before');
+  setInput(app.window, selectLabeled(app.document, 'Map'), 'busan');
+  await until(() => !selectLabeled(app.document, 'Day'), 'no day menu for a single map');
+  assert.equal(app.document.querySelector('.rt-win[data-direction]'), null, 'and no arrows, since single maps are only live');
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('the news page shows Blizzard\'s articles as picture cards, a page at a time', async () => {
+  const articles = Array.from({ length: 14 }, (_, index) => ({ id: String(24300000 - index), url: `https://overwatch.blizzard.com/en-us/news/${24300000 - index}/story-${index}/`, title: `Story ${index + 1}`, description: index === 0 ? 'The first summary.' : null, image: `https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/ab/S${index}.png`, publishedAt: iso(-index * DAY) }));
+  const app = boot({ hash: '#/hub/news', api: dataApi({ hub: { 'news.json': { schema: 1, source: 'https://overwatch.blizzard.com/en-us/news/', updatedAt: iso(0), articles } } }) });
+  await until(() => app.document.querySelectorAll('.nw-card').length === 12, 'the first page');
+  const first = app.document.querySelector('.nw-card a');
+  assert.equal(first.getAttribute('href'), articles[0].url);
+  assert.equal(first.getAttribute('target'), '_blank');
+  assert.match(text(first), /Story 1\s*The first summary\./);
+  assert.match(first.querySelector('img').getAttribute('src'), /^https:\/\/wsrv\.nl\/\?url=bnetcmsus-a\.akamaihd\.net/, 'pictures are resized on the way');
+  assert.match(text(app.document.querySelector('.nw-pager')), /Page 1 of 2/);
+  click(buttonNamed(app.document, /Older/));
+  await until(() => app.document.querySelectorAll('.nw-card').length === 2, 'the second page');
+  assert.equal(text(app.document.querySelector('.nw-card__title')), 'Story 13');
+  assert.equal(app.document.title, 'News | OW2 Hero Selector');
+  app.close();
+
+  const empty = boot({ hash: '#/hub/news' });
+  await until(() => /No news published yet/.test(text(empty.document.querySelector('.cx-page'))), 'the missing file');
+  empty.close();
+});
+
+await test('the drives page shows the next Drive, Blizzard\'s Signature pictures and its sources', async () => {
+  const events = { ...GAME_EVENTS, events: [...GAME_EVENTS.events, gameEvent('drives', 'Quick Play and Competitive Drives', 'competitive', pacificDay(5), pacificDay(9), { rewards: [{ name: 'Up to 3,000 Competitive Points and a Signature', note: 'Competitive Drives' }] }), gameEvent('team', 'Team Drives', 'competitive', pacificDay(-12), pacificDay(-9))] };
+  const app = boot({ hash: '#/hub/drives', api: dataApi({ files: { ...FILES, 'game-events.json': events } }) });
+  const next = await until(() => app.document.querySelector('.dv-card'), 'the next Drive');
+  assert.equal(text(next.querySelector('.dv-card__name')), 'Quick Play and Competitive Drives');
+  assert.equal(text(next.querySelector('.dv-card__state')), 'Coming up');
+  assert.equal(text(next.querySelector('.dv-card__countdown')), 'Starts in 5 days');
+  assert.deepEqual([...app.document.querySelectorAll('.dv-card__name')].map(text), ['Quick Play and Competitive Drives', 'Team Drives'], 'then the recent one');
+  assert.deepEqual([...app.document.querySelectorAll('.dv-look img')].map((image) => /bnetcmsus-a\.akamaihd\.net/.test(image.getAttribute('src'))), [true, true]);
+  assert.ok([...app.document.querySelectorAll('.dv-facts a')].every((link) => link.getAttribute('href').startsWith('https://overwatch.blizzard.com/en-us/news/')), 'every fact links to Blizzard');
   app.close();
 });
 

@@ -638,7 +638,8 @@ export async function buildCatalog({ dryRun = false, now = new Date(), outDir = 
         const row = match?.length === 1 ? match[0] : null;
         for (const target of match?.length === 1 ? [cosmetics.get(row.id)] : []) target.tags.add('twitch');
         const { lookup: _lookup, hero: _hero, ...rest } = reward;
-        return { ...rest, cosmeticId: row?.id ?? null, image: row?.image ?? reward.image ?? null };
+        // A picture given with the campaign is the one its announcement shows, so it comes before the catalog's.
+        return { ...rest, cosmeticId: row?.id ?? null, image: reward.image ?? row?.image ?? null };
       }),
     };
   });

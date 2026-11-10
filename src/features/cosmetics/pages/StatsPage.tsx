@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { BarChart3, ChevronDown, ChevronUp, ExternalLink, Package, Swords, TriangleAlert, UserRound } from 'lucide-react';
+import { BarChart3, ChevronDown, ChevronUp, ExternalLink, Minus, Package, Swords, TrendingDown, TrendingUp, TriangleAlert, UserRound } from 'lucide-react';
 import { Panel, SelectField, StateBlock } from '../../../components/controls';
 import { RoleIcon } from '../../../components/icons';
 import { HeroPortrait } from '../../../components/media';
@@ -9,7 +9,7 @@ import { useAsync } from '../../patches/data';
 import { idsOf, passProgress, personalStats } from '../core/collection';
 import { officialRatesUrl, sortRates, parseRates, parseRateFilters, ratesApiUrl, RATE_DIVISIONS, RATE_MAPS, serializeRateFilters, type RateFilters, type RateRow, type RateSort } from '../core/rates';
 import type { CatalogMeta, CatalogStats, FacetValue } from '../core/types';
-import { loadCatalog, loadMeta, loadPass, loadPasses, loadStats, useClock } from '../data';
+import { loadCatalog, loadMeta, loadPass, loadPasses, loadRatesDay, loadRatesIndex, loadStats, useClock, type RatesDay } from '../data';
 import { DataState, GridSkeleton, PageHeader, usePageTitle } from '../components/bits';
 import { CatalogueCredits } from './CosmeticsPage';
 import { dayText, heroLabel, rarityLabel, typeLabel, typeSingular } from '../labels';
@@ -178,9 +178,39 @@ const SUB_ROLE_GROUPS: Record<Role, SubRole[]> = {
 const SORT_LABEL: Array<{ id: RateSort; label: string }> = [
   { id: 'name', label: 'Hero' },
   { id: 'pick', label: 'Pick rate' },
-  { id: 'win', label: 'Win rate' },
   { id: 'ban', label: 'Ban rate' },
+  { id: 'win', label: 'Win rate' },
 ];
+
+/** One decimal everywhere, so 11% and 12.4% line up as 11.0% and 12.4%. */
+const percent = (value: number | null) => (value === null ? '—' : `${value.toFixed(1)}%`);
+const recordedRows = (day: RatesDay | null | undefined, view: string): RateRow[] | null => day?.views[view]?.map(([hero, pick, win, ban]) => ({ hero, pick, win, ban })) ?? null;
+
+/** A value with a bar under it, scaled to the largest in the table. The value is always in text; the bar only helps compare. */
+function RateBar({ value, max, tone }: { value: number | null; max: number; tone: 'pick' | 'ban' }) {
+  return (
+    <span className="rt-rate">
+      <span className="rt-rate__value">{percent(value)}</span>
+      <span className="rt-rate__track" data-tone={tone} aria-hidden="true"><span style={{ width: `${Math.min(100, ((value ?? 0) / max) * 100)}%` }} /></span>
+    </span>
+  );
+}
+
+/** The win rate, with an arrow for how it moved since the day before. Said in words too, for screen readers. */
+function WinRate({ value, before, since }: { value: number | null; before: number | null | undefined; since: string | null }) {
+  if (value === null || before === null || before === undefined || !since) return <span className="rt-win">{percent(value)}</span>;
+  const change = Math.round((value - before) * 10) / 10;
+  const direction = change > 0 ? 'up' : change < 0 ? 'down' : 'same';
+  const Icon = direction === 'up' ? TrendingUp : direction === 'down' ? TrendingDown : Minus;
+  const words = direction === 'same' ? `no change since ${dayText(since)}` : `${direction} ${Math.abs(change)} points since ${dayText(since)}`;
+  return (
+    <span className="rt-win" data-direction={direction} title={words.charAt(0).toUpperCase() + words.slice(1)}>
+      <Icon size={14} aria-hidden="true" />
+      {percent(value)}
+      <span className="sr-only">, {words}</span>
+    </span>
+  );
+}
 
 function HeroRates({ query, routeKey }: { query: string; routeKey: unknown }) {
   const [filters, setFilters] = useUrlState('#/hub/stats', query, routeKey, (value) => parseRateFilters(value), (value) => serializeRateFilters(value));
@@ -192,8 +222,25 @@ function HeroRates({ query, routeKey }: { query: string; routeKey: unknown }) {
   }, ratesApiUrl(filters));
   const competitive = filters.mode === 'competitive';
   const sort = !competitive && filters.sort === 'ban' ? 'pick' : filters.sort;
-  const rows = useMemo(() => sortRates(rates.data ?? [], sort, filters.role), [rates.data, sort, filters.role]);
+
+  // The daily records cover all maps and all ranks, for every input, mode and region.
+  const view = `${filters.platform}/${filters.mode}/${filters.region}`;
+  const index = useAsync(loadRatesIndex, 'rates-index');
+  const days = filters.map === 'all' && filters.division === 'all' ? index.data?.days ?? [] : [];
+  const [day, setDay] = useState('live');
+  const shownDay = day !== 'live' && days.includes(day) ? day : null;
+  const compareDay = days.find((recorded) => recorded < (shownDay ?? new Date().toISOString().slice(0, 10))) ?? null;
+  const snapshot = useAsync(() => (shownDay ? loadRatesDay(shownDay) : Promise.resolve(null)), `rates-day-${shownDay}`);
+  const previous = useAsync(() => (compareDay ? loadRatesDay(compareDay) : Promise.resolve(null)), `rates-day-${compareDay}`);
+  const shownRows = shownDay ? recordedRows(snapshot.data, view) : rates.data ?? null;
+  const before = useMemo(() => new Map((recordedRows(previous.data, view) ?? []).map((row) => [row.hero, row])), [previous.data, view]);
+  const since = before.size > 0 ? compareDay : null;
+
+  const rows = useMemo(() => sortRates(shownRows ?? [], sort, filters.role), [shownRows, sort, filters.role]);
+  const maxPick = Math.max(1, ...rows.map((row) => row.pick ?? 0));
+  const maxBan = Math.max(1, ...rows.map((row) => row.ban ?? 0));
   const heroes = new Map(HEROES.map((hero) => [hero.id, hero]));
+  const loading = shownDay ? snapshot.status === 'loading' && !snapshot.data : rates.status === 'loading' && !rates.data;
 
   return (
     <div className="cx-stats">
@@ -231,32 +278,42 @@ function HeroRates({ query, routeKey }: { query: string; routeKey: unknown }) {
               {RATE_DIVISIONS.map((division) => <option key={division.id} value={division.id}>{division.label}</option>)}
             </SelectField>
           )}
+          {days.length > 0 && (
+            <SelectField label="Day" value={shownDay ?? 'live'} onChange={setDay}>
+              <option value="live">Live (today)</option>
+              {days.map((recorded) => <option key={recorded} value={recorded}>{dayText(recorded)}</option>)}
+            </SelectField>
+          )}
         </div>
       </section>
 
-      {rates.status === 'error' ? (
+      {!shownDay && rates.status === 'error' ? (
         <DataState status="error" error={rates.error} retry={rates.retry} what="hero rates" />
-      ) : rates.status === 'loading' && !rates.data ? (
+      ) : shownDay && snapshot.status === 'error' ? (
+        <DataState status="error" error={snapshot.error} retry={snapshot.retry} what="that day's hero rates" />
+      ) : loading ? (
         <GridSkeleton count={6} />
       ) : rows.length === 0 ? (
-        <StateBlock icon={<Swords size={24} />} title="No rates for this selection">Blizzard shows no data for this combination.</StateBlock>
+        <StateBlock icon={<Swords size={24} />} title="No rates for this selection">{shownDay ? 'Nothing was recorded for this combination that day.' : 'Blizzard shows no data for this combination.'}</StateBlock>
       ) : (
         <div className="cx-table-wrap">
-          <table className="data-table cx-table cx-rates">
+          <table className="data-table cx-table cx-rates rt-table">
             <thead>
               <tr>
+                <th scope="col" className="num rt-rank">#</th>
                 {SORT_LABEL.filter((column) => competitive || column.id !== 'ban').map((column) => (
-                  <th key={column.id} scope="col" className={column.id === 'name' ? undefined : 'num'} aria-sort={sort === column.id ? (column.id === 'name' ? 'ascending' : 'descending') : 'none'}>
+                  <th key={column.id} scope="col" className={column.id === 'name' ? undefined : 'rt-head'} aria-sort={sort === column.id ? (column.id === 'name' ? 'ascending' : 'descending') : 'none'}>
                     <button type="button" className="cx-rates__sort" onClick={() => change({ sort: column.id })}>{column.label}</button>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => {
+              {rows.map((row, place) => {
                 const hero = heroes.get(row.hero);
                 return (
                   <tr key={row.hero}>
+                    <td className="num rt-rank">{place + 1}</td>
                     <th scope="row">
                       <a className="cx-rates__hero" href={`#/cosmetics?hero=${row.hero}`} title={`${hero?.name ?? row.hero}'s cosmetics`}>
                         {hero && <span className="cx-rates__portrait"><HeroPortrait id={hero.id} name={hero.name} role={hero.role} /></span>}
@@ -264,9 +321,9 @@ function HeroRates({ query, routeKey }: { query: string; routeKey: unknown }) {
                         {hero && <span className="cx-rates__role" data-role={hero.role}><RoleIcon role={hero.role} size={12} /></span>}
                       </a>
                     </th>
-                    <td className="num">{row.pick === null ? '—' : `${row.pick}%`}</td>
-                    <td className="num">{row.win === null ? '—' : `${row.win}%`}</td>
-                    {competitive && <td className="num">{row.ban === null ? '—' : `${row.ban}%`}</td>}
+                    <td><RateBar value={row.pick} max={maxPick} tone="pick" /></td>
+                    {competitive && <td><RateBar value={row.ban} max={maxBan} tone="ban" /></td>}
+                    <td><WinRate value={row.win} before={before.get(row.hero)?.win} since={since} /></td>
                   </tr>
                 );
               })}
@@ -276,7 +333,9 @@ function HeroRates({ query, routeKey }: { query: string; routeKey: unknown }) {
       )}
       <p className="cx-credit">
         Blizzard's hero statistics, read through the community-run <a href="https://overfast-api.tekrop.fr/" target="_blank" rel="noreferrer">OverFast API</a>, which keeps a copy for up to an hour.
-        {' '}<a href={officialRatesUrl(filters)} target="_blank" rel="noreferrer">See this selection on Blizzard's page <ExternalLink size={11} aria-hidden="true" /></a>
+        {' '}{since ? `Arrows compare the win rate with ${dayText(since)}. ` : ''}
+        {index.data?.days.length ? `A copy is kept once a day, for all maps and ranks, from ${dayText(index.data.days[index.data.days.length - 1])}. ` : ''}
+        <a href={officialRatesUrl(filters)} target="_blank" rel="noreferrer">See this selection on Blizzard's page <ExternalLink size={11} aria-hidden="true" /></a>
       </p>
     </div>
   );

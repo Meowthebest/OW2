@@ -64,8 +64,9 @@ export function cosmeticId(type: CosmeticType, heroId: string | null, name: stri
 // Blizzard's originals run to about 800 KB each. This free resizing service brings a card's image under 50 KB.
 // Nothing is stored in this project. If the service fails, the original loads instead, then a placeholder.
 const RESIZER = 'https://wsrv.nl/';
-// The last one holds the pictures in Blizzard's news articles, which the Events page shows. Some are over 2 MB.
-const RESIZABLE_HOSTS = new Set(['catalog.blzstatic.com', 'blz-contentstack-images.akamaized.net', 'bnetcmsus-a.akamaihd.net']);
+// bnetcmsus-a holds the pictures in Blizzard's news articles, which the Events and News pages show. Some are over 2 MB.
+// a.storyblok.com holds the Overwatch Esports site's reward pictures, up to 5120 pixels square.
+const RESIZABLE_HOSTS = new Set(['catalog.blzstatic.com', 'blz-contentstack-images.akamaized.net', 'bnetcmsus-a.akamaihd.net', 'a.storyblok.com']);
 const WIKI_IMAGES = 'overwatch.weirdgloop.org';
 
 /**

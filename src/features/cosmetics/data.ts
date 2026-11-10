@@ -82,6 +82,39 @@ export interface RecordedChange {
 
 export const loadRecordedShop = () => load<RecordedShop | null>('shop.json');
 
+// The Hub's daily files, which the sync job in scripts/hub commits beside the site rather than building with the catalog.
+const HUB_DATA_URL = `${import.meta.env.BASE_URL}data/`;
+
+export interface NewsArticle {
+  id: string;
+  url: string;
+  title: string;
+  description: string | null;
+  image: string | null;
+  publishedAt: string | null;
+}
+
+export interface NewsFile {
+  schema: 1;
+  source: string;
+  updatedAt: string;
+  articles: NewsArticle[];
+}
+
+/** One recorded view's rows: hero, pick rate, win rate, ban rate. */
+export type RecordedRateRow = [string, number | null, number | null, number | null];
+
+export interface RatesDay {
+  day: string;
+  recordedAt: string;
+  views: Record<string, RecordedRateRow[]>;
+}
+
+export const loadNews = () => once('news', () => fetchJson<NewsFile>(`${HUB_DATA_URL}news.json`, { cache: 'no-cache' }));
+export const loadRatesIndex = () => once('rates-index', () => fetchJson<{ days: string[] }>(`${HUB_DATA_URL}rates/index.json`, { cache: 'no-cache' }));
+/** A recorded day never changes, so it can come from the browser's cache. */
+export const loadRatesDay = (day: string) => once(`rates-${day}`, () => fetchJson<RatesDay>(`${HUB_DATA_URL}rates/${encodeURIComponent(day)}.json`));
+
 /** Asks itemshop.gg directly, which its documentation allows from a web page. A failure just means the recorded shop is shown. */
 export async function loadLiveShop(signal?: AbortSignal): Promise<ShopSnapshot> {
   const timeout = AbortSignal.timeout?.(10000);

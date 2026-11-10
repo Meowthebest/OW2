@@ -7,6 +7,9 @@ A fan-made Overwatch companion:
 - **Patch notes and balance tracker:** see who was buffed or nerfed, filter every change, open a hero's history, and compare patches. Every value links back to Blizzard's published notes.
 - **Player statistics:** Steam's concurrent player count for Overwatch, recorded over time, with a history chart and patch markers. Steam players only.
 - **In-game events:** what's on now, what's coming up and what just ended, with countdowns, modes, challenges and rewards. Each event links to Blizzard's announcement.
+- **Hub:** in-game events, Twitch Drops with every reward's picture, Battle Passes, Mythics, Drives, hero rates with day-to-day arrows, Blizzard's news with each article's picture, and Guess the Pro, a tab apart.
+- **Drives:** the next Drive, Blizzard's pictures of Signatures, and how Drives work, with each fact linked to Blizzard.
+- **News:** Blizzard's latest Overwatch articles as picture cards, read a few times a day.
 - **Guess the Pro:** a daily game. Find the day's OWCS pro in eight guesses from their team, region, nationality and role, with team logos, a practice mode and your own results. Player data comes from Liquipedia.
 - **Cosmetics hub:** a searchable catalogue of over 15,000 cosmetics, bundles, the live shop with its history, loot pools, mythics, Battle Passes, Twitch Drops, statistics and hero rates, plus your own collection tracking. Every record shows its source.
 
@@ -24,7 +27,7 @@ npm run dev
 | `npm run dev` | Start the dev server |
 | `npm run build` | Type-check and build to `dist/` |
 | `npm run preview` | Serve the production build |
-| `npm test` | Run the logic, patch, player, cosmetics, alert, worker, timer, accounts and UI tests, plus a build |
+| `npm test` | Run the logic, patch, player, cosmetics, alert, Guess the Pro, hub, worker, timer, accounts and UI tests, plus a build |
 | `npm run check:roster` | Compare the hero list with the live API and check image files |
 | `npm run check:alerts` | Report what needs a person, without changing anything |
 | `npm run sync:patches` | Read Blizzard's latest patch notes into `public/data/patches` |
@@ -34,6 +37,9 @@ npm run dev
 | `npm run backfill:shop` | Read past shops and item history. Needs `ITEMSHOP_API_KEY` |
 | `npm run import:wiki -- FILE...` | Import hand-made wiki export files, offline |
 | `npm run check:cosmetics` | Check the stored cosmetics data, offline |
+| `npm run sync:news` | Read Blizzard's news list into `public/data/news.json` |
+| `npm run sync:rates` | Record today's hero rates in `public/data/rates`, once a day |
+| `npm run check:hub` | Check the stored news and hero rates, offline |
 
 ## Project layout
 
@@ -78,6 +84,7 @@ docs/PLAYER_DATA.md     Player data source, storage and known limitations
 docs/COSMETICS_DATA.md  Cosmetics sources, storage, admin tools and known limitations
 docs/ALERTS.md          What the alert issues flag and how they behave
 docs/ESPORTS_DATA.md    Guess the Pro's player list: source, license and how to refresh it
+docs/HUB_DATA.md        News, hero rate history, Twitch Drops pictures and Drives: sources and upkeep
 ```
 
 ## Add a new hero
@@ -101,7 +108,9 @@ Career data works immediately with no setup, because the site can call OverFast 
 
 `.github/workflows/sync-shop.yml` checks itemshop.gg for a new shop every 15 minutes. When there is one, it stores it under `data/cosmetics/shop` and redeploys. It can also be run by hand, which is the admin refresh.
 
-GitHub's own schedule has been unreliable, so a small Cloudflare Worker starts these jobs on time. See [timer/README.md](timer/README.md).
+`.github/workflows/sync-hub.yml` reads Blizzard's news list every six hours and records the hero rates once a day, for the News and Stats pages. See [docs/HUB_DATA.md](docs/HUB_DATA.md).
+
+GitHub's own schedule has been unreliable, so a small Cloudflare Worker starts the player, shop and patch jobs on time. See [timer/README.md](timer/README.md).
 
 `.github/workflows/alerts.yml` opens a GitHub issue when something needs a person, such as a new hero, a wiki export that's due or a job that keeps failing. See [docs/ALERTS.md](docs/ALERTS.md).
 
@@ -126,6 +135,10 @@ Read [docs/PLAYER_DATA.md](docs/PLAYER_DATA.md) for the source, how readings are
 ## Cosmetics data
 
 Read [docs/COSMETICS_DATA.md](docs/COSMETICS_DATA.md) for the sources and their conditions, how data is stored, how to import and correct it, and what it can't tell you.
+
+## Hub data
+
+Read [docs/HUB_DATA.md](docs/HUB_DATA.md) for where the News, Stats, Twitch Drops and Drives pages get their data, and how to keep it current.
 
 ## Legal
 

@@ -1,0 +1,71 @@
+name: Sync hub news and hero rates
+
+# Keeps two Hub files current: Blizzard's Overwatch news list, read every six hours, and a copy of the hero rates,
+# recorded once a day so the Stats page can show how they moved. See docs/HUB_DATA.md.
+# If a read fails, nothing is committed and the site keeps what it had.
+
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: hub-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --no-fund --no-audit
+
+      # Each read can fail alone without stopping the other.
+      - name: Read Blizzard's news list
+        id: news
+        continue-on-error: true
+        run: node scripts/hub/cli.mjs news
+
+      - name: Record today's hero rates
+        id: rates
+        continue-on-error: true
+        run: node scripts/hub/cli.mjs rates
+
+      - name: Check the stored data
+        run: node scripts/hub/cli.mjs check
+
+      - name: Commit changes
+        id: commit
+        run: |
+          git add public/data/news.json public/data/rates
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update hub news and hero rates"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy the site
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref "$GITHUB_REF_NAME"
+
+      - name: Report a failed read
+        if: steps.news.outcome == 'failure' || steps.rates.outcome == 'failure'
+        run: |
+          echo "::error::A read failed: news ${{ steps.news.outcome }}, rates ${{ steps.rates.outcome }}. The last good data stays in place."
+          exit 1

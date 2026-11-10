@@ -11,6 +11,8 @@ import { DropsPage, dropNotifyId } from './pages/DropsPage';
 import { EventsPage } from './pages/EventsPage';
 import { LootPoolDetailPage, LootPoolsPage } from './pages/LootPoolsPage';
 import { MythicDetailPage, MythicsPage } from './pages/MythicsPage';
+import { NewsPage } from './pages/NewsPage';
+import { DrivesPage } from './pages/DrivesPage';
 import { ShopPage } from './pages/ShopPage';
 import { StatsPage } from './pages/StatsPage';
 import { readJson, writeJson } from '../../lib/storage';
@@ -117,6 +119,8 @@ export function CosmeticsHub({ route }: { route: Route }) {
       if (route.page === 'mythics') return route.id ? <MythicDetailPage key={route.id} id={route.id} /> : <MythicsPage query={route.query} routeKey={route} />;
       if (route.page === 'battle-passes') return route.id ? <BattlePassDetailPage key={route.id} id={route.id} /> : <BattlePassesPage />;
       if (route.page === 'twitch-drops') return <DropsPage />;
+      if (route.page === 'news') return <NewsPage />;
+      if (route.page === 'drives') return <DrivesPage />;
       return <StatsPage query={route.query} routeKey={route} />;
     default:
       return null;

@@ -206,6 +206,7 @@ export const WATCHED_JOBS = [
   { file: 'record-players.yml', name: 'Steam player count', quietHours: 2, failures: 6 },
   { file: 'sync-shop.yml', name: 'Shop recording', quietHours: 3, failures: 3 },
   { file: 'sync-patches.yml', name: 'Patch notes sync', quietHours: 30, failures: 2, help: `Blizzard's page layout may have changed. See [Manual import](${REPO_FILES}/docs/PATCH_DATA.md#manual-import).` },
+  { file: 'sync-hub.yml', name: 'Hub news and hero rates', quietHours: 30, failures: 3, help: `Blizzard's news page or OverFast may have changed. See [Hub data](${REPO_FILES}/docs/HUB_DATA.md).` },
   { file: 'deploy.yml', name: 'Site deploy', quietHours: null, failures: 1 },
 ];
 

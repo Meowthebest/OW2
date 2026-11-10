@@ -31,6 +31,7 @@ jobs:
       - run: npm run test:cosmetics
       - run: npm run test:alerts
       - run: npm run test:pro
+      - run: npm run test:hub
       - run: npm run test:worker
       - run: npm run test:timer
       - run: npm run test:accounts
