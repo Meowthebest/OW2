@@ -1747,18 +1747,30 @@ await test('the guessing game says plainly when no player list is published', as
 
 await test('a daily round gives honest clues, ends in a win, and stays won', async () => {
   const answer = todaysPro();
-  const wrong = PRO_PLAYERS.find((item) => item.id !== answer.id && item.team !== answer.team);
+  // Someone from another team who shares the answer's nationality, so the first guess gives something away.
+  const wrong = PRO_PLAYERS.find((item) => item.id !== answer.id && item.team !== answer.team && item.nationality === answer.nationality);
+  const clues = pro.cluesFor(PRO_DATA);
+  const teamMap = new Map(PRO_TEAMS.map((team) => [team.id, team]));
   const app = boot({ hash: '#/guess', api: proApi() });
   await until(() => app.document.querySelector('.gp-input__field'), 'the game');
   assert.match(app.document.title, /Guess the Pro/);
   assert.match(app.document.querySelector('.segmented__item.is-active').textContent, new RegExp(`Daily #${pro.puzzleNumber(pro.localDay(Date.now()))}`));
+  assert.ok(app.document.querySelector('.gp-help'), 'a first visit opens the rules');
+  assert.equal(buttonByName(app.document, /^How to play/).getAttribute('aria-expanded'), 'true');
+  const target = () => [...app.document.querySelectorAll('.gp-row--target .gp-cell')];
+  assert.deepEqual(target().map((cell) => cell.dataset.status), clues.map(() => 'unknown'), 'nothing is known before the first guess');
 
   await guessPro(app, wrong.name);
-  const expected = pro.compareGuess(wrong, answer, new Map(PRO_TEAMS.map((team) => [team.id, team])), pro.cluesFor(PRO_DATA));
-  const cells = [...app.document.querySelectorAll('.gp-row .gp-cell')];
+  const expected = pro.compareGuess(wrong, answer, teamMap, clues);
+  const cells = [...app.document.querySelectorAll('.gp-row--guess .gp-cell')];
   assert.deepEqual(cells.map((cell) => [cell.dataset.clue, cell.dataset.status]), expected.map((clue) => [clue.key, clue.status]));
   assert.ok(cells.every((cell) => /Match|Close|No match/.test(cell.querySelector('.sr-only').textContent)), 'each clue says its result in words too');
   assert.equal(app.document.querySelector('.gp-count').textContent, `Guess 2 of ${pro.MAX_GUESSES}`);
+  // The top row keeps what the guess gave away.
+  const known = pro.knownClues([wrong], answer, teamMap, clues);
+  assert.deepEqual(target().map((cell) => [cell.dataset.clue, cell.dataset.status]), known.map((fact) => [fact.key, fact.status]));
+  assert.equal(target()[clues.indexOf('nationality')].querySelector('.gp-cell__text').textContent, pro.countryName(answer.nationality));
+  known.forEach((fact, index) => fact.value && assert.equal(target()[index].querySelector('.gp-cell__text').textContent, fact.value));
 
   await guessPro(app, answer.name);
   const result = await until(() => app.document.querySelector('.gp-result'), 'the result');
@@ -1768,15 +1780,21 @@ await test('a daily round gives honest clues, ends in a win, and stays won', asy
   assert.match(result.querySelector('.gp-stats').textContent, /Won\s*100%/);
   assert.match(result.querySelector('.gp-stats').textContent, /Streak\s*1/);
   assert.ok(app.document.querySelector('.gp-input__field').disabled, 'no more guesses today');
+  assert.deepEqual([...app.document.querySelectorAll('.gp-pip')].map((pip) => pip.dataset.state), Array.from({ length: pro.MAX_GUESSES }, (_, index) => ['used', 'won'][index] ?? 'left'));
+  assert.equal(app.document.querySelector('.gp-row--target[data-revealed] .gp-row__player').textContent, answer.name);
+  assert.ok(target().every((cell) => cell.dataset.status === 'match'), 'a win shows the answer in green');
   const saved = JSON.parse(app.window.localStorage.getItem(PRO_KEY));
   assert.deepEqual(saved.days[pro.localDay(Date.now())], { answer: answer.id, guesses: [wrong.id, answer.id] });
   assert.equal(saved.stats.wins, 1);
   app.close();
 
-  // Coming back the same day shows the finished game, not a fresh one.
+  // Coming back the same day shows the finished game, not a fresh one, and keeps the rules out of the way.
   const again = boot({ hash: '#/guess', storage: { [PRO_KEY]: saved }, api: proApi() });
   await until(() => /Got it in 2/.test(again.document.querySelector('.gp-result')?.textContent ?? ''), 'the saved result');
-  assert.equal(again.document.querySelectorAll('.gp-row').length, 2);
+  assert.equal(again.document.querySelectorAll('.gp-row--guess').length, 2);
+  assert.equal(again.document.querySelector('.gp-help'), null);
+  click(buttonByName(again.document, /^How to play/));
+  await until(() => again.document.querySelector('.gp-help'), 'the rules, on request');
   assert.deepEqual(again.errors, []);
   again.close();
 });
@@ -1790,12 +1808,15 @@ await test('eight misses reveal the pro, and practice games don\'t touch the res
   assert.match(result.textContent, /Out of guesses/);
   assert.match(result.querySelector('.gp-answer__name').textContent, new RegExp(answer.name));
   assert.equal(app.document.querySelector('.gp-count').textContent, 'No guesses left');
+  assert.equal(app.document.querySelector('.gp-row--target[data-revealed] .gp-row__player').textContent, answer.name, 'the top row shows who it was');
+  assert.ok([...app.document.querySelectorAll('.gp-row--target .gp-cell')].every((cell) => cell.dataset.status === 'reveal'));
   const before = app.window.localStorage.getItem(PRO_KEY);
   assert.equal(JSON.parse(before).stats.played, 1);
 
   click(buttonByName(app.document, /Practice with a random pro/));
   await until(() => app.document.querySelector('.segmented__item.is-active')?.textContent === 'Practice', 'practice mode');
-  assert.equal(app.document.querySelectorAll('.gp-row').length, 0, 'a fresh board');
+  assert.equal(app.document.querySelectorAll('.gp-row--guess').length, 0, 'a fresh board');
+  assert.equal(app.document.querySelector('.gp-row--target[data-revealed]'), null, 'with a new pro to find');
   const someone = PRO_PLAYERS.find((item) => item.id !== answer.id);
   await guessPro(app, someone.name);
   assert.equal(app.window.localStorage.getItem(PRO_KEY), before, 'practice saves nothing');
@@ -1807,8 +1828,13 @@ await test('eight misses reveal the pro, and practice games don\'t touch the res
 
 await test('teams show their logo beside their name, or their initials when they have none', async () => {
   const app = boot({ hash: '#/guess', api: proApi() });
-  click(await until(() => app.document.querySelector('.gp-help summary'), 'how to play'));
+  await until(() => app.document.querySelector('.gp-tools'), 'the game');
+  assert.equal(app.document.querySelector('.gp-team'), null, 'the team list waits to be asked for');
+  const button = buttonByName(app.document, /^Teams\b/);
+  click(button);
   const teams = await until(() => app.document.querySelectorAll('.gp-team').length === 3 && [...app.document.querySelectorAll('.gp-team')], 'the team list');
+  assert.equal(button.getAttribute('aria-expanded'), 'true');
+  assert.equal(app.document.querySelector('.gp-help'), null, 'one panel at a time');
   const alpha = teams.find((team) => /Alpha Esports/.test(team.textContent));
   assert.equal(alpha.querySelector('img.gp-logo').getAttribute('src'), '/OW2/data/esports/logos/alpha.png');
   assert.equal(alpha.querySelector('img.gp-logo').getAttribute('alt'), '', 'the name beside it says who it is');

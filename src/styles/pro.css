@@ -1,8 +1,11 @@
 /* Guess the Pro. Every rule here starts with gp-, so nothing else on the site changes. */
 
 .gp-page {
+  /* Text on the match and close tiles is white, at least 6:1 against them. */
   --gp-match: #37c98b;
+  --gp-match-bg: #17573f;
   --gp-close: #eabc3f;
+  --gp-close-bg: #5c4710;
   --gp-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -10,170 +13,255 @@
   max-width: 1180px;
 }
 
+.gp-muted { font-size: 13.5px; line-height: 1.45; color: var(--ink-3); }
+.gp-muted a { color: var(--ink-2); }
+
+/* Heading */
 .gp-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 20px; }
 .gp-head__text { min-width: 0; flex: 1 1 340px; }
-.gp-head__title { font: italic 900 clamp(34px, 4vw, 48px)/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
-.gp-head__intro { margin-top: 4px; font-size: 15px; line-height: 1.45; color: var(--ink-3); max-width: 70ch; }
+.gp-head__title { font: italic 900 clamp(36px, 4.4vw, 54px)/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
+.gp-head__intro { margin-top: 6px; font-size: 15.5px; line-height: 1.45; color: var(--ink-3); max-width: 70ch; }
 .gp-head__meta { display: flex; align-items: center; }
 
-.gp-muted { font-size: 13.5px; line-height: 1.45; color: var(--ink-3); }
+/* How to play and Teams */
+.gp-tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.gp-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--panel-2);
+  font: 700 14px/1 var(--font-label);
+  letter-spacing: .03em;
+  color: var(--ink-2);
+  transition: border-color .15s, color .15s, background .15s;
+}
+.gp-chip svg { color: var(--orange); }
+.gp-chip:hover { border-color: var(--orange); color: var(--ink); }
+.gp-chip[aria-expanded='true'] { border-color: var(--orange); background: color-mix(in srgb, var(--orange) 14%, var(--panel-2)); color: var(--ink); }
+.gp-chip__count { padding: 2px 7px; border-radius: 999px; background: var(--panel-3); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.gp-panel { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: var(--gp-radius); background: var(--panel); }
+.gp-panel[hidden] { display: none; }
 
-/* How to play */
-.gp-help { border: 1px solid var(--line); border-radius: var(--gp-radius); background: var(--panel); }
-.gp-help summary { display: flex; align-items: center; min-height: 42px; padding: 0 14px; cursor: pointer; font: 700 15px/1.2 var(--font-label); letter-spacing: .03em; color: var(--ink); }
-.gp-help summary::marker { color: var(--orange); }
-.gp-help__body { display: flex; flex-direction: column; gap: 8px; padding: 0 14px 14px; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
-.gp-help__body > p, .gp-help__body > .gp-legend { max-width: 80ch; }
-.gp-legend { display: flex; flex-direction: column; gap: 5px; }
-.gp-legend li { display: flex; align-items: baseline; gap: 8px; }
-.gp-legend li > span[aria-hidden] { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 22px; height: 22px; border-radius: 4px; font-weight: 800; color: var(--ink); background: var(--panel-3); border: 1px solid var(--line-2); }
-.gp-legend li[data-status='match'] > span[aria-hidden] { background: color-mix(in srgb, var(--gp-match) 30%, var(--panel-3)); border-color: var(--gp-match); }
-.gp-legend li[data-status='close'] > span[aria-hidden] { background: color-mix(in srgb, var(--gp-close) 28%, var(--panel-3)); border-color: var(--gp-close); }
+.gp-help { display: flex; flex-direction: column; gap: 12px; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+.gp-help > p { max-width: 82ch; }
+.gp-help strong { color: var(--ink); }
+.gp-help__notes { font-size: 13.5px; color: var(--ink-3); }
+/* The three results, as small tiles in a row. On a phone they stack. */
+.gp-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.gp-legend li { display: flex; align-items: center; gap: 11px; min-width: 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: var(--gp-radius); background: var(--panel-2); }
+.gp-legend__mark { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 28px; height: 28px; border-radius: 50%; font: 800 14px/1 var(--font-body); color: var(--ink-3); background: var(--panel-3); border: 1px solid var(--line-2); }
+.gp-legend li[data-status='match'] .gp-legend__mark { color: #08130e; background: var(--gp-match); border-color: var(--gp-match); }
+.gp-legend li[data-status='close'] .gp-legend__mark { color: #191103; background: var(--gp-close); border-color: var(--gp-close); }
+.gp-legend__text { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-size: 13.5px; line-height: 1.35; color: var(--ink-3); }
+.gp-legend__text strong { font: 800 13px/1.1 var(--font-label); letter-spacing: .08em; text-transform: uppercase; }
+.gp-legend li[data-status='match'] strong { color: var(--gp-match); }
+.gp-legend li[data-status='close'] strong { color: var(--gp-close); }
 
-/* Every team in the game, by region */
-.gp-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 14px 22px; margin-top: 2px; }
-.gp-teams__title { margin-bottom: 7px; font: 800 12px/1 var(--font-label); letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
-.gp-teams__list { display: flex; flex-direction: column; gap: 6px; }
-.gp-team { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.gp-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 16px 24px; }
+.gp-teams__title { margin-bottom: 8px; font: 800 12px/1 var(--font-label); letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+.gp-teams__list { display: flex; flex-direction: column; gap: 7px; }
+.gp-team { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .gp-team__name { min-width: 0; font: 700 14.5px/1.2 var(--font-label); letter-spacing: .02em; color: var(--ink); overflow-wrap: anywhere; }
+
+/* Team logos sit on a light tile, as they were made to, and always beside the team's name. */
+.gp-logo { flex: none; display: inline-block; border-radius: 6px; background: #fff; object-fit: contain; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12), 0 2px 6px rgba(0, 0, 0, .3); }
+.gp-logo--initials { display: inline-flex; align-items: center; justify-content: center; background: var(--panel-3); border: 1px solid var(--line-2); box-shadow: none; color: var(--ink-2); font-family: var(--font-label); font-weight: 800; letter-spacing: .02em; line-height: 1; }
 
 /* Guessing */
 .gp-play { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
-.gp-play__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
-.gp-count { font: 800 15px/1 var(--font-label); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.gp-play__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
+.gp-progress { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.gp-count { font: 800 14px/1 var(--font-label); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.gp-pips { display: flex; gap: 4px; }
+.gp-pip { width: 15px; height: 8px; border-radius: 2px; background: var(--panel-3); box-shadow: inset 0 0 0 1px var(--line-2); transform: skewX(var(--skew)); }
+.gp-pip[data-state='used'] { background: var(--orange); box-shadow: none; }
+.gp-pip[data-state='won'] { background: var(--gp-match); box-shadow: none; }
 
 .gp-input { position: relative; flex: 1 1 340px; min-width: 0; }
-.gp-input__icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
+.gp-input__icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--orange); pointer-events: none; }
 .gp-input__field {
   width: 100%;
-  height: 50px;
-  padding: 0 14px 0 42px;
+  height: 54px;
+  padding: 0 16px 0 46px;
   border: 1px solid var(--line-2);
   border-radius: var(--gp-radius);
-  background: var(--panel);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
   color: var(--ink);
-  font: 600 17px/1 var(--font-body);
+  font: 700 18px/1 var(--font-label);
+  letter-spacing: .02em;
+  transition: border-color .15s, box-shadow .15s;
 }
-.gp-input__field::placeholder { color: var(--ink-3); }
-.gp-input__field:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(249, 158, 26, .2); }
-.gp-input__field:disabled { opacity: .6; }
+.gp-input__field::placeholder { color: var(--ink-3); font-weight: 600; }
+.gp-input__field:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(249, 158, 26, .22); }
+.gp-input__field:disabled { opacity: .55; }
 .gp-input__list {
   position: absolute;
   left: 0;
   right: 0;
-  top: calc(100% + 4px);
+  top: calc(100% + 6px);
   z-index: 30;
-  max-height: 340px;
+  max-height: 380px;
   overflow-y: auto;
-  padding: 4px;
+  padding: 5px;
   border: 1px solid var(--line-2);
   border-radius: var(--gp-radius);
   background: #0c1018;
-  box-shadow: 0 16px 34px rgba(0, 0, 0, .5);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .55);
 }
 .gp-input__list[hidden] { display: none; }
-.gp-option { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 42px; padding: 10px 10px; border-radius: 6px; cursor: pointer; }
-.gp-option[aria-selected='true'] { background: var(--panel-3); }
-.gp-option__name { font: 800 16px/1.1 var(--font-label); letter-spacing: .02em; color: var(--ink); }
-.gp-option__team { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-3); text-align: right; }
+.gp-option { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 46px; padding: 8px 10px; border-radius: 6px; cursor: pointer; }
+.gp-option[aria-selected='true'] { background: var(--panel-3); box-shadow: inset 3px 0 0 var(--orange); }
+.gp-option__name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: italic 900 20px/1 var(--font-display); letter-spacing: .02em; text-transform: uppercase; color: var(--ink); }
+.gp-option__team { font-size: 13.5px; color: var(--ink-3); text-align: right; }
+.gp-input__none { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 30; padding: 12px 14px; border: 1px solid var(--line-2); border-radius: var(--gp-radius); background: #0c1018; font-size: 14px; color: var(--ink-3); }
 
-/* Team logos sit on a light tile, as they were made to, and always beside the team's name. */
-.gp-logo { flex: none; display: inline-block; border-radius: 5px; background: #fff; object-fit: contain; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
-.gp-logo--initials { display: inline-flex; align-items: center; justify-content: center; background: var(--panel-3); border: 1px solid var(--line-2); box-shadow: none; color: var(--ink-2); font-family: var(--font-label); font-weight: 800; letter-spacing: .02em; line-height: 1; }
-.gp-input__none { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 30; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: var(--gp-radius); background: #0c1018; font-size: 14px; color: var(--ink-3); }
-
-/* The board: newest guess on top */
-.gp-board { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.gp-row {
-  display: grid;
-  grid-template-columns: minmax(140px, 1.25fr) repeat(var(--gp-clues, 5), minmax(0, 1fr));
-  gap: 6px;
-  min-width: 0;
-  animation: gp-in .22s var(--ease-out);
-}
-.gp-row__name { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--gp-radius); background: var(--panel); }
-.gp-row[data-correct] .gp-row__name { border-color: var(--gp-match); background: color-mix(in srgb, var(--gp-match) 14%, var(--panel)); }
-.gp-row__number { flex: none; font: 800 13px/1 var(--font-label); color: var(--ink-3); font-variant-numeric: tabular-nums; }
-.gp-row__player { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: italic 900 21px/1.1 var(--font-display); letter-spacing: .02em; text-transform: uppercase; color: var(--ink); }
+/* The board. The top row is today's pro, and names the columns. Guesses follow, newest first. */
+.gp-board { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.gp-row { display: grid; grid-template-columns: minmax(150px, 1.3fr) repeat(var(--gp-clues, 5), minmax(0, 1fr)); gap: 7px; min-width: 0; }
+.gp-row__name { display: flex; align-items: center; gap: 11px; min-width: 0; min-height: 58px; padding: 0 14px; border: 1px solid var(--line); border-radius: var(--gp-radius); background: var(--panel); }
+.gp-row__number { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; background: var(--panel-3); font: 800 12px/1 var(--font-label); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.gp-row__player { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: italic 900 23px/1.1 var(--font-display); letter-spacing: .02em; text-transform: uppercase; color: var(--ink); }
+.gp-row--guess[data-correct] .gp-row__name { border-color: var(--gp-match); background: linear-gradient(90deg, color-mix(in srgb, var(--gp-match) 22%, var(--panel)), var(--panel)); }
+.gp-row--guess[data-correct] .gp-row__number { background: var(--gp-match); color: #08130e; }
 
 .gp-cell {
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
   min-height: 58px;
-  padding: 8px 26px 8px 10px;
+  padding: 8px 28px 8px 12px;
   border: 1px solid var(--line-2);
   border-radius: var(--gp-radius);
   background: var(--panel-2);
 }
-.gp-cell[data-status='match'] { border-color: var(--gp-match); background: color-mix(in srgb, var(--gp-match) 22%, var(--panel-2)); }
-.gp-cell[data-status='close'] { border-color: var(--gp-close); background: color-mix(in srgb, var(--gp-close) 18%, var(--panel-2)); }
-.gp-cell[data-status='miss'] { opacity: .88; }
 .gp-cell__label { font: 800 10.5px/1 var(--font-label); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
-.gp-cell[data-status='match'] .gp-cell__label, .gp-cell[data-status='close'] .gp-cell__label { color: var(--ink-2); }
-.gp-cell__value { display: inline-flex; align-items: center; gap: 3px; min-width: 0; font: 700 14.5px/1.2 var(--font-label); letter-spacing: .01em; color: var(--ink); overflow-wrap: anywhere; }
-.gp-cell__value .gp-logo { margin-right: 4px; }
+.gp-cell__value { display: flex; align-items: center; gap: 8px; min-width: 0; font: 700 15px/1.2 var(--font-label); letter-spacing: .01em; color: var(--ink-2); }
+.gp-cell__text { min-width: 0; overflow-wrap: anywhere; }
 .gp-cell__hint { flex: none; color: var(--orange-hot); }
-.gp-cell__mark { position: absolute; right: 8px; top: 7px; font: 800 14px/1 var(--font-body); color: var(--ink-3); }
-.gp-cell[data-status='match'] .gp-cell__mark { color: var(--gp-match); }
-.gp-cell[data-status='close'] .gp-cell__mark { color: var(--gp-close); }
+.gp-cell__mark { position: absolute; right: 8px; top: 8px; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; font: 800 11px/1 var(--font-body); color: var(--ink-3); background: rgba(0, 0, 0, .25); }
 
-@keyframes gp-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.gp-row--guess .gp-cell { animation: gp-flip .42s var(--ease-out) both; animation-delay: calc(var(--gp-i, 0) * 90ms); transform-origin: 50% 0; }
+.gp-row--guess .gp-cell[data-status='match'] { border-color: var(--gp-match); background: linear-gradient(180deg, rgba(255, 255, 255, .07), transparent 70%), var(--gp-match-bg); }
+.gp-row--guess .gp-cell[data-status='close'] { border-color: var(--gp-close); background: linear-gradient(180deg, rgba(255, 255, 255, .07), transparent 70%), var(--gp-close-bg); }
+.gp-row--guess .gp-cell[data-status='match'] .gp-cell__value,
+.gp-row--guess .gp-cell[data-status='close'] .gp-cell__value { color: #fff; }
+.gp-row--guess .gp-cell[data-status='match'] .gp-cell__label,
+.gp-row--guess .gp-cell[data-status='close'] .gp-cell__label { color: rgba(255, 255, 255, .78); }
+.gp-row--guess .gp-cell[data-status='match'] .gp-cell__mark { color: #08130e; background: var(--gp-match); }
+.gp-row--guess .gp-cell[data-status='close'] .gp-cell__mark { color: #191103; background: var(--gp-close); }
+.gp-row--guess .gp-cell[data-status='miss'] .gp-cell__value { color: var(--ink-3); }
 
-/* The result */
-.gp-result { display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--line-2); border-top: 3px solid var(--orange); border-radius: var(--gp-radius); background: linear-gradient(180deg, var(--panel-2), var(--panel)); }
-.gp-result[data-won] { border-top-color: var(--gp-match); }
-.gp-result__head { display: flex; align-items: center; gap: 8px; color: var(--orange); }
+/* The target row */
+.gp-row--target .gp-row__name { border-style: dashed; border-color: var(--line-2); background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .018) 0 10px, transparent 10px 20px), var(--panel); }
+.gp-target__mystery { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: color-mix(in srgb, var(--orange) 16%, var(--panel-3)); border: 1px solid color-mix(in srgb, var(--orange) 50%, transparent); font: italic 900 24px/1 var(--font-display); color: var(--orange-hot); }
+.gp-target__label { font: 800 13px/1.1 var(--font-label); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.gp-cell--target { border-style: dashed; background: var(--panel); }
+.gp-cell--target .gp-cell__label { color: var(--orange); }
+.gp-cell--target .gp-cell__value { color: var(--ink); }
+.gp-cell__unknown { font: italic 900 22px/1 var(--font-display); color: var(--line-2); }
+.gp-cell--target[data-status='match'] { border-style: solid; border-color: var(--gp-match); background: color-mix(in srgb, var(--gp-match) 16%, var(--panel)); }
+.gp-cell--target[data-status='close'] { border-color: var(--gp-close); background: color-mix(in srgb, var(--gp-close) 12%, var(--panel)); }
+.gp-cell--target[data-status='close'] .gp-cell__mark { color: #191103; background: var(--gp-close); }
+.gp-cell--target[data-status='reveal'] { border-style: solid; border-color: color-mix(in srgb, var(--orange) 60%, var(--line-2)); background: color-mix(in srgb, var(--orange) 10%, var(--panel)); }
+.gp-row--target[data-revealed] .gp-row__name { border-style: solid; border-color: color-mix(in srgb, var(--orange) 60%, var(--line-2)); background: color-mix(in srgb, var(--orange) 10%, var(--panel)); }
+
+.gp-hint { padding: 4px 2px; font-size: 14.5px; color: var(--ink-3); }
+
+@keyframes gp-flip {
+  from { opacity: 0; transform: perspective(500px) rotateX(-75deg); }
+  to { opacity: 1; transform: none; }
+}
+
+/* The result: the answer beside your results */
+.gp-result {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 18px 28px;
+  padding: 18px;
+  border: 1px solid var(--line-2);
+  border-top: 3px solid var(--orange);
+  border-radius: var(--gp-radius);
+  background: radial-gradient(circle at 0 0, color-mix(in srgb, var(--orange) 10%, transparent), transparent 55%), linear-gradient(180deg, var(--panel-2), var(--panel));
+}
+.gp-result[data-won] { border-top-color: var(--gp-match); background: radial-gradient(circle at 0 0, color-mix(in srgb, var(--gp-match) 12%, transparent), transparent 55%), linear-gradient(180deg, var(--panel-2), var(--panel)); }
+.gp-result__main { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.gp-result__head { display: flex; align-items: center; gap: 9px; color: var(--orange); }
 .gp-result[data-won] .gp-result__head { color: var(--gp-match); }
-.gp-result__title { font: italic 900 30px/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
-.gp-answer { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.gp-answer__text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.gp-answer__text .gp-muted a { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-2); }
+.gp-result__title { font: italic 900 32px/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
+.gp-answer { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.gp-answer__text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .gp-answer__lead { font: 700 12px/1.2 var(--font-label); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
-.gp-answer__name { font: italic 900 38px/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
+.gp-answer__name { font: italic 900 42px/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); overflow-wrap: anywhere; }
 .gp-answer__name a { display: inline-flex; align-items: center; gap: 6px; color: inherit; text-decoration-color: var(--orange); text-underline-offset: 4px; }
 .gp-answer__name svg { color: var(--ink-3); }
 .gp-answer__facts { font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+.gp-answer__text .gp-muted a { display: inline-flex; align-items: center; gap: 3px; }
 .gp-result__actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.gp-button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
+.gp-button { display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 0 15px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel-2); font: 700 14.5px/1 var(--font-label); letter-spacing: .03em; color: var(--ink); transition: border-color .15s, background .15s; }
+.gp-button:hover { border-color: var(--orange); }
+.gp-button--primary { border-color: var(--orange); background: var(--orange); color: var(--orange-ink); }
+.gp-button--primary:hover { background: var(--orange-hot); }
 .gp-share { width: 100%; max-width: 360px; padding: 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel); color: var(--ink); font: 14px/1.4 ui-monospace, Consolas, monospace; }
 
-.gp-stats { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; border-top: 1px solid var(--line); }
-.gp-stats__numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-width: 520px; }
-.gp-stats__numbers div { display: flex; flex-direction: column-reverse; gap: 2px; }
-.gp-stats__numbers dt { font: 700 11.5px/1.2 var(--font-label); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
-.gp-stats__numbers dd { font: italic 900 30px/1 var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; }
-.gp-spread { display: flex; flex-direction: column; gap: 4px; max-width: 520px; }
-.gp-spread li { display: flex; align-items: center; gap: 8px; }
-.gp-spread__guesses { flex: none; width: 14px; font: 700 13px/1 var(--font-label); color: var(--ink-3); text-align: right; }
-.gp-spread__bar { display: flex; justify-content: flex-end; min-width: 22px; padding: 3px 6px; border-radius: 3px; background: var(--panel-3); font: 700 12.5px/1 var(--font-label); color: var(--ink); font-variant-numeric: tabular-nums; }
+.gp-stats { display: flex; flex-direction: column; gap: 10px; min-width: 0; padding-left: 24px; border-left: 1px solid var(--line); }
+.gp-stats__numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.gp-stats__numbers div { display: flex; flex-direction: column-reverse; gap: 3px; }
+.gp-stats__numbers dt { font: 700 11px/1.2 var(--font-label); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.gp-stats__numbers dd { font: italic 900 32px/1 var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.gp-stats__title { font: 800 11.5px/1 var(--font-label); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.gp-spread { display: flex; flex-direction: column; gap: 5px; }
+.gp-spread li { display: grid; grid-template-columns: 14px minmax(0, 1fr) 24px; align-items: center; gap: 8px; }
+.gp-spread__guesses { font: 700 13px/1 var(--font-label); color: var(--ink-3); text-align: right; }
+.gp-spread__track { height: 12px; border-radius: 3px; background: var(--panel-3); overflow: hidden; }
+.gp-spread__bar { display: block; height: 100%; border-radius: 3px; background: var(--ink-3); }
+.gp-spread li[data-today] .gp-spread__bar { background: var(--gp-match); }
+.gp-spread li[data-today] .gp-spread__guesses, .gp-spread li[data-today] .gp-spread__count { color: var(--gp-match); }
+.gp-spread__count { font: 700 13px/1 var(--font-label); color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
 .gp-credit { font-size: 13px; line-height: 1.5; color: var(--ink-3); }
 .gp-credit a { color: var(--ink-2); }
 
-@media (max-width: 760px) {
-  /* The name across the top, then the clues three to a row below it. */
-  .gp-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
-  .gp-row__name { grid-column: 1 / -1; min-height: 38px; }
-  .gp-row__player { font-size: 19px; }
-  .gp-cell { min-height: 50px; padding: 7px 17px 7px 8px; }
-  .gp-cell__label { font-size: 9.5px; letter-spacing: .07em; }
-  .gp-cell__value { font-size: 13.5px; }
-  .gp-cell__mark { right: 5px; top: 5px; font-size: 12px; }
-  .gp-stats__numbers dd { font-size: 26px; }
+/* On a wide screen the columns are named once, in the top row. The labels stay for screen readers. */
+@media (min-width: 761px) {
+  .gp-row--guess .gp-cell__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 }
 
-@media (max-width: 420px) {
-  .gp-answer__name { font-size: 32px; }
+@media (max-width: 900px) {
+  .gp-result { grid-template-columns: minmax(0, 1fr); }
+  .gp-stats { padding: 16px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+}
+
+@media (max-width: 760px) {
+  /* The name across the top, then the clues in a grid below it: two to a row for four clues, three for more. */
+  .gp-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+  .gp-board[data-clues='4'] .gp-row, .gp-board[data-clues='2'] .gp-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gp-row__name { grid-column: 1 / -1; min-height: 42px; }
+  .gp-row__player { font-size: 20px; }
+  .gp-cell { min-height: 52px; padding: 7px 26px 7px 10px; }
+  .gp-cell__label { font-size: 9.5px; letter-spacing: .08em; }
+  .gp-cell__value { font-size: 14px; }
+  .gp-progress { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+  .gp-answer__name { font-size: 34px; }
+  .gp-stats__numbers dd { font-size: 27px; }
+}
+
+@media (max-width: 600px) {
+  .gp-legend { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .gp-legend li { padding: 7px 10px; }
 }
 
 @media (max-width: 359px) {
-  .gp-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gp-row, .gp-board[data-clues='4'] .gp-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gp-row { animation: none; }
+  .gp-row--guess .gp-cell { animation: none; }
+  .gp-chip, .gp-input__field, .gp-button { transition: none; }
 }

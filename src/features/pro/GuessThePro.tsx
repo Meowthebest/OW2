@@ -1,5 +1,5 @@
-import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
-import { ArrowDown, ArrowUp, Copy, ExternalLink, Flag, RotateCcw, Search, Trophy, Users } from 'lucide-react';
+import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
+import { ArrowDown, ArrowUp, CircleHelp, Copy, ExternalLink, Flag, RotateCcw, Search, Trophy, Users } from 'lucide-react';
 import { Segmented, StateBlock } from '../../components/controls';
 import { readJson, writeJson } from '../../lib/storage';
 import {
@@ -11,6 +11,7 @@ import {
   countryName,
   emptyStats,
   foldName,
+  knownClues,
   localDay,
   MAX_GUESSES,
   puzzleNumber,
@@ -92,13 +93,14 @@ function TeamBadge({ team, size = 20 }: { team: ProTeam | undefined; size?: numb
   return <span className="gp-logo gp-logo--initials" style={{ width: size, height: size, fontSize: Math.max(8, Math.round(size * 0.4)) }} aria-hidden="true">{teamInitials(team.name)}</span>;
 }
 
-function Clue({ clue, team }: { clue: ClueResult; team?: ProTeam }) {
+/** One clue of one guess. Its label shows on phones, where the columns wrap, and is read out everywhere. */
+function Clue({ clue, team, order }: { clue: ClueResult; team?: ProTeam; order: number }) {
   return (
-    <div className="gp-cell" data-status={clue.status} data-clue={clue.key}>
+    <div className="gp-cell" data-status={clue.status} data-clue={clue.key} style={{ '--gp-i': order } as CSSProperties}>
       <span className="gp-cell__label">{CLUE_LABELS[clue.key]}</span>
       <span className="gp-cell__value">
-        {team && <TeamBadge team={team} size={20} />}
-        {clue.value}
+        {team && <TeamBadge team={team} size={22} />}
+        <span className="gp-cell__text">{clue.value}</span>
         {clue.hint === 'later' && <ArrowUp size={14} aria-hidden="true" className="gp-cell__hint" />}
         {clue.hint === 'earlier' && <ArrowDown size={14} aria-hidden="true" className="gp-cell__hint" />}
       </span>
@@ -111,25 +113,74 @@ function Clue({ clue, team }: { clue: ClueResult; team?: ProTeam }) {
   );
 }
 
-function Board({ guesses, players, answer, teams, clues }: { guesses: string[]; players: Map<string, ProPlayer>; answer: ProPlayer; teams: Map<string, ProTeam>; clues: ClueKey[] }) {
-  if (guesses.length === 0) return null;
+/**
+ * The top row of the board: today's pro, filled in as you learn. It names the columns too.
+ * Once the game is over it shows the answer itself.
+ */
+function TargetRow({ answer, guessed, teams, clues, revealed, won }: { answer: ProPlayer; guessed: ProPlayer[]; teams: Map<string, ProTeam>; clues: ClueKey[]; revealed: boolean; won: boolean }) {
+  const known = knownClues(guessed, answer, teams, clues);
+  const shown = revealed ? compareGuess(answer, answer, teams, clues) : null;
   return (
-    <ol className="gp-board" aria-label="Your guesses" style={{ ['--gp-clues' as string]: clues.length }}>
-      {[...guesses].reverse().map((id, index) => {
-        const guess = players.get(id);
-        if (!guess) return null;
-        const correct = guess.id === answer.id;
+    <li className="gp-row gp-row--target" data-revealed={revealed || undefined} aria-label={revealed ? `Today's pro: ${answer.name}` : 'What you know about today\'s pro'}>
+      <div className="gp-row__name gp-target__name">
+        {revealed ? (
+          <>
+            <TeamBadge team={teams.get(answer.team)} size={30} />
+            <span className="gp-row__player">{answer.name}</span>
+          </>
+        ) : (
+          <>
+            <span className="gp-target__mystery" aria-hidden="true">?</span>
+            <span className="gp-target__label">Today's pro</span>
+          </>
+        )}
+      </div>
+      {clues.map((key, index) => {
+        const fact = known[index];
+        const value = shown ? shown[index].value : fact.value;
+        const status = shown ? (won ? 'match' : 'reveal') : fact.status;
+        const team = key === 'team' && (shown || fact.status === 'match') ? teams.get(answer.team) : undefined;
         return (
-          <li key={id} className="gp-row" data-correct={correct || undefined}>
-            <div className="gp-row__name">
-              <span className="gp-row__number">{guesses.length - index}</span>
-              <span className="gp-row__player">{guess.name}</span>
-            </div>
-            {compareGuess(guess, answer, teams, clues).map((clue) => <Clue key={clue.key} clue={clue} team={clue.key === 'team' ? teams.get(guess.team) : undefined} />)}
-          </li>
+          <div key={key} className="gp-cell gp-cell--target" data-status={status} data-clue={key}>
+            <span className="gp-cell__label gp-cell__label--head">{CLUE_LABELS[key]}</span>
+            <span className="gp-cell__value">
+              {team && <TeamBadge team={team} size={22} />}
+              <span className="gp-cell__text">{value ?? <><span className="gp-cell__unknown" aria-hidden="true">?</span><span className="sr-only">Not known yet</span></>}</span>
+            </span>
+            {status === 'close' && <span className="gp-cell__mark" aria-hidden="true">{STATUS_MARK.close}</span>}
+          </div>
         );
       })}
+    </li>
+  );
+}
+
+function Board({ guesses, players, answer, teams, clues, revealed, won }: { guesses: string[]; players: Map<string, ProPlayer>; answer: ProPlayer; teams: Map<string, ProTeam>; clues: ClueKey[]; revealed: boolean; won: boolean }) {
+  const guessed = guesses.map((id) => players.get(id)).filter((player): player is ProPlayer => Boolean(player));
+  return (
+    <ol className="gp-board" aria-label="Your guesses" data-clues={clues.length} style={{ '--gp-clues': clues.length } as CSSProperties}>
+      <TargetRow answer={answer} guessed={guessed} teams={teams} clues={clues} revealed={revealed} won={won} />
+      {[...guessed].reverse().map((guess, index) => (
+        <li key={guess.id} className="gp-row gp-row--guess" data-correct={guess.id === answer.id || undefined}>
+          <div className="gp-row__name">
+            <span className="gp-row__number">{guessed.length - index}</span>
+            <span className="gp-row__player">{guess.name}</span>
+          </div>
+          {compareGuess(guess, answer, teams, clues).map((clue, order) => <Clue key={clue.key} clue={clue} order={order} team={clue.key === 'team' ? teams.get(guess.team) : undefined} />)}
+        </li>
+      ))}
     </ol>
+  );
+}
+
+/** Eight marks, one per guess: used, the winning one, or still to come. */
+function Pips({ used, won }: { used: number; won: boolean }) {
+  return (
+    <span className="gp-pips" aria-hidden="true">
+      {Array.from({ length: MAX_GUESSES }, (_, index) => (
+        <span key={index} className="gp-pip" data-state={index < used ? (won && index === used - 1 ? 'won' : 'used') : 'left'} />
+      ))}
+    </span>
   );
 }
 
@@ -181,7 +232,7 @@ function GuessInput({ players, teams, used, disabled, onGuess }: { players: ProP
   return (
     <div className="gp-input">
       <label className="sr-only" htmlFor={`${listId}-input`}>Guess a player</label>
-      <Search size={17} aria-hidden="true" className="gp-input__icon" />
+      <Search size={18} aria-hidden="true" className="gp-input__icon" />
       <input
         ref={input}
         id={`${listId}-input`}
@@ -218,8 +269,9 @@ function GuessInput({ players, teams, used, disabled, onGuess }: { players: ProP
             onClick={() => pick(player)}
             onMouseEnter={() => setActive(index)}
           >
+            <TeamBadge team={teams.get(player.team)} size={28} />
             <span className="gp-option__name">{player.name}</span>
-            <span className="gp-option__team">{teams.get(player.team)?.name} <TeamBadge team={teams.get(player.team)} size={20} /></span>
+            <span className="gp-option__team">{teams.get(player.team)?.name}</span>
           </li>
         ))}
       </ul>
@@ -234,7 +286,7 @@ function clockText(ms: number) {
   return hours > 0 ? `${hours}h ${minutes % 60}m` : `${minutes}m`;
 }
 
-function Stats({ stats }: { stats: ProStats }) {
+function Stats({ stats, today }: { stats: ProStats; today: number | null }) {
   const most = Math.max(1, ...stats.spread);
   return (
     <section className="gp-stats" aria-label="Your daily results">
@@ -244,11 +296,15 @@ function Stats({ stats }: { stats: ProStats }) {
         <div><dt>Streak</dt><dd>{stats.streak}</dd></div>
         <div><dt>Best streak</dt><dd>{stats.best}</dd></div>
       </dl>
+      <p className="gp-stats__title">Wins by guesses</p>
       <ol className="gp-spread" aria-label="Wins by number of guesses">
         {stats.spread.map((count, index) => (
-          <li key={index}>
+          <li key={index} data-today={today === index + 1 || undefined}>
             <span className="gp-spread__guesses">{index + 1}</span>
-            <span className="gp-spread__bar" style={{ width: `${Math.max(6, (count / most) * 100)}%` }}>{count}</span>
+            <span className="gp-spread__track">
+              <span className="gp-spread__bar" style={{ width: `${count === 0 ? 0 : Math.max(8, (count / most) * 100)}%` }} />
+            </span>
+            <span className="gp-spread__count">{count}</span>
           </li>
         ))}
       </ol>
@@ -271,30 +327,32 @@ function Result({ won, answer, teams, rows, day, practice, now, stats, onPractic
   };
   return (
     <section className="gp-result" data-won={won || undefined} aria-live="polite">
-      <header className="gp-result__head">
-        {won ? <Trophy size={20} aria-hidden="true" /> : <Flag size={20} aria-hidden="true" />}
-        <h2 className="gp-result__title">{won ? `Got it in ${rows.length}` : 'Out of guesses'}</h2>
-      </header>
-      <div className="gp-answer">
-        <TeamBadge team={team} size={56} />
-        <div className="gp-answer__text">
-          <p className="gp-answer__lead">{practice ? 'The pro was' : "Today's pro is"}</p>
-          <p className="gp-answer__name">
-            {answer.page ? <a href={answer.page} target="_blank" rel="noreferrer">{answer.name} <ExternalLink size={14} aria-hidden="true" /></a> : answer.name}
-          </p>
-          <p className="gp-answer__facts">
-            {[team?.name, team ? REGION_LABELS[team.region] : null, countryName(answer.nationality), answer.specialty ? `${ROLE_LABELS[answer.role]}, ${specialtyLabel(answer.specialty)}` : ROLE_LABELS[answer.role], answer.joined ? `joined ${answer.joined}` : null].filter(Boolean).join(' · ')}
-          </p>
-          {team?.page && <p className="gp-muted"><a href={team.page} target="_blank" rel="noreferrer">{team.name}'s roster on Liquipedia <ExternalLink size={11} aria-hidden="true" /></a></p>}
+      <div className="gp-result__main">
+        <header className="gp-result__head">
+          {won ? <Trophy size={22} aria-hidden="true" /> : <Flag size={22} aria-hidden="true" />}
+          <h2 className="gp-result__title">{won ? `Got it in ${rows.length}` : 'Out of guesses'}</h2>
+        </header>
+        <div className="gp-answer">
+          <TeamBadge team={team} size={64} />
+          <div className="gp-answer__text">
+            <p className="gp-answer__lead">{practice ? 'The pro was' : "Today's pro is"}</p>
+            <p className="gp-answer__name">
+              {answer.page ? <a href={answer.page} target="_blank" rel="noreferrer">{answer.name} <ExternalLink size={14} aria-hidden="true" /></a> : answer.name}
+            </p>
+            <p className="gp-answer__facts">
+              {[team?.name, team ? REGION_LABELS[team.region] : null, countryName(answer.nationality), answer.specialty ? `${ROLE_LABELS[answer.role]}, ${specialtyLabel(answer.specialty)}` : ROLE_LABELS[answer.role], answer.joined ? `joined ${answer.joined}` : null].filter(Boolean).join(' · ')}
+            </p>
+            {team?.page && <p className="gp-muted"><a href={team.page} target="_blank" rel="noreferrer">{team.name}'s roster on Liquipedia <ExternalLink size={11} aria-hidden="true" /></a></p>}
+          </div>
         </div>
+        <div className="gp-result__actions">
+          <button type="button" className="gp-button gp-button--primary" onClick={copy}><Copy size={15} aria-hidden="true" /> {copied === 'yes' ? 'Copied' : 'Copy result'}</button>
+          <button type="button" className="gp-button" onClick={onPractice}><RotateCcw size={15} aria-hidden="true" /> {practice ? 'Another practice pro' : 'Practice with a random pro'}</button>
+        </div>
+        {copied === 'failed' && <textarea className="gp-share" readOnly value={text} aria-label="Your result, to copy" rows={rows.length + 1} />}
+        {!practice && <p className="gp-muted">The next pro arrives in {clockText(untilNextDay(now))}, at midnight where you are.</p>}
       </div>
-      <div className="gp-result__actions">
-        <button type="button" className="btn-plain gp-button" onClick={copy}><Copy size={15} aria-hidden="true" /> {copied === 'yes' ? 'Copied' : 'Copy result'}</button>
-        <button type="button" className="btn-plain gp-button" onClick={onPractice}><RotateCcw size={15} aria-hidden="true" /> {practice ? 'Another practice pro' : 'Practice with a random pro'}</button>
-      </div>
-      {copied === 'failed' && <textarea className="gp-share" readOnly value={text} aria-label="Your result, to copy" rows={rows.length + 1} />}
-      {!practice && <p className="gp-muted">The next pro arrives in {clockText(untilNextDay(now))}, at midnight where you are.</p>}
-      {!practice && <Stats stats={stats} />}
+      {!practice && <Stats stats={stats} today={won ? rows.length : null} />}
     </section>
   );
 }
@@ -312,7 +370,7 @@ function TeamList({ teams, players }: { teams: ProTeam[]; players: ProPlayer[] }
           <ul className="gp-teams__list">
             {teams.filter((team) => team.region === region).map((team) => (
               <li key={team.id} className="gp-team" title={`${team.name}, ${counts.get(team.id) ?? 0} players`}>
-                <TeamBadge team={team} size={34} />
+                <TeamBadge team={team} size={32} />
                 <span className="gp-team__name">{team.name}</span>
               </li>
             ))}
@@ -323,24 +381,32 @@ function TeamList({ teams, players }: { teams: ProTeam[]; players: ProPlayer[] }
   );
 }
 
-function HowToPlay({ clues, players, teams }: { clues: ClueKey[]; players: ProPlayer[]; teams: ProTeam[] }) {
+function HowToPlay({ clues, players }: { clues: ClueKey[]; players: ProPlayer[] }) {
+  const close = ['A nationality from the same part of the world'];
+  if (clues.includes('specialty')) close.push('the same role with a different specialty');
+  if (clues.includes('joined')) close.push('joined a year apart');
+  const legend: { status: ClueStatus; text: string }[] = [
+    { status: 'match', text: "The same as today's pro" },
+    { status: 'close', text: close.length > 1 ? `${close.slice(0, -1).join(', ')}, or ${close[close.length - 1]}` : close[0] },
+    { status: 'miss', text: 'Nothing in common on that clue' },
+  ];
   return (
-    <details className="gp-help">
-      <summary>How to play</summary>
-      <div className="gp-help__body">
-        <p>Work out today's OWCS pro in {MAX_GUESSES} guesses. Pick any player from the list, and each guess shows which of their details today's pro shares.</p>
-        <ul className="gp-legend">
-          <li data-status="match"><span aria-hidden="true">{STATUS_MARK.match}</span><span><strong>Match</strong>: the same as today's pro.</span></li>
-          <li data-status="close"><span aria-hidden="true">{STATUS_MARK.close}</span><span><strong>Close</strong>: a nationality from the same part of the world{clues.includes('specialty') ? ', the same role with a different specialty' : ''}{clues.includes('joined') ? ', or joined a year apart' : ''}.</span></li>
-          <li data-status="miss"><span aria-hidden="true">{STATUS_MARK.miss}</span><span><strong>No match</strong>: nothing in common on that clue.</span></li>
-        </ul>
-        {clues.includes('joined') && <p><strong>Joined</strong> is the year the player joined their current team. The arrow points to whether today's pro joined later or earlier.</p>}
-        <p>Everyone gets the same pro on the same day, and a new one arrives at midnight where you are. Practice games use a random pro and don't count toward your results.</p>
-        {players.some((player) => player.role === 'flex') && <p><strong>{ROLE_LABELS.flex}</strong> is the role Liquipedia gives a player who covers more than one.</p>}
-        <p className="gp-muted">The list holds {players.length} players from {teams.length} teams in Stage 3 of the 2026 Overwatch Champions Series:</p>
-        <TeamList teams={teams} players={players} />
-      </div>
-    </details>
+    <div className="gp-help">
+      <p>Each guess adds a row showing what that player shares with today's pro. The top row keeps everything you've learned so far.</p>
+      <ul className="gp-legend">
+        {legend.map((item) => (
+          <li key={item.status} data-status={item.status}>
+            <span className="gp-legend__mark" aria-hidden="true">{STATUS_MARK[item.status]}</span>
+            <span className="gp-legend__text"><strong>{STATUS_TEXT[item.status]}</strong><span className="sr-only">: </span> <span>{item.text}</span></span>
+          </li>
+        ))}
+      </ul>
+      {clues.includes('joined') && <p><strong>Joined</strong> is the year the player joined their current team. The arrow points to whether today's pro joined later or earlier.</p>}
+      <p className="gp-help__notes">
+        Everyone gets the same pro, and a new one arrives at midnight where you are. Practice games use a random pro and don't count toward your results.
+        {players.some((player) => player.role === 'flex') && <> <strong>{ROLE_LABELS.flex}</strong> is the role Liquipedia gives a player who covers more than one.</>}
+      </p>
+    </div>
   );
 }
 
@@ -351,6 +417,9 @@ export function GuessThePro() {
   const [mode, setMode] = useState<'daily' | 'practice'>('daily');
   const [saved, setSaved] = useState<Saved>(readSaved);
   const [practice, setPractice] = useState<{ answer: string; guesses: string[] } | null>(null);
+  // A first visit opens the rules. After that they stay a click away.
+  const [panel, setPanel] = useState<'help' | 'teams' | null>(() => (Object.keys(readSaved().days).length === 0 ? 'help' : null));
+  const panelId = useId();
 
   useEffect(() => {
     document.title = 'Guess the Pro | OW2 Hero Selector';
@@ -411,6 +480,8 @@ export function GuessThePro() {
     });
   };
 
+  const toggle = (which: 'help' | 'teams') => setPanel((current) => (current === which ? null : which));
+
   return (
     <div className="page gp-page">
       <PageTop
@@ -423,14 +494,37 @@ export function GuessThePro() {
           />
         }
       />
-      <HowToPlay clues={clues} players={data.players} teams={data.teams} />
+      <div className="gp-tools">
+        <button type="button" className="gp-chip" aria-expanded={panel === 'help'} aria-controls={`${panelId}-help`} onClick={() => toggle('help')}>
+          <CircleHelp size={15} aria-hidden="true" /> How to play
+        </button>
+        <button type="button" className="gp-chip" aria-expanded={panel === 'teams'} aria-controls={`${panelId}-teams`} onClick={() => toggle('teams')}>
+          <Users size={15} aria-hidden="true" /> Teams <span className="gp-chip__count">{data.teams.length}</span>
+        </button>
+      </div>
+      <section id={`${panelId}-help`} className="gp-panel" hidden={panel !== 'help'} aria-label="How to play">
+        {panel === 'help' && <HowToPlay clues={clues} players={data.players} />}
+      </section>
+      <section id={`${panelId}-teams`} className="gp-panel" hidden={panel !== 'teams'} aria-label="Teams in the game">
+        {panel === 'teams' && (
+          <>
+            <p className="gp-muted">{data.players.length} players from {data.teams.length} teams in Stage 3 of the 2026 Overwatch Champions Series.</p>
+            <TeamList teams={data.teams} players={data.players} />
+          </>
+        )}
+      </section>
+
       <section className="gp-play" aria-label={playingPractice ? 'Practice game' : `Daily puzzle ${puzzleNumber(day)}`}>
         <div className="gp-play__bar">
           <GuessInput players={data.players} teams={teams} used={new Set(guesses)} disabled={over} onGuess={guess} />
-          <p className="gp-count" aria-live="polite">{over ? (won ? 'Solved' : 'No guesses left') : `Guess ${guesses.length + 1} of ${MAX_GUESSES}`}</p>
+          <div className="gp-progress">
+            <Pips used={guesses.length} won={won} />
+            <p className="gp-count" aria-live="polite">{over ? (won ? 'Solved' : 'No guesses left') : `Guess ${guesses.length + 1} of ${MAX_GUESSES}`}</p>
+          </div>
         </div>
         {over && <Result won={won} answer={answer} teams={teams} rows={rows} day={day} practice={playingPractice} now={now} stats={saved.stats} onPractice={startPractice} />}
-        <Board guesses={guesses} players={players} answer={answer} teams={teams} clues={clues} />
+        <Board guesses={guesses} players={players} answer={answer} teams={teams} clues={clues} revealed={over} won={won} />
+        {guesses.length === 0 && <p className="gp-hint">Pick any player to start. Each guess lights up what they share with today's pro.</p>}
       </section>
       <p className="gp-credit">
         Player data from <a href={LIQUIPEDIA} target="_blank" rel="noreferrer">Liquipedia</a>, under <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noreferrer">CC BY-SA 3.0</a>

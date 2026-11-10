@@ -61,6 +61,30 @@ await test('every clue shows match, close or no match, for the right reason', ()
   assert.equal(core.compareGuess(byId('clay'), byId('ace'), teamMap, ['joined'])[0].hint, 'earlier');
 });
 
+await test('the top row keeps what the guesses have shown about the answer, and nothing more', () => {
+  const clues = core.cluesFor(DATA);
+  const known = (...ids) => Object.fromEntries(core.knownClues(ids.map(byId), byId('ace'), teamMap, clues).map((fact) => [fact.key, [fact.status, fact.value, fact.from]]));
+  assert.ok(Object.values(known()).every(([status, value, from]) => status === 'unknown' && value === null && from === null), 'nothing guessed, nothing known');
+  assert.deepEqual(known('dune'), {
+    team: ['unknown', null, null],
+    region: ['match', core.REGION_LABELS.kr, 0],
+    nationality: ['close', 'East Asia', 0],
+    role: ['unknown', null, null],
+    specialty: ['unknown', null, null],
+    joined: ['unknown', null, null],
+  });
+  // A match found later replaces a close one, and a year that's one off in a known direction gives the year itself.
+  assert.deepEqual(known('dune', 'bolt'), {
+    team: ['match', 'Alpha Esports', 1],
+    region: ['match', core.REGION_LABELS.kr, 0],
+    nationality: ['match', core.countryName('KR'), 1],
+    role: ['match', core.ROLE_LABELS.damage, 1],
+    specialty: ['close', 'Not Projectile', 1],
+    joined: ['match', '2025', 1],
+  });
+  assert.equal(core.knownClues([byId('clay')], byId('ace'), teamMap, ['joined'])[0].value, '2025', 'a year earlier works too');
+});
+
 await test('clues with too little data are left out rather than shown half empty', () => {
   const sparse = { players: PLAYERS.map((item, index) => ({ ...item, specialty: index < 3 ? item.specialty : null })) };
   assert.ok(!core.cluesFor(sparse).includes('specialty'));

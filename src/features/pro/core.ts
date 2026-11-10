@@ -69,6 +69,16 @@ const AREAS: Record<string, string> = {
 };
 for (const [area, codes] of Object.entries(AREAS)) for (const code of codes.split(' ')) COUNTRY_AREAS[code] = area;
 export const countryArea = (code: string | null) => (code ? COUNTRY_AREAS[code.toUpperCase()] ?? null : null);
+export const AREA_LABELS: Record<string, string> = {
+  'east-asia': 'East Asia',
+  'southeast-asia': 'Southeast Asia',
+  'south-asia': 'South Asia',
+  oceania: 'Oceania',
+  'north-america': 'North America',
+  'latin-america': 'Latin America',
+  europe: 'Europe',
+  'middle-east-africa': 'Middle East and Africa',
+};
 
 let regionNames: Intl.DisplayNames | null = null;
 /** "South Korea" from "KR". */
@@ -218,6 +228,36 @@ export function compareGuess(guess: ProPlayer, answer: ProPlayer, teams: Map<str
       default:
         return { key, status: 'miss', value: '—' };
     }
+  });
+}
+
+export interface KnownClue {
+  key: ClueKey;
+  status: 'match' | 'close' | 'unknown';
+  /** The value when it matched, a hint when a guess came close, or null. */
+  value: string | null;
+  /** Which guess told you, so the page can show that guess's team logo. */
+  from: number | null;
+}
+
+/** What the guesses so far reveal about today's pro, clue by clue. A match gives the value, a close guess a hint. */
+export function knownClues(guesses: ProPlayer[], answer: ProPlayer, teams: Map<string, ProTeam>, clues: ClueKey[]): KnownClue[] {
+  const rows = guesses.map((guess) => compareGuess(guess, answer, teams, clues));
+  return clues.map((key, index): KnownClue => {
+    const matched = rows.findIndex((row) => row[index].status === 'match');
+    if (matched !== -1) return { key, status: 'match', value: rows[matched][index].value, from: matched };
+    const close = rows.findIndex((row) => row[index].status === 'close');
+    if (close !== -1) {
+      const guess = guesses[close];
+      const result = rows[close][index];
+      // A year apart, and the arrow says which way, so the year itself is known.
+      if (key === 'joined' && guess.joined !== null && result.hint) return { key, status: 'match', value: String(guess.joined + (result.hint === 'later' ? 1 : -1)), from: close };
+      // A close nationality means the same part of the world, which says more than the guess's own country.
+      if (key === 'nationality') return { key, status: 'close', value: AREA_LABELS[countryArea(guess.nationality) ?? ''] ?? `Near ${result.value}`, from: close };
+      // A close specialty means the same role with another specialty.
+      return { key, status: 'close', value: key === 'specialty' ? `Not ${result.value}` : `Near ${result.value}`, from: close };
+    }
+    return { key, status: 'unknown', value: null, from: null };
   });
 }
 
