@@ -9,9 +9,9 @@
   "at": "2026-11-10T23:10:26.000Z"
  },
  "lastAttempt": {
-  "at": "2026-11-10T23:10:26.000Z",
-  "ok": true,
-  "error": null
+  "at": "2026-11-10T23:15:27.000Z",
+  "ok": false,
+  "error": "Steam reported 0 players, which is not believable"
  },
  "stats": {
   "peak24h": {
