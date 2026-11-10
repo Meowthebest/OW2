@@ -1,8 +1,16 @@
 {
  "schema": 1,
  "source": "https://overwatch.blizzard.com/en-us/news/",
- "updatedAt": "2026-11-10T01:34:39.598Z",
+ "updatedAt": "2026-11-10T23:33:28.789Z",
  "articles": [
+  {
+   "id": "24316733",
+   "url": "https://overwatch.blizzard.com/en-us/news/24316733/directors-take-5v5-and-6v6-better-together/",
+   "title": "Director’s Take: 5v5 and 6v6, Better Together",
+   "description": "Two roads diverged in the Overwatch community… you should probably travel both. Game Director Aaron Keller returns with an update on the state of 5v5 and 6v6 as the Reign of Talon comes to an end.",
+   "image": "https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/kn/KN459LDD8BFD1794252493859.png",
+   "publishedAt": "2026-11-10T17:00:00.000Z"
+  },
   {
    "id": "24303010",
    "url": "https://overwatch.blizzard.com/en-us/news/24303010/reign-of-talon-s5-midcycle-sets-up-the-showdown/",
@@ -98,6 +106,14 @@
    "description": "Summer Games return, Quick Play Hacked experiments begin, plus Mythic Mauga forges a world full of sizzling rewards and more!",
    "image": "https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/ch/CHSG4BLKLEVX1784048463424.png",
    "publishedAt": "2026-07-14T18:00:00.000Z"
+  },
+  {
+   "id": "24266875",
+   "url": "https://overwatch.blizzard.com/en-us/news/24266875/reign-of-talon-s2-midcycle-continues-the-climb/",
+   "title": "Reign of Talon - S2 Midcycle Continues the Climb",
+   "description": "Keep climbing for the summit as celebrations abound, a Mythic sun god rises, champions clash, and more!",
+   "image": "https://bnetcmsus-a.akamaihd.net/cms/blog_thumbnail/27/27OZXTGL9NLL1778097635569.png",
+   "publishedAt": "2026-05-12T18:00:00.000Z"
   },
   {
    "id": "24243449",
