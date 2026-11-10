@@ -1,3 +1,4 @@
 {"at":"2026-11-05T01:31:46.406Z","source":"itemshop","action":"rotation","rotation":"2026-11-03T20:46:51Z-6jyz1w","listings":59,"added":59,"removed":0}
 {"at":"2026-11-05T16:57:25.992Z","source":"itemshop","action":"backfill","days":43,"added":42,"failed":0,"stays":316}
 {"at":"2026-11-05T19:05:03.479Z","source":"wiki","action":"import","pages":644,"records":15642,"mythics":47,"passes":25}
+{"at":"2026-11-10T19:15:53.152Z","source":"itemshop","action":"rotation","rotation":"2026-11-10T19:09:15Z-v9qtv9","listings":60,"added":10,"removed":9}
