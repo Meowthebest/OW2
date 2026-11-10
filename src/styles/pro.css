@@ -16,11 +16,34 @@
 .gp-muted { font-size: 13.5px; line-height: 1.45; color: var(--ink-3); }
 .gp-muted a { color: var(--ink-2); }
 
-/* Heading */
-.gp-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 20px; }
-.gp-head__text { min-width: 0; flex: 1 1 340px; }
+/* Heading, over arena art made for this page. The art fades to dark behind the text. */
+.gp-head {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px 20px;
+  min-height: 210px;
+  padding: 28px 26px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--gp-radius);
+  background: var(--bg);
+}
+.gp-head::before,
+.gp-head::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
+.gp-head::before { z-index: -2; background: url('/art/guess-the-pro/arena.webp') right 58% / cover no-repeat; }
+.gp-head::after {
+  z-index: -1;
+  background:
+    linear-gradient(90deg, var(--bg) 0%, rgba(9, 12, 18, .9) 34%, rgba(9, 12, 18, .35) 68%, rgba(9, 12, 18, .1) 100%),
+    linear-gradient(0deg, rgba(9, 12, 18, .7), transparent 60%);
+}
+.gp-head__text { min-width: 0; flex: 1 1 340px; text-shadow: 0 1px 3px rgba(0, 0, 0, .55); }
 .gp-head__title { font: italic 900 clamp(36px, 4.4vw, 54px)/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
-.gp-head__intro { margin-top: 6px; font-size: 15.5px; line-height: 1.45; color: var(--ink-3); max-width: 70ch; }
+.gp-head__intro { margin-top: 6px; font-size: 15.5px; line-height: 1.45; color: var(--ink-2); max-width: 50ch; }
 .gp-head__meta { display: flex; align-items: center; }
 
 /* How to play and Teams */
@@ -160,7 +183,9 @@
 
 /* The target row */
 .gp-row--target .gp-row__name { border-style: dashed; border-color: var(--line-2); background: repeating-linear-gradient(135deg, rgba(255, 255, 255, .018) 0 10px, transparent 10px 20px), var(--panel); }
-.gp-target__mystery { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: color-mix(in srgb, var(--orange) 16%, var(--panel-3)); border: 1px solid color-mix(in srgb, var(--orange) 50%, transparent); font: italic 900 24px/1 var(--font-display); color: var(--orange-hot); }
+/* A faceless player stands in for today's pro until the game ends. */
+.gp-target__mystery { position: relative; flex: none; width: 40px; height: 40px; border-radius: 8px; background: url('/art/guess-the-pro/mystery.webp') center / cover no-repeat, var(--panel-3); box-shadow: 0 0 0 1px color-mix(in srgb, var(--orange) 55%, transparent), 0 0 16px color-mix(in srgb, var(--orange) 22%, transparent); }
+.gp-target__q { position: absolute; right: -6px; bottom: -6px; display: inline-flex; align-items: center; justify-content: center; width: 19px; height: 19px; border-radius: 50%; background: var(--orange); box-shadow: 0 0 0 2px var(--panel); font: italic 900 13px/1 var(--font-display); color: var(--orange-ink); }
 .gp-target__label { font: 800 13px/1.1 var(--font-label); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
 .gp-cell--target { border-style: dashed; background: var(--panel); }
 .gp-cell--target .gp-cell__label { color: var(--orange); }
@@ -242,6 +267,11 @@
   /* The name across the top, then the clues in a grid below it: two to a row for four clues, three for more. */
   .gp-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
   .gp-board[data-clues='4'] .gp-row, .gp-board[data-clues='2'] .gp-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* The art sits above the title, which reads on plain dark below it. */
+  .gp-head { min-height: 0; padding: 118px 16px 16px; }
+  .gp-head::before { bottom: auto; height: 190px; background-size: 210% auto; background-position: 88% 52%; }
+  .gp-head::after { background: linear-gradient(180deg, rgba(9, 12, 18, .1) 0, rgba(9, 12, 18, .55) 80px, var(--bg) 175px); }
+  .gp-target__mystery { width: 34px; height: 34px; }
   .gp-row__name { grid-column: 1 / -1; min-height: 42px; }
   .gp-row__player { font-size: 20px; }
   .gp-cell { min-height: 52px; padding: 7px 26px 7px 10px; }

@@ -130,7 +130,7 @@ function TargetRow({ answer, guessed, teams, clues, revealed, won }: { answer: P
           </>
         ) : (
           <>
-            <span className="gp-target__mystery" aria-hidden="true">?</span>
+            <span className="gp-target__mystery" aria-hidden="true"><span className="gp-target__q">?</span></span>
             <span className="gp-target__label">Today's pro</span>
           </>
         )}

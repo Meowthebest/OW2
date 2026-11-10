@@ -62,6 +62,10 @@ npm run check:pros
 - **Clues.** Team, region, nationality and role. With an export, also specialty and the year they joined the team, which only show when Liquipedia gave them for most players. "Close" means a nationality from the same part of the world, the same role with a different specialty, or joining a year apart.
 - **Results** are saved in the visitor's browser only, along with today's guesses. Practice games use a random pro and save nothing.
 
+## Art
+
+The arena banner and the faceless player in the top row (`public/art/guess-the-pro/`) were made for this site with Everygen, an AI image tool. They show no real people, teams, logos or game art.
+
 ## What it can't tell you
 
 - **Roster moves since the list was taken.** The list is as of the date the game shows.
