@@ -24,6 +24,7 @@ export type CosmeticsRoute =
 export type Route =
   | { view: 'randomizer' }
   | { view: 'heroes' }
+  | { view: 'guess' }
   | { view: 'career'; playerId?: string; tab: CareerTab; hero?: string }
   | PatchRoute
   | PlayersRoute
@@ -42,6 +43,7 @@ export function parseHash(hash: string): Route {
   const mark = raw.indexOf('?');
   const parts = (mark === -1 ? raw : raw.slice(0, mark)).split('/').filter(Boolean);
   if (parts[0] === 'heroes') return { view: 'heroes' };
+  if (parts[0] === 'guess') return { view: 'guess' };
   const query = mark === -1 ? '' : raw.slice(mark + 1);
   if (parts[0] === 'cosmetics') return { view: 'cosmetics', id: parts[1] ? decode(parts[1]) : undefined, query };
   if (parts[0] === 'bundles') return { view: 'bundles', id: parts[1] ? decode(parts[1]) : undefined, query };

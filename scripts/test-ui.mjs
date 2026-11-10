@@ -1700,6 +1700,137 @@ await test('patch activity compares sampled days before and after, without claim
   app.close();
 });
 
+// Guess the Pro. The players are made up for the tests. The game's own rules, bundled here, say what today's answer is.
+const proBuild = await build({ entryPoints: ['src/features/pro/core.ts'], bundle: true, write: false, format: 'esm', platform: 'neutral', logLevel: 'silent' });
+const pro = await import(`data:text/javascript;base64,${Buffer.from(proBuild.outputFiles[0].text).toString('base64')}`);
+const PRO_TEAMS = [
+  { id: 'alpha', name: 'Alpha Esports', region: 'kr', page: null, logo: 'data/esports/logos/alpha.png' },
+  { id: 'bravo', name: 'Bravo Gaming', region: 'na', page: null, logo: null },
+  { id: 'cobalt', name: 'Cobalt', region: 'emea', page: null },
+];
+const PRO_PLAYERS = ['Arc', 'Birch', 'Cinder', 'Delta', 'Ember', 'Flint', 'Grove', 'Haze', 'Ivory', 'Jolt', 'Kestrel', 'Lumen'].map((name, index) => ({
+  id: name.toLowerCase(),
+  name,
+  team: PRO_TEAMS[index % 3].id,
+  nationality: ['KR', 'US', 'FR', 'JP'][index % 4],
+  role: ['tank', 'damage', 'support'][index % 3],
+  specialty: null,
+  joined: 2022 + (index % 5),
+  page: `https://liquipedia.net/overwatch/${name}`,
+}));
+const PRO_DATA = { schema: 1, season: '2026', exportedAt: '2026-11-09T12:00:00Z', teams: PRO_TEAMS, players: PRO_PLAYERS };
+const proApi = (data = PRO_DATA) => (target) => (/\/OW2\/data\/esports\/owcs-players\.json$/.test(target.pathname) ? (data ? jsonResponse(data) : jsonResponse({}, { status: 404 })) : jsonResponse({}, { status: 404 }));
+const todaysPro = () => pro.answerFor(pro.localDay(Date.now()), PRO_PLAYERS);
+const PRO_KEY = 'ow2.guess-the-pro.v1';
+
+async function guessPro(app, name) {
+  const input = await until(() => app.document.querySelector('.gp-input__field:not(:disabled)'), 'the name box');
+  setInput(app.window, input, name.slice(0, 3));
+  await until(() => [...app.document.querySelectorAll('.gp-option__name')].some((node) => node.textContent === name), `${name} suggested`);
+  // Move to the right suggestion with the keyboard, as a visitor would.
+  for (let step = 0; step < 8; step += 1) {
+    const active = app.document.querySelector('.gp-option[aria-selected="true"] .gp-option__name');
+    if (active?.textContent === name) break;
+    input.dispatchEvent(new app.window.KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+    await wait(10);
+  }
+  input.dispatchEvent(new app.window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  await until(() => [...app.document.querySelectorAll('.gp-row__player')].some((node) => node.textContent === name), `${name} on the board`);
+}
+
+await test('the guessing game says plainly when no player list is published', async () => {
+  const app = boot({ hash: '#/guess', api: proApi(null) });
+  await until(() => /No player list published yet/.test(app.document.querySelector('.gp-page')?.textContent ?? ''), 'the empty state');
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('a daily round gives honest clues, ends in a win, and stays won', async () => {
+  const answer = todaysPro();
+  const wrong = PRO_PLAYERS.find((item) => item.id !== answer.id && item.team !== answer.team);
+  const app = boot({ hash: '#/guess', api: proApi() });
+  await until(() => app.document.querySelector('.gp-input__field'), 'the game');
+  assert.match(app.document.title, /Guess the Pro/);
+  assert.match(app.document.querySelector('.segmented__item.is-active').textContent, new RegExp(`Daily #${pro.puzzleNumber(pro.localDay(Date.now()))}`));
+
+  await guessPro(app, wrong.name);
+  const expected = pro.compareGuess(wrong, answer, new Map(PRO_TEAMS.map((team) => [team.id, team])), pro.cluesFor(PRO_DATA));
+  const cells = [...app.document.querySelectorAll('.gp-row .gp-cell')];
+  assert.deepEqual(cells.map((cell) => [cell.dataset.clue, cell.dataset.status]), expected.map((clue) => [clue.key, clue.status]));
+  assert.ok(cells.every((cell) => /Match|Close|No match/.test(cell.querySelector('.sr-only').textContent)), 'each clue says its result in words too');
+  assert.equal(app.document.querySelector('.gp-count').textContent, `Guess 2 of ${pro.MAX_GUESSES}`);
+
+  await guessPro(app, answer.name);
+  const result = await until(() => app.document.querySelector('.gp-result'), 'the result');
+  assert.match(result.textContent, /Got it in 2/);
+  assert.match(result.querySelector('.gp-answer__name a').href, new RegExp(`${answer.name}$`));
+  assert.match(result.querySelector('.gp-stats').textContent, /Played\s*1/);
+  assert.match(result.querySelector('.gp-stats').textContent, /Won\s*100%/);
+  assert.match(result.querySelector('.gp-stats').textContent, /Streak\s*1/);
+  assert.ok(app.document.querySelector('.gp-input__field').disabled, 'no more guesses today');
+  const saved = JSON.parse(app.window.localStorage.getItem(PRO_KEY));
+  assert.deepEqual(saved.days[pro.localDay(Date.now())], { answer: answer.id, guesses: [wrong.id, answer.id] });
+  assert.equal(saved.stats.wins, 1);
+  app.close();
+
+  // Coming back the same day shows the finished game, not a fresh one.
+  const again = boot({ hash: '#/guess', storage: { [PRO_KEY]: saved }, api: proApi() });
+  await until(() => /Got it in 2/.test(again.document.querySelector('.gp-result')?.textContent ?? ''), 'the saved result');
+  assert.equal(again.document.querySelectorAll('.gp-row').length, 2);
+  assert.deepEqual(again.errors, []);
+  again.close();
+});
+
+await test('eight misses reveal the pro, and practice games don\'t touch the results', async () => {
+  const answer = todaysPro();
+  const misses = PRO_PLAYERS.filter((item) => item.id !== answer.id).slice(0, pro.MAX_GUESSES);
+  const app = boot({ hash: '#/guess', api: proApi() });
+  for (const miss of misses) await guessPro(app, miss.name);
+  const result = await until(() => app.document.querySelector('.gp-result'), 'the result');
+  assert.match(result.textContent, /Out of guesses/);
+  assert.match(result.querySelector('.gp-answer__name').textContent, new RegExp(answer.name));
+  assert.equal(app.document.querySelector('.gp-count').textContent, 'No guesses left');
+  const before = app.window.localStorage.getItem(PRO_KEY);
+  assert.equal(JSON.parse(before).stats.played, 1);
+
+  click(buttonByName(app.document, /Practice with a random pro/));
+  await until(() => app.document.querySelector('.segmented__item.is-active')?.textContent === 'Practice', 'practice mode');
+  assert.equal(app.document.querySelectorAll('.gp-row').length, 0, 'a fresh board');
+  const someone = PRO_PLAYERS.find((item) => item.id !== answer.id);
+  await guessPro(app, someone.name);
+  assert.equal(app.window.localStorage.getItem(PRO_KEY), before, 'practice saves nothing');
+  click(buttonByName(app.document, new RegExp(`Daily #`)));
+  await until(() => /Out of guesses/.test(app.document.querySelector('.gp-result')?.textContent ?? ''), 'back to the finished daily');
+  assert.deepEqual(app.errors, []);
+  app.close();
+});
+
+await test('teams show their logo beside their name, or their initials when they have none', async () => {
+  const app = boot({ hash: '#/guess', api: proApi() });
+  click(await until(() => app.document.querySelector('.gp-help summary'), 'how to play'));
+  const teams = await until(() => app.document.querySelectorAll('.gp-team').length === 3 && [...app.document.querySelectorAll('.gp-team')], 'the team list');
+  const alpha = teams.find((team) => /Alpha Esports/.test(team.textContent));
+  assert.equal(alpha.querySelector('img.gp-logo').getAttribute('src'), '/OW2/data/esports/logos/alpha.png');
+  assert.equal(alpha.querySelector('img.gp-logo').getAttribute('alt'), '', 'the name beside it says who it is');
+  assert.equal(teams.find((team) => /Bravo Gaming/.test(team.textContent)).querySelector('.gp-logo--initials').textContent, 'BG');
+  assert.deepEqual([...app.document.querySelectorAll('.gp-teams__title')].map((node) => node.textContent), ['North America', 'EMEA', 'Korea'], 'grouped by region');
+  app.close();
+});
+
+await test('the name box finds players however they\'re typed, and says when nobody matches', async () => {
+  const app = boot({ hash: '#/guess', api: proApi() });
+  const input = await until(() => app.document.querySelector('.gp-input__field'), 'the name box');
+  setInput(app.window, input, 'EMB');
+  await until(() => app.document.querySelector('.gp-option__name')?.textContent === 'Ember', 'a match whatever the case');
+  assert.equal(input.getAttribute('aria-expanded'), 'true');
+  assert.ok(input.getAttribute('aria-activedescendant'), 'the highlighted option is announced');
+  input.dispatchEvent(new app.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  await until(() => input.getAttribute('aria-expanded') === 'false', 'the list to close');
+  setInput(app.window, input, 'zzzz');
+  await until(() => /No player by that name/.test(app.document.querySelector('.gp-input__none')?.textContent ?? ''), 'the no-match note');
+  app.close();
+});
+
 console.log(`${passed} passed, ${failures.length} failed`);
 if (failures.length) {
   failures.forEach((failure) => console.error('FAIL ' + failure));

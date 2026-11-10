@@ -1,0 +1,2434 @@
+{
+ "schema": 1,
+ "season": "2026",
+ "exportedAt": "2026-11-10T00:00:00Z",
+ "teams": [
+  {
+   "id": "1234",
+   "name": "1234",
+   "region": "emea",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/EMEA/Stage_3",
+   "logo": "data/esports/logos/1234.png"
+  },
+  {
+   "id": "all-gamers",
+   "name": "All Gamers",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/all-gamers.png"
+  },
+  {
+   "id": "black-flag",
+   "name": "Black Flag",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/black-flag.png"
+  },
+  {
+   "id": "canthear",
+   "name": "CantHear",
+   "region": "pac",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Pacific",
+   "logo": "data/esports/logos/canthear.png"
+  },
+  {
+   "id": "cheeseburger",
+   "name": "Cheeseburger",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/cheeseburger.png"
+  },
+  {
+   "id": "crazy-raccoon",
+   "name": "Crazy Raccoon",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/crazy-raccoon.png"
+  },
+  {
+   "id": "dallas-fuel",
+   "name": "Dallas Fuel",
+   "region": "na",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/NA/Stage_3",
+   "logo": "data/esports/logos/dallas-fuel.png"
+  },
+  {
+   "id": "disguised",
+   "name": "Disguised",
+   "region": "na",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/NA/Stage_3",
+   "logo": "data/esports/logos/disguised.png"
+  },
+  {
+   "id": "geekay-esports",
+   "name": "Geekay Esports",
+   "region": "emea",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/EMEA/Stage_3",
+   "logo": "data/esports/logos/geekay-esports.png"
+  },
+  {
+   "id": "huneng",
+   "name": "HUNENG",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/huneng.png"
+  },
+  {
+   "id": "jd-gaming",
+   "name": "JD Gaming",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/jd-gaming.png"
+  },
+  {
+   "id": "junjilop",
+   "name": "junjilopzfx0",
+   "region": "pac",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Pacific",
+   "logo": "data/esports/logos/junjilop.png"
+  },
+  {
+   "id": "ntmr",
+   "name": "NTMR",
+   "region": "na",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/NA/Stage_3",
+   "logo": "data/esports/logos/ntmr.png"
+  },
+  {
+   "id": "o2-blast",
+   "name": "O2 Blast",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/o2-blast.png"
+  },
+  {
+   "id": "ou-gaming",
+   "name": "OU Gaming",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/ou-gaming.png"
+  },
+  {
+   "id": "poker-face",
+   "name": "Poker Face",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/poker-face.png"
+  },
+  {
+   "id": "seiji-esports",
+   "name": "SEIJI ESPORTS",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/seiji-esports.png"
+  },
+  {
+   "id": "seijiking",
+   "name": "SeijiKING",
+   "region": "pac",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Pacific",
+   "logo": null
+  },
+  {
+   "id": "shengshi",
+   "name": "SHENGSHI",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/shengshi.png"
+  },
+  {
+   "id": "solus",
+   "name": "Solus Victorem",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/solus.png"
+  },
+  {
+   "id": "spacestation",
+   "name": "Spacestation",
+   "region": "na",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/NA/Stage_3",
+   "logo": "data/esports/logos/spacestation.png"
+  },
+  {
+   "id": "stronghold",
+   "name": "Stronghold",
+   "region": "pac",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Pacific",
+   "logo": null
+  },
+  {
+   "id": "t1",
+   "name": "T1",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/t1.png"
+  },
+  {
+   "id": "team-benxxn",
+   "name": "Team Benxxn",
+   "region": "pac",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Pacific",
+   "logo": null
+  },
+  {
+   "id": "team-falcons",
+   "name": "Team Falcons",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/team-falcons.png"
+  },
+  {
+   "id": "team-liquid",
+   "name": "Team Liquid",
+   "region": "na",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/NA/Stage_3",
+   "logo": "data/esports/logos/team-liquid.png"
+  },
+  {
+   "id": "team-peps",
+   "name": "Team Peps",
+   "region": "emea",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/EMEA/Stage_3",
+   "logo": "data/esports/logos/team-peps.png"
+  },
+  {
+   "id": "team-risk",
+   "name": "Team Risk",
+   "region": "emea",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/EMEA/Stage_3",
+   "logo": null
+  },
+  {
+   "id": "gatos",
+   "name": "The Gatos Guapos",
+   "region": "pac",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Pacific",
+   "logo": "data/esports/logos/gatos.png"
+  },
+  {
+   "id": "the-kafe",
+   "name": "The Kafe",
+   "region": "na",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/NA/Stage_3",
+   "logo": "data/esports/logos/the-kafe.png"
+  },
+  {
+   "id": "twisted-minds",
+   "name": "Twisted Minds",
+   "region": "emea",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/EMEA/Stage_3",
+   "logo": "data/esports/logos/twisted-minds.png"
+  },
+  {
+   "id": "virtus-pro",
+   "name": "Virtus.pro",
+   "region": "emea",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/EMEA/Stage_3",
+   "logo": "data/esports/logos/virtus-pro.png"
+  },
+  {
+   "id": "weibo-gaming",
+   "name": "Weibo Gaming",
+   "region": "cn",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/China/Stage_3",
+   "logo": "data/esports/logos/weibo-gaming.png"
+  },
+  {
+   "id": "zanside",
+   "name": "ZANSIDE GAMING",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/zanside.png"
+  },
+  {
+   "id": "zeta-division",
+   "name": "ZETA DIVISION",
+   "region": "kr",
+   "page": "https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Asia/Stage_3/Korea",
+   "logo": "data/esports/logos/zeta-division.png"
+  }
+ ],
+ "players": [
+  {
+   "id": "800",
+   "name": "800",
+   "team": "ou-gaming",
+   "nationality": "CN",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "a1ien",
+   "name": "A1IEN",
+   "team": "o2-blast",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "abbs",
+   "name": "Abbs",
+   "team": "stronghold",
+   "nationality": "GB",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ackyyy",
+   "name": "Ackyyy",
+   "team": "gatos",
+   "nationality": "AU",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "admiral",
+   "name": "Admiral",
+   "team": "spacestation",
+   "nationality": "EE",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "agony",
+   "name": "Agony",
+   "team": "black-flag",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "alphari",
+   "name": "Alphari",
+   "team": "all-gamers",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "alphayi",
+   "name": "AlphaYi",
+   "team": "geekay-esports",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "alvicate",
+   "name": "alvicate",
+   "team": "1234",
+   "nationality": "LT",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "amdp",
+   "name": "amdp",
+   "team": "team-risk",
+   "nationality": "SA",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "apr1ta",
+   "name": "Apr1ta",
+   "team": "solus",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "attack",
+   "name": "Attack",
+   "team": "team-liquid",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "avianne",
+   "name": "Avianne",
+   "team": "seijiking",
+   "nationality": "AU",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "azent",
+   "name": "AZENT",
+   "team": "cheeseburger",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "babayaga",
+   "name": "BABAYAGA",
+   "team": "solus",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "becky",
+   "name": "Becky",
+   "team": "zanside",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "belosrea",
+   "name": "Belosrea",
+   "team": "cheeseburger",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "bernar",
+   "name": "Bernar",
+   "team": "zeta-division",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "bertlog",
+   "name": "Bertlog",
+   "team": "junjilop",
+   "nationality": "AU",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "bliss",
+   "name": "Bliss",
+   "team": "t1",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "bnji",
+   "name": "bnji",
+   "team": "junjilop",
+   "nationality": "AU",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "bpb",
+   "name": "BPB",
+   "team": "seijiking",
+   "nationality": "AU",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "brysonbtw",
+   "name": "brysonbtw",
+   "team": "team-benxxn",
+   "nationality": "HK",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "caffeine",
+   "name": "Caffeine",
+   "team": "poker-face",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "cartifan22",
+   "name": "cartifan22",
+   "team": "the-kafe",
+   "nationality": "US",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ch0r0ng",
+   "name": "CH0R0NG",
+   "team": "crazy-raccoon",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "chatchai",
+   "name": "CHATCHAI",
+   "team": "canthear",
+   "nationality": "TH",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "checkmate",
+   "name": "Checkmate",
+   "team": "team-falcons",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "chiyo",
+   "name": "ChiYo",
+   "team": "team-falcons",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "cjay",
+   "name": "Cjay",
+   "team": "dallas-fuel",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "colourhex",
+   "name": "Colourhex",
+   "team": "gatos",
+   "nationality": "AU",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "crispy",
+   "name": "crispy",
+   "team": "1234",
+   "nationality": "GB",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "crush",
+   "name": "Crush",
+   "team": "solus",
+   "nationality": "CN",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "cuffa",
+   "name": "cuFFa",
+   "team": "team-risk",
+   "nationality": "AU",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "d4rt",
+   "name": "D4RT",
+   "team": "seiji-esports",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "damo",
+   "name": "Damo",
+   "team": "ou-gaming",
+   "nationality": "HK",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "decade",
+   "name": "Decade",
+   "team": "ou-gaming",
+   "nationality": "CN",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "despair",
+   "name": "Despair",
+   "team": "team-benxxn",
+   "nationality": "HK",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "donghak",
+   "name": "DONGHAK",
+   "team": "t1",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "dox",
+   "name": "DOX",
+   "team": "seiji-esports",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "dufan",
+   "name": "DuFan",
+   "team": "huneng",
+   "nationality": "CN",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "dumbbell",
+   "name": "Dumbbell",
+   "team": "poker-face",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "eisgnom",
+   "name": "eisgnom",
+   "team": "virtus-pro",
+   "nationality": "DE",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ezhan",
+   "name": "Ezhan",
+   "team": "all-gamers",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "f1nally",
+   "name": "F1nally",
+   "team": "poker-face",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "faith",
+   "name": "Faith",
+   "team": "o2-blast",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "farway",
+   "name": "farway",
+   "team": "jd-gaming",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "fate",
+   "name": "Fate",
+   "team": "o2-blast",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "fdgod",
+   "name": "FDGod",
+   "team": "team-peps",
+   "nationality": "FR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "fed",
+   "name": "Fed",
+   "team": "junjilop",
+   "nationality": "AU",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "fei",
+   "name": "FEI",
+   "team": "team-benxxn",
+   "nationality": "TW",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "fielder",
+   "name": "Fielder",
+   "team": "team-falcons",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "finn",
+   "name": "FiNN",
+   "team": "geekay-esports",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "fixa",
+   "name": "FiXa",
+   "team": "virtus-pro",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "funnyastro",
+   "name": "FunnyAstro",
+   "team": "twisted-minds",
+   "nationality": "GB",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "gaga",
+   "name": "GAGA",
+   "team": "all-gamers",
+   "nationality": "CN",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "galaa",
+   "name": "Galaa",
+   "team": "spacestation",
+   "nationality": "ES",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "gamjung",
+   "name": "Gamjung",
+   "team": "o2-blast",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "goldenpants",
+   "name": "GoldenPants",
+   "team": "1234",
+   "nationality": "GB",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "gur3um",
+   "name": "Gur3um",
+   "team": "shengshi",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "guxue",
+   "name": "Guxue",
+   "team": "weibo-gaming",
+   "nationality": "CN",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "hamster",
+   "name": "Hamster",
+   "team": "gatos",
+   "nationality": "AU",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "hanbin",
+   "name": "Hanbin",
+   "team": "team-falcons",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "haoyoqian",
+   "name": "HaoYoqian",
+   "team": "jd-gaming",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "hawk",
+   "name": "Hawk",
+   "team": "spacestation",
+   "nationality": "US",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "heesang",
+   "name": "HeeSang",
+   "team": "crazy-raccoon",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "heesu",
+   "name": "Heesu",
+   "team": "shengshi",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "heesung",
+   "name": "HEESUNG",
+   "team": "zanside",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "heiser",
+   "name": "HEISER",
+   "team": "zanside",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "homerunball",
+   "name": "Homerunball",
+   "team": "o2-blast",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "hope",
+   "name": "Hope",
+   "team": "stronghold",
+   "nationality": "TW",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "huntin",
+   "name": "Huntin",
+   "team": "junjilop",
+   "nationality": "AU",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "hyvision",
+   "name": "HyVision",
+   "team": "seijiking",
+   "nationality": "TH",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "infekted",
+   "name": "Infekted",
+   "team": "spacestation",
+   "nationality": "US",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "insane",
+   "name": "Insane",
+   "team": "ou-gaming",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ir1s",
+   "name": "Ir1s",
+   "team": "ou-gaming",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "irony",
+   "name": "IRONY",
+   "team": "zanside",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "jae",
+   "name": "Jae",
+   "team": "stronghold",
+   "nationality": "VN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "jaewoo",
+   "name": "JaeWoo",
+   "team": "twisted-minds",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "jamorant",
+   "name": "Jamorant",
+   "team": "seijiking",
+   "nationality": "AU",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "jasm1ne",
+   "name": "Jasm1ne",
+   "team": "t1",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "junbin",
+   "name": "JunBin",
+   "team": "crazy-raccoon",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "jutsu",
+   "name": "JUTSU",
+   "team": "ntmr",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "k4ne",
+   "name": "K4NE",
+   "team": "cheeseburger",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kairen",
+   "name": "Kairen",
+   "team": "canthear",
+   "nationality": "TH",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kame",
+   "name": "kame",
+   "team": "gatos",
+   "nationality": "SG",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kamo",
+   "name": "Kamo",
+   "team": "seijiking",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kaneki",
+   "name": "Kaneki",
+   "team": "jd-gaming",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "karsonlo",
+   "name": "KarsonLo",
+   "team": "team-benxxn",
+   "nationality": "HK",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kellan",
+   "name": "Kellan",
+   "team": "dallas-fuel",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kellex",
+   "name": "Kellex",
+   "team": "geekay-esports",
+   "nationality": "DK",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kevster",
+   "name": "kevster",
+   "team": "virtus-pro",
+   "nationality": "SE",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "khenail",
+   "name": "Khenail",
+   "team": "1234",
+   "nationality": "ES",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kilo",
+   "name": "Kilo",
+   "team": "zanside",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kirsi",
+   "name": "KIRSI",
+   "team": "black-flag",
+   "nationality": "CN",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kivis",
+   "name": "KIVIS",
+   "team": "team-liquid",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kiwii",
+   "name": "KiWii",
+   "team": "disguised",
+   "nationality": "GB",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "knife",
+   "name": "KNIFE",
+   "team": "zeta-division",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "korz",
+   "name": "KORZ",
+   "team": "team-risk",
+   "nationality": "SA",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kouzi",
+   "name": "Kouzi",
+   "team": "shengshi",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kronik",
+   "name": "Kronik",
+   "team": "dallas-fuel",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "kroxz",
+   "name": "KroxZ",
+   "team": "team-peps",
+   "nationality": "FR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ksaa",
+   "name": "KSAA",
+   "team": "twisted-minds",
+   "nationality": "SA",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "landon",
+   "name": "Landon",
+   "team": "virtus-pro",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lavender",
+   "name": "Lavender",
+   "team": "seiji-esports",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lbbd7",
+   "name": "LBBD7",
+   "team": "geekay-esports",
+   "nationality": "SA",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "leave",
+   "name": "Leave",
+   "team": "weibo-gaming",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "leesoomin",
+   "name": "LeeSooMin",
+   "team": "weibo-gaming",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lengsa",
+   "name": "Lengsa",
+   "team": "all-gamers",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lep",
+   "name": "Lep",
+   "team": "ntmr",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lethal",
+   "name": "Lethal",
+   "team": "spacestation",
+   "nationality": "TR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lip",
+   "name": "LIP",
+   "team": "crazy-raccoon",
+   "nationality": "KR",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lukemino",
+   "name": "Lukemino",
+   "team": "dallas-fuel",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "lumi",
+   "name": "Lumi",
+   "team": "stronghold",
+   "nationality": "SG",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "m1nut2",
+   "name": "M1NUT2",
+   "team": "seiji-esports",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "mag",
+   "name": "Mag",
+   "team": "all-gamers",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "maka",
+   "name": "MAKA",
+   "team": "weibo-gaming",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "max",
+   "name": "MAX",
+   "team": "crazy-raccoon",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "mealgaru",
+   "name": "Mealgaru",
+   "team": "zeta-division",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "mer1t",
+   "name": "MER1T",
+   "team": "team-falcons",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "mewtwo",
+   "name": "Mewtwo",
+   "team": "solus",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "milk",
+   "name": "milk",
+   "team": "shengshi",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "misin",
+   "name": "Misin",
+   "team": "solus",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "moon1ightt",
+   "name": "Moon1ightT",
+   "team": "black-flag",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "mush2oom",
+   "name": "mush2oom",
+   "team": "canthear",
+   "nationality": "TH",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "nanda",
+   "name": "Nanda",
+   "team": "junjilop",
+   "nationality": "AU",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "nenwhy",
+   "name": "NenWhy",
+   "team": "the-kafe",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "off",
+   "name": "OFF",
+   "team": "seiji-esports",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "opener",
+   "name": "OPENER",
+   "team": "zanside",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "oputo",
+   "name": "oPuTo",
+   "team": "canthear",
+   "nationality": "TH",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "painkiller",
+   "name": "Painkiller",
+   "team": "ntmr",
+   "nationality": "US",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "palee",
+   "name": "PaLee",
+   "team": "canthear",
+   "nationality": "TH",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "perr",
+   "name": "Perr",
+   "team": "o2-blast",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "petrichor",
+   "name": "Petrichor",
+   "team": "canthear",
+   "nationality": "TH",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "pge",
+   "name": "PGE",
+   "team": "disguised",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "pride",
+   "name": "Pride",
+   "team": "huneng",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "profit",
+   "name": "Profit",
+   "team": "cheeseburger",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "proper",
+   "name": "Proper",
+   "team": "zeta-division",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "prophet",
+   "name": "Prophet",
+   "team": "jd-gaming",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "prot3ct",
+   "name": "Prot3ct",
+   "team": "solus",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "proud",
+   "name": "Proud",
+   "team": "t1",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "pugz",
+   "name": "Pugz",
+   "team": "stronghold",
+   "nationality": "AU",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "punk",
+   "name": "Punk",
+   "team": "gatos",
+   "nationality": "AU",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "quartz",
+   "name": "Quartz",
+   "team": "twisted-minds",
+   "nationality": "SA",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "rav",
+   "name": "Rav",
+   "team": "team-peps",
+   "nationality": "DK",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "recall",
+   "name": "Recall",
+   "team": "all-gamers",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "regr3t",
+   "name": "Regr3T",
+   "team": "gatos",
+   "nationality": "AU",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ripples",
+   "name": "Ripples",
+   "team": "black-flag",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "rockclimb",
+   "name": "Rockclimb",
+   "team": "black-flag",
+   "nationality": "CN",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "rokit",
+   "name": "Rokit",
+   "team": "ntmr",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "roundcat",
+   "name": "RoundCat",
+   "team": "team-benxxn",
+   "nationality": "TW",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "roxy",
+   "name": "Roxy",
+   "team": "jd-gaming",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ryan",
+   "name": "Ryan",
+   "team": "disguised",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sa1nt",
+   "name": "Sa1nt",
+   "team": "black-flag",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sara",
+   "name": "Sara",
+   "team": "huneng",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "scorch",
+   "name": "Scorch",
+   "team": "junjilop",
+   "nationality": "AU",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "scyle",
+   "name": "Scyle",
+   "team": "disguised",
+   "nationality": "SE",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "seicoe",
+   "name": "Seicoe",
+   "team": "virtus-pro",
+   "nationality": "AT",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "senorita",
+   "name": "Senorita",
+   "team": "team-benxxn",
+   "nationality": "HK",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sentier",
+   "name": "SENTIER",
+   "team": "seiji-esports",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "seonjun",
+   "name": "SeonJun",
+   "team": "dallas-fuel",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "setsuna",
+   "name": "Setsuna",
+   "team": "stronghold",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "seungan",
+   "name": "SeungAn",
+   "team": "huneng",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sgy",
+   "name": "sgy",
+   "team": "gatos",
+   "nationality": "SG",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "shockwave",
+   "name": "sHockWave",
+   "team": "team-risk",
+   "nationality": "DK",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "shousong",
+   "name": "ShouSong",
+   "team": "shengshi",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "shu",
+   "name": "Shu",
+   "team": "zeta-division",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "shy",
+   "name": "Shy",
+   "team": "weibo-gaming",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "simple",
+   "name": "Simple",
+   "team": "twisted-minds",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sirmajed",
+   "name": "SirMajed",
+   "team": "team-risk",
+   "nationality": "SA",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "skewed",
+   "name": "skewed",
+   "team": "t1",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "smurf",
+   "name": "smurf",
+   "team": "disguised",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "soae",
+   "name": "Soae",
+   "team": "poker-face",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sola",
+   "name": "SoLA",
+   "team": "poker-face",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "someone",
+   "name": "SOMEONE",
+   "team": "team-falcons",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sori",
+   "name": "SORI",
+   "team": "poker-face",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sp1nel",
+   "name": "Sp1nel",
+   "team": "seijiking",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sp1nt",
+   "name": "SP1NT",
+   "team": "team-falcons",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "stalk3r",
+   "name": "Stalk3r",
+   "team": "crazy-raccoon",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sugarfree",
+   "name": "Sugarfree",
+   "team": "spacestation",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "suna",
+   "name": "suna",
+   "team": "black-flag",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "sunzo",
+   "name": "Sunzo",
+   "team": "weibo-gaming",
+   "nationality": "CN",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "swoo",
+   "name": "SWOO",
+   "team": "poker-face",
+   "nationality": "KR",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "taejong",
+   "name": "Taejong",
+   "team": "zanside",
+   "nationality": "KR",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "tavi",
+   "name": "Tavi",
+   "team": "seijiking",
+   "nationality": "AU",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "tenten",
+   "name": "TENTEN",
+   "team": "cheeseburger",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "tkl",
+   "name": "TKL",
+   "team": "junjilop",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "tom4to",
+   "name": "Tom4to",
+   "team": "huneng",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "tr33",
+   "name": "TR33",
+   "team": "team-liquid",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "tred",
+   "name": "Tred",
+   "team": "disguised",
+   "nationality": "GB",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "trest",
+   "name": "Trest",
+   "team": "cheeseburger",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "tvnt",
+   "name": "TVNT",
+   "team": "twisted-minds",
+   "nationality": "SA",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ultraviolet",
+   "name": "UltraViolet",
+   "team": "team-liquid",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "upan",
+   "name": "Upan",
+   "team": "huneng",
+   "nationality": "CN",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "vega",
+   "name": "Vega",
+   "team": "team-liquid",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "victoria",
+   "name": "Victoria",
+   "team": "ou-gaming",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "vigilante",
+   "name": "vigilante",
+   "team": "crazy-raccoon",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "viol2t",
+   "name": "Viol2t",
+   "team": "zeta-division",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "virtual",
+   "name": "Virtual",
+   "team": "ntmr",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "willys",
+   "name": "WillyS",
+   "team": "team-peps",
+   "nationality": "SE",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "wmaimone",
+   "name": "WMaimone",
+   "team": "team-risk",
+   "nationality": "GB",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "wutian",
+   "name": "WuTian",
+   "team": "o2-blast",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "wya",
+   "name": "wya",
+   "team": "shengshi",
+   "nationality": "CN",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "xerion",
+   "name": "Xerion",
+   "team": "team-peps",
+   "nationality": "FR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "xomba",
+   "name": "xomba",
+   "team": "the-kafe",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "xten",
+   "name": "xten",
+   "team": "the-kafe",
+   "nationality": "KH",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "xzodyal",
+   "name": "Xzodyal",
+   "team": "team-peps",
+   "nationality": "ES",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "yangjun",
+   "name": "YangJun",
+   "team": "huneng",
+   "nationality": "KR",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "youbi",
+   "name": "Youbi",
+   "team": "twisted-minds",
+   "nationality": "SA",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "yunko",
+   "name": "Yunko",
+   "team": "stronghold",
+   "nationality": "SG",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "zeb",
+   "name": "Zeb",
+   "team": "the-kafe",
+   "nationality": "US",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "zephyr",
+   "name": "Zephyr",
+   "team": "team-benxxn",
+   "nationality": "TW",
+   "role": "flex",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "zeruhh",
+   "name": "zeruhh",
+   "team": "team-liquid",
+   "nationality": "US",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "zest",
+   "name": "ZEST",
+   "team": "t1",
+   "nationality": "KR",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "ziyad",
+   "name": "ZIYAD",
+   "team": "geekay-esports",
+   "nationality": "SA",
+   "role": "tank",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "zorrow",
+   "name": "Zorrow",
+   "team": "1234",
+   "nationality": "SE",
+   "role": "damage",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "zox",
+   "name": "zox",
+   "team": "team-risk",
+   "nationality": "SA",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  },
+  {
+   "id": "zzz",
+   "name": "zzz",
+   "team": "the-kafe",
+   "nationality": "US",
+   "role": "support",
+   "specialty": null,
+   "joined": null,
+   "page": null
+  }
+ ]
+}

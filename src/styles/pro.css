@@ -1,0 +1,179 @@
+/* Guess the Pro. Every rule here starts with gp-, so nothing else on the site changes. */
+
+.gp-page {
+  --gp-match: #37c98b;
+  --gp-close: #eabc3f;
+  --gp-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 1180px;
+}
+
+.gp-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 10px 20px; }
+.gp-head__text { min-width: 0; flex: 1 1 340px; }
+.gp-head__title { font: italic 900 clamp(34px, 4vw, 48px)/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
+.gp-head__intro { margin-top: 4px; font-size: 15px; line-height: 1.45; color: var(--ink-3); max-width: 70ch; }
+.gp-head__meta { display: flex; align-items: center; }
+
+.gp-muted { font-size: 13.5px; line-height: 1.45; color: var(--ink-3); }
+
+/* How to play */
+.gp-help { border: 1px solid var(--line); border-radius: var(--gp-radius); background: var(--panel); }
+.gp-help summary { display: flex; align-items: center; min-height: 42px; padding: 0 14px; cursor: pointer; font: 700 15px/1.2 var(--font-label); letter-spacing: .03em; color: var(--ink); }
+.gp-help summary::marker { color: var(--orange); }
+.gp-help__body { display: flex; flex-direction: column; gap: 8px; padding: 0 14px 14px; font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+.gp-help__body > p, .gp-help__body > .gp-legend { max-width: 80ch; }
+.gp-legend { display: flex; flex-direction: column; gap: 5px; }
+.gp-legend li { display: flex; align-items: baseline; gap: 8px; }
+.gp-legend li > span[aria-hidden] { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 22px; height: 22px; border-radius: 4px; font-weight: 800; color: var(--ink); background: var(--panel-3); border: 1px solid var(--line-2); }
+.gp-legend li[data-status='match'] > span[aria-hidden] { background: color-mix(in srgb, var(--gp-match) 30%, var(--panel-3)); border-color: var(--gp-match); }
+.gp-legend li[data-status='close'] > span[aria-hidden] { background: color-mix(in srgb, var(--gp-close) 28%, var(--panel-3)); border-color: var(--gp-close); }
+
+/* Every team in the game, by region */
+.gp-teams { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); gap: 14px 22px; margin-top: 2px; }
+.gp-teams__title { margin-bottom: 7px; font: 800 12px/1 var(--font-label); letter-spacing: .12em; text-transform: uppercase; color: var(--orange); }
+.gp-teams__list { display: flex; flex-direction: column; gap: 6px; }
+.gp-team { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.gp-team__name { min-width: 0; font: 700 14.5px/1.2 var(--font-label); letter-spacing: .02em; color: var(--ink); overflow-wrap: anywhere; }
+
+/* Guessing */
+.gp-play { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.gp-play__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+.gp-count { font: 800 15px/1 var(--font-label); letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+.gp-input { position: relative; flex: 1 1 340px; min-width: 0; }
+.gp-input__icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--ink-3); pointer-events: none; }
+.gp-input__field {
+  width: 100%;
+  height: 50px;
+  padding: 0 14px 0 42px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--gp-radius);
+  background: var(--panel);
+  color: var(--ink);
+  font: 600 17px/1 var(--font-body);
+}
+.gp-input__field::placeholder { color: var(--ink-3); }
+.gp-input__field:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(249, 158, 26, .2); }
+.gp-input__field:disabled { opacity: .6; }
+.gp-input__list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 30;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 4px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--gp-radius);
+  background: #0c1018;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, .5);
+}
+.gp-input__list[hidden] { display: none; }
+.gp-option { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-height: 42px; padding: 10px 10px; border-radius: 6px; cursor: pointer; }
+.gp-option[aria-selected='true'] { background: var(--panel-3); }
+.gp-option__name { font: 800 16px/1.1 var(--font-label); letter-spacing: .02em; color: var(--ink); }
+.gp-option__team { display: inline-flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-3); text-align: right; }
+
+/* Team logos sit on a light tile, as they were made to, and always beside the team's name. */
+.gp-logo { flex: none; display: inline-block; border-radius: 5px; background: #fff; object-fit: contain; box-shadow: 0 0 0 1px rgba(255, 255, 255, .1); }
+.gp-logo--initials { display: inline-flex; align-items: center; justify-content: center; background: var(--panel-3); border: 1px solid var(--line-2); box-shadow: none; color: var(--ink-2); font-family: var(--font-label); font-weight: 800; letter-spacing: .02em; line-height: 1; }
+.gp-input__none { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 30; padding: 10px 12px; border: 1px solid var(--line-2); border-radius: var(--gp-radius); background: #0c1018; font-size: 14px; color: var(--ink-3); }
+
+/* The board: newest guess on top */
+.gp-board { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.gp-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.25fr) repeat(var(--gp-clues, 5), minmax(0, 1fr));
+  gap: 6px;
+  min-width: 0;
+  animation: gp-in .22s var(--ease-out);
+}
+.gp-row__name { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--gp-radius); background: var(--panel); }
+.gp-row[data-correct] .gp-row__name { border-color: var(--gp-match); background: color-mix(in srgb, var(--gp-match) 14%, var(--panel)); }
+.gp-row__number { flex: none; font: 800 13px/1 var(--font-label); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.gp-row__player { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: italic 900 21px/1.1 var(--font-display); letter-spacing: .02em; text-transform: uppercase; color: var(--ink); }
+
+.gp-cell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  min-height: 58px;
+  padding: 8px 26px 8px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--gp-radius);
+  background: var(--panel-2);
+}
+.gp-cell[data-status='match'] { border-color: var(--gp-match); background: color-mix(in srgb, var(--gp-match) 22%, var(--panel-2)); }
+.gp-cell[data-status='close'] { border-color: var(--gp-close); background: color-mix(in srgb, var(--gp-close) 18%, var(--panel-2)); }
+.gp-cell[data-status='miss'] { opacity: .88; }
+.gp-cell__label { font: 800 10.5px/1 var(--font-label); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.gp-cell[data-status='match'] .gp-cell__label, .gp-cell[data-status='close'] .gp-cell__label { color: var(--ink-2); }
+.gp-cell__value { display: inline-flex; align-items: center; gap: 3px; min-width: 0; font: 700 14.5px/1.2 var(--font-label); letter-spacing: .01em; color: var(--ink); overflow-wrap: anywhere; }
+.gp-cell__value .gp-logo { margin-right: 4px; }
+.gp-cell__hint { flex: none; color: var(--orange-hot); }
+.gp-cell__mark { position: absolute; right: 8px; top: 7px; font: 800 14px/1 var(--font-body); color: var(--ink-3); }
+.gp-cell[data-status='match'] .gp-cell__mark { color: var(--gp-match); }
+.gp-cell[data-status='close'] .gp-cell__mark { color: var(--gp-close); }
+
+@keyframes gp-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+/* The result */
+.gp-result { display: flex; flex-direction: column; gap: 12px; padding: 16px; border: 1px solid var(--line-2); border-top: 3px solid var(--orange); border-radius: var(--gp-radius); background: linear-gradient(180deg, var(--panel-2), var(--panel)); }
+.gp-result[data-won] { border-top-color: var(--gp-match); }
+.gp-result__head { display: flex; align-items: center; gap: 8px; color: var(--orange); }
+.gp-result[data-won] .gp-result__head { color: var(--gp-match); }
+.gp-result__title { font: italic 900 30px/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
+.gp-answer { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.gp-answer__text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.gp-answer__text .gp-muted a { display: inline-flex; align-items: center; gap: 3px; color: var(--ink-2); }
+.gp-answer__lead { font: 700 12px/1.2 var(--font-label); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.gp-answer__name { font: italic 900 38px/1 var(--font-display); text-transform: uppercase; letter-spacing: .01em; color: var(--ink); }
+.gp-answer__name a { display: inline-flex; align-items: center; gap: 6px; color: inherit; text-decoration-color: var(--orange); text-underline-offset: 4px; }
+.gp-answer__name svg { color: var(--ink-3); }
+.gp-answer__facts { font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+.gp-result__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.gp-button { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; }
+.gp-share { width: 100%; max-width: 360px; padding: 8px; border: 1px solid var(--line-2); border-radius: 6px; background: var(--panel); color: var(--ink); font: 14px/1.4 ui-monospace, Consolas, monospace; }
+
+.gp-stats { display: flex; flex-direction: column; gap: 10px; padding-top: 12px; border-top: 1px solid var(--line); }
+.gp-stats__numbers { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; max-width: 520px; }
+.gp-stats__numbers div { display: flex; flex-direction: column-reverse; gap: 2px; }
+.gp-stats__numbers dt { font: 700 11.5px/1.2 var(--font-label); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.gp-stats__numbers dd { font: italic 900 30px/1 var(--font-display); color: var(--ink); font-variant-numeric: tabular-nums; }
+.gp-spread { display: flex; flex-direction: column; gap: 4px; max-width: 520px; }
+.gp-spread li { display: flex; align-items: center; gap: 8px; }
+.gp-spread__guesses { flex: none; width: 14px; font: 700 13px/1 var(--font-label); color: var(--ink-3); text-align: right; }
+.gp-spread__bar { display: flex; justify-content: flex-end; min-width: 22px; padding: 3px 6px; border-radius: 3px; background: var(--panel-3); font: 700 12.5px/1 var(--font-label); color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.gp-credit { font-size: 13px; line-height: 1.5; color: var(--ink-3); }
+.gp-credit a { color: var(--ink-2); }
+
+@media (max-width: 760px) {
+  /* The name across the top, then the clues three to a row below it. */
+  .gp-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+  .gp-row__name { grid-column: 1 / -1; min-height: 38px; }
+  .gp-row__player { font-size: 19px; }
+  .gp-cell { min-height: 50px; padding: 7px 17px 7px 8px; }
+  .gp-cell__label { font-size: 9.5px; letter-spacing: .07em; }
+  .gp-cell__value { font-size: 13.5px; }
+  .gp-cell__mark { right: 5px; top: 5px; font-size: 12px; }
+  .gp-stats__numbers dd { font-size: 26px; }
+}
+
+@media (max-width: 420px) {
+  .gp-answer__name { font-size: 32px; }
+}
+
+@media (max-width: 359px) {
+  .gp-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gp-row { animation: none; }
+}

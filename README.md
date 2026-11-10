@@ -7,6 +7,7 @@ A fan-made Overwatch companion:
 - **Patch notes and balance tracker:** see who was buffed or nerfed, filter every change, open a hero's history, and compare patches. Every value links back to Blizzard's published notes.
 - **Player statistics:** Steam's concurrent player count for Overwatch, recorded over time, with a history chart and patch markers. Steam players only.
 - **In-game events:** what's on now, what's coming up and what just ended, with countdowns, modes, challenges and rewards. Each event links to Blizzard's announcement.
+- **Guess the Pro:** a daily game. Find the day's OWCS pro in eight guesses from their team, region, nationality and role, with team logos, a practice mode and your own results. Player data comes from Liquipedia.
 - **Cosmetics hub:** a searchable catalogue of over 15,000 cosmetics, bundles, the live shop with its history, loot pools, mythics, Battle Passes, Twitch Drops, statistics and hero rates, plus your own collection tracking. Every record shows its source.
 
 Live site: https://meowthebest.github.io/OW2/
@@ -76,6 +77,7 @@ docs/PATCH_DATA.md      Patch data sources, method and known limitations
 docs/PLAYER_DATA.md     Player data source, storage and known limitations
 docs/COSMETICS_DATA.md  Cosmetics sources, storage, admin tools and known limitations
 docs/ALERTS.md          What the alert issues flag and how they behave
+docs/ESPORTS_DATA.md    Guess the Pro's player list: source, license and how to refresh it
 ```
 
 ## Add a new hero
@@ -127,4 +129,4 @@ Read [docs/COSMETICS_DATA.md](docs/COSMETICS_DATA.md) for the sources and their 
 
 ## Legal
 
-Unofficial fan project, not affiliated with or endorsed by Blizzard Entertainment. Overwatch, hero names and artwork are © Blizzard Entertainment. Player counts come from the Steam Web API and are provided as is, and this project is not affiliated with or endorsed by Valve or Steam. Shop data is from [itemshop.gg](https://itemshop.gg/overwatch). Cosmetics data derived from the [Overwatch Wiki](https://overwatch.wiki/) is under [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/), so it can't be used commercially. Fonts are Sofia Sans under the SIL Open Font License (`public/fonts/OFL.txt`).
+Unofficial fan project, not affiliated with or endorsed by Blizzard Entertainment. Overwatch, hero names and artwork are © Blizzard Entertainment. Player counts come from the Steam Web API and are provided as is, and this project is not affiliated with or endorsed by Valve or Steam. Shop data is from [itemshop.gg](https://itemshop.gg/overwatch). Cosmetics data derived from the [Overwatch Wiki](https://overwatch.wiki/) is under [CC BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/), so it can't be used commercially. The OWCS player list comes from [Liquipedia](https://liquipedia.net/overwatch/Main_Page) and is under [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/). The game is a fan project, not affiliated with the Overwatch Champions Series. Fonts are Sofia Sans under the SIL Open Font License (`public/fonts/OFL.txt`).

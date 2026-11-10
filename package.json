@@ -8,12 +8,13 @@
     "typecheck": "tsc --noEmit",
     "build": "node scripts/cosmetics/cli.mjs build && tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node scripts/test-logic.mjs && node scripts/test-patches.mjs && node scripts/test-players.mjs && node scripts/test-cosmetics.mjs && node scripts/test-alerts.mjs && node --test worker/test/worker.test.mjs && node --test timer/test/timer.test.mjs && node --test accounts/test/accounts.test.mjs && npm run build && node scripts/test-ui.mjs && node scripts/test-cosmetics-ui.mjs",
+    "test": "node scripts/test-logic.mjs && node scripts/test-patches.mjs && node scripts/test-players.mjs && node scripts/test-cosmetics.mjs && node scripts/test-alerts.mjs && node scripts/test-pro.mjs && node --test worker/test/worker.test.mjs && node --test timer/test/timer.test.mjs && node --test accounts/test/accounts.test.mjs && npm run build && node scripts/test-ui.mjs && node scripts/test-cosmetics-ui.mjs",
     "test:logic": "node scripts/test-logic.mjs",
     "test:patches": "node scripts/test-patches.mjs",
     "test:players": "node scripts/test-players.mjs",
     "test:cosmetics": "node scripts/test-cosmetics.mjs",
     "test:alerts": "node scripts/test-alerts.mjs",
+    "test:pro": "node scripts/test-pro.mjs",
     "test:worker": "node --test worker/test/worker.test.mjs",
     "test:timer": "node --test timer/test/timer.test.mjs",
     "test:accounts": "node --test accounts/test/accounts.test.mjs",
@@ -27,7 +28,9 @@
     "sync:shop": "node scripts/cosmetics/cli.mjs sync",
     "backfill:shop": "node scripts/cosmetics/cli.mjs backfill",
     "import:wiki": "node scripts/cosmetics/cli.mjs import-wiki",
-    "check:cosmetics": "node scripts/cosmetics/cli.mjs check"
+    "check:cosmetics": "node scripts/cosmetics/cli.mjs check",
+    "import:pros": "node scripts/esports/cli.mjs import",
+    "check:pros": "node scripts/esports/cli.mjs check"
   },
   "dependencies": {
     "lucide-react": "^0.441.0",

@@ -262,7 +262,7 @@ await test('the header menu opens, links to every section and closes with Escape
   click(toggle);
   await until(() => toggle.getAttribute('aria-expanded') === 'true', 'the menu to open');
   const links = [...app.document.querySelectorAll('.cx-nav__link')].map((link) => link.getAttribute('href'));
-  assert.deepEqual(links, ['#/cosmetics', '#/bundles', '#/shop', '#/loot-pools', '#/events', '#/hub/mythics', '#/hub/battle-passes', '#/hub/twitch-drops', '#/hub/stats', '#/collection']);
+  assert.deepEqual(links, ['#/cosmetics', '#/bundles', '#/shop', '#/loot-pools', '#/events', '#/guess', '#/hub/mythics', '#/hub/battle-passes', '#/hub/twitch-drops', '#/hub/stats', '#/collection']);
   app.document.dispatchEvent(new app.window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   await until(() => toggle.getAttribute('aria-expanded') === 'false', 'the menu to close');
   app.close();
