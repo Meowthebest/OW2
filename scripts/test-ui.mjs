@@ -1590,7 +1590,9 @@ await test('on short ranges, the moving average needs half a window of readings 
 });
 
 await test('a table gives the same values as the chart, with paging', async () => {
-  const app = boot({ hash: '#/players?range=30d', api: playerApi() });
+  // 90 days over 40 days of readings gives 40 or 41 days, so there's always a second page. With 30 days, just after
+  // midnight UTC there are exactly 30, and the test failed for that hour, which is when the patch sync deploys.
+  const app = boot({ hash: '#/players?range=90d', api: playerApi() });
   await playersReady(app);
   const details = await until(() => app.document.querySelector('.pstat-panel .pstat-details'), 'table view');
   assert.match(details.querySelector('summary').textContent, /as a table/);
