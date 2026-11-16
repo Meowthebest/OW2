@@ -1,0 +1,51 @@
+{
+ "schema": 1,
+ "id": "2026-11-16",
+ "title": "Overwatch Retail Patch Notes – November 16, 2026",
+ "date": "2026-11-16",
+ "type": "hotfix",
+ "season": {
+  "id": "2026-s5",
+  "label": "Season 5",
+  "year": 2026,
+  "number": 5
+ },
+ "sourceUrl": "https://overwatch.blizzard.com/en-us/news/patch-notes/live/2026/11/#patch-2026-11-16",
+ "forumUrl": null,
+ "contentHash": "7721f0615c330c62",
+ "reviewedAt": null,
+ "counts": {
+  "heroesBuffed": 0,
+  "heroesNerfed": 0,
+  "heroesMixed": 0,
+  "heroesNeutral": 0,
+  "heroesNeedsReview": 0,
+  "buffs": 0,
+  "nerfs": 0,
+  "neutral": 0,
+  "qol": 0,
+  "needsReview": 0,
+  "sixVsSix": 0,
+  "gameplayChanges": 0,
+  "stadiumHeroes": 0,
+  "stadiumChanges": 0,
+  "limitedHeroes": 0,
+  "limitedChanges": 0,
+  "bugFixes": 0
+ },
+ "notes": [],
+ "changes": [],
+ "other": [
+  {
+   "id": "2026-11-16/general/competitive-play-updates",
+   "section": "general",
+   "group": null,
+   "title": "Competitive Play Updates",
+   "summary": null,
+   "sourceHash": null
+  }
+ ],
+ "firstImportedAt": "2026-11-16T22:01:45.879Z",
+ "lastVerifiedAt": "2026-11-16T22:01:45.879Z",
+ "revisions": []
+}
