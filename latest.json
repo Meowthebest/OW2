@@ -3,13 +3,13 @@
  "appId": 2357570,
  "source": "https://api.steampowered.com/ISteamUserStats/GetNumberOfCurrentPlayers/v1/?appid=2357570",
  "trackingSince": "2026-11-04T17:30:47.000Z",
- "readings": 3914,
+ "readings": 3915,
  "current": {
-  "players": 22211,
-  "at": "2026-11-18T10:30:44.000Z"
+  "players": 22485,
+  "at": "2026-11-18T10:35:23.000Z"
  },
  "lastAttempt": {
-  "at": "2026-11-18T10:30:44.000Z",
+  "at": "2026-11-18T10:35:23.000Z",
   "ok": true,
   "error": null
  },
@@ -20,11 +20,11 @@
    "coveredHours": 24
   },
   "change24h": {
-   "percent": 0.2,
-   "players": 54,
+   "percent": 1.5,
+   "players": 328,
    "comparedTo": {
     "players": 22157,
-    "at": "2026-11-17T10:30:25.000Z"
+    "at": "2026-11-17T10:35:28.000Z"
    }
   },
   "average30d": null,
@@ -228,8 +228,8 @@
    21665
   ],
   [
-   1794997844,
-   21935
+   1794998123,
+   22013
   ]
  ]
 }
