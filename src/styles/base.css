@@ -84,15 +84,10 @@ code { font-family: var(--font-label); color: var(--ink); background: var(--pane
   gap: clamp(12px, 3vw, 44px);
 }
 .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; flex: none; }
-.brand__text { display: flex; flex-direction: column; line-height: 1; }
-.brand__name {
-  font: italic 900 27px/1 var(--font-display);
-  letter-spacing: .015em;
-  text-transform: uppercase;
-  color: var(--ink);
-}
-.brand__tag { font: 700 11px/1 var(--font-label); letter-spacing: .14em; text-transform: uppercase; color: var(--orange); margin-top: 3px; }
+.brand__name { font: italic 900 30px/1 var(--font-display); letter-spacing: .015em; color: var(--ink); }
+.brand--small { gap: 8px; }
 .brand--small .brand__name { font-size: 20px; }
+.logo-mark { display: block; flex: none; }
 
 .site-nav { display: flex; align-items: stretch; height: 100%; gap: 2px; }
 .site-nav__link {
@@ -473,20 +468,18 @@ code { font-family: var(--font-label); color: var(--ink); background: var(--pane
 }
 
 @media (max-width: 760px) {
-  .site-header .brand__text { display: none; }
   .site-header__inner { justify-content: space-between; gap: 8px; }
   .site-nav { flex: 1; justify-content: flex-end; }
+}
+
+@media (max-width: 640px) {
+  .site-header .brand__name { display: none; }
 }
 
 @media (max-width: 600px) {
   .site-nav__link { font-size: 14px; letter-spacing: .02em; }
   .site-nav__full { display: none; }
   .site-nav__short { display: inline; }
-}
-
-@media (max-width: 480px) {
-  .brand__text { display: none; }
-  .site-footer .brand__name { display: inline; }
 }
 
 @media (max-width: 400px) {

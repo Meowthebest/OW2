@@ -3,6 +3,7 @@ import { ChevronDown } from 'lucide-react';
 import { HEROES, ROSTER_SEASON } from '../data/heroes';
 import type { Route } from '../lib/router';
 import { cn } from '../lib/format';
+import { SITE_NAME } from '../lib/site';
 import { LogoMark } from './icons';
 import { SECTIONS, sectionOf, type SectionLink } from './SectionNav';
 
@@ -85,12 +86,9 @@ export function SiteHeader({ route }: { route: Route }) {
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <a href="#/" className="brand" aria-label="OW2 Hero Selector home">
+        <a href="#/" className="brand" aria-label={`${SITE_NAME} home`}>
           <LogoMark />
-          <span className="brand__text">
-            <span className="brand__name">Hero Selector</span>
-            <span className="brand__tag">OW2 companion</span>
-          </span>
+          <span className="brand__name">{SITE_NAME}</span>
         </a>
         <nav className="site-nav" aria-label="Main">
           {NAV.map((item) => (
@@ -127,7 +125,7 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
-        <span className="brand brand--small"><LogoMark size={22} /><span className="brand__name">Hero Selector</span></span>
+        <span className="brand brand--small"><LogoMark size={24} /><span className="brand__name">{SITE_NAME}</span></span>
         <p>
           Unofficial fan project, not affiliated with or endorsed by Blizzard Entertainment. Overwatch, hero names and artwork are © Blizzard Entertainment.
           {' '}Career data comes from public profiles through the community-run <a href="https://overfast-api.tekrop.fr/" target="_blank" rel="noreferrer">OverFast API</a>.

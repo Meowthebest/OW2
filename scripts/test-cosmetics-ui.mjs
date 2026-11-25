@@ -1,8 +1,12 @@
 // Drives the cosmetics pages in the real app, in jsdom, with made-up data served in place of the built files.
 // Run with: npm run test:cosmetics-ui
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { build } from 'esbuild';
 import { JSDOM, VirtualConsole } from 'jsdom';
+
+// The site's name, from the one place the app keeps it.
+const SITE = /SITE_NAME = '([^']+)'/.exec(readFileSync('src/lib/site.ts', 'utf8'))[1];
 
 const result = await build({
   entryPoints: ['src/main.tsx'],
@@ -469,7 +473,7 @@ await test('a cosmetic page shows its record and links everything related', asyn
   assert.equal(app.document.querySelector('.cx-bundle__link').getAttribute('href'), '#/bundles/100');
   assert.ok(app.document.querySelector('a.cx-buy').href.startsWith('https://us.shop.battle.net/'), 'official store link');
   assert.ok([...app.document.querySelectorAll('.cx-related .cx-card__link')].some((link) => link.getAttribute('href') === '#/cosmetics/skin.ana.bastet'), 'similar skins link');
-  await until(() => app.document.title === 'Aurora | OW2 Hero Selector', 'the page title');
+  await until(() => app.document.title === `Aurora · ${SITE}`, 'the page title');
   app.close();
 });
 
@@ -910,7 +914,9 @@ await test('the news page shows Blizzard\'s articles as picture cards, a page at
   click(buttonNamed(app.document, /Older/));
   await until(() => app.document.querySelectorAll('.nw-card').length === 2, 'the second page');
   assert.equal(text(app.document.querySelector('.nw-card__title')), 'Story 13');
-  assert.equal(app.document.title, 'News | OW2 Hero Selector');
+  assert.equal(app.document.title, `News · ${SITE}`);
+  app.window.location.hash = '#/';
+  await until(() => app.document.title === SITE, 'the tab to let go of the page\'s name');
   app.close();
 
   const empty = boot({ hash: '#/hub/news' });
@@ -1044,7 +1050,7 @@ const namesIn = (document, id) => [...(document.querySelector(`#ev-${id}`)?.clos
 await test('the events page shows what is on, what is next and what just ended, with honest countdowns', async () => {
   const app = boot({ hash: '#/events' });
   await until(() => app.document.querySelector('.ev-card'), 'event cards');
-  assert.match(app.document.title, /In-Game Events/);
+  assert.equal(app.document.title, `Events · ${SITE}`);
   assert.deepEqual(sectionNames(app.document), ['Happening now', 'Coming up', 'Recently ended']);
   assert.deepEqual(namesIn(app.document, 'live'), ['Dig Event', 'Reign Event'], 'ending soonest first');
   assert.deepEqual(namesIn(app.document, 'upcoming'), ['Hunt Event', 'Later Event']);

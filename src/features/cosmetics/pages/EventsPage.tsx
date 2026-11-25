@@ -284,7 +284,7 @@ function EventsSkeleton() {
 }
 
 export function EventsPage() {
-  usePageTitle('In-Game Events');
+  usePageTitle('Events');
   const events = useAsync(loadGameEvents, 'game-events');
   const now = useClock(60000);
   const file = events.data;

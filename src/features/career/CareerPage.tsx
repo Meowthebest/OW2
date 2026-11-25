@@ -4,6 +4,7 @@ import { LogoMark } from '../../components/icons';
 import { Panel, SelectField } from '../../components/controls';
 import { formatDate, formatRelative } from '../../lib/format';
 import { careerHref, navigate, type CareerTab, type Route } from '../../lib/router';
+import { usePageTitle } from '../../lib/site';
 import { careerStore } from './api';
 import type { CareerRequest } from './api/requests';
 import type { GameMode, ModeFilter, PlatformFilter, PlayerSummary } from './api/types';
@@ -126,12 +127,7 @@ function PlayerProfile({ playerId, tab, hero }: { playerId: string; tab: CareerT
     return base;
   }, [detailMode, mode, platform, playerId, requests, tab]);
 
-  useEffect(() => {
-    if (summary.data?.username) document.title = `${summary.data.username} career | OW2 Hero Selector`;
-    return () => {
-      document.title = 'OW2 Hero Selector: Random Hero Picker & Career Stats';
-    };
-  }, [summary.data?.username]);
+  usePageTitle(summary.data?.username ?? 'Career');
 
   const onTabKey = (event: React.KeyboardEvent) => {
     if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
@@ -229,6 +225,8 @@ function PlayerProfile({ playerId, tab, hero }: { playerId: string; tab: CareerT
 }
 
 export function CareerPage({ route }: { route: Extract<Route, { view: 'career' }> }) {
+  usePageTitle(route.playerId ? undefined : 'Career');
+
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [route.playerId]);

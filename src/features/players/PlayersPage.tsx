@@ -3,6 +3,7 @@ import { Activity, CalendarDays, Clock, ExternalLink, FileSearch, History, Radio
 import { StateBlock } from '../../components/controls';
 import { cn, formatDate, formatDateTime, formatInt, formatRelative } from '../../lib/format';
 import type { PlayersRoute } from '../../lib/router';
+import { usePageTitle } from '../../lib/site';
 import type { PatchIndex, PatchMeta } from '../patches/core/types';
 import { loadIndex, useAsync } from '../patches/data';
 import { formatPatchDate } from '../patches/format';
@@ -34,7 +35,6 @@ import { loadHourly, loadRecent, refreshPlayers, useHistory, useNow, usePlayerDa
 
 const PlayerChart = lazy(() => import('./components/PlayerChart').then((module) => ({ default: module.PlayerChart })));
 
-const DEFAULT_TITLE = 'OW2 Hero Selector: Random Hero Picker & Career Stats';
 const DAY = 86400;
 const TABLE_PAGE = 30;
 
@@ -377,12 +377,10 @@ export function PlayersPage({ route }: { route: PlayersRoute }) {
   const hourly = useHistory(loadHourly, hourVersion);
   const hours = hourly.data;
 
+  usePageTitle('Players');
+
   useEffect(() => {
-    document.title = 'Overwatch Player Statistics | OW2 Hero Selector';
     window.scrollTo({ top: 0 });
-    return () => {
-      document.title = DEFAULT_TITLE;
-    };
   }, []);
 
   useEffect(() => {

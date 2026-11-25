@@ -1,4 +1,4 @@
-import { useEffect, useId, useState, type ReactNode } from 'react';
+import { useId, useState, type ReactNode } from 'react';
 import { ArrowLeft, BadgeCheck, Check, ChevronDown, ChevronLeft, ChevronRight, CircleDashed, Clock, Database, ExternalLink, Heart, Info, Star, Store } from 'lucide-react';
 import { StateBlock } from '../../../components/controls';
 import { cn, formatDateTime, formatRelative } from '../../../lib/format';
@@ -181,11 +181,7 @@ export function Note({ children }: { children: ReactNode }) {
   return <p className="cx-note"><Info size={14} aria-hidden="true" /><span>{children}</span></p>;
 }
 
-export function usePageTitle(title: string) {
-  useEffect(() => {
-    document.title = `${title} | OW2 Hero Selector`;
-  }, [title]);
-}
+export { usePageTitle } from '../../../lib/site';
 
 export function GridSkeleton({ count = 12, tall = false }: { count?: number; tall?: boolean }) {
   return (

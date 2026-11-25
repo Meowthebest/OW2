@@ -40,7 +40,7 @@ export function mergeEntries(base: EntryMap, incoming: EntryMap): { merged: Entr
 export const EXPORT_APP = 'ow2-hero-selector-collection';
 
 export function exportDocument(entries: EntryMap, now = Date.now()) {
-  return { app: EXPORT_APP, schema: 1, exportedAt: new Date(now).toISOString(), note: 'Manual tracking from OW2 Hero Selector. This is not in-game ownership data.', entries };
+  return { app: EXPORT_APP, schema: 1, exportedAt: new Date(now).toISOString(), note: 'Manual tracking from OW, a fan-made Overwatch companion. This is not in-game ownership data.', entries };
 }
 
 export class ImportError extends Error {}

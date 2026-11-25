@@ -1,6 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from 'react';
 import { ArrowDown, ArrowUp, CircleHelp, Copy, ExternalLink, Flag, RotateCcw, Search, Trophy, Users } from 'lucide-react';
 import { Segmented, StateBlock } from '../../components/controls';
+import { usePageTitle } from '../../lib/site';
 import { readJson, writeJson } from '../../lib/storage';
 import {
   answerFor,
@@ -421,9 +422,7 @@ export function GuessThePro() {
   const [panel, setPanel] = useState<'help' | 'teams' | null>(() => (Object.keys(readSaved().days).length === 0 ? 'help' : null));
   const panelId = useId();
 
-  useEffect(() => {
-    document.title = 'Guess the Pro | OW2 Hero Selector';
-  }, []);
+  usePageTitle('Guess the Pro');
 
   const data = state.status === 'ready' ? state.data : null;
   const players = useMemo(() => new Map((data?.players ?? []).map((player) => [player.id, player])), [data]);

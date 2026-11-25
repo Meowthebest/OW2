@@ -1,4 +1,4 @@
-# OW2 Hero Selector
+# OW
 
 A fan-made Overwatch companion:
 
@@ -70,6 +70,7 @@ src/
     useCollection.ts    Personal tracking
   styles/               Design tokens and page styles
 public/heroes/          Self-hosted hero images
+public/brand/           The site's icon, in the sizes browsers ask for
 public/data/patches/    Imported patch data, one JSON file per patch
 scripts/patches/        Patch import command, season list, ability names, reviews
 scripts/players/        Steam reading collector
@@ -86,6 +87,12 @@ docs/ALERTS.md          What the alert issues flag and how they behave
 docs/ESPORTS_DATA.md    Guess the Pro's player list: source, license and how to refresh it
 docs/HUB_DATA.md        News, hero rate history, Twitch Drops pictures and Drives: sources and upkeep
 ```
+
+## Name and icon
+
+The name is `SITE_NAME` in `src/lib/site.ts`. `index.html` repeats it for the moment before the app loads and for link previews, and a test keeps the two the same. The site's address, saved data and collection export files keep their older names, so nothing anyone saved is lost.
+
+The icon in `public/brand/` was designed for the site with Higgsfield, an AI image tool, and redrawn as a vector: `mark.svg` for the header and footer, tab icons at 16, 32, 48 and 192 pixels, and a home-screen icon. The 16-pixel one is the cat without its ring, which is too thin to show at that size. It is an original design, not Blizzard's logo.
 
 ## Add a new hero
 

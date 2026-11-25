@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { usePageTitle } from '../../lib/site';
 import { PlayerWidget } from '../players/components/PlayerWidget';
 import { HeroStage } from './HeroStage';
 import { RecentResults } from './RecentResults';
@@ -9,6 +10,7 @@ import type { RandomizerApi } from './useRandomizer';
 
 export function RandomizerPage({ api, focusRoster }: { api: RandomizerApi; focusRoster: boolean }) {
   const first = useRef(true);
+  usePageTitle(focusRoster ? 'Heroes' : null);
 
   useEffect(() => {
     const smooth = !first.current && api.motion !== 'off';

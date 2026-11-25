@@ -5,6 +5,7 @@ import { RoleIcon } from '../../components/icons';
 import { ROLE_LABEL, type Role } from '../../data/heroes';
 import type { PatchRoute } from '../../lib/router';
 import { cn } from '../../lib/format';
+import { usePageTitle } from '../../lib/site';
 import { PatchActivity } from '../players/components/PatchActivity';
 import { FilterBar } from './components/FilterBar';
 import { HeroCard } from './components/HeroCard';
@@ -32,7 +33,6 @@ import { formatPatchDate } from './format';
 
 // Large enough that a normal patch, Stadium included, shows in full.
 const PAGE_SIZE = 36;
-const DEFAULT_TITLE = 'OW2 Hero Selector: Random Hero Picker & Career Stats';
 
 const GROUP_HEADING: Record<CardGroup, { title: string; note: string | null }> = {
   standard: { title: 'Standard play', note: null },
@@ -335,12 +335,7 @@ export function PatchNotesPage({ route }: { route: PatchRoute }) {
   const index = useAsync(loadIndex, 'index');
   const changesQuery = useRef(route.tab === 'changes' ? route.query : '');
 
-  useEffect(() => {
-    document.title = 'Patch Notes and Balance Tracker | OW2 Hero Selector';
-    return () => {
-      document.title = DEFAULT_TITLE;
-    };
-  }, []);
+  usePageTitle('Patch Notes');
 
   useEffect(() => {
     window.scrollTo({ top: 0 });

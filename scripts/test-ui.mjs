@@ -6,6 +6,9 @@ import path from 'node:path';
 import { build } from 'esbuild';
 import { JSDOM, VirtualConsole } from 'jsdom';
 
+// The site's name, from the one place the app keeps it.
+const SITE = /SITE_NAME = '([^']+)'/.exec(readFileSync('src/lib/site.ts', 'utf8'))[1];
+
 const result = await build({
   entryPoints: ['src/main.tsx'],
   bundle: true,
@@ -360,6 +363,40 @@ await test('roster search ignores accents and case, and has an empty state', asy
   await until(() => app.document.querySelector('.roster__empty'), 'empty state');
   click(buttonByName(app.document, 'Clear search and filters'));
   await until(() => app.document.querySelectorAll('.hero-tile').length === 54, 'all heroes back');
+  app.close();
+});
+
+await test('the site goes by one short name, with its own icon, in the page, the header and the tab', async () => {
+  const html = readFileSync('index.html', 'utf8');
+  assert.ok(SITE.length <= 12, 'short enough for a narrow tab to show all of it');
+  assert.equal(/<title>([^<]*)<\/title>/.exec(html)[1], SITE, 'the tab before the app loads');
+  for (const name of ['og:title', 'apple-mobile-web-app-title']) assert.ok(html.includes(`="${name}" content="${SITE}"`), name);
+  assert.ok(html.includes(`<noscript>${SITE} needs JavaScript`));
+  const icons = [...html.matchAll(/<link rel="(?:icon|apple-touch-icon)"[^>]*href="%BASE_URL%([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(icons, ['brand/icon-16.png', 'brand/icon-32.png', 'brand/icon-48.png', 'brand/icon-192.png', 'brand/apple-touch-icon.png']);
+  for (const icon of icons) {
+    const bytes = readFileSync(path.join('public', icon));
+    const wanted = Number(/icon-(\d+)\.png$/.exec(icon)?.[1] ?? 180);
+    assert.equal(bytes.subarray(1, 4).toString(), 'PNG', icon);
+    assert.deepEqual([bytes.readUInt32BE(16), bytes.readUInt32BE(20)], [wanted, wanted], `${icon} is the size it says`);
+  }
+  assert.deepEqual(readdirSync('public/brand').map((name) => `brand/${name}`).sort(), [...icons, 'brand/mark.svg'].sort(), 'no icon left over from an older look');
+  assert.ok(statSync('public/brand/mark.svg').size < 4000, 'the header icon loads on every page, so it stays small');
+
+  const app = boot({ storage: MOTION_OFF, api: careerApi() });
+  await until(() => app.document.title === SITE, 'home goes by the name alone');
+  const brand = app.document.querySelector('.site-header .brand');
+  assert.equal(brand.getAttribute('aria-label'), `${SITE} home`);
+  assert.equal(brand.textContent, SITE);
+  assert.equal(brand.querySelector('img').getAttribute('src'), '/OW2/brand/mark.svg');
+  assert.equal(brand.querySelector('img').getAttribute('alt'), '', 'the name beside it says what it is');
+  assert.equal(app.document.querySelector('.site-footer .brand').textContent, SITE);
+  for (const [hash, page] of [['#/heroes', 'Heroes'], ['#/career', 'Career'], ['#/guess', 'Guess the Pro'], ['#/career/Test-1234', 'TestPlayer']]) {
+    app.window.location.hash = hash;
+    await until(() => app.document.title === `${page} · ${SITE}`, `${page} in the tab`);
+  }
+  app.window.location.hash = '#/';
+  await until(() => app.document.title === SITE, 'the plain name again, not the last page\'s');
   app.close();
 });
 
@@ -1413,7 +1450,7 @@ await test('the homepage widget shows the recorded count, change and peak, and o
   app.window.location.hash = strip.getAttribute('href');
   await playersReady(app);
   assert.equal(app.document.querySelector('.site-nav__link.is-active').textContent, 'Players');
-  await until(() => /Player Statistics/.test(app.document.title), 'page title');
+  await until(() => app.document.title === `Players · ${SITE}`, 'page title');
   assert.ok(hosts.every((host) => !/steampowered|steamdb|steamcharts/.test(host)), hosts.join());
   assert.deepEqual(app.errors, []);
   app.close();
