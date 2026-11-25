@@ -1274,14 +1274,27 @@ await test('old data is called out rather than presented as current', async () =
   app.close();
 });
 
-await test('the newest stored patch opens without errors, whichever it is', async () => {
-  const newest = [...readPatchFile('index.json', null).patches].sort((a, b) => b.date.localeCompare(a.date))[0];
-  const app = boot({ hash: '#/patches', api: patchApi({}, { asOf: null }) });
-  await until(() => app.document.querySelector('.patch-hero__title')?.textContent === newest.title, `${newest.id} shown first`);
-  const results = await until(() => app.document.querySelector('.patch-results[aria-busy="false"]'), 'patch loaded');
-  assert.doesNotMatch(results.textContent, /Could not load/);
-  assert.deepEqual(app.errors, []);
-  app.close();
+// New patches land on their own, and a test that assumes what one holds stops the whole site from deploying. This expects only
+// what's true of any patch. A hotfix with no hero changes never becomes the page's headline, so the newest patch is opened by
+// its own address, and the headline may be any stored patch. PATCH_SMOKE=all gives every stored patch a turn as the newest.
+await test('real patch data opens without errors, whatever the newest patch holds', async () => {
+  const stored = [...readPatchFile('index.json', null).patches].sort((a, b) => b.date.localeCompare(a.date));
+  const titles = new Set(stored.map((patch) => patch.title));
+  const open = async (hash, asOf) => {
+    const app = boot({ hash, api: patchApi({}, { asOf }) });
+    const when = `${hash} as of ${asOf ?? 'today'}`;
+    const title = await until(() => app.document.querySelector('.patch-hero__title')?.textContent, `${when}: a headline`);
+    const results = await until(() => app.document.querySelector('.patch-results[aria-busy="false"]'), `${when}: its changes`);
+    assert.doesNotMatch(results.textContent, /Could not load/, when);
+    assert.deepEqual(app.errors, [], when);
+    app.close();
+    return title;
+  };
+  for (const newest of process.env.PATCH_SMOKE === 'all' ? stored : stored.slice(0, 1)) {
+    const asOf = newest === stored[0] ? null : newest.date;
+    assert.ok(titles.has(await open('#/patches', asOf)), 'the headline is a stored patch');
+    assert.equal(await open(`#/patches?patch=${newest.id}`, asOf), newest.title);
+  }
 });
 
 await test('other updates and bug fixes stay available from the patch view', async () => {
